@@ -17,6 +17,8 @@ import './structure.css';
 // 3Dmol 只在這裡被動態 import（Viewer3D 內的靜態 import 會跟著這個 chunk 載入）
 const Viewer3D = lazy(() => import('./Viewer3D'));
 
+const CONFORMER_HINT =
+  '相對能量相差約 1–2 kcal/mol 以內的構象，在室溫下會同時存在；本結果為 MMFF94 力場對單一分子在真空中的估算，未考慮溶劑與周圍分子。';
 const SEED = 42;
 const FIRST_COUNT = 5;
 const STEP = 5;
@@ -195,6 +197,7 @@ export function Conformer3DCard({ structure }: { structure: StructureForCard | n
               {batch.conformers.map((c, i) => (
                 <option key={c.rank} value={i}>
                   構象 {c.rank}
+                  {c.relativeEnergy !== null && c.rank === 1 ? '　最低能量（建議使用）' : ''}
                   {c.relativeEnergy !== null ? `（相對能量 ${c.relativeEnergy.toFixed(2)} kcal/mol）` : ''}
                 </option>
               ))}
@@ -203,6 +206,7 @@ export function Conformer3DCard({ structure }: { structure: StructureForCard | n
               產生更多構象（+{STEP}）
             </button>
           </div>
+          {batch.optimized && <small className="conformer-hint">{CONFORMER_HINT}</small>}
           {batch.exhausted && <small>已無法產生更多不同的構象。</small>}
           {!batch.exhausted && batch.conformers.length >= MAX_CONFORMERS && <small>已達上限 {MAX_CONFORMERS} 個構象。</small>}
 

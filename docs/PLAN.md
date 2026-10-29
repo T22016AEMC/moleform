@@ -55,11 +55,11 @@
 - [x] 2.2 SMILES 輸入，與 2D 繪圖雙向轉換
 - [x] 2.3 結構驗證：原子價數、鍵結、SMILES 合法性；芳香環、手性中心、E/Z；拒絕反應式與查詢結構，保留連接點 `*`（DECISIONS D31）
 - [x] 2.4 MOL／SDF 匯入與匯出
-- [ ] 2.5 小分子 3D 產生：OpenChemLib JS 的 ConformerGenerator 構象、MMFF94 最佳化，在 Web Worker 中執行，預設只算少量構象，可再要求更多；MMFF 缺參數時顯示初始構象並標示「未經力場最佳化」（DECISIONS D33）
-- [ ] 2.5a 瀏覽器實測：在使用者電腦的瀏覽器中，記錄 BADGE 等較大分子的 3D 產生與最佳化耗時、網頁是否保持可操作；數字交使用者判斷是否可接受，不可接受則依 D33 降級
-- [ ] 2.5b MMFF94 能量單位確認：用 MMFF94 官方驗證資料集（MMFF94 Validation Suite）中的分子比對 OpenChemLib 的能量；確認單位前不顯示相對能量
-- [ ] 2.6 3D 顯示：選定 3D 顯示函式庫（先查證授權，不得為 GPL 類）；旋轉、縮放、平移；Ball-and-Stick、Stick、Space-Filling；原子編號；標示為理論構型
-- [ ] 2.7 3D 量測：鍵長、鍵角由 3D 座標自行計算，二面角可用 OpenChemLib `calculateTorsion`（注意其回傳弧度）
+- [x] 2.5 小分子 3D 產生：OpenChemLib JS 的 ConformerGenerator 構象、MMFF94 最佳化，在 Web Worker 中執行，預設只算少量構象，可再要求更多；MMFF 缺參數時顯示初始構象並標示「未經力場最佳化」（DECISIONS D33）
+- [x] 2.5a 瀏覽器實測：在使用者電腦的瀏覽器中，記錄 BADGE 等較大分子的 3D 產生與最佳化耗時、網頁是否保持可操作；數字交使用者判斷是否可接受，不可接受則依 D33 降級
+- [x] 2.5b MMFF94 能量單位確認：用 MMFF94 官方驗證資料集（MMFF94 Validation Suite）中的分子比對 OpenChemLib 的能量；確認單位前不顯示相對能量
+- [x] 2.6 3D 顯示：選定 3D 顯示函式庫（先查證授權，不得為 GPL 類）；旋轉、縮放、平移；Ball-and-Stick、Stick、Space-Filling；原子編號；標示為理論構型
+- [x] 2.7 3D 量測：鍵長、鍵角由 3D 座標自行計算，二面角可用 OpenChemLib `calculateTorsion`（注意其回傳弧度）
 - [ ] 2.8 本機化合物庫：存在瀏覽器，可匯出、匯入檔案（DECISIONS D23）
 - [ ] 2.9 使用者驗證清單：幾個已知分子的結構、3D 與量測值
 

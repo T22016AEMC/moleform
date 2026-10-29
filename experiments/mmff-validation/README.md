@@ -40,4 +40,4 @@ foreach ($f in 'MMFF94_hypervalent.mol2','MMFF94.energies','MMFF94.titles','READ
 node experiments/mmff-validation/compare.mjs
 ```
 
-腳本用根專案的 `openchemlib`（9.25.2）。做法：讀 mol2 座標，**不做最佳化**，直接以 `ForceFieldMMFF94(mol, 'MMFF94').getTotalEnergy()` 取得能量，與 `MMFF94.energies` 的 OPTIMOL 欄位比對。只挑「中性、只含 C／H／N／O／F／Cl、鍵級為 1／2／3、每個原子的總鍵級等於標準價數」的分子（排除離子、芳香鍵型別與其他元素的表示法差異，避免把表示法差異誤判成單位問題）。結果寫到 `results.md` 與 `results.json`。
+腳本用根專案的 `openchemlib`（9.25.2）。做法：讀 mol2 座標，**不做最佳化**，直接以 `ForceFieldMMFF94(mol, 'MMFF94').getTotalEnergy()` 取得能量，與 `MMFF94.energies` 的 OPTIMOL 欄位比對。納入「只含 H／C／N／O／F／Cl／Br／I／S／P／Si、鍵型別為 1／2／3／am（醯胺，當單鍵）」的分子。mol2 沒有形式電荷欄位（也沒有下載 `MMFF94.fc_hypervalent`），所以形式電荷由每個原子的總鍵級推得（例如 N 四價 +1、單鍵的末端 O −1、鹵離子 −1；對照表在 `compare.mjs`），再用「形式電荷總和 = mol2 部分電荷總和的四捨五入」核對，推不出或對不上者排除。結果分三群（A 中性 C/H/N/O/F/Cl、B 中性含 S/P/Si/Br/I、C 離子或兩性離子）寫到 `results.md` 與 `results.json`。含金屬的 10 個分子與 7 個形式電荷無法推定的分子被排除（名單見 `results.md` 第二行）。

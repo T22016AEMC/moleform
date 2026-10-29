@@ -70,3 +70,4 @@
 .viewer3d-measure h4, .viewer3d-measure p { margin: 0 0 var(--space-gap-sm); }
 .viewer3d-toolbar input[type='checkbox'] { width: auto; flex: none; padding: 0; }
 .viewer3d-toolbar select, .conformer-select select { width: auto; max-width: 100%; }
+.conformer-hint { display: block; margin-bottom: var(--space-gap-sm); }
