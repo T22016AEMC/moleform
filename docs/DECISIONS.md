@@ -46,6 +46,7 @@
 | D31 | 結構輸入**拒絕反應式與查詢結構**，但**保留聚合物連接點 `*`**（`[*:1]`、`[*:2]`） | CheMScutter 的 `structureChecks.ts` 搬入時須改寫，不得原樣照搬 |
 | D32 | GitHub repo 名稱：**`moleform`** | 用於 Vite 與 Ketcher 子專案的 `base` 路徑（`/moleform/`、`/moleform/ketcher/`） |
 | D33 | 架構採**純前端**（P01 結案）。RDKit.js 負責 2D、SMARTS、描述子；**OpenChemLib JS**（`openchemlib`）負責 3D 構象與 MMFF94 最佳化，在 Web Worker 中執行。若 Phase 2 在瀏覽器實測時效能或顯示無法接受，3D 降級為不顯示，其他功能不受影響 | 依任務 001、005；是否「無法接受」由使用者依 Phase 2 實測數字判斷 |
+| D34 | 介面風格**直接沿用 CheMScutter**，不參考 FilMaster | 使用者 2026-10-29 決定；`assets/style-reference.png` 不再使用 |
 
 ## 二、建議（待確認）
 
