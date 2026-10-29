@@ -537,3 +537,75 @@ describe('序列化', () => {
     }
   });
 });
+
+describe('目標 Solid Content 自動計算 Liquid 用量', () => {
+  const pgmea = (amount = 0) => ({ ...liquidC('PGMEA', amount), name: 'PGMEA' });
+  const fromTarget = (solid: Parameters<typeof formulation>[0], liquid: Component<LiquidCategory>[], extra: Partial<Formulation> = {}) =>
+    formulation(solid, { unit: 'g', components: liquid }, { targetSolidContentPct: 4, liquidFromTarget: true, ...extra });
+
+  it('(a) Solid g：5S 8 g、E3 2 g，目標 4% → PGMEA 240 g；Solid Content 4%', () => {
+    const out = computeFormulation(fromTarget({ unit: 'g', components: [solidC('S', 8), solidC('E', 2)] }, [pgmea()]), MW);
+    expect(out.errors).toEqual([]);
+    expect(out.liquidFromTarget).toMatchObject({ unit: 'g', amounts: { PGMEA: 240 } });
+    near(value(out.results.liquid!.components[0].massG), 240);
+    expect(out.results.liquid!.components[0].massG?.unit).toBe('g');
+    near(value(out.results.overall.solidContent), 4);
+    near(value(out.results.overall.totalMass), 250);
+    expect(out.results.overall.target).toBeNull();
+  });
+
+  it('(b) 4A：Solid wt% P 80、E 20，目標 4% → PGMEA 每 100 份固體 2400 份（重量份基準）', () => {
+    const out = computeFormulation(fromTarget({ unit: 'wt', components: [solidC('P', 80), solidC('E', 20)] }, [pgmea()]), MW);
+    expect(out.errors).toEqual([]);
+    expect(out.liquidFromTarget?.unit).toBe('重量份');
+    expect(out.liquidFromTarget?.basisNote).toContain('每 100 份固體');
+    near(out.liquidFromTarget!.amounts.PGMEA, 2400);
+    expect(out.results.liquid!.components[0].massG?.unit).toBe('重量份');
+    near(value(out.results.overall.solidContent), 4);
+    expect(out.results.overall.solidMass.unit).toBe('重量份');
+    near(value(out.results.overall.solidMass), 100);
+    near(value(out.results.overall.totalMass), 2500);
+  });
+
+  it('(c) 兩種溶劑 1:1，目標 4%，Solid 10 g → 各 120 g；2:1 則 160／80', () => {
+    const solid = { unit: 'g' as const, components: [solidC('S', 10)] };
+    const out = computeFormulation(fromTarget(solid, [liquidC('S1', 1), liquidC('S2', 1)]), MW);
+    expect(out.errors).toEqual([]);
+    expect(out.liquidFromTarget!.amounts).toEqual({ S1: 120, S2: 120 });
+    const out2 = computeFormulation(fromTarget(solid, [liquidC('S1', 2), liquidC('S2', 1)]), MW);
+    near(out2.liquidFromTarget!.amounts.S1, 160);
+    near(out2.liquidFromTarget!.amounts.S2, 80);
+    expect(computeFormulation(fromTarget(solid, [liquidC('S1', -1), liquidC('S2', 1)]), MW).errors.map((e) => e.code)).toContain('INVALID_AMOUNT');
+    expect(computeFormulation(fromTarget(solid, [liquidC('S1', 0), liquidC('S2', 0)]), MW).errors.map((e) => e.code)).toContain('ZERO_TOTAL');
+  });
+
+  it('Solid 以 wt% 但有填 Solid 總重 → 以 g 計；單位為重量份未填總重 → 每 100 份', () => {
+    const wt = computeFormulation(fromTarget({ unit: 'wt', components: [solidC('P', 80), solidC('E', 20)] }, [pgmea()], { solidTotalG: 10 }), MW);
+    expect(wt.liquidFromTarget).toMatchObject({ unit: 'g', amounts: { PGMEA: 240 } });
+    const parts = computeFormulation(fromTarget({ unit: 'parts', components: [solidC('P', 30), solidC('E', 20)] }, [pgmea()]), MW);
+    expect(parts.liquidFromTarget?.unit).toBe('重量份');
+    near(parts.liquidFromTarget!.amounts.PGMEA, 2400);
+  });
+
+  it('單一溶劑：忽略原本的 Liquid 用量與 Liquid 總重；沒有 liquidFromTarget 旗標（舊檔）照原規則', () => {
+    const solid = { unit: 'g' as const, components: [solidC('S', 8), solidC('E', 2)] };
+    const ignored = computeFormulation(fromTarget(solid, [pgmea(999)], { liquidTotalG: 5 }), MW);
+    expect(ignored.errors).toEqual([]);
+    near(ignored.liquidFromTarget!.amounts.PGMEA, 240);
+    const legacy = computeFormulation(formulation(solid, { unit: 'g', components: [pgmea(96)] }, { targetSolidContentPct: 4 }), MW);
+    expect(legacy.liquidFromTarget).toBeNull();
+    near(value(legacy.results.liquid!.components[0].massG), 96);
+    near(value(legacy.results.overall.target!.liquidTotal), 240);
+  });
+
+  it('Solid 區沒有成分或有錯誤：不計算 Liquid；配方檔記錄 liquidFromTarget，舊檔沒有此欄位', () => {
+    const none = computeFormulation(fromTarget({ unit: 'g', components: [] }, [pgmea()]), MW);
+    expect(none.errors.map((e) => e.code)).toContain('TARGET_NEEDS_SOLID_MASS');
+    expect(none.liquidFromTarget).toBeNull();
+    const f = fromTarget({ unit: 'g', components: [solidC('S', 8)] }, [pgmea()]);
+    const back = parseFormulation(serializeFormulation(f));
+    expect(back.ok && back.formulation.liquidFromTarget).toBe(true);
+    const old = parseFormulation(serializeFormulation(formulation({ unit: 'g', components: [solidC('S', 8)] }, undefined, { targetSolidContentPct: 4 })));
+    expect(old.ok && old.formulation.liquidFromTarget).toBeUndefined();
+  });
+});

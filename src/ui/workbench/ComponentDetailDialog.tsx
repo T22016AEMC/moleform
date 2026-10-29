@@ -12,7 +12,7 @@ import { saveCompoundToLibrary } from './libraryBridge';
 import { KetcherPane } from './KetcherPane';
 import { Modal } from './Modal';
 import { applyStructureToRow, candidateFromValidation, isPolymerSmiles, libraryInputFromRow } from './model';
-import { useStructureDrawing } from './StructureImage';
+import { StructureImage, useStructureDrawing } from './StructureImage';
 
 interface Props {
   row: Row;
@@ -46,6 +46,10 @@ export function ComponentDetailDialog({ row, area, onChange, onClose }: Props) {
   const source = polymer ? row.canonicalSmiles : molblock || row.canonicalSmiles;
   const drawing = useStructureDrawing({ source, width: 440, height: 300, mark: true, polymer });
 
+  // 共聚物：所有單元並排顯示（第一種單元是成分本身的結構）
+  const extraUnits = polymer ? (row.polymerEdit?.extraUnits ?? []) : [];
+  const copolymerUnits = extraUnits.length > 0 ? [{ smiles: row.canonicalSmiles, fractionText: row.polymerEdit?.firstFractionText ?? '' }, ...extraUnits.map((u) => ({ smiles: u.smiles.trim(), fractionText: u.fractionText }))].filter((u) => u.smiles !== '') : [];
+  const fractionLabel = (row.polymerEdit?.fractionBasis ?? 'mol') === 'mol' ? 'mol%' : 'wt%';
   const [analysis, setAnalysis] = useState<{ key: string; value: RepeatUnitAnalysis | null } | null>(null);
   const polymerSpec = polymer && row.polymerEdit ? specFromEdit(row.polymerEdit, row.canonicalSmiles) : null;
   const polymerKey = analysisKey(row.canonicalSmiles, polymerSpec);
@@ -109,12 +113,22 @@ export function ComponentDetailDialog({ row, area, onChange, onClose }: Props) {
       <div className="modal-section">
         <label htmlFor="detail-name">名稱</label>
         <input id="detail-name" type="text" maxLength={100} value={row.name} autoComplete="off" onChange={(e) => onChange((r) => ({ ...r, name: e.target.value }))} />
-        <small>{area === 'solid' ? 'Solid' : 'Liquid'}　{row.category}{polymer && <span className="polymer-tag">聚合物</span>}</small>
+        <small>{area === 'solid' ? 'Solid' : 'Liquid'}　{row.category}{polymer && <span className="polymer-tag">{extraUnits.length > 0 ? '共聚物' : '聚合物'}</span>}</small>
       </div>
 
       <div className="modal-section detail-structure">
         <h3>結構</h3>
-        <div className="detail-structure-box">
+        {copolymerUnits.length > 1 && (
+          <div className="detail-units" role="group" aria-label="共聚物的所有單元">
+            {copolymerUnits.map((u, i) => (
+              <figure key={i} className="detail-unit">
+                <StructureImage label={`單元 ${i + 1} 的結構（標出反應原子）`} source={u.smiles} width={300} height={220} mark polymer />
+                <figcaption>單元 {i + 1}、{u.fractionText.trim() || '—'} {fractionLabel}</figcaption>
+              </figure>
+            ))}
+          </div>
+        )}
+        <div className="detail-structure-box" hidden={copolymerUnits.length > 1}>
           {drawing.kind === 'done' && drawing.drawn.svg ? (
             <div className="structure-image" role="img" aria-label={`${row.name} 的結構圖`} dangerouslySetInnerHTML={{ __html: drawing.drawn.svg }} />
           ) : (
@@ -142,6 +156,7 @@ export function ComponentDetailDialog({ row, area, onChange, onClose }: Props) {
               onChange={(polymerEdit) => onChange((r) => ({ ...r, polymerEdit }))}
               analysis={currentAnalysis}
               firstSmiles={row.canonicalSmiles}
+              onReplaceFirst={(smiles, polymerEdit) => onChange(({ molfile: _m, compoundId: _c, ...r }) => ({ ...r, canonicalSmiles: smiles, polymerEdit }))}
             />
           )}
           <small>聚合物不提供 3D（D05）。</small>

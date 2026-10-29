@@ -192,7 +192,10 @@ describe('儲存層（記憶體版與失敗情況）', () => {
 describe('畫面的編輯狀態與配方互轉', () => {
   it('配方 → 編輯狀態 → 配方，內容不變', () => {
     const f = sample('一');
-    expect(toFormulation(fromFormulation(f))).toEqual(f);
+    // 舊配方有目標固含量但沒有 liquidFromTarget：畫面進入自動計算模式，存檔時寫入旗標
+    expect(toFormulation(fromFormulation(f))).toEqual({ ...f, liquidFromTarget: true });
+    const { targetSolidContentPct: _t, ...noTarget } = f;
+    expect(toFormulation(fromFormulation(noTarget))).toEqual(noTarget);
   });
 
   it('空白或無法解析的文字變成 NaN／沒有填；選填欄位空白時不出現', () => {

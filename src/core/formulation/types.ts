@@ -66,6 +66,11 @@ export interface Formulation {
   targetSolidContentPct?: number;
   /** 聚合物 mol% 的基準（D46）：chain＝整條鏈（預設）、unit＝重複單元；省略視為 chain */
   polymerMolBasis?: PolymerMolBasis;
+  /**
+   * 使用目標固含量（targetSolidContentPct）自動計算 Liquid 用量（任務 020 後續）：Liquid 區各成分的 amount 只是溶劑間的相對比例
+   * （只有一種溶劑時忽略），實際用量由 Solid 質量與目標計算。省略（舊檔）＝照原本規則，Liquid 用量由使用者填寫。
+   */
+  liquidFromTarget?: boolean;
 }
 
 /** 聚合物 mol% 的基準：chain＝莫耳數 = 質量 ÷ Mn；unit＝莫耳數 = 質量 ÷ 重複單元分子量（D46） */
@@ -163,6 +168,8 @@ export interface FormulationResults {
 }
 
 export interface FormulationOutcome {
+  /** 使用目標固含量時，程式算出的 Liquid 各成分用量（單位：Solid 已知質量為 g，否則為每 100 份固體的重量份）；否則 null */
+  liquidFromTarget: { unit: string; basisNote: string; amounts: Record<string, number> } | null;
   results: FormulationResults;
   errors: FormulationIssue[];
   warnings: FormulationIssue[];

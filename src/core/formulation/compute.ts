@@ -61,6 +61,12 @@ interface AreaState {
   result: AreaResult | null;
 }
 
+interface DerivedLiquid {
+  unit: string;
+  basisNote: string;
+  amounts: Record<string, number>;
+}
+
 interface Sink {
   errors: FormulationIssue[];
   warnings: FormulationIssue[];
@@ -228,7 +234,54 @@ export function computeFormulation(formulation: Formulation, molecularWeights: M
   const basis = formulation.polymerMolBasis ?? 'chain';
   const unitWeights = options.unitWeights ?? {};
   const solid = processArea('solid', formulation.solid.unit, formulation.solid.components, formulation.solidTotalG, molecularWeights, basis, unitWeights, sink);
-  const liquid = processArea('liquid', formulation.liquid.unit, formulation.liquid.components, formulation.liquidTotalG, molecularWeights, basis, unitWeights, sink);
+
+  // 目標 Solid Content 啟用（liquidFromTarget）：Liquid 區用量由程式依目標計算（使用者只填溶劑間的相對比例）
+  const targetValue = formulation.targetSolidContentPct;
+  const targetUsable = isValidNumber(targetValue) && targetValue > 0 && targetValue < 100;
+  let derived: DerivedLiquid | null = null;
+  let liquid: AreaState;
+  if (formulation.liquidFromTarget === true && targetUsable && formulation.liquid.components.length > 0) {
+    const comps = formulation.liquid.components;
+    const unit = solid.mass !== null ? 'g' : '重量份';
+    if (!solid.ok) {
+      liquid = failedState('g', comps); // Solid 區的錯誤已列出
+    } else if (solid.empty) {
+      sink.errors.push({ area: 'formulation', code: 'TARGET_NEEDS_SOLID_MASS', message: '無法由目標固含量計算 Liquid 用量：Solid 區沒有成分' });
+      liquid = failedState('g', comps);
+    } else {
+      // 基準：Solid 質量已知（g 或有填 Solid 總重）→ 以 g 計；否則每 100 份固體
+      const base = solid.mass !== null ? solid.mass : 100;
+      const needed = (base * (100 - targetValue)) / targetValue;
+      const ratios = comps.length === 1 ? [1] : comps.map((c) => c.amount);
+      const bad = ratios.findIndex((r) => !isValidNumber(r) || r < 0);
+      const sum = ratios.reduce((s, r) => s + (isValidNumber(r) ? r : 0), 0);
+      if (bad >= 0) {
+        sink.errors.push({ area: 'liquid', code: 'INVALID_AMOUNT', message: `Liquid 區的「${labelOf(comps[bad], bad)}」溶劑比例必須是大於或等於 0 的數字`, componentId: comps[bad].id });
+        liquid = failedState('g', comps);
+      } else if (!(sum > 0)) {
+        sink.errors.push({ area: 'liquid', code: 'ZERO_TOTAL', message: 'Liquid 區的溶劑比例合計為 0，無法分配' });
+        liquid = failedState('g', comps);
+      } else {
+        const amounts: Record<string, number> = {};
+        const derivedComps = comps.map((c, i) => {
+          amounts[c.id] = (needed * ratios[i]) / sum;
+          return { ...c, amount: amounts[c.id] };
+        });
+        liquid = processArea('liquid', 'g', derivedComps, undefined, molecularWeights, basis, unitWeights, sink);
+        if (solid.mass === null && liquid.result) {
+          // 相對基準：質量欄位標示為重量份（每 100 份固體）
+          liquid.result = { ...liquid.result, components: liquid.result.components.map((c) => ({ ...c, massG: c.massG ? { ...c.massG, unit: '重量份' } : null })) };
+        }
+        derived = {
+          unit,
+          basisNote: solid.mass !== null ? '依目標固含量計算，Solid 以 g 計' : '依目標固含量計算，以每 100 份固體為基準（重量份）',
+          amounts,
+        };
+      }
+    }
+  } else {
+    liquid = processArea('liquid', formulation.liquid.unit, formulation.liquid.components, formulation.liquidTotalG, molecularWeights, basis, unitWeights, sink);
+  }
 
   // 整體：Solid Content
   const na = (reason: string) => calc(null, 'g', reason);
@@ -246,6 +299,10 @@ export function computeFormulation(formulation: Formulation, molecularWeights: M
       solidMass = solid.mass;
       liquidMass = liquid.mass;
       absolute = true;
+    } else if (derived && solid.mass === null) {
+      // 目標固含量的相對基準：每 100 份固體
+      solidMass = 100;
+      liquidMass = liquid.totalRel;
     } else if (relativeOk(solid) && relativeOk(liquid)) {
       solidMass = solid.totalRel;
       liquidMass = liquid.totalRel;
@@ -300,7 +357,7 @@ export function computeFormulation(formulation: Formulation, molecularWeights: M
 
   // 目標 Solid Content：由 Solid 質量反推 Liquid 總質量（不需要 Liquid 區無誤）
   const target = formulation.targetSolidContentPct;
-  if (target !== undefined) {
+  if (target !== undefined && !derived) {
     if (!isValidNumber(target) || !(target > 0 && target < 100)) {
       sink.errors.push({ area: 'formulation', code: 'TARGET_OUT_OF_RANGE', message: '目標 Solid Content 必須大於 0 且小於 100（%）' });
     } else if (solid.ok) {
@@ -329,6 +386,7 @@ export function computeFormulation(formulation: Formulation, molecularWeights: M
 
   return {
     results: { solid: solid.result, liquid: liquid.result, overall },
+    liquidFromTarget: derived,
     errors: sink.errors,
     warnings: sink.warnings,
   };

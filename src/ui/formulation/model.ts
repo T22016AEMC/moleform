@@ -58,18 +58,22 @@ export function parseNumberText(text: string): number {
 /** 選填欄位：空白＝沒有填；填了但不是數字＝NaN（核心會報錯） */
 const optional = (text: string): number | undefined => (text.trim() === '' ? undefined : parseNumberText(text));
 
-function toComponent(row: Row): Component {
+/** 使用目標固含量時，Liquid 用量改由程式計算；欄位只填溶劑間的相對比例，空白視為 1 */
+export const targetActive = (state: Pick<EditorState, 'targetText'>) => state.targetText.trim() !== '';
+
+function toComponent(row: Row, blankAmount?: number): Component {
   const { amountText, amountTouched: _touched, polymerEdit, ...rest } = row;
   const polymer = polymerEdit && rest.canonicalSmiles.includes('*') ? specFromEdit(polymerEdit, rest.canonicalSmiles) : null;
-  return { ...rest, amount: parseNumberText(amountText), ...(polymer ? { polymer } : {}) };
+  const amount = blankAmount !== undefined && amountText.trim() === '' ? blankAmount : parseNumberText(amountText);
+  return { ...rest, amount, ...(polymer ? { polymer } : {}) };
 }
 
 export function toFormulation(state: EditorState): Formulation {
   const f: Formulation = {
     schemaVersion: 1,
     name: state.name,
-    solid: { unit: state.solidUnit, components: state.solidRows.map(toComponent) as Formulation['solid']['components'] },
-    liquid: { unit: state.liquidUnit, components: state.liquidRows.map(toComponent) as Formulation['liquid']['components'] },
+    solid: { unit: state.solidUnit, components: state.solidRows.map((r) => toComponent(r)) as Formulation['solid']['components'] },
+    liquid: { unit: state.liquidUnit, components: state.liquidRows.map((r) => toComponent(r, targetActive(state) ? 1 : undefined)) as Formulation['liquid']['components'] },
   };
   const solidTotal = optional(state.solidTotalText);
   const liquidTotal = optional(state.liquidTotalText);
@@ -77,6 +81,7 @@ export function toFormulation(state: EditorState): Formulation {
   if (solidTotal !== undefined) f.solidTotalG = solidTotal;
   if (liquidTotal !== undefined) f.liquidTotalG = liquidTotal;
   if (target !== undefined) f.targetSolidContentPct = target;
+  if (targetActive(state)) f.liquidFromTarget = true; // 記錄使用目標固含量；清空目標就回到手動輸入
   if (state.polymerMolBasis === 'unit') f.polymerMolBasis = 'unit'; // 預設（整條鏈）不寫入，舊檔與新檔一致
   return f;
 }

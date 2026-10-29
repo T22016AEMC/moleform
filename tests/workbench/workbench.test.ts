@@ -195,3 +195,43 @@ describe('縮圖與詳細圖（Worker 的繪圖請求）', () => {
     expect(isChemRequest({ ...request, source: undefined })).toBe(false);
   });
 });
+
+// ---------- 目標 Solid Content：Liquid 用量由程式計算（任務 020 後續）----------
+import { computeFormulation as computeForTarget } from '../../src/core/formulation/compute';
+import { fromFormulation as stateFromFormulation, pendingAmountIds as pendingIds, targetActive as isTargetActive } from '../../src/ui/formulation/model';
+
+describe('目標 Solid Content 的編輯狀態', () => {
+  const rows = () => {
+    const s1: Row = { ...newRow('solid', { name: 'S', canonicalSmiles: 'CCO' }), id: 's1', amountText: '8' };
+    const s2: Row = { ...newRow('solid', { name: 'E', canonicalSmiles: 'CCN' }), id: 's2', amountText: '2' };
+    const l1: Row = { ...newRow('liquid', { name: 'PGMEA', canonicalSmiles: 'COCC(C)OC(C)=O' }), id: 'l1', amountText: '' };
+    return { s1, s2, l1 };
+  };
+
+  it('填了目標：記錄 liquidFromTarget，Liquid 用量空白視為比例 1，不觸發「尚未填完」', () => {
+    const { s1, s2, l1 } = rows();
+    const state = { ...emptyState(), solidRows: [s1, s2], liquidRows: [l1], targetText: '4' };
+    expect(isTargetActive(state)).toBe(true);
+    const f = toFormulation(state);
+    expect(f.liquidFromTarget).toBe(true);
+    expect(f.targetSolidContentPct).toBe(4);
+    expect(f.liquid.components[0].amount).toBe(1);
+    // 畫面的「尚未填完用量」只看 Solid 區（Liquid 區由程式計算）
+    expect(pendingIds([s1, s2]).size).toBe(0);
+    expect(pendingIds([s1, s2, l1]).size).toBe(1);
+    const out = computeForTarget(f, { s1: 46, s2: 45, l1: 90 });
+    expect(out.liquidFromTarget?.amounts.l1).toBeCloseTo(240, 9); // Solid g：8 + 2 g，目標 4%
+  });
+
+  it('清空目標：不再記錄旗標，Liquid 恢復手動輸入；存檔再讀回保留狀態', () => {
+    const { s1, l1 } = rows();
+    const cleared = toFormulation({ ...emptyState(), solidRows: [s1], liquidRows: [l1], targetText: '' });
+    expect(cleared.liquidFromTarget).toBeUndefined();
+    expect(Number.isNaN(cleared.liquid.components[0].amount)).toBe(true);
+    const f = toFormulation({ ...emptyState(), solidRows: [s1], liquidRows: [{ ...l1, amountText: '2' }], targetText: '4' });
+    const back = stateFromFormulation(f);
+    expect(back.targetText).toBe('4');
+    expect(isTargetActive(back)).toBe(true);
+    expect(toFormulation(back)).toEqual(f);
+  });
+});

@@ -17,6 +17,7 @@ import {
   fromFormulation,
   LIQUID_UNIT_OPTIONS,
   pendingAmountIds,
+  targetActive,
   visibleIssues,
   SOLID_UNIT_OPTIONS,
   toFormulation,
@@ -95,10 +96,14 @@ interface AreaCardProps {
   units: Record<string, RepeatUnitAnalysis | null>;
   onAdd: () => void;
   onOpenDetail: (rowId: string) => void;
+  /** 使用目標固含量時，程式算出的 Liquid 用量（Liquid 區使用）；沒有或算不出為 null */
+  derived: FormulationOutcome['liquidFromTarget'];
 }
 
-function AreaCard({ area, state, setState, issues, units, onAdd, onOpenDetail }: AreaCardProps) {
+function AreaCard({ area, state, setState, issues, units, onAdd, onOpenDetail, derived }: AreaCardProps) {
   const isSolid = area === 'solid';
+  // 填了目標固含量：Liquid 用量改由程式計算（任務 020 後續）
+  const auto = !isSolid && targetActive(state);
   const rows = isSolid ? state.solidRows : state.liquidRows;
   const unit = isSolid ? state.solidUnit : state.liquidUnit;
   const totalText = isSolid ? state.solidTotalText : state.liquidTotalText;
@@ -157,6 +162,7 @@ function AreaCard({ area, state, setState, issues, units, onAdd, onOpenDetail }:
           <select
             id={`${area}-unit`}
             value={unit}
+            disabled={auto}
             onChange={(e) => setState((s) => (isSolid ? { ...s, solidUnit: e.target.value as EditorState['solidUnit'] } : { ...s, liquidUnit: e.target.value as EditorState['liquidUnit'] }))}
           >
             {unitOptions.map((o) => (
@@ -165,7 +171,11 @@ function AreaCard({ area, state, setState, issues, units, onAdd, onOpenDetail }:
           </select>
         </div>
       </div>
-      <small>整區使用同一種單位（D36）</small>
+      {auto ? (
+        <small role="status">依目標固含量計算{derived ? `：${derived.basisNote}` : ''}。{rows.length > 1 ? '多種溶劑請在欄位填溶劑間的相對比例（重量份，空白視為 1）。' : ''}清空「目標 Solid Content」可手動輸入。</small>
+      ) : (
+        <small>整區使用同一種單位（D36）</small>
+      )}
       <IssueList issues={areaIssues} />
 
       {rows.length === 0 ? (
@@ -198,6 +208,35 @@ function AreaCard({ area, state, setState, issues, units, onAdd, onOpenDetail }:
                         <option key={c} value={c}>{c}</option>
                       ))}
                     </select>
+                    {auto && rows.length > 1 && (
+                      <div className="amount-input">
+                        <input
+                          id={`amount-${row.id}`}
+                          type="text"
+                          inputMode="decimal"
+                          aria-label={`${row.name} 溶劑比例`}
+                          value={row.amountText}
+                          placeholder="比例（預設 1）"
+                          aria-invalid={invalid}
+                          onChange={(e) => patchRow(row.id, { amountText: e.target.value, amountTouched: true })}
+                        />
+                        <span className="amount-unit">份</span>
+                      </div>
+                    )}
+                    {auto ? (
+                      <div className="amount-input">
+                        <input
+                          id={rows.length > 1 ? undefined : `amount-${row.id}`}
+                          type="text"
+                          readOnly
+                          aria-label={`${row.name} 用量（依目標固含量計算）`}
+                          value={derived && derived.amounts[row.id] !== undefined ? String(Number(derived.amounts[row.id].toFixed(4))) : ''}
+                          placeholder="—"
+                        />
+                        <span className="amount-unit">{derived?.unit === '重量份' ? '份' : 'g'}</span>
+                        <small className="auto-note">依目標固含量計算</small>
+                      </div>
+                    ) : (
                     <div className="amount-input">
                       <input
                         id={`amount-${row.id}`}
@@ -212,6 +251,7 @@ function AreaCard({ area, state, setState, issues, units, onAdd, onOpenDetail }:
                       />
                       <span className="amount-unit">{UNIT_SUFFIX[unit] ?? unit}</span>
                     </div>
+                    )}
                   </div>
                   {isSolid && (
                     <div className="component-checks">
@@ -267,7 +307,7 @@ function AreaCard({ area, state, setState, issues, units, onAdd, onOpenDetail }:
 
       <div className="area-foot">
         <button type="button" className="add-component" onClick={onAdd}>＋加入成分</button>
-        <div className="area-total">
+        {!auto && <div className="area-total">
           <label htmlFor={`${area}-total`}>該區總重（選填）</label>
           <div className="amount-input">
             <input
@@ -279,7 +319,7 @@ function AreaCard({ area, state, setState, issues, units, onAdd, onOpenDetail }:
             />
             <span className="amount-unit">g</span>
           </div>
-        </div>
+        </div>}
       </div>
     </section>
   );
@@ -461,7 +501,7 @@ export function Workbench({ storage }: Props) {
   }, [debounced, weights, ready, units]);
 
   // 新加入、尚未填用量的成分先不顯示數值錯誤（輸入過或離開欄位後才顯示）
-  const pending = useMemo(() => pendingAmountIds([...state.solidRows, ...state.liquidRows]), [state.solidRows, state.liquidRows]);
+  const pending = useMemo(() => pendingAmountIds([...state.solidRows, ...(targetActive(state) ? [] : state.liquidRows)]), [state.solidRows, state.liquidRows, state.targetText]);
   const issues = useMemo<SeverityIssue[]>(
     () =>
       visibleIssues(
@@ -527,13 +567,13 @@ export function Workbench({ storage }: Props) {
                 <input id="target-input" type="text" inputMode="decimal" value={state.targetText} onChange={(e) => setState((s) => ({ ...s, targetText: e.target.value }))} />
                 <span className="amount-unit">%</span>
               </div>
-              <small>填了之後，會由 Solid 質量反推所需的 Liquid 總量，並依 Liquid 區的組成分配。</small>
+              <small>填了之後，Liquid 區的用量改由程式依目標計算（Solid 質量已知用 g，否則以每 100 份固體為基準的重量份）；多種溶劑只需在 Liquid 區填溶劑間的相對比例。清空則回到手動輸入。</small>
             </div>
             <IssueList issues={targetIssues} />
           </section>
 
-          <AreaCard area="solid" state={state} setState={setState} issues={issues} units={units} onAdd={() => setDialog({ kind: 'add', area: 'solid' })} onOpenDetail={(rowId) => setDialog({ kind: 'detail', rowId })} />
-          <AreaCard area="liquid" state={state} setState={setState} issues={issues} units={units} onAdd={() => setDialog({ kind: 'add', area: 'liquid' })} onOpenDetail={(rowId) => setDialog({ kind: 'detail', rowId })} />
+          <AreaCard area="solid" state={state} setState={setState} issues={issues} units={units} derived={null} onAdd={() => setDialog({ kind: 'add', area: 'solid' })} onOpenDetail={(rowId) => setDialog({ kind: 'detail', rowId })} />
+          <AreaCard area="liquid" state={state} setState={setState} issues={issues} units={units} derived={outcome?.liquidFromTarget ?? null} onAdd={() => setDialog({ kind: 'add', area: 'liquid' })} onOpenDetail={(rowId) => setDialog({ kind: 'detail', rowId })} />
         </div>
 
         <div className="workbench-right" aria-label="即時結果">

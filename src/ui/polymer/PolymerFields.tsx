@@ -16,6 +16,8 @@ interface Props {
   analysis: RepeatUnitAnalysis | null;
   /** 成分本身的結構（共聚物的第一種單元）；省略時不顯示共聚物的單元清單 */
   firstSmiles?: string;
+  /** 刪除第一種單元時，把成分的結構換成下一種單元（成分詳細彈窗提供；其他地方的第一種單元是目前輸入的結構，不能刪） */
+  onReplaceFirst?: (smiles: string, edit: PolymerEdit) => void;
 }
 
 const BASIS_LABEL: Record<PolymerBasis, string> = { mw: 'Mw（g/mol）', mn: 'Mn（g/mol）', dp: 'DP（數量平均，重複單元數）' };
@@ -46,7 +48,7 @@ function helper(edit: PolymerEdit, analysis: RepeatUnitAnalysis | null, firstSmi
 }
 
 /** 共聚物的單元清單（任務 020）：第一種單元是成分本身的結構；其他單元貼 SMILES（含兩個 *）。比例合計須為 100 */
-function UnitList({ idPrefix, edit, onChange, firstSmiles }: { idPrefix: string; edit: PolymerEdit; onChange: (edit: PolymerEdit) => void; firstSmiles: string }) {
+function UnitList({ idPrefix, edit, onChange, firstSmiles, onReplaceFirst }: { idPrefix: string; edit: PolymerEdit; onChange: (edit: PolymerEdit) => void; firstSmiles: string; onReplaceFirst?: (smiles: string, edit: PolymerEdit) => void }) {
   const extras = edit.extraUnits ?? [];
   const basis = edit.fractionBasis ?? 'mol';
   const label = basis === 'mol' ? 'mol%' : 'wt%';
@@ -69,7 +71,13 @@ function UnitList({ idPrefix, edit, onChange, firstSmiles }: { idPrefix: string;
       </div>
       <div className="polymer-unit-row">
         <StructureImage label="單元 1 的結構" source={firstSmiles} width={96} height={64} polymer />
-        <span>單元 1（目前結構）</span>
+        <input
+          type="text"
+          readOnly
+          aria-label="單元 1 的 SMILES"
+          title="第一種單元是這個成分的結構；要修改結構請用「修改結構」或上方的結構輸入"
+          value={firstSmiles}
+        />
         <div className="amount-input">
           <input
             type="text"
@@ -80,6 +88,19 @@ function UnitList({ idPrefix, edit, onChange, firstSmiles }: { idPrefix: string;
           />
           <span className="amount-unit">{label}</span>
         </div>
+        <button
+          type="button"
+          className="secondary"
+          disabled={!onReplaceFirst}
+          title={onReplaceFirst ? undefined : '第一種單元是目前輸入的結構，無法在這裡刪除'}
+          onClick={() => {
+            const [next, ...rest] = extras;
+            const nextEdit: PolymerEdit = rest.length === 0 ? { ...edit, extraUnits: [], firstFractionText: '' } : { ...edit, firstFractionText: next.fractionText, extraUnits: rest };
+            onReplaceFirst?.(next.smiles.trim(), nextEdit);
+          }}
+        >
+          刪除
+        </button>
       </div>
       {extras.map((u, i) => (
         <div className="polymer-unit-row" key={i}>
@@ -116,13 +137,13 @@ function UnitList({ idPrefix, edit, onChange, firstSmiles }: { idPrefix: string;
   );
 }
 
-export function PolymerFields({ idPrefix, edit, onChange, analysis, firstSmiles }: Props) {
+export function PolymerFields({ idPrefix, edit, onChange, analysis, firstSmiles, onReplaceFirst }: Props) {
   const name = `${idPrefix}-basis`;
   const pdiMessage = pdiHelper(edit);
   const extras = edit.extraUnits ?? [];
   return (
     <div className="polymer-fields">
-      {firstSmiles !== undefined && extras.length > 0 && <UnitList idPrefix={idPrefix} edit={edit} onChange={onChange} firstSmiles={firstSmiles} />}
+      {firstSmiles !== undefined && extras.length > 0 && <UnitList idPrefix={idPrefix} edit={edit} onChange={onChange} firstSmiles={firstSmiles} onReplaceFirst={onReplaceFirst} />}
       {firstSmiles !== undefined && (
         <button type="button" className="secondary polymer-add-unit" onClick={() => onChange({ ...edit, extraUnits: [...extras, { smiles: '', fractionText: '' }] })}>
           ＋新增單元（共聚物）
