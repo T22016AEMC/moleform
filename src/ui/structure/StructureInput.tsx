@@ -33,6 +33,11 @@ export interface LoadRequest {
 interface Props {
   onStructureChange?: (structure: StructureValidation | null) => void;
   loadRequest?: LoadRequest | null;
+  /**
+   * 這個分頁正在顯示時才載入 Ketcher（任務 018）：離開分頁就釋放，回來時重新載入並還原目前結構，
+   * 這樣同一時間最多只有一個 Ketcher 實例（成分彈窗也會開 Ketcher）。預設 true。
+   */
+  active?: boolean;
 }
 
 interface View {
@@ -51,7 +56,7 @@ function failedView(source: Source, message: string, code: StructureProblem['cod
   };
 }
 
-export function StructureInput({ onStructureChange, loadRequest }: Props) {
+export function StructureInput({ onStructureChange, loadRequest, active = true }: Props) {
   const [smilesText, setSmilesText] = useState('');
   const [view, setView] = useState<View | null>(null);
   const [frameState, setFrameState] = useState<'loading' | 'ready' | 'failed'>('loading');
@@ -73,6 +78,7 @@ export function StructureInput({ onStructureChange, loadRequest }: Props) {
   const fileInput = useRef<HTMLInputElement>(null);
   const openedAt = useRef(performance.now());
   const frameHandler = useRef<(message: FrameResponse) => void>(() => {});
+  const latestResult = useRef<StructureValidation | undefined>(undefined);
 
   const sendFrame = useCallback((request: FrameRequest) => {
     iframe.current?.contentWindow?.postMessage(request, location.origin);
@@ -141,6 +147,21 @@ export function StructureInput({ onStructureChange, loadRequest }: Props) {
       }
     }
   };
+
+  // 分頁顯示時載入 Ketcher 並還原目前結構；離開分頁就釋放 iframe（見 Props.active）
+  useEffect(() => {
+    if (active) {
+      openedAt.current = performance.now();
+      const last = latestResult.current;
+      if (last?.valid && pendingLoad.current === null) pendingLoad.current = last.molblock;
+    } else {
+      frameReady.current = false;
+      loadId.current = 0;
+      clearTimeout(changeTimer.current);
+      setFrameState('loading');
+      setFrameMessage('正在載入繪圖器與本機 WASM…');
+    }
+  }, [active]);
 
   useEffect(() => {
     const receive = (event: MessageEvent<unknown>) => {
@@ -225,6 +246,7 @@ export function StructureInput({ onStructureChange, loadRequest }: Props) {
   }
 
   const result = view?.result;
+  latestResult.current = result;
   // 把目前驗證結果交給下方的 3D 卡片（只在結果物件改變時通知）
   useEffect(() => {
     onStructureChange?.(result ?? null);
@@ -254,15 +276,17 @@ export function StructureInput({ onStructureChange, loadRequest }: Props) {
       </div>
 
       <div className="ketcher-container">
-        <iframe
-          ref={iframe}
-          title="Ketcher 結構繪圖器"
-          src={FRAME_URL}
-          onError={() => {
-            setFrameState('failed');
-            setFrameMessage('繪圖器載入失敗，請重新整理後再試。');
-          }}
-        />
+        {active && (
+          <iframe
+            ref={iframe}
+            title="Ketcher 結構繪圖器"
+            src={FRAME_URL}
+            onError={() => {
+              setFrameState('failed');
+              setFrameMessage('繪圖器載入失敗，請重新整理後再試。');
+            }}
+          />
+        )}
       </div>
       <p role="status" className={frameState === 'failed' ? 'structure-frame-failed' : 'structure-frame-status'}>{frameMessage}</p>
 

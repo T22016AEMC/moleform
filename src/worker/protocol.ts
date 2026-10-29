@@ -45,11 +45,27 @@ export interface ReactiveAtomsRequest {
   source: string;
 }
 
-export type ChemRequest = StatusRequest | ValidateRequest | WeightRequest | RepeatUnitRequest | CrosslinkRequest | ReactiveAtomsRequest;
+/** 畫出結構的 2D 圖（SVG）；mark 為 true 時標出反應原子（成分縮圖與詳細彈窗，任務 018） */
+export interface DrawRequest {
+  type: 'draw';
+  id: number;
+  source: string;
+  width: number;
+  height: number;
+  /** 標記用的強調色（#rrggbb，來自 theme.css） */
+  color: string;
+  mark: boolean;
+  /** 聚合物的重複單元：標記時排除連接點 */
+  polymer: boolean;
+}
+
+export type ChemRequest = StatusRequest | ValidateRequest | WeightRequest | RepeatUnitRequest | CrosslinkRequest | ReactiveAtomsRequest | DrawRequest;
 
 export type ChemResponse =
   | { type: 'crosslink'; id: number; ok: true; result: CrosslinkResult; svgs: Record<string, string> }
   | { type: 'crosslink'; id: number; ok: false; error: string }
+  | { type: 'draw'; id: number; ok: true; svg: string | null; marked: number }
+  | { type: 'draw'; id: number; ok: false; error: string }
   | { type: 'reactiveAtoms'; id: number; ok: true; atoms: number[] }
   | { type: 'reactiveAtoms'; id: number; ok: false; error: string }
   | { type: 'repeatUnit'; id: number; ok: true; analysis: RepeatUnitAnalysis }
@@ -69,5 +85,9 @@ export function isChemRequest(value: unknown): value is ChemRequest {
   if (request.type === 'weight' || request.type === 'repeatUnit') return typeof request.smiles === 'string';
   if (request.type === 'crosslink') return Array.isArray(request.components) && typeof request.color === 'string';
   if (request.type === 'reactiveAtoms') return typeof request.source === 'string';
+  if (request.type === 'draw') {
+    return typeof request.source === 'string' && typeof request.width === 'number' && typeof request.height === 'number'
+      && typeof request.color === 'string' && typeof request.mark === 'boolean' && typeof request.polymer === 'boolean';
+  }
   return request.type === 'validate' && typeof request.input === 'string';
 }

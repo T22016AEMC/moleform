@@ -61,6 +61,8 @@ export function reactiveAtomsOf(
   source: string,
   groups: readonly FunctionalGroupRow[],
   rules: readonly ReactionRuleRow[],
+  /** 聚合物的重複單元要排除連接點（任務 018 的成分詳細彈窗）；預設 false，3D 的用法不變 */
+  excludeAttachments = false,
 ): number[] {
   const inRules = new Set(rules.flatMap((r) => [r.group_a, r.group_b]).filter((id) => id !== ''));
   const mol = parseStructure(RDKit, source);
@@ -70,7 +72,7 @@ export function reactiveAtomsOf(
       RDKit,
       mol,
       groups.filter((g) => inRules.has(g.id)),
-      false, // 3D 只用於小分子（D05），不需排除連接點
+      excludeAttachments, // 3D 只用於小分子（D05），預設不需排除連接點
     );
     return [...new Set(found.flatMap((g) => g.sites.flat()))].sort((a, b) => a - b);
   } finally {

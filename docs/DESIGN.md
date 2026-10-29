@@ -11,7 +11,8 @@
 - `src/ui/theme.css`：變數
 - `src/ui/base.css`：全域 `body`、標題、`button`、`input`、`select`、`label`、`.card`、`.error`、`.number`
 - `src/ui/components/components.css`：頁首、頁尾、結果顯示元件
-- `src/ui/crosslink/crosslink.css`：「交聯」分頁（判定區塊、配對表、反應原子標記圖）；反應原子的強調色一律取 `--color-accent`
+- `src/ui/crosslink/crosslink.css`：交聯結果（判定區塊、配對表、反應原子標記圖）；反應原子的強調色一律取 `--color-accent`
+- `src/ui/workbench/workbench.css`：配方工作台的兩欄版面、成分列、右欄可收合區塊、彈窗（任務 018，D45）
 
 ## 變數
 
@@ -82,9 +83,28 @@
 | `--page-padding-mobile` | `20px 12px 40px` | 頁面內距（手機） |
 | `--header-logo-height` | `60px` | 頁首 Logo 高度（MoleForm 新增，非 CheMScutter 原值） |
 
+### 配方工作台與彈窗（任務 018，D45；MoleForm 新增，非 CheMScutter 原值）
+| 變數 | 數值 | 用途 |
+|---|---|---|
+| `--workbench-max-width` | `1840px` | 工作台分頁的內容最大寬度（其他分頁仍用 `--page-max-width`）；同事螢幕約 1900×1200 |
+| `--workbench-columns` | `2fr 3fr` | 左欄（配方輸入）約 40%、右欄（即時結果）約 60% |
+| `--workbench-gap` | `24px` | 兩欄間距 |
+| `--thumb-width`／`--thumb-height` | `96px`／`48px` | 成分列的結構縮圖；程式內繪圖尺寸（`Workbench.tsx` 的 `THUMB_WIDTH`、`THUMB_HEIGHT`）需一致 |
+| `--modal-width`／`--modal-width-wide` | `820px`／`1040px` | 彈窗寬度（加入成分／成分詳細） |
+| `--color-backdrop` | `rgba(32, 52, 60, 0.55)` | 彈窗外的暗色區域 |
+| `--shadow-modal` | `0 12px 40px rgba(32, 52, 60, 0.35)` | 彈窗與「⋯」選單的陰影 |
+| `--z-modal` | `100` | 彈窗層級 |
+
 ## 響應式斷點
 
 `@media (max-width: 600px)`（CheMScutter 原值）。CSS 變數不能用在媒體查詢條件中，所以此數值直接寫在 `base.css` 的 `@media` 裡；要改請同時改這裡與所有 `@media`。
+
+## 配方工作台的版面（任務 018，D45）
+
+- 分頁：配方工作台（預設）、分子工具、化合物庫。
+- 寬度 **1280px 以上**：左欄輸入、右欄結果並排；右欄 `position: sticky`，自己捲動，左欄捲動時它不跟著跑。**小於 1280px**（`@media (max-width: 1279px)`，直接寫在 `workbench.css`）：改為輸入在上、結果在下，不固定。
+- 右欄四個區塊（組成、交聯第 0 層、交聯第 1 層、理論配比與比例掃描）可展開／收合，預設全部展開，狀態只存在畫面中。
+- 彈窗：Esc 或點暗色區域關閉；開啟時焦點移進彈窗，關閉後回到原本的按鈕。Ketcher 的 iframe 只在需要時載入（彈窗的 Ketcher 分頁、成分詳細的「用 Ketcher 編輯結構」、分子工具分頁顯示時），同一時間最多一個。焦點在 Ketcher 畫布內時，Esc 不會傳到彈窗外層（瀏覽器對 iframe 的限制），請用「✕」或點暗色區域關閉。
 
 ## 3D 構象的自訂值（任務 011）
 

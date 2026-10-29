@@ -32,6 +32,7 @@ import { validateInput } from '../../worker/client';
 import { specFromEdit, editFromSpec, type PolymerEdit } from '../polymer/model';
 import type { PolymerContext } from '../polymer/usePolymerInput';
 import { downloadText } from '../download';
+import { LIBRARY_CHANGED_EVENT } from '../workbench/libraryBridge';
 import { createIndexedDbStorage, STORAGE_FAILED_MESSAGE, type LibraryStorage } from './storage';
 import './library.css';
 
@@ -108,6 +109,17 @@ export function CompoundLibrary({ structure, polymer, onLoad, storage: storagePr
     return () => {
       cancelled = true;
     };
+  }, [storage]);
+
+  // 配方工作台的彈窗把成分存進化合物庫後，重新讀取（任務 018）；否則這裡的舊清單之後會覆蓋新存的資料
+  useEffect(() => {
+    const reload = () => {
+      void storage.loadAll().then((loaded) => {
+        if (loaded.ok) setLibrary(loaded.value);
+      });
+    };
+    window.addEventListener(LIBRARY_CHANGED_EVENT, reload);
+    return () => window.removeEventListener(LIBRARY_CHANGED_EVENT, reload);
   }, [storage]);
 
   /** 更新畫面上的清單並寫入儲存；儲存失敗時清單仍留在畫面（可匯出），並顯示提醒 */

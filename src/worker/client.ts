@@ -88,6 +88,26 @@ export async function analyzeCrosslinkInWorker(components: CrosslinkComponent[],
   return { ok: false, error: response.type === 'status' && !response.ready ? response.error : '收到非預期的回應' };
 }
 
+export interface DrawnStructure {
+  /** 結構無法解析時為 null */
+  svg: string | null;
+  /** 標出的反應原子數 */
+  marked: number;
+}
+
+/** 畫出結構的 2D 圖（成分縮圖、成分詳細彈窗，任務 018）；Worker 失敗時回傳 null */
+export async function drawStructureInWorker(options: {
+  source: string;
+  width: number;
+  height: number;
+  color: string;
+  mark: boolean;
+  polymer: boolean;
+}): Promise<DrawnStructure | null> {
+  const response = await request((id) => ({ type: 'draw', id, ...options }));
+  return response.type === 'draw' && response.ok ? { svg: response.svg, marked: response.marked } : null;
+}
+
 /** 結構上已登錄反應官能基的反應原子（0 起算）；Worker 失敗時回傳 null */
 export async function reactiveAtomsInWorker(source: string): Promise<number[] | null> {
   const response = await request((id) => ({ type: 'reactiveAtoms', id, source }));

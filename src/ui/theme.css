@@ -68,4 +68,18 @@
 
   /* 頁首（MoleForm 新增，非 CheMScutter 原值） */
   --header-logo-height: 60px;
+
+  /* 配方工作台（任務 018，D45；MoleForm 新增）。上下排列的斷點 1280px 不能用變數，見 docs/DESIGN.md */
+  --workbench-max-width: 1840px;
+  --workbench-columns: 2fr 3fr; /* 左欄約 40%、右欄約 60% */
+  --workbench-gap: 24px;
+  --thumb-width: 96px;
+  --thumb-height: 48px;
+
+  /* 彈窗（任務 018） */
+  --modal-width: 820px;
+  --modal-width-wide: 1040px;
+  --color-backdrop: rgba(32, 52, 60, 0.55);
+  --shadow-modal: 0 12px 40px rgba(32, 52, 60, 0.35);
+  --z-modal: 100;
 }

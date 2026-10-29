@@ -55,6 +55,7 @@ MoleForm（化學配方物性與交聯預測引擎）是一個網頁程式：輸
 - 撰寫 SMARTS 時依 DECISIONS D22 的流程。
 - 使用 OpenChemLib JS 時注意：`getBondLength`、`getBondAngle` 依 2D 座標計算，3D 的鍵長、鍵角必須自行由 x、y、z 計算（見 `docs/reports/005-結果.md`）。
 - 推送方式：提交後由 AI 工具自行 `git push`，執行時不設 `GIT_TERMINAL_PROMPT`，並只對該指令清除 `GCM_INTERACTIVE`（PowerShell：`$env:GCM_INTERACTIVE=$null; git push`），使用 Windows 認證管理員中已存的憑證。推送失敗就回報錯誤並停止，不得修改 git 或認證設定，也不得要求使用者提供密碼或權杖。remote 網址須指定帳號（https://T22016AEMC@github.com/T22016AEMC/moleform.git），避免認證管理員因有多個 GitHub 帳號而跳出看不到的選帳號視窗。
+- 文字檔編碼：不得用 PowerShell 的 `Set-Content`、`Out-File`、`Add-Content` 或重新導向（`>`、`>>`）寫入任何文字檔（Windows PowerShell 5.1 預設不是 UTF-8，曾造成報告亂碼）。一律用編輯工具寫檔，或明確指定 UTF-8；寫完含中文的檔案後，讀回確認沒有亂碼再提交。
 
 ## 技術堆疊
 

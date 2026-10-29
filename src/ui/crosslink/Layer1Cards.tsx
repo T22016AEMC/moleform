@@ -1,4 +1,4 @@
-// 「交聯」分頁的第 1 層與理論配比卡片（任務 017，D11、D40、D41、D44）。
+// 配方工作台右欄的交聯第 1 層與理論配比區塊（任務 017，D11、D40、D41、D44；任務 018 改為可收合區塊）。
 // 依 D09，不顯示各成分的官能基數量、當量與分子量；網路計算結果（成鍵數、交聯密度、Mc 等）照常顯示（D44）。
 import { useMemo, useState } from 'react';
 import {
@@ -31,6 +31,7 @@ import type { Formulation } from '../../core/formulation/types';
 import { confidenceLabel, type CalcResult, type Confidence } from '../../core/result';
 import { ResultValue } from '../components/ResultValue';
 import { UnifiedNote } from '../components/UnifiedNote';
+import { ResultBlock } from '../workbench/ResultBlock';
 
 const UNIT_LABEL: Record<string, string> = { g: 'g', parts: '重量份', wt: 'wt%', mol: 'mol%', phr: 'phr' };
 
@@ -40,7 +41,7 @@ function calc(value: number | null, unit: string, modelName: string, confidence:
   return { value: value === null ? null : round(value), unit, modelName, confidence, sources: [], ...(notApplicable ? { notApplicable } : {}) };
 }
 
-/** 讀取畫面上「配方」分頁的配方，整理第 1 層的輸入 */
+/** 讀取畫面上左欄的配方，整理第 1 層的輸入 */
 function usePrepared(result: CrosslinkResult, formulation: Formulation | null): PrepareOutcome | null {
   return useMemo(() => {
     if (!formulation) return null;
@@ -69,8 +70,7 @@ export function Layer1Section({ result, formulation }: Props) {
 
   return (
     <>
-      <section className="card" aria-labelledby="layer1-title">
-        <h2 id="layer1-title">交聯（第 1 層）</h2>
+      <ResultBlock id="layer1" title="交聯第 1 層">
         <p>
           依目前配方的用量，算出反應官能基比、過量官能基、理論最大成鍵數，以及指定轉化率下的凝膠點、溶膠分率、交聯密度、網目分子量 Mc 與殘留官能基。
         </p>
@@ -105,7 +105,7 @@ export function Layer1Section({ result, formulation }: Props) {
             {convValid && <Layer1Output prep={prep} conv={conv / 100} />}
           </>
         )}
-      </section>
+      </ResultBlock>
 
       {prep !== null && prep.ok && convValid && <TheoryCard prep={prep} conv={conv / 100} />}
     </>
@@ -232,9 +232,7 @@ function TheoryCard({ prep, conv }: { prep: Extract<PrepareOutcome, { ok: true }
   const atBoundary = scan?.bestIndex != null && (scan.bestIndex === 0 || scan.bestIndex === scan.points.length - 1);
 
   return (
-    <section className="card" aria-labelledby="theory-title">
-      <h2 id="theory-title">理論配比</h2>
-
+    <ResultBlock id="theory" title="理論配比與比例掃描">
       <h3>化學計量配比</h3>
       <p>
         保持「{prep.setup.nameA}」一側的用量不變，按比例調整「{prep.setup.nameB}」一側所有成分（成分之間的相對比例不變），使兩類官能基等量。
@@ -304,7 +302,7 @@ function TheoryCard({ prep, conv }: { prep: Extract<PrepareOutcome, { ok: true }
         {SCAN_DISCLAIMER}。
       </p>
       <UnifiedNote />
-    </section>
+    </ResultBlock>
   );
 }
 

@@ -61,6 +61,20 @@ async function handle(request: ChemRequest): Promise<ChemResponse> {
       return { type: 'crosslink', id: request.id, ok: false, error: message(e) };
     }
   }
+  if (request.type === 'draw') {
+    try {
+      const rdkit = await loadRDKit();
+      let marked: number[] = [];
+      if (request.mark) {
+        const t = tables();
+        marked = reactiveAtomsOf(rdkit, request.source, t.functionalGroups, t.reactionRules, request.polymer);
+      }
+      const svg = drawMarkedStructure(rdkit, request.source, marked, { color: request.color, width: request.width, height: request.height });
+      return { type: 'draw', id: request.id, ok: true, svg, marked: marked.length };
+    } catch (e) {
+      return { type: 'draw', id: request.id, ok: false, error: message(e) };
+    }
+  }
   if (request.type === 'reactiveAtoms') {
     try {
       const rdkit = await loadRDKit();

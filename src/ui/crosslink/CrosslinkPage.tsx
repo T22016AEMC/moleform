@@ -1,4 +1,4 @@
-// 「交聯」分頁（任務 016，交聯第 0 層，D11）：讀取「配方」分頁目前的配方，顯示反應配對與判定。
+// 配方工作台右欄的交聯第 0 層（任務 016，D11；任務 018 改為右欄區塊）：讀取左欄目前的配方，顯示反應配對與判定。
 // 依 D09，畫面不顯示各成分的官能基數量、當量與分子量；判定只依結構與反應規則表的計數（D17）。
 import { useEffect, useMemo, useState } from 'react';
 import {
@@ -13,6 +13,7 @@ import type { Formulation } from '../../core/formulation/types';
 import { confidenceLabel } from '../../core/result';
 import { analyzeCrosslinkInWorker } from '../../worker/client';
 import { UnifiedNote } from '../components/UnifiedNote';
+import { ResultBlock } from '../workbench/ResultBlock';
 import { Layer1Section } from './Layer1Cards';
 import './crosslink.css';
 
@@ -77,13 +78,12 @@ export function CrosslinkPage({ formulation }: { formulation: Formulation | null
 
   return (
     <div className="crosslink-page">
-      <section className="card" aria-labelledby="crosslink-title">
-        <h2 id="crosslink-title">交聯（第 0 層）</h2>
+      <ResultBlock id="layer0" title="交聯第 0 層">
         <p>
-          依「配方」分頁目前的成分，找出會反應的配對，並依每分子的平均官能度判定結構條件：具形成網路、鏈延長，或封端／接枝的結構條件。
+          依左欄目前的成分，找出會反應的配對，並依每分子的平均官能度判定結構條件：具形成網路、鏈延長，或封端／接枝的結構條件。
           這是依結構與反應規則表的計數判定，不判斷反應會不會實際發生。
         </p>
-        {state.kind === 'empty' && <p className="structure-placeholder">配方裡還沒有成分。請先到「配方」分頁加入成分。</p>}
+        {state.kind === 'empty' && <p className="structure-placeholder">配方裡還沒有成分。請先在左欄加入成分。</p>}
         {state.kind === 'working' && <p role="status">分析中…</p>}
         {state.kind === 'error' && (
           <div className="error" role="alert">
@@ -91,7 +91,7 @@ export function CrosslinkPage({ formulation }: { formulation: Formulation | null
           </div>
         )}
         {state.kind === 'done' && <Result result={state.result} svgs={state.svgs} />}
-      </section>
+      </ResultBlock>
       {state.kind === 'done' && <Layer1Section result={state.result} formulation={formulation} />}
     </div>
   );
@@ -173,7 +173,7 @@ function Result({ result, svgs }: { result: CrosslinkResult; svgs: Record<string
         <>
           <h3>反應原子標記</h3>
           <p>
-            以強調色標出參與反應的原子；編號從 1 起算，與「結構」分頁 3D 畫面的原子編號一致。聚合物顯示重複單元。
+            以強調色標出參與反應的原子；編號從 1 起算，與「分子工具」分頁 3D 畫面的原子編號一致。聚合物顯示重複單元。
           </p>
           <div className="crosslink-structures">
             {shown.map((c) => (

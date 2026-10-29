@@ -8,6 +8,7 @@
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--color-bg); }
 main { max-width: var(--page-max-width); margin: 0 auto; padding: var(--page-padding); }
+main.main-wide { max-width: var(--workbench-max-width); }
 h1 { margin-bottom: 0; color: var(--color-heading); }
 h2 { margin-top: 0; }
 h3 { font-size: var(--font-size-h3); margin: 0 0 var(--space-gap-sm); }
