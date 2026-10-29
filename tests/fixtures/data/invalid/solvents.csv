@@ -3,3 +3,4 @@ s1,Solv,溶劑,0-00-0,CCO,density,1.0,g/cm3,25,self,tests/fixtures,示範,,pendi
 s1,Solv,溶劑,0-00-0,CCO,density,1.1,g/cm3,25,self,tests/fixtures,示範,,pending,測試用示範資料，非化學資料
 s1,Solv,溶劑,9-99-9,CCO,viscosity,1.0,mPa s,25,self,tests/fixtures,示範,,pending,測試用示範資料，非化學資料
 s1,Solv,溶劑,0-00-0,CCO,hsp_d,,MPa^0.5,,self,tests/fixtures,示範,,pending,測試用示範資料，非化學資料
+s2,Solv2,溶劑二,1-11-1,,density,1.0,g/cm3,25,self,tests/fixtures,示範,,pending,測試用示範資料，非化學資料

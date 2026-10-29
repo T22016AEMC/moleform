@@ -36,7 +36,7 @@ MoleForm 的化學資料放在 `src/data/` 的四個 CSV。**目前只有標題�
 | `id` | 階層式名稱，例如 `amine.primary.aliphatic`；唯一 |
 | `name_zh` | 中文名稱 |
 | `smarts` | SMARTS；必須能被 RDKit 解析 |
-| `reactive_atom_maps` | SMARTS 中代表反應原子的原子映射編號（整數），`\|` 分隔；可空 |
+| `reactive_atom_maps` | SMARTS 中代表反應原子的原子映射編號，`\|` 分隔；可空；有值時每一項都必須是整數 |
 | `should_match` | 應命中的測試分子 SMILES，`\|` 分隔；至少 1 個 |
 | `should_not_match` | 不應命中的測試分子 SMILES，`\|` 分隔；至少 1 個 |
 
@@ -79,8 +79,8 @@ MoleForm 的化學資料放在 `src/data/` 的四個 CSV。**目前只有標題�
 |---|---|
 | `solvent_id` | 唯一代號 |
 | `name_en`、`name_zh` | 名稱 |
-| `cas` | CAS 號 |
-| `smiles` | SMILES |
+| `cas` | CAS 號（選填） |
+| `smiles` | SMILES（**必填**） |
 | `property` | 物性名稱，例如 `density`、`viscosity`、`surface_tension`、`hsp_d` |
 | `value` | 數值（必填） |
 | `unit` | 單位（必填） |
@@ -88,6 +88,14 @@ MoleForm 的化學資料放在 `src/data/` 的四個 CSV。**目前只有標題�
 
 `(solvent_id, property, temperature_c)` 必須唯一；同一 `solvent_id` 的 `name_en`、`name_zh`、`cas`、`smiles` 每一列都要一致。
 
+## 各表必填欄位與額外規則（任務 009、010，使用者 2026-10-29 同意）
+
+除各表說明中的規則外，檢查程式還會檢查：
+
+- `functional_groups.csv`：`id`、`name_zh`、`smarts` 必填；`reactive_atom_maps` 每一項須為整數。
+- `reaction_rules.csv`：`id`、`reaction_type`、`group_a`、`reaction_smarts`、`catalyst_required` 必填；`functionality_a`、`functionality_b` 有值時須為正整數；`temp_min_c`、`temp_max_c` 須同時填寫或同時留空。
+- `group_contributions.csv`：`method`、`group_id`、`group_name`、`property`、`value`、`unit` 必填；同一 `method` 內同一 `group_id` 只能有一個 `group_name`。
+- `solvents.csv`：`solvent_id`、`name_en`、`smiles`、`property`、`value`、`unit` 必填；**`smiles` 為必填（任務 010 起）**；`cas`、`name_zh`、`temperature_c` 選填。
 ## 用 Excel 開啟與存檔
 
 1. 開啟：Excel → 資料 → 從文字／CSV → 檔案原點選 **UTF-8**；或直接雙擊（含 BOM 的檔案通常能直接正確顯示）。

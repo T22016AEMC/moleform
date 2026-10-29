@@ -54,6 +54,7 @@ describe('示範資料：刻意寫錯的資料，每一種錯誤都要被抓到'
     ['(solvent_id, property, temperature_c) 重複', SV, 3, 'solvent_id, property, temperature_c', '重複'],
     ['同一 solvent_id 的 CAS 不一致', SV, 4, 'cas', '不一致'],
     ['溶劑 value 空白', SV, 5, 'value', '必填'],
+    ['溶劑缺 SMILES', SV, 6, 'smiles', '必填'],
   ];
 
   it.each(cases)('%s', async (_name, file, row, column, text) => {

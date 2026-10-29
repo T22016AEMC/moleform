@@ -182,6 +182,7 @@ export function validateSolvents(t: TableResult<SolventRow>, file = 'solvents.cs
     const n = t.rowNumbers[i];
     c.required(n, 'solvent_id', r.solvent_id);
     c.required(n, 'name_en', r.name_en);
+    c.required(n, 'smiles', r.smiles);
     c.required(n, 'property', r.property);
     if (r.value === null) c.add(n, 'value', '必填欄位是空的');
     c.required(n, 'unit', r.unit);

@@ -10,10 +10,11 @@
 | K02 | **純前端會讓基團貢獻參數與反應規則表跟著網頁送到瀏覽器**，任何人可看到 | 已決（D21）：不需保密 | 無需處理 |
 | K03 | **借用 YIHAN-HSU/TiN-Al2O3-SiO2-HMDS-P1-S5 的 3D 功能**：(a) 擁有者帳號與使用者不同，公開 repo 檔案清單中未見 LICENSE；(b) 它的 3D 可能與吸附模型、底材、SQLite、登入驗證耦合；(c) 它是 Node + Python 的混合架構，採用會連帶決定架構 | 已結案（D19）：不參考該專案 | 無需處理 |
 | K04 | 套件管理器不一致：SpecReader 用 pnpm，chemscutter 用 npm | 已結案（D20）：使用 npm | 無需處理 |
-| K05 | **CheMScutter 的 Ketcher 是獨立子專案**（`packages/ketcher-frame/`，React 18.3.1、獨立 package-lock，用 iframe 嵌入主程式的 React 19）。搬進 MoleForm 會連帶兩份相依與兩次 `npm ci`，且 Ketcher 在 Windows 中文路徑下的行為未測試 | 已決（D28）：沿用 iframe 子專案 | Phase 2 的 2.1 複製時處理；Windows 中文路徑下的建置在 Phase 1、2 實際建置時確認 |
+| K05 | **CheMScutter 的 Ketcher 是獨立子專案**（`packages/ketcher-frame/`，React 18.3.1、獨立 package-lock，用 iframe 嵌入主程式的 React 19）。搬進 MoleForm 會連帶兩份相依與兩次 `npm ci`，且 Ketcher 在 Windows 中文路徑下的行為未測試 | 已決（D28）：沿用 iframe 子專案。**中文路徑已驗證（任務 010）**：在 `C:\Users\t22016\Desktop\程式\MoleForm\MoleForm_V0` 下，子專案 `npm ci`、`tsc`、`vite build`、`notices.mjs` 全部成功，`dist/ketcher/` 與 `THIRD-PARTY-NOTICES.txt` 正常產生，Ketcher 在瀏覽器（Edge）載入與運作正常 | 已結案；若日後換路徑或換機器（例如 CI 的 Linux 環境）再確認一次 |
 | K06 | **CheMScutter 的 `lightningcss`（MPL-2.0，弱 copyleft）**由 vite 帶入，僅建置期使用、不隨網頁發布；Ketcher 相依樹中另有一個授權欄位為空的 `eve-raphael`（0.5.0）與 `asap`（1.0.0，以舊式 `licenses` 欄位標示 MIT） | 已決（D29）：接受 | 發布時沿用 CheMScutter 的 THIRD-PARTY-NOTICES 產生方式；對外商用前重新檢查 |
 | K07 | **OpenChemLib 的 MMFF94 沒有退路力場**：含硼（例如 BF₃–胺錯合物催化劑）、SF₆ 型硫等缺參數時會直接拋錯 | 已知（任務 005） | 改顯示初始構象並標示「未經力場最佳化」（PLAN 2.5） |
 | K08 | **OpenChemLib 的 MMFF94 能量單位在型別定義中未註明** | 未確認 | PLAN 2.5b 以 MMFF94 官方驗證資料集比對；確認前不顯示相對能量 |
+| K09 | **Ketcher 自己匯入 SMILES 時，會把連接點 `[*:1]` 轉成 R 基團標籤（R1、R2）**，匯出成 Molfile 為 `R#` 加 `RGROUPS`，不是 `*`；另外 Indigo 的 `check` 會把 `*` 原子也報成「查詢特徵」。純 `*` 原子（star atom）可正常顯示、匯出與來回（任務 010 在 Ketcher 3.18.0 實測） | 已處理（任務 010）：SMILES 含 `*` 時改送 RDKit 產生的 Molfile（連接點寫成 `*`，原子映射編號保留）給 Ketcher；不使用 Indigo 的 `query` 檢查，改由 KET／Molfile 文字自行判斷查詢結構；Ketcher 中使用者自己畫的 R 基團標籤（R1…）仍被拒絕（沿用 CheMScutter 的限制） | 使用者在瀏覽器確認 `[*:1]CC[*:2]` 的顯示；Phase 5 設計重複單元輸入時再檢討 |
 
 ## 模型精度限制（要在介面上誠實標示）
 

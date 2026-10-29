@@ -51,10 +51,10 @@
 
 開工前需要使用者決定：無（3D 做法依 DECISIONS D33）
 
-- [ ] 2.1 Ketcher 2D 繪圖：從 CheMScutter 複製 iframe 子專案 `packages/ketcher-frame/`（DECISIONS D27、D28），頻道名稱與 `base` 改為 MoleForm
-- [ ] 2.2 SMILES 輸入，與 2D 繪圖雙向轉換
-- [ ] 2.3 結構驗證：原子價數、鍵結、SMILES 合法性；芳香環、手性中心、E/Z；拒絕反應式與查詢結構，保留連接點 `*`（DECISIONS D31）
-- [ ] 2.4 MOL／SDF 匯入與匯出
+- [ ] 2.1 Ketcher 2D 繪圖：從 CheMScutter 複製 iframe 子專案 `packages/ketcher-frame/`（DECISIONS D27、D28），頻道名稱與 `base` 改為 MoleForm（任務 010 已實作，待使用者在瀏覽器確認後勾選）
+- [ ] 2.2 SMILES 輸入，與 2D 繪圖雙向轉換（任務 010 已實作，待使用者在瀏覽器確認後勾選）
+- [ ] 2.3 結構驗證：原子價數、鍵結、SMILES 合法性；芳香環、手性中心、E/Z；拒絕反應式與查詢結構，保留連接點 `*`（DECISIONS D31）（任務 010 已實作，待使用者在瀏覽器確認後勾選）
+- [ ] 2.4 MOL／SDF 匯入與匯出（任務 010 已實作，待使用者在瀏覽器確認後勾選）
 - [ ] 2.5 小分子 3D 產生：OpenChemLib JS 的 ConformerGenerator 構象、MMFF94 最佳化，在 Web Worker 中執行，預設只算少量構象，可再要求更多；MMFF 缺參數時顯示初始構象並標示「未經力場最佳化」（DECISIONS D33）
 - [ ] 2.5a 瀏覽器實測：在使用者電腦的瀏覽器中，記錄 BADGE 等較大分子的 3D 產生與最佳化耗時、網頁是否保持可操作；數字交使用者判斷是否可接受，不可接受則依 D33 降級
 - [ ] 2.5b MMFF94 能量單位確認：用 MMFF94 官方驗證資料集（MMFF94 Validation Suite）中的分子比對 OpenChemLib 的能量；確認單位前不顯示相對能量
