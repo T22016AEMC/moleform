@@ -264,11 +264,36 @@ describe('SDF 匯出與匯入', () => {
     expect(outcome.summary.reasons).toHaveLength(1);
   });
 
-  it('空檔案被拒絕；匯入是附加到現有清單', async () => {
+  it('空檔案被拒絕', async () => {
     const lib = make([], '乙醇', 'CCO', 'a');
     expect((await importLibrarySdf(lib, '', validateMolfile)).ok).toBe(false);
+  });
+
+  it('重複偵測：名稱與結構都相同 → 略過（列出名稱）', async () => {
+    const lib = make([], '乙醇', 'CCO', 'a');
     const outcome = await importLibrarySdf(lib, exportLibrarySdf(entries(lib)), validateMolfile);
-    expect(outcome.library).toHaveLength(2);
+    expect(outcome.library).toHaveLength(1);
+    expect(outcome.summary).toMatchObject({ added: 0, skipped: 1, reasons: ['名稱與結構都相同：乙醇'] });
+    expect(outcome.summary.sameStructureNames ?? []).toEqual([]);
+    expect(summaryText(outcome.summary)).toBe('新增 0 筆、更新 0 筆、略過 1 筆（名稱與結構都相同：乙醇）');
+  });
+
+  it('重複偵測：結構相同但名稱不同 → 仍新增，摘要列出名稱', async () => {
+    const lib = make([], '乙醇', 'CCO', 'a');
+    const other = make([], '酒精', 'OCC', 'z');
+    const outcome = await importLibrarySdf(lib, exportLibrarySdf(entries(other)), validateMolfile);
+    expect(outcome.library.map((c) => c.name)).toEqual(['乙醇', '酒精']);
+    expect(outcome.summary).toMatchObject({ added: 1, skipped: 0, sameStructureNames: ['酒精'] });
+    expect(summaryText(outcome.summary)).toBe('新增 1 筆、更新 0 筆、略過 0 筆；結構重複但名稱不同 1 筆（酒精）');
+  });
+
+  it('重複偵測也涵蓋同一個檔案內先後出現的重複', async () => {
+    const a = make([], '乙醇', 'CCO', 'a');
+    const b = make([], '酒精', 'OCC', 'b');
+    const text = exportLibrarySdf(entries(a)) + exportLibrarySdf(entries(a)) + exportLibrarySdf(entries(b));
+    const outcome = await importLibrarySdf([], text, validateMolfile);
+    expect(outcome.library.map((c) => c.name)).toEqual(['乙醇', '酒精']);
+    expect(outcome.summary).toMatchObject({ added: 2, skipped: 1, sameStructureNames: ['酒精'] });
   });
 });
 

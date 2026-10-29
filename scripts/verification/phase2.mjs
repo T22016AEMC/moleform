@@ -39,6 +39,7 @@ try {
   const { getRDKit } = await server.ssrLoadModule('/src/core/rdkit/loader.ts');
   const { validateStructure } = await server.ssrLoadModule('/src/core/structure/validate.ts');
   const { ConformerSession } = await server.ssrLoadModule('/src/core/conformer/session.ts');
+  const { UNOPTIMIZED_MEASURE_NOTE } = await server.ssrLoadModule('/src/core/conformer/types.ts');
   const { distance, angleDegrees } = await server.ssrLoadModule('/src/core/geometry.ts');
   const RDKit = await getRDKit();
 
@@ -108,6 +109,10 @@ try {
       ranges.set(label, r);
     }
     out();
+    if (!batch.optimized) {
+      out(`> ${UNOPTIMIZED_MEASURE_NOTE}`);
+      out();
+    }
     out('| 鍵型 | 鍵長範圍（Å） | 鍵數 |');
     out('|---|---|---|');
     for (const [label, r] of [...ranges].sort((a, b) => a[0].localeCompare(b[0]))) {
@@ -137,6 +142,11 @@ try {
       out('（原子編號為 3D 結構中從 1 起算的編號，與 3D 畫面的原子編號相同。）');
     }
   }
+
+  out();
+  out('---');
+  out();
+  out('使用者的檢查結果不在本檔（本檔每次重新產生會被覆蓋），見 `docs/verification/phase2-使用者檢查.md`。');
 
   mkdirSync(dirname(OUTPUT), { recursive: true });
   writeFileSync(OUTPUT, `${lines.join('\n')}\n`, 'utf8');

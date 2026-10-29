@@ -35,6 +35,8 @@ export interface ImportSummary {
   skipped: number;
   /** 略過的原因（已合併相同原因並附筆數） */
   reasons: string[];
+  /** 匯入 SDF 時，結構與現有化合物相同但名稱不同（仍已新增）的名稱 */
+  sameStructureNames?: string[];
 }
 
 export interface ImportOutcome {
@@ -49,5 +51,7 @@ export interface ImportOutcome {
 /** 把「新增 N 筆、更新 N 筆、略過 N 筆（原因…）」組成畫面文字 */
 export function summaryText(summary: ImportSummary): string {
   const base = `新增 ${summary.added} 筆、更新 ${summary.updated} 筆、略過 ${summary.skipped} 筆`;
-  return summary.reasons.length ? `${base}（${summary.reasons.join('；')}）` : base;
+  const text = summary.reasons.length ? `${base}（${summary.reasons.join('；')}）` : base;
+  const same = summary.sameStructureNames ?? [];
+  return same.length ? `${text}；結構重複但名稱不同 ${same.length} 筆（${same.join('、')}）` : text;
 }

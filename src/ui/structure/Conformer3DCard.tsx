@@ -211,7 +211,7 @@ export function Conformer3DCard({ structure }: { structure: StructureForCard | n
           {!batch.exhausted && batch.conformers.length >= MAX_CONFORMERS && <small>已達上限 {MAX_CONFORMERS} 個構象。</small>}
 
           <Suspense fallback={<p role="status">正在載入 3D 顯示…</p>}>
-            <Viewer3D molfile={current.molfile} />
+            <Viewer3D molfile={current.molfile} optimized={batch.optimized} />
           </Suspense>
 
           {energyResult && (

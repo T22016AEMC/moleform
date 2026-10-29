@@ -243,7 +243,7 @@ export function CompoundLibrary({ structure, onLoad, storage: storageProp }: Pro
         資料只存在這台電腦的這個瀏覽器。清除瀏覽器資料、換電腦或換瀏覽器都會看不到，請定期匯出備份。
       </p>
       <p className="library-last-export" role="status">
-        上次匯出：{lastExport ? displayDate(lastExport) : '尚未匯出'}
+        上次備份（JSON）：{lastExport ? displayDate(lastExport) : '尚未備份'}
       </p>
       {!storageOk && (
         <p className="error" role="alert">{STORAGE_FAILED_MESSAGE}</p>

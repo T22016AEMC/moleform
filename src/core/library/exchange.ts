@@ -205,6 +205,13 @@ export async function importLibrarySdf(
       .slice(0, NAME_MAX)
       .join('');
     const notes = [...(record.properties.MoleForm_Notes ?? '')].slice(0, NOTES_MAX).join('');
+    // 重複偵測（含本次檔案中先前已加入的）：名稱與結構都相同 → 略過；結構相同但名稱不同 → 仍新增並列出
+    const sameStructure = merged.filter((c) => c.canonicalSmiles === checked.canonicalSmiles);
+    if (sameStructure.some((c) => c.name === name)) {
+      reasons.add(`名稱與結構都相同：${name}`);
+      continue;
+    }
+    if (sameStructure.length) (summary.sameStructureNames ??= []).push(name);
     merged.push({
       id: newId(),
       name,

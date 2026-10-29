@@ -43,4 +43,7 @@ export interface ConformerBatch {
   inputAtoms: number;
 }
 
+/** 未經力場最佳化時，加在鍵長、鍵角旁的註記 */
+export const UNOPTIMIZED_MEASURE_NOTE = '此結構未經力場最佳化，鍵長、鍵角僅為初始幾何，不可作為參考值。';
+
 export const NOT_OPTIMIZED_NOTE = '未經力場最佳化（MMFF94 不支援此結構中的元素或原子型）';

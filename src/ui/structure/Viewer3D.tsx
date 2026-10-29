@@ -2,7 +2,8 @@
 // 所以 3Dmol 只在使用者按「產生 3D」之後才下載（任務 011 D-14）。
 import { useEffect, useMemo, useRef, useState } from 'react';
 import * as $3Dmol from '3dmol';
-import { angleDegrees, dihedralDegrees, distance, type Vec3 } from '../../core/geometry';
+import { UNOPTIMIZED_MEASURE_NOTE } from '../../core/conformer/types';
+import { angleDegrees,dihedralDegrees, distance, type Vec3 } from '../../core/geometry';
 
 export type ViewStyle = 'ballstick' | 'stick' | 'spacefill';
 const STYLE_LABEL: Record<ViewStyle, string> = {
@@ -31,7 +32,7 @@ const styleSpec = (style: ViewStyle) =>
 
 const fixed = (value: number, digits: number) => (Number.isFinite(value) ? value.toFixed(digits) : '無法計算');
 
-export function Viewer3D({ molfile }: { molfile: string }) {
+export function Viewer3D({ molfile, optimized = true }: { molfile: string; optimized?: boolean }) {
   const container = useRef<HTMLDivElement>(null);
   const viewer = useRef<$3Dmol.GLViewer | null>(null);
   const [style, setStyle] = useState<ViewStyle>('ballstick');
@@ -172,6 +173,7 @@ export function Viewer3D({ molfile }: { molfile: string }) {
 
       <div className="viewer3d-measure">
         <h4>量測</h4>
+        {!optimized && <p className="structure-notice" role="note">{UNOPTIMIZED_MEASURE_NOTE}</p>}
         <p>依序點選 2、3、4 個原子，分別得到鍵長（距離）、鍵角、二面角。再點第 5 個原子時重新開始。</p>
         {picked.length === 0 ? (
           <p className="structure-placeholder">尚未選取原子</p>
