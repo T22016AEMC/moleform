@@ -62,3 +62,14 @@
   .library-save, .library-tools { grid-template-columns: 1fr; }
   .library-item { grid-template-columns: 1fr; }
 }
+
+.library-badge {
+  justify-self: start;
+  padding: 0 var(--space-gap-sm);
+  background: var(--color-tint);
+  border: 1px solid var(--color-border-tint);
+  border-radius: var(--radius-control);
+  color: var(--color-heading);
+  font-size: var(--font-size-small);
+}
+.polymer-edit { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-gap-sm); }

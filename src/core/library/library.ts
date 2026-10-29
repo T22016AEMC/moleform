@@ -1,4 +1,6 @@
 // 化合物庫的純函式（任務 012）。每個函式回傳新的陣列，不修改傳入的資料，Node 即可測試。
+import { parsePolymerSpec } from '../polymer/convert';
+import type { PolymerSpec } from '../polymer/types';
 import { NAME_MAX, NOTES_MAX, type Compound, type Library } from './types';
 
 export type Validated<T> = { ok: true; value: T } | { ok: false; error: string };
@@ -26,6 +28,16 @@ export interface NewCompoundInput {
   canonicalSmiles: string;
   molfile?: string;
   notes?: string;
+  /** 聚合物設定；有值時 canonicalSmiles 必須含連接點 `*` */
+  polymer?: PolymerSpec;
+}
+
+function checkPolymer(polymer: PolymerSpec | undefined, smiles: string): Validated<PolymerSpec | undefined> {
+  if (polymer === undefined) return { ok: true, value: undefined };
+  const parsed = parsePolymerSpec(polymer);
+  if (!parsed.ok) return { ok: false, error: parsed.reason };
+  if (!smiles.includes('*')) return { ok: false, error: '聚合物的重複單元需要連接點（*）' };
+  return { ok: true, value: parsed.spec };
 }
 
 /** 新增一筆；名稱或備註不合規則時回傳錯誤 */
@@ -40,6 +52,8 @@ export function addCompound(
   const notes = validateNotes(input.notes ?? '');
   if (!notes.ok) return notes;
   if (input.canonicalSmiles.trim() === '') return { ok: false, error: '沒有可儲存的結構' };
+  const polymer = checkPolymer(input.polymer, input.canonicalSmiles);
+  if (!polymer.ok) return polymer;
   if (library.some((c) => c.id === id)) return { ok: false, error: '編號重複' };
   const stamp = now.toISOString();
   const compound: Compound = {
@@ -48,6 +62,7 @@ export function addCompound(
     canonicalSmiles: input.canonicalSmiles,
     molfile: input.molfile ?? '',
     notes: notes.value,
+    ...(polymer.value ? { polymer: polymer.value } : {}),
     createdAt: stamp,
     updatedAt: stamp,
   };
@@ -73,6 +88,15 @@ export function editNotes(library: Library, id: string, notes: string, now: Date
   const checked = validateNotes(notes);
   if (!checked.ok) return checked;
   return updateOne(library, id, (c) => ({ ...c, notes: checked.value, updatedAt: now.toISOString() }));
+}
+
+/** 修改聚合物的 Mn 或 DP；只能用在已經是聚合物的化合物 */
+export function editPolymer(library: Library, id: string, polymer: PolymerSpec, now: Date = new Date()): Validated<Library> {
+  const target = library.find((c) => c.id === id);
+  if (!target) return { ok: false, error: '找不到這筆化合物' };
+  const checked = checkPolymer(polymer, target.canonicalSmiles);
+  if (!checked.ok) return checked;
+  return updateOne(library, id, (c) => ({ ...c, polymer: checked.value, updatedAt: now.toISOString() }));
 }
 
 export function removeCompound(library: Library, id: string): Library {
@@ -108,6 +132,8 @@ export function sameCompound(a: Compound, b: Compound): boolean {
     a.canonicalSmiles === b.canonicalSmiles &&
     a.molfile === b.molfile &&
     a.notes === b.notes &&
+    a.polymer?.mnInput === b.polymer?.mnInput &&
+    a.polymer?.dpInput === b.polymer?.dpInput &&
     a.createdAt === b.createdAt &&
     a.updatedAt === b.updatedAt
   );

@@ -1,5 +1,6 @@
 // 配方的資料模型與換算結果型別（任務 013，Phase 3）。純 TypeScript，不可引用 React。
 // 分子量由呼叫端（RDKit）算好後傳入，只用於計算，不放進任何結果型別（D09）。
+import type { PolymerSpec } from '../polymer/types';
 import type { CalcResult } from '../result';
 
 export const FORMULATION_SCHEMA_VERSION = 1;
@@ -39,6 +40,12 @@ export interface Component<Category extends string = string> {
   compoundId?: string;
   /** 使用者畫的 2D Molfile（若有）；讓配方檔不依賴化合物庫也能完整還原 */
   molfile?: string;
+  /**
+   * 均聚物設定（任務 015，D42）：canonicalSmiles 是含兩個連接點的重複單元，Mn 或 DP 擇一。
+   * 聚合物成分以 Mn 作為「每分子質量」傳入核心（見 MolecularWeights），但核心不用它算 mol%（U02 尚未決定），
+   * 只供之後任務 017 計算官能度使用。
+   */
+  polymer?: PolymerSpec;
 }
 
 export interface Area<Unit extends string, Category extends string> {
@@ -60,7 +67,10 @@ export interface Formulation {
   targetSolidContentPct?: number;
 }
 
-/** 呼叫端傳入：成分 id → 平均分子量（g/mol） */
+/**
+ * 呼叫端傳入：成分 id → 每分子質量（g/mol）。小分子為平均分子量；聚合物為 Mn（每條鏈）。
+ * 聚合物的值不會用來算 mol%（含 `*` 的成分一律排除，U02），只保留給官能度計算（任務 017）。
+ */
 export type MolecularWeights = Readonly<Record<string, number | undefined>>;
 
 // ---------- 錯誤與警告 ----------

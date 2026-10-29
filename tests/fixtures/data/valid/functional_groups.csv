@@ -1,3 +1,4 @@
 id,name_zh,smarts,reactive_atom_maps,should_match,should_not_match,source_type,source,source_detail,source_original,review_status,notes
 demo.alcohol,示範醇,[CX4][OX2H:1],1,CCO|CCCO,CCC|CC(=O)O,self,tests/fixtures,示範,,pending,測試用示範資料，非化學資料
 demo.acid,示範酸,[CX3](=O)[OX2H:1],1,CC(=O)O,CCO,self,tests/fixtures,示範,,pending,測試用示範資料，非化學資料
+demo.user,示範使用者提供,[CX4][OX2H:1],1,CCO,CCC,user,使用者提供,2026-10-29,,pending,測試用示範資料，非化學資料

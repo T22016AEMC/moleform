@@ -159,7 +159,7 @@ describe('允許並提示：連接點 *', () => {
     expect(v.canonicalSmiles).toContain('*');
     expect(v.problems).toHaveLength(1);
     expect(v.problems[0]).toMatchObject({ level: 'info', code: 'CONNECTION_POINT' });
-    expect(v.problems[0].message).toBe('含連接點 *，聚合物重複單元功能在 Phase 5 提供');
+    expect(v.problems[0].message).toBe('含連接點 *；均聚物可在「均聚物設定」填入 Mn 或 DP，共聚物等功能在 Phase 5 提供');
   });
 
   it('匯出的 Molfile 把連接點寫成 *（不是 RDKit 預設的 R），映射編號仍在', () => {

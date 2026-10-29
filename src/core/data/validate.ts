@@ -37,13 +37,32 @@ class Collector {
   }
 }
 
+const USER_SOURCE = '使用者提供';
+
+/** YYYY-MM-DD，且是存在的日期 */
+function isIsoDate(s: string): boolean {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s);
+  if (!m) return false;
+  const [y, mo, d] = [Number(m[1]), Number(m[2]), Number(m[3])];
+  const dt = new Date(Date.UTC(y, mo - 1, d));
+  return dt.getUTCFullYear() === y && dt.getUTCMonth() === mo - 1 && dt.getUTCDate() === d;
+}
+
 /** 共用欄位規則（出處與審核狀態，AGENTS.md 鐵則 3、D17、D22） */
 function checkCommon(c: Collector, row: number, f: CommonFields) {
   if (!(SOURCE_TYPES as readonly string[]).includes(f.source_type)) {
     c.add(row, 'source_type', `只能是 ${SOURCE_TYPES.join('、')}，實際為「${f.source_type}」`);
   }
-  c.required(row, 'source', f.source);
-  c.required(row, 'source_detail', f.source_detail);
+  if (f.source_type === 'user') {
+    // D43：使用者提供的資訊，source 固定為「使用者提供」，source_detail 為提供日期
+    if (f.source !== USER_SOURCE) c.add(row, 'source', `source_type 為 user 時 source 須為「${USER_SOURCE}」`);
+    if (!isIsoDate(f.source_detail)) {
+      c.add(row, 'source_detail', 'source_type 為 user 時 source_detail 須為提供日期（YYYY-MM-DD）');
+    }
+  } else {
+    c.required(row, 'source', f.source);
+    c.required(row, 'source_detail', f.source_detail);
+  }
   if (f.source_type === 'package' && f.source_original === '') {
     c.add(row, 'source_original', 'source_type 為 package 時必填（套件引用的原始文獻）');
   }

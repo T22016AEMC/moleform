@@ -22,9 +22,9 @@ MoleForm 的化學資料放在 `src/data/` 的四個 CSV。**目前只有標題�
 
 | 欄位 | 說明 | 規則 |
 |---|---|---|
-| `source_type` | 出處類型 | 只能是 `book`、`paper`、`package`、`self` |
-| `source` | 書名、論文、或套件名稱 | 必填 |
-| `source_detail` | 頁碼、表格編號；`package` 時為套件版本 | 必填 |
+| `source_type` | 出處類型 | 只能是 `book`、`paper`、`package`、`self`、`user`（使用者提供，D43） |
+| `source` | 書名、論文、或套件名稱 | 必填；`source_type=user` 時須為「使用者提供」 |
+| `source_detail` | 頁碼、表格編號；`package` 時為套件版本；`user` 時為提供日期 | 必填；`source_type=user` 時須為日期（YYYY-MM-DD） |
 | `source_original` | `package` 時，套件引用的原始文獻 | `source_type=package` 時必填 |
 | `review_status` | 使用者審核狀態 | 只能是 `pending`、`approved`（D17） |
 | `notes` | 備註 | `source_type=self` 時必填，說明為何自行撰寫（D22） |
@@ -114,6 +114,14 @@ MoleForm 的化學資料放在 `src/data/` 的四個 CSV。**目前只有標題�
 ## 測試用示範資料
 
 `tests/fixtures/data/valid/` 是格式正確的示範資料，`tests/fixtures/data/invalid/` 是刻意寫錯的資料，用來證明檢查有效。兩者都標明「測試用示範資料，非化學資料」，不在 `src/data/`，也不會出現在網站上。
+
+## 均聚物重複單元的分子量 M_unit（任務 015，D42）
+
+- 重複單元以 SMILES 或 Molfile 輸入，恰好兩個連接點：`[*:1]`、`[*:2]`，或兩個未編號的 `*`（依出現順序視為 1、2）。
+- **M_unit 的計算方式**：RDKit 的平均分子量（`amw`）。RDKit 把虛原子 `*` 的質量視為 0，且各原子的氫數照重複單元的原樣計算，所以結果等於「把 `*` 移除、不補氫」的重複單元平均分子量（例如 `*CC*` 為 C₂H₄）。分子式同樣是不含 `*`、不補氫的組成。
+- `DP = Mn / M_unit`、`Mn = DP × M_unit`；端基忽略（Phase 5 才處理），換算結果附註「未計入端基」。
+- M_unit 與 Mn 依 D09 不在結果區顯示；Mn 與 DP 是使用者的輸入，可顯示在輸入欄旁當輸入輔助。
+- 程式位置：`src/core/polymer/`；測試：`tests/polymer/`。
 
 ## 程式位置
 

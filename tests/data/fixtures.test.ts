@@ -34,6 +34,9 @@ describe('示範資料：刻意寫錯的資料，每一種錯誤都要被抓到'
     ['should_match 為空', FG, 11, 'should_match', '至少需要 1 個'],
     ['reactive_atom_maps 非整數', FG, 12, 'reactive_atom_maps', '整數'],
     ['測試分子 SMILES 無法解析', FG, 13, 'should_match', 'SMILES 無法解析'],
+    ['user 缺日期', FG, 14, 'source_detail', '提供日期（YYYY-MM-DD）'],
+    ['user 的 source 不是「使用者提供」', FG, 15, 'source', '使用者提供'],
+    ['user 的日期格式錯', FG, 15, 'source_detail', 'YYYY-MM-DD'],
     // 反應規則
     ['group_a 不存在', RR, 3, 'group_a', '不存在'],
     ['temp_min_c > temp_max_c', RR, 4, 'temp_min_c', '不可大於'],

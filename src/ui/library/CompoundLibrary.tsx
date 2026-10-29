@@ -16,6 +16,7 @@ import {
   dateStamp,
   displayDate,
   editNotes,
+  editPolymer,
   findDuplicates,
   removeCompound,
   renameCompound,
@@ -25,8 +26,11 @@ import {
   type SortKey,
 } from '../../core/library/library';
 import { NAME_MAX, NOTES_MAX, summaryText, type Compound } from '../../core/library/types';
+import type { PolymerSpec } from '../../core/polymer/types';
 import type { StructureValidation } from '../../core/structure/validate';
 import { validateInput } from '../../worker/client';
+import { specFromEdit, editFromSpec, type PolymerEdit } from '../polymer/model';
+import type { PolymerContext } from '../polymer/usePolymerInput';
 import { downloadText } from '../download';
 import { createIndexedDbStorage, STORAGE_FAILED_MESSAGE, type LibraryStorage } from './storage';
 import './library.css';
@@ -54,18 +58,26 @@ interface Editing {
   id: string;
   name: string;
   notes: string;
+  /** 只有聚合物才有：Mn 或 DP 的編輯狀態 */
+  polymer?: PolymerEdit;
 }
+
+/** 清單上顯示的聚合物設定（Mn、DP 是使用者的輸入，可以顯示） */
+const polymerLabel = (spec: PolymerSpec) =>
+  spec.mnInput !== undefined ? `Mn ${spec.mnInput.toLocaleString('en-US')} g/mol` : `DP ${spec.dpInput}`;
 
 interface Props {
   /** 目前「結構輸入」的驗證結果；有效時才能儲存 */
   structure: StructureValidation | null;
-  /** 把化合物送進結構輸入（Molfile 或 SMILES） */
-  onLoad: (input: string) => void;
+  /** 「均聚物設定」的目前狀態；結構含連接點時，儲存會存成聚合物 */
+  polymer: PolymerContext;
+  /** 把化合物送進結構輸入（Molfile 或 SMILES）；聚合物一併帶出 Mn 或 DP */
+  onLoad: (input: string, polymer?: PolymerSpec) => void;
   /** 測試或預覽時可換成其他儲存實作；預設為瀏覽器 IndexedDB */
   storage?: LibraryStorage;
 }
 
-export function CompoundLibrary({ structure, onLoad, storage: storageProp }: Props) {
+export function CompoundLibrary({ structure, polymer, onLoad, storage: storageProp }: Props) {
   const storage = useMemo(() => storageProp ?? createIndexedDbStorage(), [storageProp]);
   const [library, setLibrary] = useState<Compound[]>([]);
   const [storageOk, setStorageOk] = useState(true);
@@ -117,6 +129,21 @@ export function CompoundLibrary({ structure, onLoad, storage: storageProp }: Pro
       setFormError(name.error);
       return;
     }
+    // 含連接點的結構視為均聚物：須符合連接點規則，並填好 Mn 或 DP
+    if (polymer.hasMark) {
+      if (!polymer.analysis) {
+        setFormError('正在檢查連接點，請稍後再儲存');
+        return;
+      }
+      if (!polymer.analysis.ok) {
+        setFormError(`含連接點的結構需符合均聚物規則才能儲存：${polymer.analysis.problem.message}`);
+        return;
+      }
+      if (!polymer.spec) {
+        setFormError('這是聚合物的重複單元，請先在「均聚物設定」填入 Mn 或 DP');
+        return;
+      }
+    }
     const duplicates = findDuplicates(libraryRef.current, structure.canonicalSmiles);
     if (duplicates.length && !force) {
       setDuplicateOf(duplicates.map((d) => d.name).join('、'));
@@ -126,6 +153,7 @@ export function CompoundLibrary({ structure, onLoad, storage: storageProp }: Pro
       name: saveName,
       canonicalSmiles: structure.canonicalSmiles,
       molfile: structure.molblock,
+      ...(polymer.hasMark && polymer.spec ? { polymer: polymer.spec } : {}),
     });
     if (!added.ok) {
       setFormError(added.error);
@@ -160,13 +188,27 @@ export function CompoundLibrary({ structure, onLoad, storage: storageProp }: Pro
       setEditError(noted.error);
       return;
     }
+    let next = noted.value;
+    if (editing.polymer) {
+      const spec = specFromEdit(editing.polymer);
+      if (!spec) {
+        setEditError('請輸入大於 0 的 Mn 或 DP');
+        return;
+      }
+      const changed = editPolymer(next, editing.id, spec);
+      if (!changed.ok) {
+        setEditError(changed.error);
+        return;
+      }
+      next = changed.value;
+    }
     setEditError('');
     setEditing(null);
-    await commit([...noted.value]);
+    await commit([...next]);
   }
 
   function load(compound: Compound) {
-    onLoad(compound.molfile || compound.canonicalSmiles);
+    onLoad(compound.molfile || compound.canonicalSmiles, compound.polymer);
   }
 
   async function markExported(now: Date) {
@@ -324,6 +366,26 @@ export function CompoundLibrary({ structure, onLoad, storage: storageProp }: Pro
                     maxLength={NOTES_MAX}
                     onChange={(event) => setEditing({ ...editing, notes: event.target.value })}
                   />
+                  {editing.polymer && (
+                    <div className="polymer-edit">
+                      <label htmlFor={`edit-polymer-basis-${compound.id}`}>聚合物設定（Mn 與 DP 擇一）</label>
+                      <select
+                        id={`edit-polymer-basis-${compound.id}`}
+                        value={editing.polymer.basis}
+                        onChange={(event) => setEditing({ ...editing, polymer: { ...editing.polymer!, basis: event.target.value as PolymerEdit['basis'] } })}
+                      >
+                        <option value="mn">Mn（g/mol）</option>
+                        <option value="dp">DP（重複單元數）</option>
+                      </select>
+                      <input
+                        type="text"
+                        inputMode="decimal"
+                        aria-label={editing.polymer.basis === 'mn' ? 'Mn' : 'DP'}
+                        value={editing.polymer.text}
+                        onChange={(event) => setEditing({ ...editing, polymer: { ...editing.polymer!, text: event.target.value } })}
+                      />
+                    </div>
+                  )}
                   {editError && <p className="error" role="alert">{editError}</p>}
                   <div className="library-row-actions">
                     <button type="button" onClick={() => void saveEdit()}>儲存變更</button>
@@ -334,6 +396,9 @@ export function CompoundLibrary({ structure, onLoad, storage: storageProp }: Pro
                 <>
                   <div className="library-item-main">
                     <strong className="library-name">{compound.name}</strong>
+                    {compound.polymer && (
+                      <span className="library-badge">聚合物　{polymerLabel(compound.polymer)}</span>
+                    )}
                     <code className="library-smiles" title={compound.canonicalSmiles}>{truncate(compound.canonicalSmiles)}</code>
                     <small className="library-date">更新：{displayDate(compound.updatedAt)}</small>
                     {compound.notes && <p className="library-notes">{compound.notes}</p>}
@@ -343,7 +408,12 @@ export function CompoundLibrary({ structure, onLoad, storage: storageProp }: Pro
                     <button
                       type="button"
                       onClick={() => {
-                        setEditing({ id: compound.id, name: compound.name, notes: compound.notes });
+                        setEditing({
+                          id: compound.id,
+                          name: compound.name,
+                          notes: compound.notes,
+                          ...(compound.polymer ? { polymer: editFromSpec(compound.polymer) } : {}),
+                        });
                         setEditError('');
                         setConfirmDeleteId(null);
                       }}

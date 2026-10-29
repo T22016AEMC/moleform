@@ -43,7 +43,7 @@ export const COMMON_COLUMNS = [
   'notes',
 ] as const;
 
-export const SOURCE_TYPES = ['book', 'paper', 'package', 'self'] as const;
+export const SOURCE_TYPES = ['book', 'paper', 'package', 'self', 'user'] as const;
 export const REVIEW_STATUSES = ['pending', 'approved'] as const;
 
 export interface FunctionalGroupRow extends CommonFields {

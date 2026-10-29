@@ -1,3 +1,4 @@
+import type { RepeatUnitAnalysis } from '../core/polymer/types';
 import type { StructureValidation } from '../core/structure/validate';
 import type { ChemRequest, ChemResponse } from './protocol';
 
@@ -62,6 +63,12 @@ export type ValidateOutcome = { ok: true; result: StructureValidation } | { ok: 
 export async function averageWeightOf(smiles: string): Promise<number | null> {
   const response = await request((id) => ({ type: 'weight', id, smiles }));
   return response.type === 'weight' && response.ok ? response.weight : null;
+}
+
+/** 請 Worker 分析重複單元（連接點規則、M_unit）；Worker 失敗時回傳 null。M_unit 只用於計算，不顯示（D09）。 */
+export async function analyzeRepeatUnitInWorker(smiles: string): Promise<RepeatUnitAnalysis | null> {
+  const response = await request((id) => ({ type: 'repeatUnit', id, smiles }));
+  return response.type === 'repeatUnit' && response.ok ? response.analysis : null;
 }
 
 /** 請 Worker 中的 RDKit 驗證 SMILES 或 Molfile。 */

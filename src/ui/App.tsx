@@ -8,6 +8,10 @@ import { StructureInput, type LoadRequest } from './structure/StructureInput';
 import { CompoundLibrary } from './library/CompoundLibrary';
 import { FormulationPage } from './formulation/FormulationPage';
 import { Conformer3DCard } from './structure/Conformer3DCard';
+import type { PolymerSpec } from '../core/polymer/types';
+import { editFromSpec } from './polymer/model';
+import { PolymerSettings } from './polymer/PolymerSettings';
+import { usePolymerInput } from './polymer/usePolymerInput';
 
 // 只有開發模式才載入；正式建置會整段移除，示範資料不會進入 dist。
 const DevPreview = import.meta.env.DEV ? lazy(() => import('./components/DevPreview')) : null;
@@ -21,7 +25,15 @@ export function App() {
   const [tab, setTab] = useState<(typeof TABS)[number][0]>('structure');
   const [structure, setStructure] = useState<StructureValidation | null>(null);
   const [loadRequest, setLoadRequest] = useState<LoadRequest | null>(null);
-  const loadIntoStructure = useCallback((input: string) => setLoadRequest((prev) => ({ id: (prev?.id ?? 0) + 1, input })), []);
+  const { context: polymer, setEdit: setPolymerEdit } = usePolymerInput(structure);
+  const loadIntoStructure = useCallback(
+    (input: string, polymerSpec?: PolymerSpec) => {
+      setLoadRequest((prev) => ({ id: (prev?.id ?? 0) + 1, input }));
+      // 載入聚合物時一併還原 Mn 或 DP；一般化合物不改動已填的值
+      if (polymerSpec) setPolymerEdit(editFromSpec(polymerSpec));
+    },
+    [setPolymerEdit],
+  );
   return (
     <main>
       <Header />
@@ -35,11 +47,12 @@ export function App() {
       {/* 兩個分頁都保持掛載（只是隱藏），切換時不會清除各頁的內容，也不會重新載入 Ketcher */}
       <div id="panel-structure" hidden={tab !== 'structure'}>
         <StructureInput onStructureChange={setStructure} loadRequest={loadRequest} />
-        <CompoundLibrary structure={structure} onLoad={loadIntoStructure} />
+        <PolymerSettings context={polymer} onChange={setPolymerEdit} />
+        <CompoundLibrary structure={structure} polymer={polymer} onLoad={loadIntoStructure} />
         <Conformer3DCard structure={structure} />
       </div>
       <div id="panel-formulation" hidden={tab !== 'formulation'}>
-        <FormulationPage structure={structure} />
+        <FormulationPage structure={structure} polymer={polymer} />
       </div>
       {DevPreview && (
         <Suspense fallback={null}>

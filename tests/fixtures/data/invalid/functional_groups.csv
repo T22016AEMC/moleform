@@ -11,3 +11,5 @@ demo.badenum,列舉錯,[CX4][OX2H],,CCO,CCC,blog,x,y,,maybe,
 demo.nolist,清單空,[CX4][OX2H],,,CCC,self,tests/fixtures,示範,,pending,測試用示範資料，非化學資料
 demo.badmap,映射非整數,[CX4][OX2H],a,CCO,CCC,self,tests/fixtures,示範,,pending,測試用示範資料，非化學資料
 demo.badsmiles,測試分子錯,[CX4][OX2H],,not_a_smiles((,CCC,self,tests/fixtures,示範,,pending,測試用示範資料，非化學資料
+demo.usernodate,user缺日期,[CX4][OX2H],,CCO,CCC,user,使用者提供,,,pending,測試用示範資料，非化學資料
+demo.userbad,user來源與日期錯,[CX4][OX2H],,CCO,CCC,user,某人,10/29,,pending,測試用示範資料，非化學資料

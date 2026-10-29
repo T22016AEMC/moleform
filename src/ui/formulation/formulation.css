@@ -73,3 +73,11 @@
   .component-fields { grid-template-columns: 1fr 1fr; }
   :root { --padding-cell: 10px 8px; }
 }
+
+.polymer-fields { display: grid; gap: var(--space-gap-sm); }
+.polymer-basis { display: flex; flex-wrap: wrap; gap: var(--space-gap); }
+.polymer-helper { color: var(--color-text-muted); }
+.polymer-settings .polymer-fields { max-width: 28rem; margin: var(--space-gap) 0; }
+.polymer-row { grid-column: 1 / -1; padding-top: var(--space-gap-sm); border-top: 1px dashed var(--color-border-row); }
+.polymer-tag { display: inline-block; margin-left: var(--space-gap-sm); padding: 0 var(--space-gap-sm); background: var(--color-tint); border: 1px solid var(--color-border-tint); border-radius: var(--radius-control); color: var(--color-heading); font-size: var(--font-size-small); }.polymer-basis .check { display: inline-flex; gap: var(--space-gap-sm); align-items: center; margin-top: 0; font-weight: normal; }
+.polymer-basis input[type='radio'] { width: auto; padding: 0; }

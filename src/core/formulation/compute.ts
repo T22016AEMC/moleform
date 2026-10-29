@@ -40,6 +40,8 @@ function calc(value: number | null, unit: string, notApplicable?: string): CalcR
 
 const num = (value: number) => String(Number(value.toFixed(6)));
 const isValidNumber = (value: unknown): value is number => typeof value === 'number' && Number.isFinite(value);
+// 含 `*` 的成分是聚合物：即使呼叫端傳入了它的 Mn（每鏈質量），這裡也不用來算 mol%（U02 尚未決定），
+// Mn 只保留給之後的官能度計算（任務 017）。
 const hasPolymerMark = (smiles: string) => smiles.includes('*');
 const areaLabel = (area: AreaName) => (area === 'solid' ? 'Solid 區' : 'Liquid 區');
 const labelOf = (c: Component, index: number) => c.name.trim() || `第 ${index + 1} 項`;

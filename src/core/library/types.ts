@@ -1,5 +1,8 @@
 // 本機化合物庫的資料模型（任務 012）。純資料，不含分子量、官能基數量或當量（D09）。
 
+import type { PolymerSpec } from '../polymer/types';
+
+// 任務 015 新增的 polymer 是選用欄位，沒有它的舊版檔案照舊可讀，所以版本維持 1。
 export const SCHEMA_VERSION = 1;
 export const NAME_MAX = 100;
 export const NOTES_MAX = 1000;
@@ -15,6 +18,11 @@ export interface Compound {
   molfile: string;
   /** 備註，最多 1000 字；沒有時為空字串 */
   notes: string;
+  /**
+   * 均聚物設定（任務 015，D42）：有值表示這筆是聚合物，canonicalSmiles／molfile 是含兩個連接點的重複單元，
+   * Mn 或 DP 擇一。舊版檔案沒有這個欄位，視為一般化合物。
+   */
+  polymer?: PolymerSpec;
   /** ISO 時間 */
   createdAt: string;
   updatedAt: string;

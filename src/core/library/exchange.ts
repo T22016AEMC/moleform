@@ -1,5 +1,7 @@
 // 化合物庫的匯出與匯入（任務 012）：JSON（完整備份）與 SDF（給其他化學軟體）。
 // SMILES 驗證需要 RDKit，所以匯入函式接收呼叫端提供的驗證函式（瀏覽器用 Worker，測試直接用 RDKit）。
+import { parsePolymerSpec } from '../polymer/convert';
+import type { PolymerSpec } from '../polymer/types';
 import { parseSdf } from '../structure/sdf';
 import { newId, sameCompound, validateName, validateNotes } from './library';
 import {
@@ -69,6 +71,13 @@ function parseRow(row: unknown): { ok: true; compound: Compound } | { ok: false;
   const notes = validateNotes((r.notes as string | null | undefined) ?? '');
   if (!notes.ok) return { ok: false, reason: `備註超過 ${NOTES_MAX} 字` };
   if (!isIso(r.createdAt) || !isIso(r.updatedAt)) return { ok: false, reason: '時間格式錯誤' };
+  let polymer: PolymerSpec | undefined;
+  if (r.polymer != null) {
+    const parsed = parsePolymerSpec(r.polymer);
+    if (!parsed.ok) return { ok: false, reason: parsed.reason };
+    if (!r.canonicalSmiles.includes('*')) return { ok: false, reason: '聚合物的重複單元沒有連接點（*）' };
+    polymer = parsed.spec;
+  }
   return {
     ok: true,
     compound: {
@@ -77,6 +86,7 @@ function parseRow(row: unknown): { ok: true; compound: Compound } | { ok: false;
       canonicalSmiles: r.canonicalSmiles,
       molfile: (r.molfile as string | null | undefined) ?? '',
       notes: notes.value,
+      ...(polymer ? { polymer } : {}),
       createdAt: r.createdAt,
       updatedAt: r.updatedAt,
     },
@@ -171,6 +181,12 @@ export function exportLibrarySdf(entries: readonly SdfEntry[]): string {
       const notes = sdfValue(compound.notes);
       const props = [`> <MoleForm_Name>\n${oneLine(compound.name)}\n`];
       if (notes) props.push(`> <MoleForm_Notes>\n${notes}\n`);
+      // 聚合物：Molfile 是含連接點的重複單元，另附類型與 Mn 或 DP
+      if (compound.polymer) {
+        props.push('> <MoleForm_Type>\npolymer\n');
+        if (compound.polymer.mnInput !== undefined) props.push(`> <MoleForm_Mn>\n${compound.polymer.mnInput}\n`);
+        if (compound.polymer.dpInput !== undefined) props.push(`> <MoleForm_DP>\n${compound.polymer.dpInput}\n`);
+      }
       return `${lines.join('\n')}\n${props.join('\n')}\n$$$$\n`;
     })
     .join('');
@@ -205,6 +221,21 @@ export async function importLibrarySdf(
       .slice(0, NAME_MAX)
       .join('');
     const notes = [...(record.properties.MoleForm_Notes ?? '')].slice(0, NOTES_MAX).join('');
+    // 聚合物：MoleForm_Type=polymer 且有 Mn 或 DP；設定不合規則時略過該筆
+    let polymer: PolymerSpec | undefined;
+    if (record.properties.MoleForm_Type?.trim() === 'polymer') {
+      const mn = record.properties.MoleForm_Mn?.trim();
+      const dp = record.properties.MoleForm_DP?.trim();
+      const parsed = parsePolymerSpec({
+        ...(mn ? { mnInput: Number(mn) } : {}),
+        ...(dp ? { dpInput: Number(dp) } : {}),
+      });
+      if (!parsed.ok || !checked.canonicalSmiles.includes('*')) {
+        reasons.add('聚合物設定不合規則（需有連接點與 Mn 或 DP 其中之一）');
+        continue;
+      }
+      polymer = parsed.spec;
+    }
     // 重複偵測（含本次檔案中先前已加入的）：名稱與結構都相同 → 略過；結構相同但名稱不同 → 仍新增並列出
     const sameStructure = merged.filter((c) => c.canonicalSmiles === checked.canonicalSmiles);
     if (sameStructure.some((c) => c.name === name)) {
@@ -218,6 +249,7 @@ export async function importLibrarySdf(
       canonicalSmiles: checked.canonicalSmiles,
       molfile: checked.molfile,
       notes,
+      ...(polymer ? { polymer } : {}),
       createdAt: stamp,
       updatedAt: stamp,
     });

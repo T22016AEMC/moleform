@@ -8,7 +8,12 @@ import { LIQUID_CATEGORIES, SOLID_CATEGORIES } from '../../core/formulation/type
 import { confidenceLabel, type CalcResult } from '../../core/result';
 import type { Compound } from '../../core/library/types';
 import type { StructureValidation } from '../../core/structure/validate';
-import { averageWeightOf, validateInput } from '../../worker/client';
+import { resolvePolymer } from '../../core/polymer/convert';
+import type { RepeatUnitAnalysis } from '../../core/polymer/types';
+import { analyzeRepeatUnitInWorker, averageWeightOf, validateInput } from '../../worker/client';
+import { emptyPolymerEdit } from '../polymer/model';
+import { PolymerFields } from '../polymer/PolymerFields';
+import type { PolymerContext } from '../polymer/usePolymerInput';
 import { UnifiedNote } from '../components/UnifiedNote';
 import { createIndexedDbStorage } from '../library/storage';
 import { FormulationLibrary } from './FormulationLibrary';
@@ -80,9 +85,13 @@ interface AreaCardProps {
   setState: (update: (s: EditorState) => EditorState) => void;
   issues: SeverityIssue[];
   structure: StructureValidation | null;
+  /** 「結構」分頁的均聚物設定，從目前結構加入成分時帶入 */
+  polymer: PolymerContext;
+  /** 重複單元分析結果（以 SMILES 為鍵），聚合物成分的 Mn／DP 欄位用來換算 */
+  units: Record<string, RepeatUnitAnalysis | null>;
 }
 
-function AreaCard({ area, state, setState, issues, structure }: AreaCardProps) {
+function AreaCard({ area, state, setState, issues, structure, polymer, units }: AreaCardProps) {
   const isSolid = area === 'solid';
   const rows = isSolid ? state.solidRows : state.liquidRows;
   const unit = isSolid ? state.solidUnit : state.liquidUnit;
@@ -123,13 +132,13 @@ function AreaCard({ area, state, setState, issues, structure }: AreaCardProps) {
   function addFromCompound() {
     const compound = compounds?.find((c) => c.id === pickedId);
     if (!compound) return;
-    setRows((rs) => [...rs, newRow(area, { name: compound.name, canonicalSmiles: compound.canonicalSmiles, molfile: compound.molfile, compoundId: compound.id })]);
+    setRows((rs) => [...rs, newRow(area, { name: compound.name, canonicalSmiles: compound.canonicalSmiles, molfile: compound.molfile, compoundId: compound.id, polymer: compound.polymer })]);
     setAddMessage(`已加入「${compound.name}」`);
   }
 
   function addFromStructure() {
     if (!structure?.valid) return;
-    setRows((rs) => [...rs, newRow(area, { name: '目前結構', canonicalSmiles: structure.canonicalSmiles, molfile: structure.molblock })]);
+    setRows((rs) => [...rs, newRow(area, { name: '目前結構', canonicalSmiles: structure.canonicalSmiles, molfile: structure.molblock, polymer: polymer.spec ?? undefined })]);
     setAddMessage('已加入「結構」分頁的目前結構');
   }
 
@@ -188,6 +197,7 @@ function AreaCard({ area, state, setState, issues, structure }: AreaCardProps) {
                   <div className="field">
                     <span className="field-label">結構</span>
                     <code className="library-smiles" title={row.canonicalSmiles}>{truncate(row.canonicalSmiles)}</code>
+                    {row.canonicalSmiles.includes('*') && <span className="polymer-tag">聚合物</span>}
                   </div>
                   <div className="field">
                     <label htmlFor={`cat-${row.id}`}>分類</label>
@@ -215,6 +225,21 @@ function AreaCard({ area, state, setState, issues, structure }: AreaCardProps) {
                     {!row.amountTouched && row.amountText.trim() === '' && <small className="amount-hint">請輸入用量</small>}
                   </div>
                 </div>
+                {row.canonicalSmiles.includes('*') && (
+                  <div className="polymer-row">
+                    <span className="field-label">聚合物（Mn 與 DP 擇一）</span>
+                    {units[row.canonicalSmiles]?.ok === false ? (
+                      <p className="form-error" role="alert">{(units[row.canonicalSmiles] as Extract<RepeatUnitAnalysis, { ok: false }>).problem.message}</p>
+                    ) : (
+                      <PolymerFields
+                        idPrefix={`poly-${row.id}`}
+                        edit={row.polymerEdit ?? emptyPolymerEdit()}
+                        onChange={(edit) => patchRow(row.id, { polymerEdit: edit })}
+                        analysis={units[row.canonicalSmiles] ?? null}
+                      />
+                    )}
+                  </div>
+                )}
                 {isSolid && (
                   <div className="component-checks">
                     <label className="check">
@@ -387,15 +412,18 @@ function Overall({ outcome }: { outcome: FormulationOutcome }) {
 interface Props {
   /** 「結構」分頁目前的結構 */
   structure: StructureValidation | null;
+  /** 「結構」分頁的均聚物設定 */
+  polymer: PolymerContext;
   /** 測試或預覽時可換成其他儲存實作 */
   storage?: FormulationStorage;
 }
 
-export function FormulationPage({ structure, storage }: Props) {
+export function FormulationPage({ structure, polymer, storage }: Props) {
   const [state, setStateRaw] = useState<EditorState>(emptyState);
   const [currentId, setCurrentId] = useState<string | null>(null);
   const [debounced, setDebounced] = useState<Formulation>(() => toFormulation(emptyState()));
   const [weights, setWeights] = useState<Record<string, number | null>>({});
+  const [units, setUnits] = useState<Record<string, RepeatUnitAnalysis | null>>({});
 
   const setState = useCallback((update: (s: EditorState) => EditorState) => setStateRaw(update), []);
   const formulation = useMemo(() => toFormulation(state), [state]);
@@ -427,15 +455,43 @@ export function FormulationPage({ structure, storage }: Props) {
     };
   }, [needed, weights]);
 
+  // 聚合物（含 *）：由 Worker 分析重複單元，取得 M_unit 以換算 Mn／DP；不顯示 M_unit（D09）
+  const polymerSmiles = useMemo(() => {
+    const smiles = new Set<string>();
+    for (const row of [...state.solidRows, ...state.liquidRows]) {
+      if (row.canonicalSmiles.includes('*')) smiles.add(row.canonicalSmiles);
+    }
+    return [...smiles];
+  }, [state.solidRows, state.liquidRows]);
+
+  useEffect(() => {
+    const missing = polymerSmiles.filter((s) => !(s in units));
+    if (!missing.length) return;
+    let cancelled = false;
+    void Promise.all(missing.map(async (s) => [s, await analyzeRepeatUnitInWorker(s)] as const)).then((entries) => {
+      if (!cancelled) setUnits((u) => ({ ...u, ...Object.fromEntries(entries) }));
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [polymerSmiles, units]);
+
   const ready = needed.every((s) => s in weights);
   const outcome = useMemo<FormulationOutcome | null>(() => {
     if (!ready) return null;
     const byId: Record<string, number | undefined> = {};
     for (const c of [...debounced.solid.components, ...debounced.liquid.components]) {
-      byId[c.id] = weights[c.canonicalSmiles] ?? undefined;
+      if (c.canonicalSmiles.includes('*')) {
+        // 聚合物以 Mn 作為每分子質量傳入；核心不用它算 mol%（U02），只供之後計算官能度（任務 017）
+        const unit = units[c.canonicalSmiles];
+        const resolved = c.polymer && unit?.ok ? resolvePolymer(c.polymer, unit.mUnit) : null;
+        byId[c.id] = resolved?.ok ? resolved.mn : undefined;
+      } else {
+        byId[c.id] = weights[c.canonicalSmiles] ?? undefined;
+      }
     }
     return computeFormulation(debounced, byId);
-  }, [debounced, weights, ready]);
+  }, [debounced, weights, ready, units]);
 
   // 新加入、尚未填用量的成分先不顯示數值錯誤（輸入過或離開欄位後才顯示）
   const pending = useMemo(() => pendingAmountIds([...state.solidRows, ...state.liquidRows]), [state.solidRows, state.liquidRows]);
@@ -474,8 +530,8 @@ export function FormulationPage({ structure, storage }: Props) {
         {currentId && <small>目前編輯的是已儲存的配方（按「儲存」會覆蓋它，「另存」會新增一筆）。</small>}
       </section>
 
-      <AreaCard area="solid" state={state} setState={setState} issues={issues} structure={structure} />
-      <AreaCard area="liquid" state={state} setState={setState} issues={issues} structure={structure} />
+      <AreaCard area="solid" state={state} setState={setState} issues={issues} structure={structure} polymer={polymer} units={units} />
+      <AreaCard area="liquid" state={state} setState={setState} issues={issues} structure={structure} polymer={polymer} units={units} />
 
       <section className="card" aria-labelledby="target-title">
         <h2 id="target-title">目標 Solid Content（選填）</h2>

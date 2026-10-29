@@ -1,9 +1,16 @@
 // 配方畫面的編輯狀態與 Formulation 之間的轉換（任務 014）。數值輸入框保留使用者打的原始文字。
 import { newId } from '../../core/library/library';
+import type { PolymerSpec } from '../../core/polymer/types';
+import { editFromSpec, specFromEdit, type PolymerEdit } from '../polymer/model';
 import type { Component, Formulation, LiquidCategory, LiquidUnit, SolidCategory, SolidUnit } from '../../core/formulation/types';
 
 /** amountTouched：使用者輸入過或離開過用量欄位（只在畫面使用，不存進配方）；在那之前空白用量不顯示錯誤 */
-export type Row = Omit<Component, 'amount'> & { amountText: string; amountTouched?: boolean };
+export type Row = Omit<Component, 'amount' | 'polymer'> & {
+  amountText: string;
+  amountTouched?: boolean;
+  /** 聚合物的 Mn 或 DP 輸入（含 `*` 的成分才會用到）；存檔時轉成 Component.polymer */
+  polymerEdit?: PolymerEdit;
+};
 
 /** 尚未填用量（空白且還沒輸入過、沒離開過欄位）的成分編號 */
 export function pendingAmountIds(rows: readonly Row[]): Set<string> {
@@ -49,8 +56,9 @@ export function parseNumberText(text: string): number {
 const optional = (text: string): number | undefined => (text.trim() === '' ? undefined : parseNumberText(text));
 
 function toComponent(row: Row): Component {
-  const { amountText, amountTouched: _touched, ...rest } = row;
-  return { ...rest, amount: parseNumberText(amountText) };
+  const { amountText, amountTouched: _touched, polymerEdit, ...rest } = row;
+  const polymer = polymerEdit && rest.canonicalSmiles.includes('*') ? specFromEdit(polymerEdit) : null;
+  return { ...rest, amount: parseNumberText(amountText), ...(polymer ? { polymer } : {}) };
 }
 
 export function toFormulation(state: EditorState): Formulation {
@@ -72,8 +80,8 @@ export function toFormulation(state: EditorState): Formulation {
 const textOf = (value: number | undefined) => (value === undefined || Number.isNaN(value) ? '' : String(value));
 
 function toRow(component: Component): Row {
-  const { amount, ...rest } = component;
-  return { ...rest, amountText: textOf(amount) };
+  const { amount, polymer, ...rest } = component;
+  return { ...rest, amountText: textOf(amount), ...(polymer ? { polymerEdit: editFromSpec(polymer) } : {}) };
 }
 
 export function fromFormulation(f: Formulation): EditorState {
@@ -91,7 +99,7 @@ export function fromFormulation(f: Formulation): EditorState {
 
 export function newRow(
   area: 'solid' | 'liquid',
-  input: { name: string; canonicalSmiles: string; molfile?: string; compoundId?: string },
+  input: { name: string; canonicalSmiles: string; molfile?: string; compoundId?: string; polymer?: PolymerSpec },
 ): Row {
   const category: SolidCategory | LiquidCategory = area === 'solid' ? 'Small Molecule' : 'Solvent';
   return {
@@ -103,6 +111,8 @@ export function newRow(
     ...(area === 'solid' ? { isResin: false, volatileFlag: false } : {}),
     ...(input.molfile ? { molfile: input.molfile } : {}),
     ...(input.compoundId ? { compoundId: input.compoundId } : {}),
+    // 含連接點的成分都附 Mn／DP 輸入欄（來自化合物庫或「結構」分頁時帶入已填的值）
+    ...(input.canonicalSmiles.includes('*') ? { polymerEdit: editFromSpec(input.polymer) } : {}),
   };
 }
 
