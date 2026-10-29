@@ -1,0 +1,57 @@
+/* 全域樣式。所有數值使用 theme.css 的變數。寫法參考 CheMScutter 的 src/ui/analysis.css。 */
+:root {
+  font-family: var(--font-sans);
+  color: var(--color-text);
+  background: var(--color-bg);
+  line-height: var(--line-height);
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--color-bg); }
+main { max-width: var(--page-max-width); margin: 0 auto; padding: var(--page-padding); }
+h1 { margin-bottom: 0; color: var(--color-heading); }
+h2 { margin-top: 0; }
+h3 { font-size: var(--font-size-h3); margin: 0 0 var(--space-gap-sm); }
+small { color: var(--color-text-muted); }
+label { font-weight: var(--weight-label); margin-top: var(--space-gap-sm); }
+input, select, button { font: inherit; border-radius: var(--radius-control); padding: var(--padding-control); }
+input, select {
+  width: 100%;
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-surface);
+  color: inherit;
+}
+input { font-family: var(--font-mono); }
+button {
+  justify-self: start;
+  border: 0;
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  cursor: pointer;
+  padding-inline: var(--padding-button-inline);
+}
+button:disabled { cursor: wait; opacity: 0.65; }
+:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 3px; }
+summary { cursor: pointer; font-weight: var(--weight-label); }
+
+.card {
+  padding: var(--padding-card);
+  margin-top: var(--space-gap-xl);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+}
+
+.error {
+  padding: var(--space-gap-md);
+  color: var(--color-error);
+  background: var(--color-error-bg);
+  border-left: 4px solid var(--color-error-border);
+  overflow-wrap: anywhere;
+}
+
+.number { font-variant-numeric: tabular-nums; white-space: nowrap; font-family: var(--font-mono); }
+
+@media (max-width: 600px) {
+  main { padding: var(--page-padding-mobile); }
+  .card { padding: var(--padding-card-mobile); }
+}

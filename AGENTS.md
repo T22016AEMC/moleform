@@ -54,6 +54,7 @@ MoleForm（化學配方物性與交聯預測引擎）是一個網頁程式：輸
 - 結構與化學處理使用 RDKit。避免加入 GPL 授權的相依套件（例如 Open Babel），以保留未來商業化彈性；新增任何相依套件前先確認授權。
 - 撰寫 SMARTS 時依 DECISIONS D22 的流程。
 - 使用 OpenChemLib JS 時注意：`getBondLength`、`getBondAngle` 依 2D 座標計算，3D 的鍵長、鍵角必須自行由 x、y、z 計算（見 `docs/reports/005-結果.md`）。
+- 推送方式：提交後由 AI 工具自行 `git push`，執行時不設 `GIT_TERMINAL_PROMPT`，並只對該指令清除 `GCM_INTERACTIVE`（PowerShell：`$env:GCM_INTERACTIVE=$null; git push`），使用 Windows 認證管理員中已存的憑證。推送失敗就回報錯誤並停止，不得修改 git 或認證設定，也不得要求使用者提供密碼或權杖。
 
 ## 技術堆疊
 

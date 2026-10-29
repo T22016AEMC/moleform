@@ -1,0 +1,71 @@
+/*
+ * 介面變數。數值取自 CheMScutter 的 src/ui/analysis.css 與 src/ui/results/results.css（原樣）。
+ * 新增畫面一律使用這些變數；需要新顏色或尺寸時先加進本檔與 docs/DESIGN.md。
+ * 注意：CSS 變數不能用在 @media 條件中，響應式斷點（600px）請見 docs/DESIGN.md。
+ */
+:root {
+  /* 字型 */
+  --font-sans: system-ui, sans-serif;
+  --font-mono: ui-monospace, monospace;
+  --line-height: 1.6;
+  --font-size-small: 0.85rem;
+  --font-size-h3: 1rem;
+  --weight-label: 650;
+  --weight-strong: 700;
+
+  /* 文字與背景 */
+  --color-text: #20343c;
+  --color-text-muted: #52636a;
+  --color-bg: #f3f6f7;
+  --color-surface: #ffffff;
+  --color-on-accent: #ffffff;
+
+  /* 主色 */
+  --color-heading: #15566a;
+  --color-accent: #155d70;
+  --color-tint: #edf5f6;
+  --color-tint-subtle: #f4f8fa;
+  --color-focus: #d57516;
+
+  /* 邊框 */
+  --color-border: #d6e0e4;
+  --color-border-strong: #71868f;
+  --color-border-tint: #c4d7dc;
+  --color-border-row: #dce5e8;
+
+  /* 警示與錯誤 */
+  --color-warn-bg: #fff3d9;
+  --color-warn-border: #a66d13;
+  --color-warn-soft-bg: #fff8eb;
+  --color-warn-soft-border: #b26b16;
+  --color-error: #9d2525;
+  --color-error-bg: #fff0ee;
+  --color-error-border: #bb3939;
+
+  /* 圓角 */
+  --radius-card: 12px;
+  --radius-panel: 8px;
+  --radius-control: 6px;
+
+  /* 間距與內距 */
+  --space-gap-sm: 8px;
+  --space-gap: 10px;
+  --space-gap-md: 12px;
+  --space-gap-lg: 16px;
+  --space-gap-xl: 24px;
+  --padding-card: 24px;
+  --padding-card-mobile: 16px;
+  --padding-panel: 16px;
+  --padding-control: 10px 12px;
+  --padding-button-inline: 24px;
+  --padding-cell: 12px;
+  --padding-cell-mobile: 10px 8px;
+
+  /* 頁面 */
+  --page-max-width: 1080px;
+  --page-padding: 32px 24px 64px;
+  --page-padding-mobile: 20px 12px 40px;
+
+  /* 頁首（MoleForm 新增，非 CheMScutter 原值） */
+  --header-logo-height: 60px;
+}

@@ -1,0 +1,43 @@
+/* 頁首、頁尾與結果顯示元件的樣式。只使用 theme.css 的變數。 */
+.site-header { display: flex; flex-wrap: wrap; gap: var(--space-gap-lg); align-items: center; }
+.site-header img { height: var(--header-logo-height); width: auto; }
+.site-header p { margin: 0; color: var(--color-text-muted); font-size: var(--font-size-small); }
+
+.site-footer { margin-top: var(--space-gap-xl); color: var(--color-text-muted); font-size: var(--font-size-small); }
+.site-footer .error { margin: 0; }
+
+.unified-note {
+  margin: var(--space-gap-lg) 0 0;
+  padding: var(--space-gap-md);
+  background: var(--color-tint);
+  border-left: 4px solid var(--color-accent);
+  border-radius: var(--radius-control);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-small);
+}
+
+.result-value {
+  padding: var(--padding-panel);
+  margin: var(--space-gap) 0;
+  background: var(--color-tint);
+  border: 1px solid var(--color-border-tint);
+  border-radius: var(--radius-panel);
+}
+.result-value .result-head { display: flex; flex-wrap: wrap; gap: var(--space-gap-md); align-items: baseline; }
+.result-value .result-number { font-family: var(--font-mono); font-size: 1.25rem; font-variant-numeric: tabular-nums; }
+.result-value .result-unit { color: var(--color-text-muted); }
+.result-value .result-model { margin: 4px 0; color: var(--color-text-muted); font-size: var(--font-size-small); }
+.result-value .result-na { color: var(--color-text-muted); font-weight: var(--weight-strong); }
+
+.confidence-tag {
+  display: inline-block;
+  padding: 2px var(--space-gap);
+  border-radius: var(--radius-control);
+  border: 1px solid var(--color-border-strong);
+  font-size: var(--font-size-small);
+}
+.confidence-direct { background: var(--color-tint); color: var(--color-accent); border-color: var(--color-accent); }
+.confidence-estimate { background: var(--color-warn-soft-bg); color: var(--color-warn-border); border-color: var(--color-warn-soft-border); }
+.confidence-trend { background: var(--color-surface); color: var(--color-text-muted); border-style: dashed; }
+
+.dev-preview { border: 2px dashed var(--color-warn-soft-border); background: var(--color-warn-soft-bg); }
