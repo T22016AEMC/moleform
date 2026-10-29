@@ -22,3 +22,6 @@ assets/style-reference.png
 
 # MMFF94 驗證資料集原始檔（重新散布授權未確認，不提交）
 experiments/mmff-validation/data/
+
+# Reference papers (copyright; do not commit)
+docs/references/

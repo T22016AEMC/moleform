@@ -2,6 +2,7 @@
 // 只依結構與反應規則表做計數判定，不判斷反應會不會實際發生（D17）。可信度「直接計算」。
 import type { FunctionalGroupRow, ReactionRuleRow } from '../data/types';
 import { resolvePolymer } from '../polymer/convert';
+import { averageMolecularWeight } from '../formulation/molecularWeight';
 import { analyzeRepeatUnit } from '../polymer/repeatUnit';
 import type { RDKitModule } from '../rdkit/types';
 import { findGroupSites, parseStructure } from './groups';
@@ -29,7 +30,7 @@ export function analyzeComponent(RDKit: RDKitModule, c: CrosslinkComponent, grou
   const isPolymer = c.canonicalSmiles.includes('*');
   // 小分子優先用 Molfile：原子索引與「結構」分頁的 3D 畫面一致；聚合物用 SMILES（與重複單元分析一致）
   const source = !isPolymer && c.molfile && c.molfile.trim() !== '' ? c.molfile : c.canonicalSmiles;
-  const base: ComponentAnalysis = { id: c.id, name: c.name, isPolymer, source, dp: null, groups: [], problem: null };
+  const base: ComponentAnalysis = { id: c.id, name: c.name, isPolymer, source, dp: null, molarMass: null, groups: [], problem: null };
 
   const mol = parseStructure(RDKit, source);
   if (!mol) return { ...base, problem: '無法解析這個成分的結構' };
@@ -39,6 +40,7 @@ export function analyzeComponent(RDKit: RDKitModule, c: CrosslinkComponent, grou
     mol.delete();
   }
 
+  if (!isPolymer) base.molarMass = averageMolecularWeight(RDKit, c.canonicalSmiles);
   if (isPolymer) {
     const unit = analyzeRepeatUnit(RDKit, c.canonicalSmiles);
     if (!unit.ok) return { ...base, problem: unit.problem.message };
@@ -46,6 +48,7 @@ export function analyzeComponent(RDKit: RDKitModule, c: CrosslinkComponent, grou
     const resolved = resolvePolymer(c.polymer, unit.mUnit);
     if (!resolved.ok) return { ...base, problem: resolved.error };
     base.dp = resolved.dp;
+    base.molarMass = resolved.mn;
   }
   return base;
 }
@@ -121,6 +124,8 @@ export function analyzeCrosslink(RDKit: RDKitModule, components: readonly Crossl
         pairs.push({
           ruleId: rule.id,
           reactionLabel: `${nameB === null ? nameA : `${nameA}–${nameB}`} ${rule.reaction_type}`,
+          groupAName: nameA,
+          groupBName: nameB ?? '',
           a: endA,
           b: endB,
           self: i === j,

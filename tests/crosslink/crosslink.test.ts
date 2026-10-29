@@ -128,10 +128,10 @@ describe('測試體系：配方 4A、4B', () => {
     for (const atoms of Object.values(result.markedAtoms)) expect(atoms).toEqual([...atoms].sort((a, b) => a - b));
   });
 
-  it('審核狀態：用到 pending 的規則與官能基會標出', () => {
+  it('審核狀態：三列皆已通過（approved），不再標示「尚未審核」', () => {
     const result = analyzeCrosslink(RDKit, [pc, ec, lc], T);
-    expect(result.pendingReview.rules).toEqual(['epoxy+phenol']);
-    expect(result.pendingReview.groups.sort()).toEqual(['ether.epoxide', 'hydroxyl.phenolic']);
+    expect(result.pendingReview.rules).toEqual([]);
+    expect(result.pendingReview.groups).toEqual([]);
   });
 
   it('聚合物缺 Mn 與 DP：無法判定並警告', () => {

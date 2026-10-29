@@ -13,6 +13,7 @@ import type { Formulation } from '../../core/formulation/types';
 import { confidenceLabel } from '../../core/result';
 import { analyzeCrosslinkInWorker } from '../../worker/client';
 import { UnifiedNote } from '../components/UnifiedNote';
+import { Layer1Section } from './Layer1Cards';
 import './crosslink.css';
 
 const RECALC_DELAY_MS = 300;
@@ -79,7 +80,7 @@ export function CrosslinkPage({ formulation }: { formulation: Formulation | null
       <section className="card" aria-labelledby="crosslink-title">
         <h2 id="crosslink-title">交聯（第 0 層）</h2>
         <p>
-          依「配方」分頁目前的成分，找出會反應的配對，並依每分子的平均官能度判定是形成網路、鏈延長，或只有封端與接枝。
+          依「配方」分頁目前的成分，找出會反應的配對，並依每分子的平均官能度判定結構條件：具形成網路、鏈延長，或封端／接枝的結構條件。
           這是依結構與反應規則表的計數判定，不判斷反應會不會實際發生。
         </p>
         {state.kind === 'empty' && <p className="structure-placeholder">配方裡還沒有成分。請先到「配方」分頁加入成分。</p>}
@@ -91,6 +92,7 @@ export function CrosslinkPage({ formulation }: { formulation: Formulation | null
         )}
         {state.kind === 'done' && <Result result={state.result} svgs={state.svgs} />}
       </section>
+      {state.kind === 'done' && <Layer1Section result={state.result} formulation={formulation} />}
     </div>
   );
 }

@@ -34,6 +34,8 @@ export interface ComponentAnalysis {
   source: string;
   /** 聚合度（僅聚合物，且 Mn 或 DP 有效時） */
   dp: number | null;
+  /** 每分子質量（g/mol）：小分子為平均分子量，聚合物為 Mn；算不出為 null。只供第 1 層計算，不顯示（D09） */
+  molarMass: number | null;
   /** 有位點的官能基（聚合物已排除涉及連接點 * 的匹配） */
   groups: GroupSites[];
   /** 分析上的問題（無法解析、聚合物缺 Mn／DP 等）；沒有問題為 null */
@@ -60,6 +62,9 @@ export interface PairResult {
   ruleId: string;
   /** 例如「環氧基–酚羥基 開環加成」 */
   reactionLabel: string;
+  /** 規則 group_a／group_b 的中文名稱（group_b 為空時 groupBName 為空字串） */
+  groupAName: string;
+  groupBName: string;
   a: PairEnd;
   /** 規則的 group_b 為空（自反應）時為 null */
   b: PairEnd | null;
@@ -88,17 +93,17 @@ export interface CrosslinkResult {
 }
 
 export const VERDICT_LABEL: Record<Verdict, string> = {
-  network: '可形成網路',
-  chain: '鏈延長（線性）',
-  capping: '封端或接枝',
+  network: '配方具形成網路的結構條件；是否凝膠與交聯程度見第 1 層',
+  chain: '具鏈延長的結構條件',
+  capping: '具封端／接枝的結構條件',
   undetermined: '無法判定（聚合物缺少 Mn 或 DP）',
   none: '無反應',
 };
 
 export const PAIR_KIND_LABEL: Record<PairKind, string> = {
-  network: '網路',
-  chain: '鏈延長',
-  capping: '封端',
-  graft: '接枝',
+  network: '具形成網路的結構條件',
+  chain: '具鏈延長的結構條件',
+  capping: '具封端的結構條件',
+  graft: '具接枝的結構條件',
   undetermined: '無法判定',
 };
