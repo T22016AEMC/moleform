@@ -1,0 +1,6 @@
+method,group_id,group_name,property,value,unit,source_type,source,source_detail,source_original,review_status,notes
+m,G1,基團,Vw,1.5,cm3/mol,self,tests/fixtures,示範,,pending,測試用示範資料，非化學資料
+m,G1,基團,Vw,2.5,cm3/mol,self,tests/fixtures,示範,,pending,測試用示範資料，非化學資料
+m,G2,基團,Vw,abc,cm3/mol,self,tests/fixtures,示範,,pending,測試用示範資料，非化學資料
+m,G1,別的名稱,Yg,2.5,K,self,tests/fixtures,示範,,pending,測試用示範資料，非化學資料
+m,G3,缺出處,Vw,1.0,cm3/mol,self,,,,pending,測試用示範資料，非化學資料

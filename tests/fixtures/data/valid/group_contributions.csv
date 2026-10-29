@@ -1,0 +1,3 @@
+method,group_id,group_name,property,value,unit,source_type,source,source_detail,source_original,review_status,notes
+demo_method,G1,示範基團,Vw,1.5,cm3/mol,self,tests/fixtures,示範,,pending,測試用示範資料，非化學資料
+demo_method,G1,示範基團,Yg,2.5,K,self,tests/fixtures,示範,,pending,測試用示範資料，非化學資料

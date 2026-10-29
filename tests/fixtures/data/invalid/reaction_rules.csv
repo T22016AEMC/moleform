@@ -1,0 +1,10 @@
+id,reaction_type,group_a,group_b,reaction_smarts,catalyst_required,temp_min_c,temp_max_c,functionality_a,functionality_b,byproduct,bond_volume_change,bond_volume_change_unit,should_react,should_not_react,source_type,source,source_detail,source_original,review_status,notes
+demo.ok,縮合,demo.alcohol,,[C:1][OH:2].[C:3](=[O:5])[OH:4]>>[C:1][O:2][C:3]=[O:5].[OH2:4],none,100,200,1,,,,,CCO+CC(=O)O,CCC+CC,self,tests/fixtures,示範,,pending,測試用示範資料，非化學資料
+demo.missinggroup,縮合,demo.nope,,[C:1][OH:2].[C:3](=[O:5])[OH:4]>>[C:1][O:2][C:3]=[O:5].[OH2:4],none,100,200,1,,,,,CCO+CC(=O)O,CCC+CC,self,tests/fixtures,示範,,pending,測試用示範資料，非化學資料
+demo.temp,縮合,demo.alcohol,,[C:1][OH:2].[C:3](=[O:5])[OH:4]>>[C:1][O:2][C:3]=[O:5].[OH2:4],none,200,100,1,,,,,CCO+CC(=O)O,CCC+CC,self,tests/fixtures,示範,,pending,測試用示範資料，非化學資料
+demo.badrxn,縮合,demo.alcohol,,[C:1]>>>[,none,100,200,1,,,,,CCO+CC(=O)O,CCC+CC,self,tests/fixtures,示範,,pending,測試用示範資料，非化學資料
+demo.noreact,縮合,demo.alcohol,,[C:1][OH:2].[C:3](=[O:5])[OH:4]>>[C:1][O:2][C:3]=[O:5].[OH2:4],none,100,200,1,,,,,CCC+CCC,CCC+CC,self,tests/fixtures,示範,,pending,測試用示範資料，非化學資料
+demo.reacts,縮合,demo.alcohol,,[C:1][OH:2].[C:3](=[O:5])[OH:4]>>[C:1][O:2][C:3]=[O:5].[OH2:4],none,100,200,1,,,,,CCO+CC(=O)O,CCO+CC(=O)O,self,tests/fixtures,示範,,pending,測試用示範資料，非化學資料
+demo.ok,縮合,demo.alcohol,,[C:1][OH:2].[C:3](=[O:5])[OH:4]>>[C:1][O:2][C:3]=[O:5].[OH2:4],none,100,200,1,,,,,CCO+CC(=O)O,CCC+CC,self,tests/fixtures,示範,,pending,測試用示範資料，非化學資料
+demo.mixed,縮合,demo.alcohol,,[C:1][OH:2].[C:3](=[O:5])[OH:4]>>[C:1][O:2][C:3]=[O:5].[OH2:4],none,100,,1,2,,5,,CCO+CC(=O)O,CCC+CC,self,tests/fixtures,示範,,pending,測試用示範資料，非化學資料
+demo.badpair,縮合,demo.alcohol,,[C:1][OH:2].[C:3](=[O:5])[OH:4]>>[C:1][O:2][C:3]=[O:5].[OH2:4],none,100,200,1,,,,,CCO,CCC+CC,self,tests/fixtures,示範,,pending,測試用示範資料，非化學資料

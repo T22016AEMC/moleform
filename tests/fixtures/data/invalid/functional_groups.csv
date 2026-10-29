@@ -1,0 +1,13 @@
+id,name_zh,smarts,reactive_atom_maps,should_match,should_not_match,source_type,source,source_detail,source_original,review_status,notes
+demo.alcohol,示範,[CX4][OX2H],,CCO,CCC,self,tests/fixtures,示範,,pending,測試用示範資料，非化學資料
+demo.nosource,缺出處,[CX4][OX2H],,CCO,CCC,self,,,,pending,測試用示範資料，非化學資料
+demo.pkg,package缺原始文獻,[CX4][OX2H],,CCO,CCC,package,pkg,1.0.0,,pending,
+demo.badsmarts,SMARTS錯,[C(,,CCO,CCC,self,tests/fixtures,示範,,pending,測試用示範資料，非化學資料
+demo.nomatch,應命中沒命中,[CX4][OX2H],,CCC,CCC,self,tests/fixtures,示範,,pending,測試用示範資料，非化學資料
+demo.alcohol,重複id,[CX4][OX2H],,CCO,CCC,self,tests/fixtures,示範,,pending,測試用示範資料，非化學資料
+demo.hit,不應命中卻命中,[CX4][OX2H],,CCO,CCO,self,tests/fixtures,示範,,pending,測試用示範資料，非化學資料
+demo.selfnonotes,self缺備註,[CX4][OX2H],,CCO,CCC,self,tests/fixtures,示範,,pending,
+demo.badenum,列舉錯,[CX4][OX2H],,CCO,CCC,blog,x,y,,maybe,
+demo.nolist,清單空,[CX4][OX2H],,,CCC,self,tests/fixtures,示範,,pending,測試用示範資料，非化學資料
+demo.badmap,映射非整數,[CX4][OX2H],a,CCO,CCC,self,tests/fixtures,示範,,pending,測試用示範資料，非化學資料
+demo.badsmiles,測試分子錯,[CX4][OX2H],,not_a_smiles((,CCC,self,tests/fixtures,示範,,pending,測試用示範資料，非化學資料
