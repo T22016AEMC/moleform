@@ -1,4 +1,5 @@
 // 主執行緒與化學 Worker 之間的訊息格式。
+import type { CrosslinkComponent, CrosslinkResult } from '../core/crosslink/types';
 import type { RepeatUnitAnalysis } from '../core/polymer/types';
 import type { StructureValidation } from '../core/structure/validate';
 
@@ -28,9 +29,29 @@ export interface RepeatUnitRequest {
   smiles: string;
 }
 
-export type ChemRequest = StatusRequest | ValidateRequest | WeightRequest | RepeatUnitRequest;
+/** 交聯第 0 層：官能基辨識、配對、判定，並畫出參與反應成分的反應原子標記圖（任務 016） */
+export interface CrosslinkRequest {
+  type: 'crosslink';
+  id: number;
+  components: CrosslinkComponent[];
+  /** 標記用的強調色（#rrggbb，來自 theme.css） */
+  color: string;
+}
+
+/** 結構（Molfile 或 SMILES）上已登錄反應官能基的反應原子，供 3D 標記（任務 016） */
+export interface ReactiveAtomsRequest {
+  type: 'reactiveAtoms';
+  id: number;
+  source: string;
+}
+
+export type ChemRequest = StatusRequest | ValidateRequest | WeightRequest | RepeatUnitRequest | CrosslinkRequest | ReactiveAtomsRequest;
 
 export type ChemResponse =
+  | { type: 'crosslink'; id: number; ok: true; result: CrosslinkResult; svgs: Record<string, string> }
+  | { type: 'crosslink'; id: number; ok: false; error: string }
+  | { type: 'reactiveAtoms'; id: number; ok: true; atoms: number[] }
+  | { type: 'reactiveAtoms'; id: number; ok: false; error: string }
   | { type: 'repeatUnit'; id: number; ok: true; analysis: RepeatUnitAnalysis }
   | { type: 'repeatUnit'; id: number; ok: false; error: string }
   | { type: 'weight'; id: number; ok: true; weight: number | null }
@@ -46,5 +67,7 @@ export function isChemRequest(value: unknown): value is ChemRequest {
   if (typeof request.id !== 'number' || !Number.isSafeInteger(request.id)) return false;
   if (request.type === 'status') return true;
   if (request.type === 'weight' || request.type === 'repeatUnit') return typeof request.smiles === 'string';
+  if (request.type === 'crosslink') return Array.isArray(request.components) && typeof request.color === 'string';
+  if (request.type === 'reactiveAtoms') return typeof request.source === 'string';
   return request.type === 'validate' && typeof request.input === 'string';
 }

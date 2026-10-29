@@ -1,3 +1,4 @@
+import type { CrosslinkComponent, CrosslinkResult } from '../core/crosslink/types';
 import type { RepeatUnitAnalysis } from '../core/polymer/types';
 import type { StructureValidation } from '../core/structure/validate';
 import type { ChemRequest, ChemResponse } from './protocol';
@@ -76,4 +77,19 @@ export async function validateInput(input: string): Promise<ValidateOutcome> {
   const response = await request((id) => ({ type: 'validate', id, input }));
   if (response.type === 'validate') return response.ok ? { ok: true, result: response.result } : { ok: false, error: response.error };
   return { ok: false, error: response.type === 'status' && !response.ready ? response.error : '收到非預期的回應' };
+}
+
+export type CrosslinkOutcome = { ok: true; result: CrosslinkResult; svgs: Record<string, string> } | { ok: false; error: string };
+
+/** 請 Worker 做交聯第 0 層分析並畫出反應原子標記圖（任務 016） */
+export async function analyzeCrosslinkInWorker(components: CrosslinkComponent[], color: string): Promise<CrosslinkOutcome> {
+  const response = await request((id) => ({ type: 'crosslink', id, components, color }));
+  if (response.type === 'crosslink') return response.ok ? { ok: true, result: response.result, svgs: response.svgs } : { ok: false, error: response.error };
+  return { ok: false, error: response.type === 'status' && !response.ready ? response.error : '收到非預期的回應' };
+}
+
+/** 結構上已登錄反應官能基的反應原子（0 起算）；Worker 失敗時回傳 null */
+export async function reactiveAtomsInWorker(source: string): Promise<number[] | null> {
+  const response = await request((id) => ({ type: 'reactiveAtoms', id, source }));
+  return response.type === 'reactiveAtoms' && response.ok ? response.atoms : null;
 }

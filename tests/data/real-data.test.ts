@@ -3,17 +3,17 @@ import { getRDKit } from '../../src/core/rdkit/loader';
 import { bundledTexts, checkAllTables, loadTables } from '../../src/core/data/load';
 import { describeIssues } from './helpers';
 
-// 對 src/data 的實際檔案做格式檢查。目前只有標題列（任務 009 不填化學資料）。
+// 對 src/data 的實際檔案做格式檢查。
 describe('src/data 實際資料表', () => {
   it('標題列正確，格式、出處、唯一性與 SMARTS 檢查全部通過', async () => {
     const RDKit = await getRDKit();
     expect(describeIssues(checkAllTables(RDKit, bundledTexts))).toEqual([]);
   });
 
-  it('目前四個表都只有標題列（沒有資料列）', () => {
+  it('資料列數：官能基 2 列、反應規則 1 列（任務 016），其餘只有標題列', () => {
     const { tables } = loadTables(bundledTexts);
-    expect(tables.functionalGroups.rows).toHaveLength(0);
-    expect(tables.reactionRules.rows).toHaveLength(0);
+    expect(tables.functionalGroups.rows.map((r) => r.id)).toEqual(['hydroxyl.phenolic', 'ether.epoxide']);
+    expect(tables.reactionRules.rows.map((r) => r.id)).toEqual(['epoxy+phenol']);
     expect(tables.groupContributions.rows).toHaveLength(0);
     expect(tables.solvents.rows).toHaveLength(0);
   });

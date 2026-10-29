@@ -1,6 +1,6 @@
 # 資料表說明（DATA）
 
-MoleForm 的化學資料放在 `src/data/` 的四個 CSV。**目前只有標題列，沒有任何化學資料**（任務 009）；資料由使用者提供的書籍、論文或成熟套件的內建值轉錄（AGENTS.md 鐵則 3、DECISIONS D18），不得憑記憶填寫。
+MoleForm 的化學資料放在 `src/data/` 的四個 CSV。**目前只有任務 016 加入的 2 個官能基（`hydroxyl.phenolic`、`ether.epoxide`）與 1 條反應規則（`epoxy+phenol`），皆為 `review_status = pending`；其餘表只有標題列**（任務 009、016）；資料由使用者提供的書籍、論文或成熟套件的內建值轉錄（AGENTS.md 鐵則 3、DECISIONS D18），不得憑記憶填寫。
 
 | 檔案 | 用途 | 每一列是 |
 |---|---|---|

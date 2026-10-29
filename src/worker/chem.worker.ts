@@ -1,5 +1,8 @@
 import wasmUrl from '@rdkit/rdkit/RDKit_minimal.wasm?url';
 import { getRDKit } from '../core/rdkit/loader';
+import { analyzeCrosslink } from '../core/crosslink/analyze';
+import { drawMarkedStructure, reactiveAtomsOf } from '../core/crosslink/draw';
+import { bundledTexts, loadTables } from '../core/data/load';
 import { averageMolecularWeight } from '../core/formulation/molecularWeight';
 import { analyzeRepeatUnit } from '../core/polymer/repeatUnit';
 import { validateStructure } from '../core/structure/validate';
@@ -11,6 +14,11 @@ const loadRDKit = () =>
   getRDKit({ locateFile: (file, prefix) => (file.endsWith('.wasm') ? wasmUrl : prefix + file) });
 
 const message = (e: unknown) => (e instanceof Error ? e.message : String(e));
+
+const tables = () => {
+  const { tables: loaded } = loadTables(bundledTexts);
+  return { functionalGroups: loaded.functionalGroups.rows, reactionRules: loaded.reactionRules.rows };
+};
 
 async function handle(request: ChemRequest): Promise<ChemResponse> {
   if (request.type === 'status') {
@@ -35,6 +43,31 @@ async function handle(request: ChemRequest): Promise<ChemResponse> {
       return { type: 'repeatUnit', id: request.id, ok: true, analysis: analyzeRepeatUnit(rdkit, request.smiles) };
     } catch (e) {
       return { type: 'repeatUnit', id: request.id, ok: false, error: message(e) };
+    }
+  }
+  if (request.type === 'crosslink') {
+    try {
+      const rdkit = await loadRDKit();
+      const result = analyzeCrosslink(rdkit, request.components, tables());
+      const svgs: Record<string, string> = {};
+      for (const analysis of result.components) {
+        const marked = result.markedAtoms[analysis.id];
+        if (!marked) continue; // 不參與反應的成分不畫
+        const svg = drawMarkedStructure(rdkit, analysis.source, marked, { color: request.color });
+        if (svg) svgs[analysis.id] = svg;
+      }
+      return { type: 'crosslink', id: request.id, ok: true, result, svgs };
+    } catch (e) {
+      return { type: 'crosslink', id: request.id, ok: false, error: message(e) };
+    }
+  }
+  if (request.type === 'reactiveAtoms') {
+    try {
+      const rdkit = await loadRDKit();
+      const t = tables();
+      return { type: 'reactiveAtoms', id: request.id, ok: true, atoms: reactiveAtomsOf(rdkit, request.source, t.functionalGroups, t.reactionRules) };
+    } catch (e) {
+      return { type: 'reactiveAtoms', id: request.id, ok: false, error: message(e) };
     }
   }
   try {

@@ -8,6 +8,7 @@ import {
 } from '../../core/conformer/support';
 import { conformersToSdf } from '../../core/conformer/export';
 import type { ConformerBatch } from '../../core/conformer/types';
+import { reactiveAtomsInWorker } from '../../worker/client';
 import { generateConformers, type GenerateHandle } from '../../worker/conformerClient';
 import { downloadText } from '../download';
 import { ResultValue } from '../components/ResultValue';
@@ -56,6 +57,9 @@ export function Conformer3DCard({ structure }: { structure: StructureForCard | n
   const [phase, setPhase] = useState<Phase>({ kind: 'idle' });
   const [run, setRun] = useState<Run | null>(null);
   const [selected, setSelected] = useState(0);
+  // 標記反應原子（任務 016）：null 表示尚未查詢或查詢失敗
+  const [reactiveAtoms, setReactiveAtoms] = useState<number[] | null>(null);
+  const [markReactive, setMarkReactive] = useState(false);
   const handle = useRef<GenerateHandle | null>(null);
   // 結構身分用 canonical SMILES 判斷：Ketcher 重新排版 2D 座標時 Molfile 會變，但不是不同的分子
   const identity = structure?.valid ? structure.canonicalSmiles : '';
@@ -74,6 +78,19 @@ export function Conformer3DCard({ structure }: { structure: StructureForCard | n
   }, [identity]);
 
   useEffect(() => () => handle.current?.cancel(), []);
+
+  // 結構上已登錄反應官能基的反應原子（與配方無關；用同一份 Molfile，原子編號才會與 3D 畫面一致）
+  useEffect(() => {
+    setReactiveAtoms(null);
+    if (!molblock || !support.supported) return;
+    let cancelled = false;
+    void reactiveAtomsInWorker(molblock).then((atoms) => {
+      if (!cancelled) setReactiveAtoms(atoms);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [molblock, support.supported]);
 
   function start(target: number, more: boolean) {
     const startedFor = identity;
@@ -211,7 +228,19 @@ export function Conformer3DCard({ structure }: { structure: StructureForCard | n
           {!batch.exhausted && batch.conformers.length >= MAX_CONFORMERS && <small>已達上限 {MAX_CONFORMERS} 個構象。</small>}
 
           <Suspense fallback={<p role="status">正在載入 3D 顯示…</p>}>
-            <Viewer3D molfile={current.molfile} optimized={batch.optimized} />
+            <div className="viewer3d-mark">
+              <label className="inline-check">
+                <input
+                  type="checkbox"
+                  checked={markReactive}
+                  disabled={!reactiveAtoms || reactiveAtoms.length === 0}
+                  onChange={(event) => setMarkReactive(event.target.checked)}
+                />
+                標記反應原子
+              </label>
+              {reactiveAtoms && reactiveAtoms.length === 0 && <small>這個結構沒有已登錄的反應官能基。</small>}
+            </div>
+            <Viewer3D molfile={current.molfile} optimized={batch.optimized} markedAtoms={markReactive && reactiveAtoms ? reactiveAtoms : []} />
           </Suspense>
 
           {energyResult && (

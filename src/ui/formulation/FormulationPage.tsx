@@ -416,9 +416,11 @@ interface Props {
   polymer: PolymerContext;
   /** 測試或預覽時可換成其他儲存實作 */
   storage?: FormulationStorage;
+  /** 目前編輯中的配方改變時通知（「交聯」分頁讀取它，任務 016） */
+  onFormulationChange?: (formulation: Formulation) => void;
 }
 
-export function FormulationPage({ structure, polymer, storage }: Props) {
+export function FormulationPage({ structure, polymer, storage, onFormulationChange }: Props) {
   const [state, setStateRaw] = useState<EditorState>(emptyState);
   const [currentId, setCurrentId] = useState<string | null>(null);
   const [debounced, setDebounced] = useState<Formulation>(() => toFormulation(emptyState()));
@@ -427,6 +429,7 @@ export function FormulationPage({ structure, polymer, storage }: Props) {
 
   const setState = useCallback((update: (s: EditorState) => EditorState) => setStateRaw(update), []);
   const formulation = useMemo(() => toFormulation(state), [state]);
+  useEffect(() => onFormulationChange?.(formulation), [formulation, onFormulationChange]);
 
   // 輸入改變後延遲約 0.3 秒再重算
   useEffect(() => {

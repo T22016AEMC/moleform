@@ -32,7 +32,25 @@ const styleSpec = (style: ViewStyle) =>
 
 const fixed = (value: number, digits: number) => (Number.isFinite(value) ? value.toFixed(digits) : '無法計算');
 
-export function Viewer3D({ molfile, optimized = true }: { molfile: string; optimized?: boolean }) {
+/** theme.css 的強調色（反應原子標記用） */
+function accentColor(): string {
+  try {
+    return getComputedStyle(document.documentElement).getPropertyValue('--color-accent').trim() || '#155d70';
+  } catch {
+    return '#155d70';
+  }
+}
+
+export function Viewer3D({
+  molfile,
+  optimized = true,
+  markedAtoms = [],
+}: {
+  molfile: string;
+  optimized?: boolean;
+  /** 要標記的反應原子（0 起算的原子索引，與原子編號減 1 相同，任務 016）；空陣列代表不標記 */
+  markedAtoms?: readonly number[];
+}) {
   const container = useRef<HTMLDivElement>(null);
   const viewer = useRef<$3Dmol.GLViewer | null>(null);
   const [style, setStyle] = useState<ViewStyle>('ballstick');
@@ -43,6 +61,7 @@ export function Viewer3D({ molfile, optimized = true }: { molfile: string; optim
   const pickedRef = useRef<PickedAtom[]>([]);
   pickedRef.current = picked;
   const lastMolfile = useRef<string | null>(null);
+  const markKey = markedAtoms.join(',');
 
   // 建立檢視器（只一次）
   useEffect(() => {
@@ -98,6 +117,23 @@ export function Viewer3D({ molfile, optimized = true }: { molfile: string; optim
         });
       }
     }
+    if (markKey !== '') {
+      const color = accentColor();
+      for (const index of markKey.split(',').map(Number)) {
+        const atom = atoms.find((a) => a.index === index);
+        if (!atom) continue;
+        v.addStyle({ index }, { sphere: { color, radius: 0.55, opacity: 0.6 } });
+        v.addLabel(`${atom.elem ?? ''}${index + 1}`, {
+          position: { x: atom.x ?? 0, y: atom.y ?? 0, z: atom.z ?? 0 },
+          fontSize: 12,
+          fontColor: 'white',
+          backgroundColor: color,
+          backgroundOpacity: 0.9,
+          alignment: 'topCenter',
+          inFront: true,
+        });
+      }
+    }
     picked.forEach((p, order) => {
       v.addStyle({ index: p.index }, { sphere: { color: SELECT_COLOR, radius: 0.5, opacity: 0.55 } });
       v.addLabel(`選取 ${order + 1}`, {
@@ -127,7 +163,7 @@ export function Viewer3D({ molfile, optimized = true }: { molfile: string; optim
     });
     if (newModel) v.zoomTo();
     v.render();
-  }, [molfile, style, showNumbers, showHydrogens, picked]);
+  }, [molfile, style, showNumbers, showHydrogens, picked, markKey]);
 
   const measurement = useMemo(() => {
     const [a, b, c, d] = picked;

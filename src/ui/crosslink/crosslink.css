@@ -1,0 +1,17 @@
+/* 交聯分頁。只使用 theme.css 的變數；響應式斷點 600px。 */
+.crosslink-page > .card:first-child { margin-top: var(--space-gap-lg); }
+
+.crosslink-verdict { margin: var(--space-gap-lg) 0; padding: var(--padding-panel); background: var(--color-tint); border: 1px solid var(--color-border-tint); border-radius: var(--radius-panel); }
+.crosslink-verdict h3 { margin-top: 0; }
+.crosslink-verdict p { margin: 4px 0; }
+.crosslink-verdict .result-model { color: var(--color-text-muted); font-size: var(--font-size-small); }
+.crosslink-verdict-text { font-size: 1.25rem; font-weight: var(--weight-strong); color: var(--color-heading); }
+
+.crosslink-table th, .crosslink-table td { text-align: left; }
+.crosslink-warn { color: var(--color-warn-border); }
+
+.crosslink-structures { display: flex; flex-wrap: wrap; gap: var(--space-gap-lg); }
+.crosslink-figure { margin: 0; padding: var(--space-gap); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-panel); max-width: 100%; }
+.crosslink-figure figcaption { margin-top: var(--space-gap-sm); color: var(--color-text-muted); font-size: var(--font-size-small); }
+.crosslink-svg { max-width: 100%; overflow-x: auto; }
+.crosslink-svg svg { max-width: 100%; height: auto; }

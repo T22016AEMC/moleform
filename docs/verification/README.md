@@ -8,6 +8,8 @@
 |---|---|
 | `phase2-輸出.md` | Phase 2：8 個分子（乙醇、環氧丙烷、苯酚、雙酚 A、BADGE、L-丙胺酸、反式 2-丁烯、BF₃）的 canonical SMILES、驗證結果、構象數、是否經力場最佳化、各鍵型的鍵長範圍、環氧環鍵角 |
 | `phase3-輸出.md` | Phase 3：5 個示範配方（BADGE／雙酚 A／三苯基膦／溶劑）的輸入、各成分的平均分子量（僅此處列出，供手算 mol%；網站不顯示，D09）、全部換算結果、錯誤與警告 |
+| `phase4-輸出.md` | Phase 4：本次使用的官能基與反應規則（SMARTS、出處、審核狀態）、測試成分的官能基種類與數量（聚合物另列每分子平均）與反應原子編號、配方 4A／4B 的配對與網路判定（第 0 層；官能基數量只列在此，網站不顯示，D09） |
+| `phase4-使用者檢查.md` | 使用者對 Phase 4 輸出的檢查結果（手寫記錄） |
 | `phase3-使用者檢查.md` | 使用者對 Phase 3 輸出的檢查結果（手寫記錄） |
 | `phase2-使用者檢查.md` | 使用者對上述輸出的檢查結果（手寫記錄，不會被腳本覆蓋） |
 
@@ -19,7 +21,7 @@
 npm run verify:phase2
 ```
 
-Phase 3 用 `npm run verify:phase3`（腳本 `scripts/verification/phase3.ts`，Node 直接執行 TypeScript）。
+Phase 3 用 `npm run verify:phase3`（腳本 `scripts/verification/phase3.ts`，Node 直接執行 TypeScript）；Phase 4 用 `npm run verify:phase4`（腳本 `scripts/verification/phase4.ts`，第 1 層加入後會寫進同一份輸出）。
 
 Phase 2 的腳本是 `scripts/verification/phase2.mjs`。它用 Node 載入與網站相同的程式碼（`src/core/`），3D 計算的種子固定為 42、要求 5 個構象，所以重複執行結果相同。程式、OpenChemLib 或 RDKit 版本改變後請重新產生並一併提交。
 

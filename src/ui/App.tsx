@@ -7,6 +7,8 @@ import type { StructureValidation } from '../core/structure/validate';
 import { StructureInput, type LoadRequest } from './structure/StructureInput';
 import { CompoundLibrary } from './library/CompoundLibrary';
 import { FormulationPage } from './formulation/FormulationPage';
+import { CrosslinkPage } from './crosslink/CrosslinkPage';
+import type { Formulation } from '../core/formulation/types';
 import { Conformer3DCard } from './structure/Conformer3DCard';
 import type { PolymerSpec } from '../core/polymer/types';
 import { editFromSpec } from './polymer/model';
@@ -19,11 +21,13 @@ const DevPreview = import.meta.env.DEV ? lazy(() => import('./components/DevPrev
 const TABS = [
   ['structure', '結構'],
   ['formulation', '配方'],
+  ['crosslink', '交聯'],
 ] as const;
 
 export function App() {
   const [tab, setTab] = useState<(typeof TABS)[number][0]>('structure');
   const [structure, setStructure] = useState<StructureValidation | null>(null);
+  const [formulation, setFormulation] = useState<Formulation | null>(null);
   const [loadRequest, setLoadRequest] = useState<LoadRequest | null>(null);
   const { context: polymer, setEdit: setPolymerEdit } = usePolymerInput(structure);
   const loadIntoStructure = useCallback(
@@ -44,7 +48,7 @@ export function App() {
           </button>
         ))}
       </div>
-      {/* 兩個分頁都保持掛載（只是隱藏），切換時不會清除各頁的內容，也不會重新載入 Ketcher */}
+      {/* 各分頁都保持掛載（只是隱藏），切換時不會清除各頁的內容，也不會重新載入 Ketcher */}
       <div id="panel-structure" hidden={tab !== 'structure'}>
         <StructureInput onStructureChange={setStructure} loadRequest={loadRequest} />
         <PolymerSettings context={polymer} onChange={setPolymerEdit} />
@@ -52,7 +56,10 @@ export function App() {
         <Conformer3DCard structure={structure} />
       </div>
       <div id="panel-formulation" hidden={tab !== 'formulation'}>
-        <FormulationPage structure={structure} polymer={polymer} />
+        <FormulationPage structure={structure} polymer={polymer} onFormulationChange={setFormulation} />
+      </div>
+      <div id="panel-crosslink" hidden={tab !== 'crosslink'}>
+        <CrosslinkPage formulation={formulation} />
       </div>
       {DevPreview && (
         <Suspense fallback={null}>
