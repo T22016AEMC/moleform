@@ -2,12 +2,19 @@
 // 分子量：Mw、Mn、DP 擇一，PDI 選填（D47）。共聚物（任務 020）：第一種單元就是成分本身的結構，
 // 其他單元放在 extraUnits；沒有 extraUnits 時與均聚物完全相同（畫面與資料都沒有多餘欄位）。
 import { MESSAGE_PDI_DEFAULT, MESSAGE_PDI_LEGACY, type PolymerBasis } from '../../core/polymer/convert';
-import type { FractionBasis, PolymerSpec, PolymerUnit } from '../../core/polymer/types';
+import { END_GROUP_PRESETS } from '../../core/data/endGroups';
+import type { EndGroup, FractionBasis, PolymerSpec, PolymerUnit } from '../../core/polymer/types';
 
 /** 共聚物中第二種以後的單元：SMILES（使用者貼上或由 Ketcher 帶入）與比例的原始文字 */
 export interface UnitEdit {
   smiles: string;
   fractionText: string;
+}
+
+/** 一端端基的編輯狀態（任務 022）：choice 為 ''（不填）、'custom'（自訂 SMILES）或端基清單的 id（EG01…） */
+export interface EndEdit {
+  choice: string;
+  custom: string;
 }
 
 export interface PolymerEdit {
@@ -21,6 +28,26 @@ export interface PolymerEdit {
   firstFractionText?: string;
   /** 第二種以後的單元；省略或空陣列＝均聚物 */
   extraUnits?: UnitEdit[];
+  /** 端基 1、端基 2；省略＝不填（未計入端基） */
+  end1?: EndEdit;
+  end2?: EndEdit;
+}
+
+/** 端基的編輯狀態轉成端基；不填、自訂但空白、清單裡找不到 id 都視為沒填 */
+export function endFromEdit(edit: EndEdit | undefined): EndGroup | null {
+  if (!edit || edit.choice === '') return null;
+  if (edit.choice === 'custom') {
+    const smiles = edit.custom.trim();
+    return smiles === '' ? null : { smiles };
+  }
+  const row = END_GROUP_PRESETS.find((p) => p.id === edit.choice);
+  return row ? { smiles: row.smiles, presetId: row.id } : null;
+}
+
+function endToEdit(end: EndGroup | undefined): EndEdit | undefined {
+  if (!end) return undefined;
+  const row = end.presetId ? END_GROUP_PRESETS.find((p) => p.id === end.presetId && p.smiles === end.smiles) : undefined;
+  return row ? { choice: row.id, custom: '' } : { choice: 'custom', custom: end.smiles };
 }
 
 export const emptyPolymerEdit = (): PolymerEdit => ({ basis: 'mw', text: '', pdiText: '' });
@@ -64,12 +91,16 @@ export function specFromEdit(edit: PolymerEdit, firstSmiles?: string): PolymerSp
     spec.units = units;
     spec.fractionBasis = edit.fractionBasis ?? 'mol';
   }
+  const end1 = endFromEdit(edit.end1);
+  const end2 = endFromEdit(edit.end2);
+  if (end1 || end2) spec.endGroups = { ...(end1 ? { end1 } : {}), ...(end2 ? { end2 } : {}) };
   return spec;
 }
 
 /** 分析結果的快取鍵：共聚物的單元或比例改變時要重新分析（均聚物只看 SMILES） */
-export function analysisKey(smiles: string, spec: Pick<PolymerSpec, 'units' | 'fractionBasis'> | null | undefined): string {
-  return spec?.units ? JSON.stringify([smiles, spec.units, spec.fractionBasis ?? 'mol']) : smiles;
+export function analysisKey(smiles: string, spec: Pick<PolymerSpec, 'units' | 'fractionBasis' | 'endGroups'> | null | undefined): string {
+  if (!spec?.units && !spec?.endGroups) return smiles;
+  return JSON.stringify([smiles, spec.units ?? null, spec.fractionBasis ?? 'mol', spec.endGroups ?? null]);
 }
 
 const unitCount = (spec: PolymerSpec) => (spec.units && spec.units.length > 1 ? spec.units.length : 1);
@@ -82,7 +113,7 @@ export function polymerLabel(spec: PolymerSpec): string {
       : spec.mnInput !== undefined
         ? `Mn ${spec.mnInput.toLocaleString('en-US')} g/mol`
         : `DP ${spec.dpInput}`;
-  const kind = unitCount(spec) > 1 ? `共聚物 ${unitCount(spec)} 種單元，` : '';
+  const kind = (unitCount(spec) > 1 ? `共聚物 ${unitCount(spec)} 種單元，` : '') + (spec.endGroups ? '含端基，' : '');
   if (spec.pdiInput !== undefined) return `${kind}${main}，PDI ${spec.pdiInput}`;
   return spec.mwInput !== undefined ? `${kind}${main}，${MESSAGE_PDI_DEFAULT}` : `${kind}${main}（${MESSAGE_PDI_LEGACY}）`;
 }
@@ -100,5 +131,9 @@ export function editFromSpec(spec: PolymerSpec | undefined): PolymerEdit {
     edit.firstFractionText = String(first.fraction);
     edit.extraUnits = rest.map((u) => ({ smiles: u.smiles, fractionText: String(u.fraction) }));
   }
+  const e1 = endToEdit(spec.endGroups?.end1);
+  const e2 = endToEdit(spec.endGroups?.end2);
+  if (e1) edit.end1 = e1;
+  if (e2) edit.end2 = e2;
   return edit;
 }

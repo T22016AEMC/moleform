@@ -45,9 +45,14 @@ export function prepareLayer1(result: CrosslinkResult, formulation: Formulation,
   // 每個參與成分在 A、B 兩側的每分子官能度（來自第 0 層各配對的兩端）
   const fA = new Map<string, number | null>();
   const fB = new Map<string, number | null>();
+  // 聚合物每平均單元與兩端端基的官能基數（第 1 層的兩成分近似用，D50）
+  const endA = new Map<string, { perUnit: number; perChain: number }>();
+  const endB = new Map<string, { perUnit: number; perChain: number }>();
   for (const p of result.pairs) {
     fA.set(p.a.componentId, p.a.f);
     fB.set(p.b!.componentId, p.b!.f);
+    if (p.a.perUnit !== null) endA.set(p.a.componentId, { perUnit: p.a.perUnit, perChain: p.a.perChain ?? 0 });
+    if (p.b!.perUnit !== null) endB.set(p.b!.componentId, { perUnit: p.b!.perUnit, perChain: p.b!.perChain ?? 0 });
   }
   for (const id of fA.keys()) {
     if (fB.has(id)) return { ok: false, reason: '同一個成分同時含兩類反應官能基，第 1 層暫不支援' };
@@ -64,7 +69,11 @@ export function prepareLayer1(result: CrosslinkResult, formulation: Formulation,
         return { ok: false, reason: `「${a.name}」缺少計算所需的資料（聚合物需 Mw、Mn 或 DP）` };
       }
       // 聚合物：每重複單元官能基數 = f ÷ DP_n；分子量分布以兩成分近似（D47）
-      const distribution = a.isPolymer && a.distribution && a.dp !== null && a.dp > 0 ? { ...a.distribution, groupsPerUnit: f / a.dp } : undefined;
+      const end = side === 'A' ? endA.get(id) : endB.get(id);
+      const distribution =
+        a.isPolymer && a.distribution && a.dp !== null && a.dp > 0 && end
+          ? { ...a.distribution, groupsPerUnit: end.perUnit, endGroups: end.perChain }
+          : undefined;
       components.push({
         id,
         name: a.name,

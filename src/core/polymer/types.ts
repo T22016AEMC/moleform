@@ -26,6 +26,8 @@ export interface PolymerSpec {
   units?: PolymerUnit[];
   /** units 的比例基準（mol%／wt%）；省略視為 mol */
   fractionBasis?: FractionBasis;
+  /** 兩端的端基（任務 022，D50）；省略＝兩端都不填，結果與沒有端基功能時完全相同 */
+  endGroups?: EndGroups;
 }
 
 /** 共聚物的一種重複單元：含兩個連接點的 SMILES 與比例（依 fractionBasis，合計 100） */
@@ -35,6 +37,18 @@ export interface PolymerUnit {
 }
 
 export type FractionBasis = 'mol' | 'wt';
+
+/** 聚合物一端的端基（任務 022，D50）：含一個 `*` 的 SMILES；presetId 為從端基清單選的 id（自訂則省略） */
+export interface EndGroup {
+  smiles: string;
+  presetId?: string;
+}
+
+/** 兩端的端基，各自選填；省略（舊檔）＝兩端都不填 */
+export interface EndGroups {
+  end1?: EndGroup;
+  end2?: EndGroup;
+}
 
 /** 結果附註：共聚物的組成分布近似（任務 020） */
 export const COPOLYMER_NOTE = '共聚物以平均組成計算，未考慮鏈間組成分布';
@@ -56,7 +70,8 @@ export type RepeatUnitProblemCode =
   | 'DANGLING_ATTACHMENT'
   | 'ATTACHMENT_TO_ATTACHMENT'
   | 'BAD_NUMBERING'
-  | 'BAD_FRACTION';
+  | 'BAD_FRACTION'
+  | 'BAD_END_GROUP';
 
 export interface RepeatUnitProblem {
   code: RepeatUnitProblemCode;
@@ -87,4 +102,11 @@ export interface UnitComposition {
  * 重複單元分析。共聚物時 mUnit 為平均重複單元質量 M̄_unit = Σ x_i·M_unit,i，formula 為第一種單元；
  * units 列出各單元（均聚物為單一單元，莫耳分率 1）。
  */
-export type RepeatUnitAnalysis = ({ ok: true; units?: UnitComposition[] } & RepeatUnitInfo) | { ok: false; problem: RepeatUnitProblem };
+export type RepeatUnitAnalysis = ({
+  ok: true;
+  units?: UnitComposition[];
+  /** 已填端基的質量合計 M_ends（g/mol；沒填為 0）。只供計算，不顯示（D09） */
+  mEnds?: number;
+  /** 端基 1、端基 2 是否有填 */
+  endsFilled?: [boolean, boolean];
+} & RepeatUnitInfo) | { ok: false; problem: RepeatUnitProblem };

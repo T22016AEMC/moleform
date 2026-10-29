@@ -4,6 +4,7 @@ import type { FunctionalGroupRow, ReactionRuleRow } from '../data/types';
 import { resolvePolymer } from '../polymer/convert';
 import { averageMolecularWeight } from '../formulation/molecularWeight';
 import { analyzePolymerUnits } from '../polymer/copolymer';
+import { analyzeEndGroups } from '../polymer/endGroups';
 import type { RDKitModule } from '../rdkit/types';
 import { findGroupSites, parseStructure } from './groups';
 import { judgeFormulation, judgePair } from './judge';
@@ -15,6 +16,7 @@ import {
   type ComponentAnalysis,
   type CrosslinkComponent,
   type CrosslinkResult,
+  type EndAnalysis,
   type GroupSites,
   type PairCatalyst,
   type PairEnd,
@@ -32,7 +34,7 @@ export function analyzeComponent(RDKit: RDKitModule, c: CrosslinkComponent, grou
   const isPolymer = c.canonicalSmiles.includes('*');
   // 小分子優先用 Molfile：原子索引與「分子工具」分頁的 3D 畫面一致；聚合物用 SMILES（與重複單元分析一致）
   const source = !isPolymer && c.molfile && c.molfile.trim() !== '' ? c.molfile : c.canonicalSmiles;
-  const base: ComponentAnalysis = { id: c.id, name: c.name, isPolymer, source, dp: null, molarMass: null, distribution: null, groups: [], units: null, unitGroupCounts: {}, problem: null };
+  const base: ComponentAnalysis = { id: c.id, name: c.name, isPolymer, source, dp: null, molarMass: null, distribution: null, ends: null, endGroupCounts: {}, groups: [], units: null, unitGroupCounts: {}, problem: null };
 
   const mol = parseStructure(RDKit, source);
   if (!mol) return { ...base, problem: '無法解析這個成分的結構' };
@@ -72,12 +74,38 @@ export function analyzeComponent(RDKit: RDKitModule, c: CrosslinkComponent, grou
       const extra = Object.keys(counts).filter((id) => !first.some((g) => g.groupId === id)).map((groupId) => ({ groupId, sites: [] }));
       base.groups = [...first, ...extra];
     }
+    // 端基（任務 022，D50）：用相同的 SMARTS 與 * 處理辨識端基上的官能基
+    const endInfo = analyzeEndGroups(RDKit, c.polymer);
+    if (endInfo.ok && c.polymer?.endGroups) {
+      const endAnalyses: (EndAnalysis | null)[] = [];
+      for (const info of endInfo.ends) {
+        if (!info) {
+          endAnalyses.push(null);
+          continue;
+        }
+        const endMol = parseStructure(RDKit, info.smiles);
+        let sites: GroupSites[] = [];
+        if (endMol) {
+          try {
+            sites = findGroupSites(RDKit, endMol, groups, true);
+          } finally {
+            endMol.delete();
+          }
+        }
+        endAnalyses.push({ smiles: info.smiles, groups: sites });
+        for (const g of sites) base.endGroupCounts[g.groupId] = (base.endGroupCounts[g.groupId] ?? 0) + g.sites.length;
+      }
+      base.ends = endAnalyses;
+      // 只有端基才有的官能基以空位點列出，讓配對判斷知道這個成分含有它
+      const onlyEnds = Object.keys(base.endGroupCounts).filter((id) => !base.groups.some((g) => g.groupId === id));
+      base.groups = [...base.groups, ...onlyEnds.map((groupId) => ({ groupId, sites: [] }))];
+    }
     if (!c.polymer) return { ...base, problem: '聚合物需要填入 Mw（或 Mn、DP），才能判定' };
-    const resolved = resolvePolymer(c.polymer, unit.mUnit);
+    const resolved = resolvePolymer(c.polymer, unit.mUnit, { mEnds: unit.mEnds ?? 0, filled: unit.endsFilled ?? [false, false] });
     if (!resolved.ok) return { ...base, problem: resolved.error };
     base.dp = resolved.dp;
     base.molarMass = resolved.mn;
-    base.distribution = { mw: resolved.mw, mn: resolved.mn, mUnit: unit.mUnit };
+    base.distribution = { mw: resolved.mw, mn: resolved.mn, mUnit: unit.mUnit, mEnds: unit.mEnds ?? 0 };
   }
   return base;
 }
@@ -85,7 +113,8 @@ export function analyzeComponent(RDKit: RDKitModule, c: CrosslinkComponent, grou
 /** 此成分每分子平均的反應官能度：位點數 × 規則官能度（每個基團形成的鍵數）；聚合物再乘聚合度。 */
 function functionalityOf(a: ComponentAnalysis, groupId: string, perGroup: number): number | null {
   const sites = a.groups.find((g) => g.groupId === groupId)?.sites.length ?? 0;
-  if (a.isPolymer) return a.dp === null ? null : (a.unitGroupCounts[groupId] ?? sites) * perGroup * a.dp;
+  // 聚合物（D50）：每條鏈官能基數 = DP_n × 每平均單元官能基數 + 兩端端基官能基數
+  if (a.isPolymer) return a.dp === null ? null : (a.unitGroupCounts[groupId] ?? sites) * perGroup * a.dp + (a.endGroupCounts[groupId] ?? 0) * perGroup;
   return sites * perGroup;
 }
 
@@ -114,12 +143,22 @@ export function analyzeCrosslink(RDKit: RDKitModule, components: readonly Crossl
     groupId,
     isPolymer: a.isPolymer,
     f: functionalityOf(a, groupId, perGroup),
+    perUnit: a.isPolymer ? (a.unitGroupCounts[groupId] ?? a.groups.find((g) => g.groupId === groupId)?.sites.length ?? 0) * perGroup : null,
+    perChain: a.isPolymer ? (a.endGroupCounts[groupId] ?? 0) * perGroup : null,
   });
   const unitMarks = new Map<string, Set<number>[]>();
+  const endMarks = new Map<string, Set<number>[]>();
   const mark = (a: ComponentAnalysis, groupId: string) => {
     const set = marks.get(a.id) ?? new Set<number>();
     for (const site of a.groups.find((g) => g.groupId === groupId)?.sites ?? []) site.forEach((atom) => set.add(atom));
     marks.set(a.id, set);
+    if (a.ends) {
+      const perEnd = endMarks.get(a.id) ?? a.ends.map(() => new Set<number>());
+      a.ends.forEach((e, k) => {
+        for (const site of e?.groups.find((g) => g.groupId === groupId)?.sites ?? []) site.forEach((atom) => perEnd[k].add(atom));
+      });
+      endMarks.set(a.id, perEnd);
+    }
     if (a.units && a.units.length > 1) {
       const perUnit = unitMarks.get(a.id) ?? a.units.map(() => new Set<number>());
       a.units.forEach((u, k) => {
@@ -194,6 +233,12 @@ export function analyzeCrosslink(RDKit: RDKitModule, components: readonly Crossl
   for (const [id, set] of marks) markedAtoms[id] = [...set].sort((x, y) => x - y);
   const markedUnitAtoms: Record<string, number[][]> = {};
   for (const [id, sets] of unitMarks) markedUnitAtoms[id] = sets.map((s) => [...s].sort((x, y) => x - y));
+  const markedEndAtoms: Record<string, (number[] | null)[]> = {};
+  for (const [id, sets] of endMarks) {
+    const analysis = analyses.find((a) => a.id === id);
+    if (sets.every((s) => s.size === 0)) continue; // 端基上沒有反應原子：不需要畫
+    markedEndAtoms[id] = sets.map((s, k) => (analysis?.ends?.[k] ? [...s].sort((x, y) => x - y) : null));
+  }
 
   return {
     modelName: CROSSLINK_MODEL_NAME,
@@ -204,6 +249,7 @@ export function analyzeCrosslink(RDKit: RDKitModule, components: readonly Crossl
     components: analyses,
     markedAtoms,
     markedUnitAtoms,
+    markedEndAtoms,
     warnings,
     pendingReview: {
       rules: tables.reactionRules.filter((r) => usedRules.has(r.id) && r.review_status === 'pending').map((r) => r.id),

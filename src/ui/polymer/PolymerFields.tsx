@@ -1,11 +1,12 @@
 // 均聚物的分子量輸入欄（任務 015、019，D47）：主要輸入 Mw＋PDI，也可切換為 Mn＋PDI 或 DP＋PDI。
 // Mw、Mn、DP、PDI 是使用者的輸入，換算出的其他值顯示在旁邊當作輸入輔助（D09 不適用於使用者輸入）；
 // 重複單元分子量 M_unit 不顯示，結果區也不顯示分子量（D09）。
-import { DEFAULT_PDI, END_GROUP_NOTE, type RepeatUnitAnalysis } from '../../core/polymer/types';
+import { END_GROUP_PRESETS } from '../../core/data/endGroups';
+import { DEFAULT_PDI, type RepeatUnitAnalysis } from '../../core/polymer/types';
 import { MESSAGE_PDI_DEFAULT, MESSAGE_PDI_RANGE, resolvePolymer, type PolymerBasis } from '../../core/polymer/convert';
 import { FRACTION_TOLERANCE } from '../../core/polymer/copolymer';
 import { StructureImage } from '../workbench/StructureImage';
-import { specFromEdit, type PolymerEdit, type UnitEdit } from './model';
+import { endFromEdit, specFromEdit, type EndEdit, type PolymerEdit, type UnitEdit } from './model';
 
 interface Props {
   /** 用來產生欄位編號，同一頁面內不可重複 */
@@ -38,13 +39,43 @@ function helper(edit: PolymerEdit, analysis: RepeatUnitAnalysis | null, firstSmi
   if (!spec) return Number.isFinite(Number(edit.text.trim())) && Number(edit.text.trim()) > 0 ? '' : '請輸入大於 0 的數字';
   if (!analysis) return '計算中…';
   if (!analysis.ok) return '';
-  const resolved = resolvePolymer(spec, analysis.mUnit);
+  const resolved = resolvePolymer(spec, analysis.mUnit, { mEnds: analysis.mEnds ?? 0, filled: analysis.endsFilled ?? [false, false] });
   if (!resolved.ok) return resolved.error === MESSAGE_PDI_RANGE ? '' : resolved.error;
   const parts: string[] = [];
   if (edit.basis !== 'mw') parts.push(`Mw ≈ ${int(resolved.mw)} g/mol`);
   if (edit.basis !== 'mn') parts.push(`Mn ≈ ${int(resolved.mn)} g/mol`);
   parts.push(`DP_n ≈ ${resolved.dp.toFixed(1)}`, `DP_w ≈ ${resolved.dpW.toFixed(1)}`);
-  return `${parts.join('、')}（${END_GROUP_NOTE}）`;
+  return resolved.note === '' ? parts.join('、') : `${parts.join('、')}（${resolved.note}）`;
+}
+
+/** 一端端基的選擇（任務 022，D50）：不填／端基清單 27 項／自訂 SMILES，選好的端基顯示縮圖 */
+function EndGroupField({ idPrefix, which, value, onChange }: { idPrefix: string; which: 1 | 2; value: EndEdit | undefined; onChange: (next: EndEdit) => void }) {
+  const current = value ?? { choice: '', custom: '' };
+  const end = endFromEdit(current);
+  return (
+    <div className="polymer-end-field">
+      <label htmlFor={`${idPrefix}-end${which}`}>端基 {which}</label>
+      <select id={`${idPrefix}-end${which}`} value={current.choice} onChange={(e) => onChange({ ...current, choice: e.target.value })}>
+        <option value="">不填（未計入端基）</option>
+        {END_GROUP_PRESETS.map((p) => (
+          <option key={p.id} value={p.id}>
+            {p.name}　{p.smiles}
+          </option>
+        ))}
+        <option value="custom">自訂 SMILES</option>
+      </select>
+      {current.choice === 'custom' && (
+        <input
+          type="text"
+          aria-label={`端基 ${which} 的 SMILES（含一個 *）`}
+          placeholder="例如 [*]CCO（恰好一個 *）"
+          value={current.custom}
+          onChange={(e) => onChange({ ...current, custom: e.target.value })}
+        />
+      )}
+      {end && <StructureImage label={`端基 ${which} 的結構`} source={end.smiles} width={96} height={64} polymer />}
+    </div>
+  );
 }
 
 /** 共聚物的單元清單（任務 020）：第一種單元是成分本身的結構；其他單元貼 SMILES（含兩個 *）。比例合計須為 100 */
@@ -149,6 +180,11 @@ export function PolymerFields({ idPrefix, edit, onChange, analysis, firstSmiles,
           ＋新增單元（共聚物）
         </button>
       )}
+      <div className="polymer-ends" role="group" aria-label="端基">
+        <EndGroupField idPrefix={idPrefix} which={1} value={edit.end1} onChange={(end1) => onChange({ ...edit, end1 })} />
+        <EndGroupField idPrefix={idPrefix} which={2} value={edit.end2} onChange={(end2) => onChange({ ...edit, end2 })} />
+        <small>端基只填鏈盡頭多出來的部分；已經畫在重複單元裡的原子不要重複填。</small>
+      </div>
       <div className="polymer-basis" role="radiogroup" aria-label="輸入方式">
         {(['mw', 'mn', 'dp'] as const).map((basis) => (
           <label key={basis} className="check">

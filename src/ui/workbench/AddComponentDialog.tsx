@@ -279,11 +279,8 @@ export function AddComponentDialog({ area, existingCount, onAdd, onClose }: Prop
           {polymer && (
             <div className="polymer-row">
               <span className="field-label">聚合物（Mw、Mn、DP 擇一；可加單元成為共聚物）</span>
-              {currentAnalysis?.ok === false ? (
-                <p className="form-error" role="alert">{currentAnalysis.problem.message}</p>
-              ) : (
-                <PolymerFields idPrefix="add-polymer" edit={form.polymerEdit} onChange={(polymerEdit) => setForm((f) => ({ ...f, polymerEdit }))} analysis={currentAnalysis} firstSmiles={polymerSmiles} />
-              )}
+              {currentAnalysis?.ok === false && <p className="form-error" role="alert">{currentAnalysis.problem.message}</p>}
+              <PolymerFields idPrefix="add-polymer" edit={form.polymerEdit} onChange={(polymerEdit) => setForm((f) => ({ ...f, polymerEdit }))} analysis={currentAnalysis} firstSmiles={polymerSmiles} />
             </div>
           )}
 

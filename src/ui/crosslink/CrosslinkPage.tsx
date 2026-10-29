@@ -178,7 +178,18 @@ function Result({ result, svgs }: { result: CrosslinkResult; svgs: Record<string
           <div className="crosslink-structures">
             {shown.flatMap((c) => {
               const count = c.units && c.units.length > 1 ? c.units.length : 1;
-              return Array.from({ length: count }, (_, k) => {
+              const endFigures = [1, 2].flatMap((n) => {
+                const svg = svgs[`${c.id}@end${n}`];
+                return svg
+                  ? [
+                      <figure key={`${c.id}-end${n}`} className="crosslink-figure">
+                        <div className="crosslink-svg" role="img" aria-label={`${c.name} 端基 ${n} 的反應原子標記圖`} dangerouslySetInnerHTML={{ __html: svg }} />
+                        <figcaption>{c.name}（端基 {n}）</figcaption>
+                      </figure>,
+                    ]
+                  : [];
+              });
+              const unitFigures = Array.from({ length: count }, (_, k) => {
                 const svg = svgs[k === 0 ? c.id : `${c.id}#${k}`];
                 if (!svg) return null;
                 // 共聚物：每種單元各一張，標出單元序號與比例（使用者輸入的組成）
@@ -193,6 +204,7 @@ function Result({ result, svgs }: { result: CrosslinkResult; svgs: Record<string
                   </figure>
                 );
               });
+              return [...unitFigures, ...endFigures];
             })}
           </div>
         </>

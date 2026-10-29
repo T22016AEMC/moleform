@@ -44,9 +44,10 @@ export interface Layer1Component {
   groupsPerMolecule: number;
   /**
    * 聚合物的分子量分布（任務 019，D47）：有值時以兩成分等重量近似（見 docs/MODELS.md）取代單一成分。
-   * groupsPerUnit = 每重複單元的反應官能基數（含規則官能度）。只供計算，不顯示（D09）。
+   * groupsPerUnit = 每（平均）重複單元的反應官能基數（含規則官能度）；mEnds = 已填端基的質量合計、endGroups = 兩端端基的反應官能基數合計（D50，省略＝0）。
+   * 虛擬成分的官能度 f(M) = ((M − M_ends) ÷ M̄_unit) × groupsPerUnit + endGroups。只供計算，不顯示（D09）。
    */
-  distribution?: { mw: number; mn: number; mUnit: number; groupsPerUnit: number };
+  distribution?: { mw: number; mn: number; mUnit: number; groupsPerUnit: number; mEnds?: number; endGroups?: number };
 }
 
 export interface Layer1Setup {
@@ -122,7 +123,10 @@ export function buildSystem(setup: Layer1Setup): { sys: MMSystem; mixture: boole
       const { m1, m2, single } = twoComponentMasses(d.mw, d.mn);
       if (!single) {
         // 每個虛擬成分：重量分率 0.5、分子數 = 質量 ÷ M、官能度 = (M ÷ M_unit) × 每重複單元官能基數
-        return [m1, m2].flatMap((m) => split((m / d.mUnit) * d.groupsPerUnit, (0.5 * c.mass) / m, 0.5 * c.mass));
+        // f(M) 是 M 的一次式（端基 D50）；M 小於端基質量時鏈長以 0 計
+        const mEnds = d.mEnds ?? 0;
+        const fOf = (m: number) => (Math.max(m - mEnds, 0) / d.mUnit) * d.groupsPerUnit + (d.endGroups ?? 0);
+        return [m1, m2].flatMap((m) => split(fOf(m), (0.5 * c.mass) / m, 0.5 * c.mass));
       }
     }
     return split(c.groupsPerMolecule, c.mass / c.molarMass, c.mass);

@@ -67,13 +67,14 @@ export async function averageWeightOf(smiles: string): Promise<number | null> {
 }
 
 /** 請 Worker 分析重複單元（連接點規則、M_unit）；Worker 失敗時回傳 null。M_unit 只用於計算，不顯示（D09）。 */
-export async function analyzeRepeatUnitInWorker(smiles: string, spec?: Pick<PolymerSpec, 'units' | 'fractionBasis'> | null): Promise<RepeatUnitAnalysis | null> {
+export async function analyzeRepeatUnitInWorker(smiles: string, spec?: Pick<PolymerSpec, 'units' | 'fractionBasis' | 'endGroups'> | null): Promise<RepeatUnitAnalysis | null> {
   const response = await request((id) => ({
     type: 'repeatUnit',
     id,
     smiles,
     ...(spec?.units ? { units: spec.units } : {}),
     ...(spec?.fractionBasis ? { fractionBasis: spec.fractionBasis } : {}),
+    ...(spec?.endGroups ? { endGroups: spec.endGroups } : {}),
   }));
   return response.type === 'repeatUnit' && response.ok ? response.analysis : null;
 }

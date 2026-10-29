@@ -190,6 +190,9 @@ export function exportLibrarySdf(entries: readonly SdfEntry[]): string {
         if (compound.polymer.units) props.push(`> <MoleForm_Units>
 ${JSON.stringify({ units: compound.polymer.units, fractionBasis: compound.polymer.fractionBasis ?? 'mol' })}
 `);
+        if (compound.polymer.endGroups) props.push(`> <MoleForm_EndGroups>
+${JSON.stringify(compound.polymer.endGroups)}
+`);
         if (compound.polymer.pdiInput !== undefined) props.push(`> <MoleForm_PDI>\n${compound.polymer.pdiInput}\n`);
       }
       return `${lines.join('\n')}\n${props.join('\n')}\n$$$$\n`;
@@ -240,8 +243,16 @@ export async function importLibrarySdf(
       } catch {
         copolymer = { units: 'invalid' };
       }
+      let endGroups: unknown;
+      try {
+        const raw = record.properties.MoleForm_EndGroups?.trim();
+        if (raw) endGroups = JSON.parse(raw);
+      } catch {
+        endGroups = 'invalid';
+      }
       const parsed = parsePolymerSpec({
         ...copolymer,
+        ...(endGroups !== undefined ? { endGroups } : {}),
         ...(mw ? { mwInput: Number(mw) } : {}),
         ...(mn ? { mnInput: Number(mn) } : {}),
         ...(dp ? { dpInput: Number(dp) } : {}),

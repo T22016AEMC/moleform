@@ -490,7 +490,7 @@ export function Workbench({ storage }: Props) {
       if (c.canonicalSmiles.includes('*')) {
         // 聚合物：整條鏈基準用 Mn、重複單元基準用 M_unit（D46）；只用於計算，不顯示（D09）
         const unit = units[analysisKey(c.canonicalSmiles, c.polymer)];
-        const resolved = c.polymer && unit?.ok ? resolvePolymer(c.polymer, unit.mUnit) : null;
+        const resolved = c.polymer && unit?.ok ? resolvePolymer(c.polymer, unit.mUnit, { mEnds: unit.mEnds ?? 0, filled: unit.endsFilled ?? [false, false] }) : null;
         byId[c.id] = resolved?.ok ? resolved.mn : undefined;
         unitWeights[c.id] = resolved?.ok && unit?.ok ? unit.mUnit : undefined;
       } else {

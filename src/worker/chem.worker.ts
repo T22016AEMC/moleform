@@ -40,7 +40,7 @@ async function handle(request: ChemRequest): Promise<ChemResponse> {
   if (request.type === 'repeatUnit') {
     try {
       const rdkit = await loadRDKit();
-      return { type: 'repeatUnit', id: request.id, ok: true, analysis: analyzePolymerUnits(rdkit, request.smiles, { units: request.units, fractionBasis: request.fractionBasis }) };
+      return { type: 'repeatUnit', id: request.id, ok: true, analysis: analyzePolymerUnits(rdkit, request.smiles, { units: request.units, fractionBasis: request.fractionBasis, endGroups: request.endGroups }) };
     } catch (e) {
       return { type: 'repeatUnit', id: request.id, ok: false, error: message(e) };
     }
@@ -56,6 +56,16 @@ async function handle(request: ChemRequest): Promise<ChemResponse> {
         const svg = drawMarkedStructure(rdkit, analysis.source, marked, { color: request.color });
         if (svg) svgs[analysis.id] = svg;
         // 共聚物：第二種以後的單元各畫一張，鍵為「成分編號#單元序號」（序號從 1 起算，第 0 種用成分編號）
+        // 聚合物端基（任務 022）：有反應原子的端基各畫一張，鍵為「成分編號@end1／@end2」
+        const perEnd = result.markedEndAtoms[analysis.id];
+        if (perEnd && analysis.ends) {
+          perEnd.forEach((atoms, k) => {
+            const end = analysis.ends?.[k];
+            if (!atoms || !end) return;
+            const endSvg = drawMarkedStructure(rdkit, end.smiles, atoms, { color: request.color, width: 240, height: 180 });
+            if (endSvg) svgs[`${analysis.id}@end${k + 1}`] = endSvg;
+          });
+        }
         const perUnit = result.markedUnitAtoms[analysis.id];
         if (perUnit && analysis.units) {
           for (let k = 1; k < analysis.units.length; k++) {

@@ -136,7 +136,7 @@ export function sameCompound(a: Compound, b: Compound): boolean {
     a.polymer?.mnInput === b.polymer?.mnInput &&
     a.polymer?.dpInput === b.polymer?.dpInput &&
     a.polymer?.pdiInput === b.polymer?.pdiInput &&
-    JSON.stringify([a.polymer?.units, a.polymer?.fractionBasis]) === JSON.stringify([b.polymer?.units, b.polymer?.fractionBasis]) &&
+    JSON.stringify([a.polymer?.units, a.polymer?.fractionBasis, a.polymer?.endGroups]) === JSON.stringify([b.polymer?.units, b.polymer?.fractionBasis, b.polymer?.endGroups]) &&
     a.createdAt === b.createdAt &&
     a.updatedAt === b.updatedAt
   );

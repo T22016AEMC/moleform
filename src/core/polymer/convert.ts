@@ -1,6 +1,7 @@
 // Mw／Mn／DP 與 PDI 的換算（任務 015、019，D47）：Mn = Mw ÷ PDI；DP_n = Mn ÷ M_unit；DP_w = Mw ÷ M_unit。
 // 端基忽略（Phase 5 才處理），所以換算結果都要附註「未計入端基」（END_GROUP_NOTE）。
-import { DEFAULT_PDI, END_GROUP_NOTE, type PolymerSpec, type PolymerUnit } from './types';
+import { endGroupNote } from './endGroups';
+import { DEFAULT_PDI, END_GROUP_NOTE, type EndGroups, type PolymerSpec, type PolymerUnit } from './types';
 
 const isPositive = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v) && v > 0;
 const isPdi = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v) && v >= 1;
@@ -39,7 +40,19 @@ export type ResolvedPolymer =
   | { ok: false; error: string };
 
 /** 由使用者輸入的 Mw、Mn 或 DP（擇一）、選填的 PDI 與 M_unit 求出其他值 */
-export function resolvePolymer(spec: PolymerSpec, mUnit: number): ResolvedPolymer {
+export interface EndsInfo {
+  /** 已填端基的質量合計 M_ends（g/mol） */
+  mEnds: number;
+  /** 端基 1、端基 2 是否有填 */
+  filled: readonly [boolean, boolean];
+}
+
+/**
+ * 由使用者輸入的 Mw、Mn 或 DP（擇一）、選填的 PDI、平均重複單元質量與端基求出其他值（端基，D50）。
+ * DP_n = (Mn − M_ends) ÷ M̄_unit、DP_w = (Mw − M_ends) ÷ M̄_unit；輸入 DP 時 Mn = DP × M̄_unit + M_ends。沒有端基時 M_ends = 0。
+ */
+export function resolvePolymer(spec: PolymerSpec, mUnit: number, ends?: EndsInfo): ResolvedPolymer {
+  const mEnds = ends?.mEnds ?? 0;
   const given = (v: number | undefined) => v !== undefined && !Number.isNaN(v);
   const hasMw = given(spec.mwInput);
   const hasMn = given(spec.mnInput);
@@ -68,20 +81,21 @@ export function resolvePolymer(spec: PolymerSpec, mUnit: number): ResolvedPolyme
   } else {
     if (!isPositive(spec.dpInput)) return { ok: false, error: 'DP 必須是大於 0 的數字。' };
     basis = 'dp';
-    mn = mnFromDp(spec.dpInput, mUnit);
+    mn = mnFromDp(spec.dpInput, mUnit) + mEnds;
     mw = mn * pdi;
   }
+  if (!(mn > mEnds)) return { ok: false, error: `Mn 必須大於端基質量合計（M_ends = ${Number(mEnds.toFixed(3))}）` };
   return {
     ok: true,
     basis,
     mw,
     mn,
-    dp: dpFromMn(mn, mUnit),
-    dpW: dpFromMn(mw, mUnit),
+    dp: dpFromMn(mn - mEnds, mUnit),
+    dpW: dpFromMn(mw - mEnds, mUnit),
     pdi,
     pdiIsDefault: !hasPdi,
     legacy: !hasPdi && basis !== 'mw',
-    note: END_GROUP_NOTE,
+    note: ends ? endGroupNote(ends.filled) : END_GROUP_NOTE,
   };
 }
 
@@ -120,6 +134,22 @@ export function parsePolymerSpec(value: unknown): { ok: true; spec: PolymerSpec 
     }
     spec.units = list;
     if (fractionBasis === 'mol' || fractionBasis === 'wt') spec.fractionBasis = fractionBasis;
+  }
+  // 端基（任務 022）：舊檔沒有，視為兩端都不填
+  const { endGroups } = value as Record<string, unknown>;
+  if (endGroups !== undefined && endGroups !== null) {
+    if (typeof endGroups !== 'object' || Array.isArray(endGroups)) return { ok: false, reason: '端基設定格式錯誤' };
+    const parsedEnds: EndGroups = {};
+    for (const key of ['end1', 'end2'] as const) {
+      const e = (endGroups as Record<string, unknown>)[key];
+      if (e === undefined || e === null) continue;
+      if (typeof e !== 'object' || Array.isArray(e) || typeof (e as Record<string, unknown>).smiles !== 'string' || (e as { smiles: string }).smiles.trim() === '') {
+        return { ok: false, reason: `端基 ${key === 'end1' ? 1 : 2} 的 SMILES 格式錯誤` };
+      }
+      const { smiles, presetId } = e as { smiles: string; presetId?: unknown };
+      parsedEnds[key] = typeof presetId === 'string' ? { smiles, presetId } : { smiles };
+    }
+    if (parsedEnds.end1 || parsedEnds.end2) spec.endGroups = parsedEnds;
   }
   return { ok: true, spec };
 }

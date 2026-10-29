@@ -34,6 +34,12 @@ export interface UnitAnalysis {
   groups: GroupSites[];
 }
 
+/** 聚合物一端的端基辨識結果（任務 022）：官能基位點的原子索引以端基自己的 SMILES 為準 */
+export interface EndAnalysis {
+  smiles: string;
+  groups: GroupSites[];
+}
+
 export interface ComponentAnalysis {
   id: string;
   name: string;
@@ -45,7 +51,11 @@ export interface ComponentAnalysis {
   /** 每分子質量（g/mol）：小分子為平均分子量，聚合物為 Mn；算不出為 null。只供第 1 層計算，不顯示（D09） */
   molarMass: number | null;
   /** 聚合物的分子量分布資料（Mw、Mn、重複單元分子量；任務 019）。只供第 1 層的兩成分近似，不顯示（D09）；非聚合物或算不出為 null */
-  distribution: { mw: number; mn: number; mUnit: number } | null;
+  distribution: { mw: number; mn: number; mUnit: number; mEnds: number } | null;
+  /** 聚合物端基 1、端基 2 的辨識結果（沒填為 null）；非聚合物為 null */
+  ends: (EndAnalysis | null)[] | null;
+  /** 聚合物兩端端基的官能基數合計（依官能基分開）；只供計算，不顯示（D09） */
+  endGroupCounts: Record<string, number>;
   /** 有位點的官能基（聚合物已排除涉及連接點 * 的匹配）。共聚物：含任一單元有的官能基，sites 為第一種單元的位點（可能為空） */
   groups: GroupSites[];
   /** 聚合物各單元的辨識結果（含第一種）；小分子為 null */
@@ -65,6 +75,10 @@ export interface PairEnd {
   isPolymer: boolean;
   /** 此成分每分子平均的反應官能度；算不出（缺 Mn／DP）時為 null。僅供判定與驗證文件，不顯示（D09） */
   f: number | null;
+  /** 聚合物：每個平均重複單元的反應官能基數（含規則官能度）；其他為 null。只供第 1 層的分子量分布近似 */
+  perUnit: number | null;
+  /** 聚合物：兩端端基上的反應官能基數合計（含規則官能度）；其他為 null */
+  perChain: number | null;
 }
 
 export interface PairCatalyst {
@@ -103,6 +117,8 @@ export interface CrosslinkResult {
   markedAtoms: Record<string, number[]>;
   /** 共聚物（兩種以上單元）每種單元要標記的反應原子（0 起算，依單元順序）；其他成分沒有此項 */
   markedUnitAtoms: Record<string, number[][]>;
+  /** 聚合物端基 1、端基 2 要標記的反應原子（0 起算，以端基自己的 SMILES 為準；沒填或沒有為 null）；沒有任何端基官能基的成分沒有此項 */
+  markedEndAtoms: Record<string, (number[] | null)[]>;
   warnings: string[];
   /** 用到的、尚未審核（pending）的規則與官能基 id */
   pendingReview: { rules: string[]; groups: string[] };

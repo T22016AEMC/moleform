@@ -2,6 +2,7 @@
 // 每條鏈的組成視為等於平均組成（見 docs/MODELS.md「共聚物」）；均聚物視為只有一種單元、100 mol%。
 // 平均單元質量 M̄_unit = Σ x_i·M_unit,i；分子量只用於計算，不顯示（D09）。
 import type { RDKitModule } from '../rdkit/types';
+import { analyzeEndGroups } from './endGroups';
 import { analyzeRepeatUnit } from './repeatUnit';
 import type { PolymerSpec, PolymerUnit, RepeatUnitAnalysis, RepeatUnitInfo } from './types';
 
@@ -19,7 +20,16 @@ export function unitsOf(canonicalSmiles: string, spec: Pick<PolymerSpec, 'units'
  * 分析聚合物的各單元並求平均單元質量。回傳的 mUnit 為 M̄_unit。
  * 錯誤：單元結構不合連接點規則、比例不是正數、比例合計不為 100（±0.01）。
  */
-export function analyzePolymerUnits(RDKit: RDKitModule, canonicalSmiles: string, spec?: Pick<PolymerSpec, 'units' | 'fractionBasis'>): RepeatUnitAnalysis {
+export function analyzePolymerUnits(RDKit: RDKitModule, canonicalSmiles: string, spec?: Pick<PolymerSpec, 'units' | 'fractionBasis' | 'endGroups'>): RepeatUnitAnalysis {
+  const units = analyzeUnitsOnly(RDKit, canonicalSmiles, spec);
+  if (!units.ok) return units;
+  // 端基（任務 022）：M_ends 與是否有填；端基錯誤指出是端基 1 或 2
+  const ends = analyzeEndGroups(RDKit, spec);
+  if (!ends.ok) return { ok: false, problem: { code: 'BAD_END_GROUP', message: ends.message } };
+  return { ...units, mEnds: ends.mEnds, endsFilled: ends.filled };
+}
+
+function analyzeUnitsOnly(RDKit: RDKitModule, canonicalSmiles: string, spec?: Pick<PolymerSpec, 'units' | 'fractionBasis'>): RepeatUnitAnalysis {
   const units = unitsOf(canonicalSmiles, spec);
   const single = units.length === 1 && !spec?.units;
   const infos: RepeatUnitInfo[] = [];
