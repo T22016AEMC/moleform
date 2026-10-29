@@ -30,7 +30,7 @@ export function analyzeComponent(RDKit: RDKitModule, c: CrosslinkComponent, grou
   const isPolymer = c.canonicalSmiles.includes('*');
   // 小分子優先用 Molfile：原子索引與「分子工具」分頁的 3D 畫面一致；聚合物用 SMILES（與重複單元分析一致）
   const source = !isPolymer && c.molfile && c.molfile.trim() !== '' ? c.molfile : c.canonicalSmiles;
-  const base: ComponentAnalysis = { id: c.id, name: c.name, isPolymer, source, dp: null, molarMass: null, groups: [], problem: null };
+  const base: ComponentAnalysis = { id: c.id, name: c.name, isPolymer, source, dp: null, molarMass: null, distribution: null, groups: [], problem: null };
 
   const mol = parseStructure(RDKit, source);
   if (!mol) return { ...base, problem: '無法解析這個成分的結構' };
@@ -44,11 +44,12 @@ export function analyzeComponent(RDKit: RDKitModule, c: CrosslinkComponent, grou
   if (isPolymer) {
     const unit = analyzeRepeatUnit(RDKit, c.canonicalSmiles);
     if (!unit.ok) return { ...base, problem: unit.problem.message };
-    if (!c.polymer) return { ...base, problem: '聚合物需要填入 Mn 或 DP，才能判定' };
+    if (!c.polymer) return { ...base, problem: '聚合物需要填入 Mw（或 Mn、DP），才能判定' };
     const resolved = resolvePolymer(c.polymer, unit.mUnit);
     if (!resolved.ok) return { ...base, problem: resolved.error };
     base.dp = resolved.dp;
     base.molarMass = resolved.mn;
+    base.distribution = { mw: resolved.mw, mn: resolved.mn, mUnit: unit.mUnit };
   }
   return base;
 }

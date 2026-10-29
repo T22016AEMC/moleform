@@ -29,7 +29,7 @@ import { NAME_MAX, NOTES_MAX, summaryText, type Compound } from '../../core/libr
 import type { PolymerSpec } from '../../core/polymer/types';
 import type { StructureValidation } from '../../core/structure/validate';
 import { validateInput } from '../../worker/client';
-import { specFromEdit, editFromSpec, type PolymerEdit } from '../polymer/model';
+import { specFromEdit, editFromSpec, polymerLabel, type PolymerEdit } from '../polymer/model';
 import type { PolymerContext } from '../polymer/usePolymerInput';
 import { downloadText } from '../download';
 import { LIBRARY_CHANGED_EVENT } from '../workbench/libraryBridge';
@@ -62,10 +62,6 @@ interface Editing {
   /** 只有聚合物才有：Mn 或 DP 的編輯狀態 */
   polymer?: PolymerEdit;
 }
-
-/** 清單上顯示的聚合物設定（Mn、DP 是使用者的輸入，可以顯示） */
-const polymerLabel = (spec: PolymerSpec) =>
-  spec.mnInput !== undefined ? `Mn ${spec.mnInput.toLocaleString('en-US')} g/mol` : `DP ${spec.dpInput}`;
 
 interface Props {
   /** 目前「結構輸入」的驗證結果；有效時才能儲存 */
@@ -152,7 +148,7 @@ export function CompoundLibrary({ structure, polymer, onLoad, storage: storagePr
         return;
       }
       if (!polymer.spec) {
-        setFormError('這是聚合物的重複單元，請先在「均聚物設定」填入 Mn 或 DP');
+        setFormError('這是聚合物的重複單元，請先在「均聚物設定」填入 Mw（或 Mn、DP）');
         return;
       }
     }
@@ -204,7 +200,7 @@ export function CompoundLibrary({ structure, polymer, onLoad, storage: storagePr
     if (editing.polymer) {
       const spec = specFromEdit(editing.polymer);
       if (!spec) {
-        setEditError('請輸入大於 0 的 Mn 或 DP');
+        setEditError('請輸入大於 0 的 Mw（或 Mn、DP），PDI 若有填需為數字');
         return;
       }
       const changed = editPolymer(next, editing.id, spec);
@@ -380,21 +376,30 @@ export function CompoundLibrary({ structure, polymer, onLoad, storage: storagePr
                   />
                   {editing.polymer && (
                     <div className="polymer-edit">
-                      <label htmlFor={`edit-polymer-basis-${compound.id}`}>聚合物設定（Mn 與 DP 擇一）</label>
+                      <label htmlFor={`edit-polymer-basis-${compound.id}`}>聚合物設定（Mw、Mn、DP 擇一；PDI 留空使用預設值 2）</label>
                       <select
                         id={`edit-polymer-basis-${compound.id}`}
                         value={editing.polymer.basis}
                         onChange={(event) => setEditing({ ...editing, polymer: { ...editing.polymer!, basis: event.target.value as PolymerEdit['basis'] } })}
                       >
+                        <option value="mw">Mw（g/mol）</option>
                         <option value="mn">Mn（g/mol）</option>
-                        <option value="dp">DP（重複單元數）</option>
+                        <option value="dp">DP（數量平均，重複單元數）</option>
                       </select>
                       <input
                         type="text"
                         inputMode="decimal"
-                        aria-label={editing.polymer.basis === 'mn' ? 'Mn' : 'DP'}
+                        aria-label={editing.polymer.basis === 'mw' ? 'Mw' : editing.polymer.basis === 'mn' ? 'Mn' : 'DP'}
                         value={editing.polymer.text}
                         onChange={(event) => setEditing({ ...editing, polymer: { ...editing.polymer!, text: event.target.value } })}
+                      />
+                      <input
+                        type="text"
+                        inputMode="decimal"
+                        aria-label="PDI（選填，預設 2）"
+                        placeholder="PDI（選填，預設 2）"
+                        value={editing.polymer.pdiText}
+                        onChange={(event) => setEditing({ ...editing, polymer: { ...editing.polymer!, pdiText: event.target.value } })}
                       />
                     </div>
                   )}

@@ -26,7 +26,7 @@ import {
 } from '../formulation/model';
 import type { FormulationStorage } from '../formulation/storage';
 import '../formulation/formulation.css';
-import { specFromEdit } from '../polymer/model';
+import { polymerLabel, specFromEdit } from '../polymer/model';
 import { AddComponentDialog } from './AddComponentDialog';
 import { ComponentDetailDialog } from './ComponentDetailDialog';
 import { drawSource, isPolymerSmiles } from './model';
@@ -80,8 +80,8 @@ function IssueList({ issues }: { issues: SeverityIssue[] }) {
 /** 聚合物成分在列上的簡短說明（Mn、DP 是使用者的輸入，可以顯示；細節在成分詳細彈窗） */
 function polymerSummary(row: Row): string {
   const spec = row.polymerEdit ? specFromEdit(row.polymerEdit) : null;
-  if (!spec) return '尚未設定 Mn／DP';
-  return spec.mnInput !== undefined ? `Mn ${spec.mnInput.toLocaleString('en-US')} g/mol` : `DP ${spec.dpInput}`;
+  if (!spec) return '尚未設定 Mw／PDI';
+  return polymerLabel(spec);
 }
 
 // ---------- 區域（Solid／Liquid） ----------
@@ -315,6 +315,7 @@ function AreaTable({ title, result }: { title: string; result: AreaResult }) {
           ))}
         </tbody>
       </table>
+      {result.polymerMolNote && <small>{result.polymerMolNote}</small>}
     </div>
   );
 }
@@ -440,17 +441,19 @@ export function Workbench({ storage }: Props) {
   const outcome = useMemo<FormulationOutcome | null>(() => {
     if (!ready) return null;
     const byId: Record<string, number | undefined> = {};
+    const unitWeights: Record<string, number | undefined> = {};
     for (const c of [...debounced.solid.components, ...debounced.liquid.components]) {
       if (c.canonicalSmiles.includes('*')) {
-        // 聚合物以 Mn 作為每分子質量傳入；核心不用它算 mol%（U02），只供之後計算官能度（任務 017）
+        // 聚合物：整條鏈基準用 Mn、重複單元基準用 M_unit（D46）；只用於計算，不顯示（D09）
         const unit = units[c.canonicalSmiles];
         const resolved = c.polymer && unit?.ok ? resolvePolymer(c.polymer, unit.mUnit) : null;
         byId[c.id] = resolved?.ok ? resolved.mn : undefined;
+        unitWeights[c.id] = resolved?.ok && unit?.ok ? unit.mUnit : undefined;
       } else {
         byId[c.id] = weights[c.canonicalSmiles] ?? undefined;
       }
     }
-    return computeFormulation(debounced, byId);
+    return computeFormulation(debounced, byId, { unitWeights });
   }, [debounced, weights, ready, units]);
 
   // 新加入、尚未填用量的成分先不顯示數值錯誤（輸入過或離開欄位後才顯示）
@@ -488,6 +491,7 @@ export function Workbench({ storage }: Props) {
 
   const solid = outcome?.results.solid;
   const liquid = outcome?.results.liquid;
+  const hasPolymerRow = [...state.solidRows, ...state.liquidRows].some((r) => isPolymerSmiles(r.canonicalSmiles));
 
   const detailRow = dialog?.kind === 'detail' ? [...state.solidRows, ...state.liquidRows].find((r) => r.id === dialog.rowId) : undefined;
   const detailArea = detailRow && state.solidRows.some((r) => r.id === detailRow.id) ? 'solid' : 'liquid';
@@ -552,6 +556,22 @@ export function Workbench({ storage }: Props) {
                           </li>
                         ))}
                       </ul>
+                    </div>
+                  )}
+                  {hasPolymerRow && (
+                    <div className="form-row-inline" role="radiogroup" aria-label="聚合物 mol% 基準">
+                      <span>聚合物 mol% 基準</span>
+                      {(['chain', 'unit'] as const).map((basis) => (
+                        <label key={basis} className="check">
+                          <input
+                            type="radio"
+                            name="polymer-mol-basis"
+                            checked={state.polymerMolBasis === basis}
+                            onChange={() => setState((s) => ({ ...s, polymerMolBasis: basis }))}
+                          />
+                          {basis === 'chain' ? '以鏈計' : '以重複單元計'}
+                        </label>
+                      ))}
                     </div>
                   )}
                   {solid && <AreaTable title="Solid" result={solid} />}

@@ -31,7 +31,7 @@ export function App() {
   const loadIntoStructure = useCallback(
     (input: string, polymerSpec?: PolymerSpec) => {
       setLoadRequest((prev) => ({ id: (prev?.id ?? 0) + 1, input }));
-      // 載入聚合物時一併還原 Mn 或 DP；一般化合物不改動已填的值
+      // 載入聚合物時一併還原 Mw／Mn／DP 與 PDI；一般化合物不改動已填的值
       if (polymerSpec) setPolymerEdit(editFromSpec(polymerSpec));
       // 結構載入「分子工具」，順便切過去讓使用者看到
       setTab('tools');

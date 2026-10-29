@@ -61,9 +61,20 @@ export function prepareLayer1(result: CrosslinkResult, formulation: Formulation,
       const a = analysis.get(id)!;
       if (!solidIds.has(id)) return { ok: false, reason: `「${a.name}」在 Liquid 區，第 1 層只計算 Solid 區成分的反應` };
       if (f === null || !(f > 0) || a.molarMass === null || !(a.molarMass > 0)) {
-        return { ok: false, reason: `「${a.name}」缺少計算所需的資料（聚合物需 Mn 或 DP）` };
+        return { ok: false, reason: `「${a.name}」缺少計算所需的資料（聚合物需 Mw、Mn 或 DP）` };
       }
-      components.push({ id, name: a.name, side, isPolymer: a.isPolymer, mass: wt.get(id) as number, molarMass: a.molarMass, groupsPerMolecule: f });
+      // 聚合物：每重複單元官能基數 = f ÷ DP_n；分子量分布以兩成分近似（D47）
+      const distribution = a.isPolymer && a.distribution && a.dp !== null && a.dp > 0 ? { ...a.distribution, groupsPerUnit: f / a.dp } : undefined;
+      components.push({
+        id,
+        name: a.name,
+        side,
+        isPolymer: a.isPolymer,
+        mass: wt.get(id) as number,
+        molarMass: a.molarMass,
+        groupsPerMolecule: f,
+        ...(distribution ? { distribution } : {}),
+      });
     }
   }
 

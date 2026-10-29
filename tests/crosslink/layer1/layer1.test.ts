@@ -1,7 +1,9 @@
 // 第 1 層（官能基比、理論配比、比例掃描）的測試（任務 017）：只檢查程式依公式運作（D17）。
 import { beforeAll, describe, expect, it } from 'vitest';
 import { analyzeCrosslink } from '../../../src/core/crosslink/analyze';
-import { computeLayer1, groupTotals, MESSAGE_NOT_GELLED, type Layer1Setup } from '../../../src/core/crosslink/layer1/layer1';
+import { buildSystem, computeLayer1, groupTotals, MESSAGE_NOT_GELLED, NOTE_DISTRIBUTION, type Layer1Setup } from '../../../src/core/crosslink/layer1/layer1';
+import { gelConversion, groupMoles } from '../../../src/core/crosslink/layer1/millerMacosko';
+import { twoComponentMasses } from '../../../src/core/polymer/distribution';
 import { describeAmounts, prepareLayer1, MESSAGE_MULTI_RULE } from '../../../src/core/crosslink/layer1/prepare';
 import { SCAN_OPTIONS, scanRatio, setupAtRatio, stoichiometricSetup, checkScanSettings, defaultScanSettings, type ScanProperty } from '../../../src/core/crosslink/layer1/stoich';
 import type { CrosslinkComponent } from '../../../src/core/crosslink/types';
@@ -299,5 +301,137 @@ describe('比例掃描', () => {
     expect(checkScanSettings({ min: 0, max: 1, points: 5 })).not.toBeNull();
     expect(checkScanSettings({ min: 0.6, max: 1.4, points: 1 })).not.toBeNull();
     expect(checkScanSettings({ min: 0.6, max: 1.4, points: 41 })).toBeNull();
+  });
+});
+
+// ---------- 分子量分布的兩成分近似（任務 019，D47）----------
+// 手算範例：Mw 6000、PDI 1.8 → Mn = 3333.33，M₁ = 2000、M₂ = 10000；M_unit = 200、每重複單元 2 個官能基
+//   → 虛擬成分官能度 f₁ = 2000/200×2 = 20、f₂ = 10000/200×2 = 100；重量平均官能度 = 6000/200×2 = 60
+const MW_HAND = { mw: 6000, mn: 6000 / 1.8, mUnit: 200, groupsPerUnit: 2 };
+const handSetup = (distribution?: typeof MW_HAND): Layer1Setup => ({
+  nameA: 'A 基',
+  nameB: 'B 基',
+  totalMass: 100,
+  components: [
+    {
+      id: 'poly',
+      name: '聚合物',
+      side: 'A',
+      isPolymer: true,
+      mass: 80,
+      molarMass: MW_HAND.mn,
+      groupsPerMolecule: (MW_HAND.mn / MW_HAND.mUnit) * MW_HAND.groupsPerUnit,
+      ...(distribution ? { distribution } : {}),
+    },
+    { id: 'xl', name: '交聯劑', side: 'B', isPolymer: false, mass: 20, molarMass: 100, groupsPerMolecule: 2 },
+  ],
+});
+
+describe('兩成分近似（D47）', () => {
+  it('M₁、M₂ 與手算一致：Mw 6000、PDI 1.8 → 虛擬成分質量 2000、10000，官能度 20、100，各占一半重量', () => {
+    const { sys } = buildSystem(handSetup(MW_HAND));
+    expect(sys.a).toHaveLength(2);
+    const [s1, s2] = sys.a;
+    expect(s1.f).toBe(20);
+    expect(s2.f).toBe(100);
+    expect(s1.mass).toBeCloseTo(40, 9);
+    expect(s2.mass).toBeCloseTo(40, 9);
+    expect(s1.n).toBeCloseTo(40 / 2000, 9); // 分子數 = 質量 ÷ M₁
+    expect(s2.n).toBeCloseTo(40 / 10000, 9);
+    // 合計：分子數 = 質量 ÷ Mn、質量 = 80；官能基莫耳數與單一成分（Mn）相同
+    expect(s1.n + s2.n).toBeCloseTo(80 / MW_HAND.mn, 9);
+    const single = buildSystem(handSetup()).sys;
+    expect(groupMoles(sys.a)).toBeCloseTo(groupMoles(single.a), 9);
+    expect(groupMoles(sys.b)).toBeCloseTo(groupMoles(single.b), 9);
+  });
+
+  it('凝膠點：兩成分近似 = 單一成分取重量平均官能度（f_w = 60，數值一致）', () => {
+    const two = buildSystem(handSetup(MW_HAND)).sys;
+    // 單一成分、官能度取重量平均（60）：同樣質量，官能基莫耳數與兩成分相同
+    const moles = groupMoles(two.a);
+    const oneA = [{ f: 60, n: moles / 60, mass: 80 }];
+    const gelTwo = gelConversion(two) as number;
+    const gelOne = gelConversion({ a: oneA, b: two.b }) as number;
+    expect(gelTwo).toBeGreaterThan(0);
+    expect(gelTwo).toBeLessThan(1);
+    expect(gelTwo).toBeCloseTo(gelOne, 10);
+    // 與舊的「只用 Mn」近似（f_n = 33.33）不同：分布越寬，凝膠越早
+    const gelMnOnly = gelConversion(buildSystem(handSetup()).sys) as number;
+    expect(gelTwo).toBeLessThan(gelMnOnly);
+    // 完整分布結果相同的原因：凝膠條件只取決於 Σ a_i(f_i − 1)＝f_w − 1（式 27 的一般形式）
+    expect(computeLayer1(handSetup(MW_HAND), 1)!.gelConversion).toBeCloseTo(gelTwo, 12);
+  });
+
+  it('凝膠點只取決於 Mw：固定 Mw = 6000 改變 PDI（1.2、1.8、3），凝膠點幾乎相同', () => {
+    // 官能基莫耳數與重量平均官能度不變；差異只來自非整數官能度的相鄰整數混合（B-8），小於 1e-4
+    const gels = [1.2, 1.8, 3].map((pdi) => {
+      const mn = 6000 / pdi;
+      const s = handSetup({ ...MW_HAND, mn });
+      s.components[0].molarMass = mn;
+      s.components[0].groupsPerMolecule = (mn / 200) * 2;
+      return gelConversion(buildSystem(s).sys) as number;
+    });
+    expect(gels[1]).toBeCloseTo(gels[0], 4);
+    expect(gels[2]).toBeCloseTo(gels[0], 4);
+  });
+
+  it('PDI = 1：與沒有分布資料（任務 017 的單一成分）的結果完全相同', () => {
+    const { prep } = prepare(formulation([solid('P', 'P', P, 80, { polymer: { mwInput: 6000, pdiInput: 1 } }), solid('E', 'E', E, 20, { polymer: { mwInput: 3000, pdiInput: 1 } })]));
+    if (!prep.ok) throw new Error(prep.reason);
+    expect(prep.setup.components.filter((c) => c.isPolymer).every((c) => c.distribution !== undefined)).toBe(true);
+    const withDist = computeLayer1(prep.setup, 1)!;
+    const stripped: Layer1Setup = { ...prep.setup, components: prep.setup.components.map(({ distribution: _d, ...rest }) => rest) };
+    const noDist = computeLayer1(stripped, 1)!;
+    expect(withDist).toEqual(noDist);
+    // 手算範例也一樣
+    const hand = { ...MW_HAND, mn: 6000 };
+    const h1 = handSetup(hand);
+    h1.components[0].molarMass = 6000;
+    h1.components[0].groupsPerMolecule = (6000 / 200) * 2;
+    const h2: Layer1Setup = { ...h1, components: h1.components.map(({ distribution: _d, ...rest }) => rest) };
+    expect(computeLayer1(h1, 1)).toEqual(computeLayer1(h2, 1));
+  });
+
+  it('第 0 層與直接計算結果只取決於質量與組成，不受分子量分布影響', () => {
+    const run = (pdi: number) => {
+      const f = formulation([solid('P', 'P', P, 80, { polymer: { mwInput: 6000, pdiInput: pdi } }), solid('E', 'E', E, 20, { polymer: { mwInput: 4500, pdiInput: pdi } })]);
+      const { result, prep } = prepare(f);
+      if (!prep.ok) throw new Error(prep.reason);
+      const r = computeLayer1(prep.setup, 0.8)!;
+      const noDist = computeLayer1({ ...prep.setup, components: prep.setup.components.map(({ distribution: _d, ...rest }) => rest) }, 0.8)!;
+      return { result, totals: groupTotals(prep.setup), r, noDist };
+    };
+    const base = run(1);
+    for (const pdi of [1.8, 2, 3]) {
+      const x = run(pdi);
+      // 官能基莫耳數（內部）與官能基比、過量、理論最大成鍵數、殘留：與 PDI 無關
+      expect(x.totals.nA).toBeCloseTo(base.totals.nA, 9);
+      expect(x.totals.nB).toBeCloseTo(base.totals.nB, 9);
+      for (const key of ['ratioBToA', 'ratioText', 'limiting', 'excess', 'excessPct', 'maxBondsMolPerKg', 'bondsFormedMolPerKg', 'residualAPct', 'residualBPct', 'residualTotalPct'] as const) {
+        if (typeof base.r[key] === 'number') expect(x.r[key] as number).toBeCloseTo(base.r[key] as number, 9);
+        else expect(x.r[key]).toEqual(base.r[key]);
+      }
+      // 加入分布近似前後，直接計算的部分不變
+      expect(x.r.ratioBToA).toBeCloseTo(x.noDist.ratioBToA, 9);
+      expect(x.r.maxBondsMolPerKg).toBeCloseTo(x.noDist.maxBondsMolPerKg, 9);
+      expect(x.r.residualTotalPct).toBeCloseTo(x.noDist.residualTotalPct, 9);
+      // 第 0 層：配對與判定相同
+      expect(x.result.verdict).toBe(base.result.verdict);
+      expect(x.result.pairs.map((p) => p.kind)).toEqual(base.result.pairs.map((p) => p.kind));
+    }
+  });
+
+  it('只有 Mn 或 DP 的舊資料：PDI 視為 2；Mw = Mn × 2 後以兩成分近似', () => {
+    const { prep } = prepare(F4A); // pol = Mn 6000（舊）、epo = DP 21（舊）
+    if (!prep.ok) throw new Error(prep.reason);
+    const poly = prep.setup.components.find((c) => c.id === 'P')!;
+    expect(poly.distribution!.mw).toBeCloseTo(12000, 6);
+    expect(poly.distribution!.mn).toBeCloseTo(6000, 6);
+    const m = twoComponentMasses(poly.distribution!.mw, poly.distribution!.mn);
+    expect(m.m1 + m.m2).toBeCloseTo(24000, 6);
+  });
+
+  it('結果附註：分子量分布以兩成分（等重量）近似', () => {
+    expect(NOTE_DISTRIBUTION).toBe('分子量分布以兩成分（等重量）近似；凝膠點只取決於 Mw，溶膠分率與交聯密度為近似值');
   });
 });

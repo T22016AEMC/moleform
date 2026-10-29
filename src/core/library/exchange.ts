@@ -184,8 +184,10 @@ export function exportLibrarySdf(entries: readonly SdfEntry[]): string {
       // 聚合物：Molfile 是含連接點的重複單元，另附類型與 Mn 或 DP
       if (compound.polymer) {
         props.push('> <MoleForm_Type>\npolymer\n');
+        if (compound.polymer.mwInput !== undefined) props.push(`> <MoleForm_Mw>\n${compound.polymer.mwInput}\n`);
         if (compound.polymer.mnInput !== undefined) props.push(`> <MoleForm_Mn>\n${compound.polymer.mnInput}\n`);
         if (compound.polymer.dpInput !== undefined) props.push(`> <MoleForm_DP>\n${compound.polymer.dpInput}\n`);
+        if (compound.polymer.pdiInput !== undefined) props.push(`> <MoleForm_PDI>\n${compound.polymer.pdiInput}\n`);
       }
       return `${lines.join('\n')}\n${props.join('\n')}\n$$$$\n`;
     })
@@ -224,14 +226,18 @@ export async function importLibrarySdf(
     // 聚合物：MoleForm_Type=polymer 且有 Mn 或 DP；設定不合規則時略過該筆
     let polymer: PolymerSpec | undefined;
     if (record.properties.MoleForm_Type?.trim() === 'polymer') {
+      const mw = record.properties.MoleForm_Mw?.trim();
       const mn = record.properties.MoleForm_Mn?.trim();
       const dp = record.properties.MoleForm_DP?.trim();
+      const pdi = record.properties.MoleForm_PDI?.trim();
       const parsed = parsePolymerSpec({
+        ...(mw ? { mwInput: Number(mw) } : {}),
         ...(mn ? { mnInput: Number(mn) } : {}),
         ...(dp ? { dpInput: Number(dp) } : {}),
+        ...(pdi ? { pdiInput: Number(pdi) } : {}),
       });
       if (!parsed.ok || !checked.canonicalSmiles.includes('*')) {
-        reasons.add('聚合物設定不合規則（需有連接點與 Mn 或 DP 其中之一）');
+        reasons.add('聚合物設定不合規則（需有連接點與 Mw、Mn 或 DP 其中之一）');
         continue;
       }
       polymer = parsed.spec;

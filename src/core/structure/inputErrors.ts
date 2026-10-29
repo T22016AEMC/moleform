@@ -20,7 +20,7 @@ export const rejectionMessages = {
   polymer: 'MoleForm 只接受分子結構，不接受 Molfile 的聚合物／重複單元記號（SRU 等）。聚合物重複單元請使用連接點 *（Phase 5 提供）。',
 } as const;
 
-export const connectionPointNotice = '含連接點 *；均聚物可在「均聚物設定」填入 Mn 或 DP，共聚物等功能在 Phase 5 提供';
+export const connectionPointNotice = '含連接點 *；均聚物可在「均聚物設定」填入 Mw 與 PDI（或改填 Mn、DP），共聚物等功能在 Phase 5 提供';
 
 export class InputValidationError extends Error {
   constructor(

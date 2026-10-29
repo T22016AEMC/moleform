@@ -90,7 +90,7 @@ export function editNotes(library: Library, id: string, notes: string, now: Date
   return updateOne(library, id, (c) => ({ ...c, notes: checked.value, updatedAt: now.toISOString() }));
 }
 
-/** 修改聚合物的 Mn 或 DP；只能用在已經是聚合物的化合物 */
+/** 修改聚合物的 Mw、Mn 或 DP 與 PDI；只能用在已經是聚合物的化合物 */
 export function editPolymer(library: Library, id: string, polymer: PolymerSpec, now: Date = new Date()): Validated<Library> {
   const target = library.find((c) => c.id === id);
   if (!target) return { ok: false, error: '找不到這筆化合物' };
@@ -132,8 +132,10 @@ export function sameCompound(a: Compound, b: Compound): boolean {
     a.canonicalSmiles === b.canonicalSmiles &&
     a.molfile === b.molfile &&
     a.notes === b.notes &&
+    a.polymer?.mwInput === b.polymer?.mwInput &&
     a.polymer?.mnInput === b.polymer?.mnInput &&
     a.polymer?.dpInput === b.polymer?.dpInput &&
+    a.polymer?.pdiInput === b.polymer?.pdiInput &&
     a.createdAt === b.createdAt &&
     a.updatedAt === b.updatedAt
   );

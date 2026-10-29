@@ -9,7 +9,7 @@ import {
   NOTE_M06,
   NOTE_MASS_BASIS,
   NOTE_MC_DEFINITION,
-  NOTE_MN_ONLY,
+  NOTE_DISTRIBUTION,
   NOTE_NON_INTEGER,
   computeLayer1,
 } from '../../core/crosslink/layer1/layer1';
@@ -46,8 +46,12 @@ function usePrepared(result: CrosslinkResult, formulation: Formulation | null): 
   return useMemo(() => {
     if (!formulation) return null;
     const mw: Record<string, number | undefined> = {};
-    for (const c of result.components) mw[c.id] = c.molarMass ?? undefined;
-    return prepareLayer1(result, formulation, computeFormulation(formulation, mw));
+    const unitWeights: Record<string, number | undefined> = {};
+    for (const c of result.components) {
+      mw[c.id] = c.molarMass ?? undefined;
+      if (c.distribution) unitWeights[c.id] = c.distribution.mUnit;
+    }
+    return prepareLayer1(result, formulation, computeFormulation(formulation, mw, { unitWeights }));
   }, [result, formulation]);
 }
 
@@ -119,7 +123,7 @@ function Layer1Output({ prep, conv }: { prep: Extract<PrepareOutcome, { ok: true
   const name = (side: 'A' | 'B' | null) => (side === 'A' ? setup.nameA : side === 'B' ? setup.nameB : '');
   const direct = LAYER1_DIRECT_MODEL_NAME;
   const mm = LAYER1_MODEL_NAME;
-  const notes = [r.usedMixtureApprox ? NOTE_NON_INTEGER : null, r.hasPolymer ? NOTE_MN_ONLY : null, NOTE_MASS_BASIS].filter((n): n is string => n !== null);
+  const notes = [r.usedMixtureApprox ? NOTE_NON_INTEGER : null, r.hasPolymer ? NOTE_DISTRIBUTION : null, NOTE_MASS_BASIS].filter((n): n is string => n !== null);
 
   return (
     <>

@@ -2,6 +2,7 @@
 // 交聯密度、網目分子量 Mc、殘留官能基。純 TypeScript，不可引用 React。
 // 「直接計算」：官能基比、過量、理論最大成鍵數、殘留百分比；「理論估算」：凝膠點、溶膠分率、交聯密度、Mc（Miller–Macosko）。
 // 各成分的官能基莫耳數只在內部使用，結果型別不含各成分的官能基數量（D09、D44）。
+import { twoComponentMasses } from '../../polymer/distribution';
 import {
   conversions,
   finiteProbability,
@@ -20,7 +21,8 @@ export const MESSAGE_NOT_GELLED = '未凝膠，不適用';
 export const MESSAGE_NEVER_GELS = '理論上不會凝膠';
 export const NOTE_MASS_BASIS = '以質量為基準，未換算體積';
 export const NOTE_NON_INTEGER = '官能度以相鄰整數混合近似';
-export const NOTE_MN_ONLY = '僅有 Mn，未考慮分子量分布；分布越寬，實際凝膠點越早';
+/** 取代 D42 的 Mn 近似附註（D47） */
+export const NOTE_DISTRIBUTION = '分子量分布以兩成分（等重量）近似；凝膠點只取決於 Mw，溶膠分率與交聯密度為近似值';
 export const NOTE_MC_DEFINITION = 'Mc 為依 Miller–Macosko 式 51 推導的質量基準定義（每克固體的有效網目鏈莫耳數的倒數），非論文原式';
 /** 凝膠點與交聯相關結果的限制說明（KNOWN_ISSUES M06 的重點） */
 export const NOTE_M06 = '理想模型未考慮分子內環化、官能基活性差異與副反應；實際凝膠點通常比理論晚，實際交聯密度通常比理論低。';
@@ -36,6 +38,11 @@ export interface Layer1Component {
   molarMass: number;
   /** 每分子平均反應官能基數（聚合物含聚合度），可為非整數 */
   groupsPerMolecule: number;
+  /**
+   * 聚合物的分子量分布（任務 019，D47）：有值時以兩成分等重量近似（見 docs/MODELS.md）取代單一成分。
+   * groupsPerUnit = 每重複單元的反應官能基數（含規則官能度）。只供計算，不顯示（D09）。
+   */
+  distribution?: { mw: number; mn: number; mUnit: number; groupsPerUnit: number };
 }
 
 export interface Layer1Setup {
@@ -80,7 +87,7 @@ export interface Layer1Result {
   mcGPerMol: number | null;
   /** 官能度以相鄰整數混合近似過 */
   usedMixtureApprox: boolean;
-  /** 含聚合物（只有 Mn 的近似，D42） */
+  /** 含聚合物（分子量分布以兩成分近似，D47） */
   hasPolymer: boolean;
 }
 
@@ -91,14 +98,28 @@ export function ratioText(nameA: string, nameB: string, ratioBToA: number): stri
   return `${nameA} : ${nameB} = 1 : ${fmt(ratioBToA)}`;
 }
 
-/** 組出 Miller–Macosko 用的 A、B 兩側成分（非整數官能度拆成相鄰整數的虛擬成分，B-8） */
+/**
+ * 組出 Miller–Macosko 用的 A、B 兩側成分。
+ * 聚合物（有分子量分布）以兩個等重量的虛擬成分表示（D47，本專案推導）；PDI = 1 時為單一成分，與任務 017 相同。
+ * 非整數官能度拆成相鄰整數的虛擬成分（B-8）。
+ */
 export function buildSystem(setup: Layer1Setup): { sys: MMSystem; mixture: boolean } {
   let mixture = false;
-  const species = (c: Layer1Component): MMSpecies[] => {
-    const n = c.mass / c.molarMass;
-    const parts = splitFunctionality(c.groupsPerMolecule, n, c.mass);
+  const split = (f: number, n: number, mass: number): MMSpecies[] => {
+    const parts = splitFunctionality(f, n, mass);
     if (parts.length > 1) mixture = true;
     return parts;
+  };
+  const species = (c: Layer1Component): MMSpecies[] => {
+    const d = c.distribution;
+    if (d) {
+      const { m1, m2, single } = twoComponentMasses(d.mw, d.mn);
+      if (!single) {
+        // 每個虛擬成分：重量分率 0.5、分子數 = 質量 ÷ M、官能度 = (M ÷ M_unit) × 每重複單元官能基數
+        return [m1, m2].flatMap((m) => split((m / d.mUnit) * d.groupsPerUnit, (0.5 * c.mass) / m, 0.5 * c.mass));
+      }
+    }
+    return split(c.groupsPerMolecule, c.mass / c.molarMass, c.mass);
   };
   const a = setup.components.filter((c) => c.side === 'A').flatMap(species);
   const b = setup.components.filter((c) => c.side === 'B').flatMap(species);

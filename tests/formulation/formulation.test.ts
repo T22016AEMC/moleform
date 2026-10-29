@@ -1,7 +1,7 @@
 // 配方換算核心的行為測試（任務 013）：用手算可驗證的範例檢查程式有沒有照規則算對（D17）。
 // 分子量直接給定（不使用真實化合物）：A = 100、B = 50、C = 200 g/mol；溶劑 S1、S2 不需要分子量。
 import { describe, expect, it } from 'vitest';
-import { computeFormulation, MESSAGE_POLYMER_MOL, MESSAGE_SOLID_CONTENT_NEEDS_TOTAL, MESSAGE_VOL_NOT_SUPPORTED } from '../../src/core/formulation/compute';
+import { computeFormulation, MESSAGE_POLYMER_NO_MW, MESSAGE_SOLID_CONTENT_NEEDS_TOTAL, MESSAGE_VOL_NOT_SUPPORTED } from '../../src/core/formulation/compute';
 import { parseFormulation, serializeFormulation } from '../../src/core/formulation/serialize';
 import type {
   Component,
@@ -135,21 +135,68 @@ describe('Solid mol', () => {
     expect(out.results.solid).toBeNull();
   });
 
-  it('含 * 的成分用 mol：回傳 U02 訊息', () => {
+  it('含 * 的成分用 mol、缺分子量（Mw／Mn／DP 沒填）：報錯並指出成分', () => {
     const polymer = solidC('A', 50, { canonicalSmiles: '*CC*', category: 'Resin' });
-    const out = computeFormulation(formulation({ unit: 'mol', components: [polymer, solidC('B', 50)] }), MW);
-    const err = out.errors.find((e) => e.code === 'POLYMER_MOL_BASIS')!;
-    expect(err.message).toContain(MESSAGE_POLYMER_MOL);
-    expect(err.message).toContain('U02');
+    const out = computeFormulation(formulation({ unit: 'mol', components: [polymer, solidC('B', 50)] }), { B: 50 });
+    const err = out.errors.find((e) => e.code === 'MISSING_MW')!;
+    expect(err.message).toContain(MESSAGE_POLYMER_NO_MW);
     expect(err.componentId).toBe('A');
+  });
+
+  // 聚合物 mol% 基準（D46）。手算：A（含 *）Mn = 1000、M_unit = 100；B 一般小分子 M = 50。
+  const polymerA = solidC('A', 50, { canonicalSmiles: '[*:1]CC[*:2]', category: 'Resin', name: '樹脂P' });
+  const MW_POLY = { A: 1000, B: 50 };
+  const UNIT_W = { A: 100 };
+
+  it('聚合物 mol% 單位（預設以整條鏈計）：50 mol% × Mn 1000 : 50 mol% × 50 = 50000 : 2500 → wt% 95.24／4.76', () => {
+    const out = computeFormulation(formulation({ unit: 'mol', components: [polymerA, solidC('B', 50)] }), MW_POLY, { unitWeights: UNIT_W });
+    expect(out.errors).toEqual([]);
+    const [a, b] = out.results.solid!.components;
+    near(value(a.wtPct), 95.238);
+    near(value(b.wtPct), 4.762);
+    near(value(a.molPct), 50);
+    expect(out.results.solid!.polymerMolNote).toBe('聚合物 mol% 以整條鏈（Mn）計');
+  });
+
+  it('聚合物 mol% 單位，以重複單元計：50 × 100 : 50 × 50 = 5000 : 2500 → wt% 66.67／33.33', () => {
+    const out = computeFormulation(
+      formulation({ unit: 'mol', components: [polymerA, solidC('B', 50)] }, undefined, { polymerMolBasis: 'unit' }),
+      MW_POLY,
+      { unitWeights: UNIT_W },
+    );
+    expect(out.errors).toEqual([]);
+    const [a, b] = out.results.solid!.components;
+    near(value(a.wtPct), 66.667);
+    near(value(b.wtPct), 33.333);
+    expect(out.results.solid!.polymerMolNote).toBe('聚合物 mol% 以重複單元計');
+  });
+
+  it('P 80 g、E 20 g 的 mol%：以鏈計與以重複單元計（手算）', () => {
+    // P：Mn 4000、M_unit 400；E：Mn 2000、M_unit 100
+    const p = solidC('P', 80, { canonicalSmiles: '[*:1]CC[*:2]', category: 'Resin' });
+    const e = solidC('E', 20, { canonicalSmiles: '[*:1]CC[*:2]', category: 'Resin' });
+    const mw = { P: 4000, E: 2000 };
+    const unitWeights = { P: 400, E: 100 };
+    // 以鏈計：P 80/4000 = 0.02 mol、E 20/2000 = 0.01 mol → 66.667／33.333
+    const chain = computeFormulation(formulation({ unit: 'g', components: [p, e] }), mw, { unitWeights });
+    expect(chain.errors).toEqual([]);
+    near(value(chain.results.solid!.components[0].molPct), 66.667);
+    near(value(chain.results.solid!.components[1].molPct), 33.333);
+    // 以重複單元計：P 80/400 = 0.2 mol、E 20/100 = 0.2 mol → 50／50
+    const unit = computeFormulation(formulation({ unit: 'g', components: [p, e] }, undefined, { polymerMolBasis: 'unit' }), mw, { unitWeights });
+    near(value(unit.results.solid!.components[0].molPct), 50);
+    near(value(unit.results.solid!.components[1].molPct), 50);
+    // 切換基準只影響 mol% 顯示，不影響質量相關結果
+    expect(unit.results.solid!.components.map((c) => value(c.wtPct))).toEqual(chain.results.solid!.components.map((c) => value(c.wtPct)));
+    expect(unit.results.solid!.components.map((c) => value(c.massG))).toEqual(chain.results.solid!.components.map((c) => value(c.massG)));
   });
 });
 
 describe('含 * 的成分用 g、parts、wt', () => {
-  it('質量相關結果正常；整區都不輸出 mol%（不使用部分基準）並說明原因', () => {
-    // A（含 *）50 g、B 50 g：wt% 各 50；A 無法換算 mol% → B 的 mol% 也不輸出（使用者 2026-10-29 決定）
+  it('聚合物缺分子量：質量相關結果正常；整區都不輸出 mol%（不使用部分基準）並說明原因', () => {
+    // A（含 *）50 g、B 50 g：wt% 各 50；A 缺 Mw／Mn／DP → B 的 mol% 也不輸出（任務 014 規則）
     const polymer = solidC('A', 50, { canonicalSmiles: '[*:1]CC[*:2]', category: 'Resin', name: '樹脂P' });
-    const out = computeFormulation(formulation({ unit: 'g', components: [polymer, solidC('B', 50)] }), MW);
+    const out = computeFormulation(formulation({ unit: 'g', components: [polymer, solidC('B', 50)] }), { B: 50 });
     expect(out.errors).toEqual([]);
     const [a, b] = out.results.solid!.components;
     near(value(a.wtPct), 50);
@@ -157,9 +204,10 @@ describe('含 * 的成分用 g、parts、wt', () => {
     for (const c of [a, b]) {
       expect(c.molPct.value).toBeNull();
       expect(c.molPct.notApplicable).toBe(
-        '樹脂P 無法換算 mol%（含連接點 *，聚合物的 mol% 基準將於 Phase 5 決定（U02）），本區不提供 mol% 以免數值不完整',
+        '樹脂P 無法換算 mol%（聚合物缺少分子量（需填 Mw、Mn 或 DP）），本區不提供 mol% 以免數值不完整',
       );
     }
+    expect(out.results.solid!.polymerMolNote).toBeNull();
     expect(out.warnings.map((w) => w.code)).toContain('MOL_UNAVAILABLE');
     expect(out.warnings.map((w) => w.code)).not.toContain('MOL_PARTIAL');
   });

@@ -138,7 +138,7 @@ describe('測試體系：配方 4A、4B', () => {
     const result = analyzeCrosslink(RDKit, [comp('P', 'P', P, 'Resin'), ec, lc], T);
     expect(result.pairs[0].kind).toBe('undetermined');
     expect(result.verdict).toBe('undetermined');
-    expect(result.warnings.some((w) => w.includes('Mn 或 DP'))).toBe(true);
+    expect(result.warnings.some((w) => w.includes('Mw'))).toBe(true);
   });
 
   it('只有溶劑：無反應', () => {

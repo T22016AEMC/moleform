@@ -41,9 +41,8 @@ export interface Component<Category extends string = string> {
   /** 使用者畫的 2D Molfile（若有）；讓配方檔不依賴化合物庫也能完整還原 */
   molfile?: string;
   /**
-   * 均聚物設定（任務 015，D42）：canonicalSmiles 是含兩個連接點的重複單元，Mn 或 DP 擇一。
-   * 聚合物成分以 Mn 作為「每分子質量」傳入核心（見 MolecularWeights），但核心不用它算 mol%（U02 尚未決定），
-   * 只供之後任務 017 計算官能度使用。
+   * 均聚物設定（任務 015、019，D42、D47）：canonicalSmiles 是含兩個連接點的重複單元，Mw、Mn 或 DP 擇一，PDI 選填。
+   * 聚合物的 mol% 依 Formulation.polymerMolBasis 換算（D46）：整條鏈以 Mn 計，重複單元以 M_unit 計。
    */
   polymer?: PolymerSpec;
 }
@@ -65,13 +64,28 @@ export interface Formulation {
   liquidTotalG?: number;
   /** 目標 Solid Content（%），0 < 值 < 100 */
   targetSolidContentPct?: number;
+  /** 聚合物 mol% 的基準（D46）：chain＝整條鏈（預設）、unit＝重複單元；省略視為 chain */
+  polymerMolBasis?: PolymerMolBasis;
 }
+
+/** 聚合物 mol% 的基準：chain＝莫耳數 = 質量 ÷ Mn；unit＝莫耳數 = 質量 ÷ 重複單元分子量（D46） */
+export type PolymerMolBasis = 'chain' | 'unit';
+
+export const POLYMER_MOL_NOTE: Record<PolymerMolBasis, string> = {
+  chain: '聚合物 mol% 以整條鏈（Mn）計',
+  unit: '聚合物 mol% 以重複單元計',
+};
 
 /**
  * 呼叫端傳入：成分 id → 每分子質量（g/mol）。小分子為平均分子量；聚合物為 Mn（每條鏈）。
- * 聚合物的值不會用來算 mol%（含 `*` 的成分一律排除，U02），只保留給官能度計算（任務 017）。
+ * 聚合物以重複單元計 mol% 時，另由 ComputeOptions.unitWeights 傳入重複單元分子量。
  */
 export type MolecularWeights = Readonly<Record<string, number | undefined>>;
+
+export interface ComputeOptions {
+  /** 聚合物（含 `*`）成分 id → 重複單元分子量（g/mol）；polymerMolBasis 為 unit 時使用 */
+  unitWeights?: MolecularWeights;
+}
 
 // ---------- 錯誤與警告 ----------
 
@@ -89,7 +103,6 @@ export type IssueCode =
   | 'VOL_IN_SOLID'
   | 'VOL_NOT_SUPPORTED'
   | 'MISSING_MW'
-  | 'POLYMER_MOL_BASIS'
   | 'TARGET_OUT_OF_RANGE'
   | 'TARGET_NEEDS_SOLID_MASS'
   | 'SOLID_CONTENT_NEEDS_TOTAL'
@@ -120,6 +133,8 @@ export interface ComponentResult {
 export interface AreaResult {
   unit: string;
   components: ComponentResult[];
+  /** 區內有聚合物且 mol% 有輸出（或以 mol% 輸入）時的基準附註（D46）；否則 null */
+  polymerMolNote: string | null;
 }
 
 export interface TargetSolidContentResult {

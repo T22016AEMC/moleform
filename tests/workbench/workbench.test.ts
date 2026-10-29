@@ -74,30 +74,36 @@ describe('加入成分彈窗：表單 → 配方成分', () => {
     expect(row.polymerEdit).toBeUndefined();
   });
 
-  it('聚合物：Mn 填在彈窗裡，進入配方後成為成分的聚合物設定', () => {
+  it('聚合物：Mw 與 PDI 填在彈窗裡，進入配方後成為成分的聚合物設定；預設輸入方式是 Mw', () => {
     const candidate = candidateFromValidation(valid(POLYMER))!;
-    const form = { ...initialForm(candidate, 0, 'Resin'), polymerEdit: { basis: 'mn' as const, text: '12000' } };
+    expect(initialForm(candidate, 0, 'Resin').polymerEdit).toEqual({ basis: 'mw', text: '', pdiText: '' });
+    const form = { ...initialForm(candidate, 0, 'Resin'), polymerEdit: { basis: 'mw' as const, text: '6000', pdiText: '1.8' } };
     const row = rowFromCandidate('solid', candidate, form, 0);
     const state = { ...emptyState(), solidRows: [row] };
-    expect(toFormulation(state).solid.components[0].polymer).toEqual({ mnInput: 12000 });
+    expect(toFormulation(state).solid.components[0].polymer).toEqual({ mwInput: 6000, pdiInput: 1.8 });
+    // PDI 留空：沒有 pdiInput（計算時使用預設 2）
+    const noPdi = { ...row, polymerEdit: { basis: 'mw' as const, text: '4500', pdiText: '' } };
+    expect(toFormulation({ ...emptyState(), solidRows: [noPdi] }).solid.components[0].polymer).toEqual({ mwInput: 4500 });
   });
 
-  it('聚合物：Mn 尚未填時成分仍加入（沒有聚合物設定），輸入框保留使用者打的文字', () => {
+  it('聚合物：分子量尚未填時成分仍加入（沒有聚合物設定），輸入框保留使用者打的文字', () => {
     const candidate = candidateFromValidation(valid(POLYMER))!;
-    const form = { ...initialForm(candidate, 0, 'Resin'), polymerEdit: { basis: 'dp' as const, text: 'abc' } };
+    const form = { ...initialForm(candidate, 0, 'Resin'), polymerEdit: { basis: 'dp' as const, text: 'abc', pdiText: '' } };
     const row = rowFromCandidate('solid', candidate, form, 0);
-    expect(row.polymerEdit).toEqual({ basis: 'dp', text: 'abc' });
+    expect(row.polymerEdit).toEqual({ basis: 'dp', text: 'abc', pdiText: '' });
     expect(toFormulation({ ...emptyState(), solidRows: [row] }).solid.components[0].polymer).toBeUndefined();
   });
 
-  it('從化合物庫選聚合物：彈窗的 Mn／DP 欄帶入化合物的設定', () => {
+  it('從化合物庫選聚合物：彈窗的分子量欄帶入化合物的設定（舊資料只有 Mn 或 DP，PDI 欄留空＝預設）', () => {
     const candidate = candidateFromCompound(compound({ canonicalSmiles: POLYMER, polymer: { dpInput: 80 } }));
-    expect(initialForm(candidate, 0, 'Resin').polymerEdit).toEqual({ basis: 'dp', text: '80' });
+    expect(initialForm(candidate, 0, 'Resin').polymerEdit).toEqual({ basis: 'dp', text: '80', pdiText: '' });
+    const withMw = candidateFromCompound(compound({ canonicalSmiles: POLYMER, polymer: { mwInput: 6000, pdiInput: 1.8 } }));
+    expect(initialForm(withMw, 0, 'Resin').polymerEdit).toEqual({ basis: 'mw', text: '6000', pdiText: '1.8' });
   });
 
-  it('同時存進化合物庫：化合物資料來自這一列（聚合物帶 Mn／DP）', () => {
+  it('同時存進化合物庫：化合物資料來自這一列（聚合物帶分子量與 PDI）', () => {
     const candidate = candidateFromValidation(valid(POLYMER))!;
-    const form = { ...initialForm(candidate, 0, 'Resin'), name: '樹脂 A', polymerEdit: { basis: 'mn' as const, text: '3000' } };
+    const form = { ...initialForm(candidate, 0, 'Resin'), name: '樹脂 A', polymerEdit: { basis: 'mn' as const, text: '3000', pdiText: '' } };
     const row = rowFromCandidate('solid', candidate, form, 0);
     expect(libraryInputFromRow(row)).toEqual({ name: '樹脂 A', canonicalSmiles: POLYMER, molfile: candidate.molfile, polymer: { mnInput: 3000 } });
     const small = rowFromCandidate('liquid', candidateFromValidation(valid('CCO'))!, initialForm(null, 0, 'Solvent'), 0);
@@ -111,9 +117,9 @@ describe('成分詳細彈窗：修改後配方更新', () => {
   it('改 Mn／DP 後，配方裡的聚合物設定跟著變', () => {
     let row = base();
     expect(toFormulation({ ...emptyState(), solidRows: [row] }).solid.components[0].polymer).toBeUndefined();
-    row = { ...row, polymerEdit: { basis: 'mn', text: '8000' } };
+    row = { ...row, polymerEdit: { basis: 'mn', text: '8000', pdiText: '' } };
     expect(toFormulation({ ...emptyState(), solidRows: [row] }).solid.components[0].polymer).toEqual({ mnInput: 8000 });
-    row = { ...row, polymerEdit: { basis: 'dp', text: '40' } };
+    row = { ...row, polymerEdit: { basis: 'dp', text: '40', pdiText: '' } };
     expect(toFormulation({ ...emptyState(), solidRows: [row] }).solid.components[0].polymer).toEqual({ dpInput: 40 });
   });
 
@@ -124,8 +130,8 @@ describe('成分詳細彈窗：修改後配方更新', () => {
   });
 
   it('套用新結構：聚合物保留已填的 Mn；改成小分子則不再有聚合物輸入', () => {
-    const withMn: Row = { ...base(), polymerEdit: { basis: 'mn', text: '5000' } };
-    expect(applyStructureToRow(withMn, { canonicalSmiles: '[*:1]CC[*:2]', molfile: 'x' }).polymerEdit).toEqual({ basis: 'mn', text: '5000' });
+    const withMn: Row = { ...base(), polymerEdit: { basis: 'mn', text: '5000', pdiText: '' } };
+    expect(applyStructureToRow(withMn, { canonicalSmiles: '[*:1]CC[*:2]', molfile: 'x' }).polymerEdit).toEqual({ basis: 'mn', text: '5000', pdiText: '' });
     const small = applyStructureToRow(withMn, { canonicalSmiles: 'CCO', molfile: 'y' });
     expect(small.polymerEdit).toBeUndefined();
     expect(toFormulation({ ...emptyState(), solidRows: [small] }).solid.components[0].polymer).toBeUndefined();

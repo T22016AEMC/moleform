@@ -18,6 +18,7 @@ import {
 } from '../../src/core/library/exchange';
 import { addCompound, editPolymer } from '../../src/core/library/library';
 import type { Library } from '../../src/core/library/types';
+import type { PolymerSpec } from '../../src/core/polymer/types';
 import { getRDKit } from '../../src/core/rdkit/loader';
 import type { RDKitModule } from '../../src/core/rdkit/types';
 import { validateStructure } from '../../src/core/structure/validate';
@@ -43,7 +44,7 @@ const validateMolfile: ValidateMolfile = async (molfile) => {
   return { ok: false, reason: r.problems.find((p) => p.level === 'error')?.message ?? '無效' };
 };
 
-function make(library: Library, name: string, smiles: string, id: string, polymer?: { mnInput?: number; dpInput?: number }): Library {
+function make(library: Library, name: string, smiles: string, id: string, polymer?: PolymerSpec): Library {
   const v = validateStructure(RDKit, smiles);
   expect(v.valid).toBe(true);
   const added = addCompound(library, { name, canonicalSmiles: v.canonicalSmiles, molfile: v.molblock, ...(polymer ? { polymer } : {}) }, T1, id);
@@ -225,29 +226,39 @@ describe('配方：聚合物成分', () => {
     expect(parseFormulation(JSON.stringify(f)).ok).toBe(false);
   });
 
-  it('質量相關換算照常（wt%、g、Solid Content）；mol% 整區不輸出，且傳入 Mn 不影響任何結果', () => {
+  it('質量相關換算照常（wt%、g、Solid Content）；缺分子量時 mol% 整區不輸出，有 Mn 時以鏈計輸出（D46）', () => {
     const f = polymerFormulation();
     const without = computeFormulation(f, {});
+    expect(without.errors).toEqual([]);
+    expect(without.results.solid!.components[0].molPct.value).toBeNull();
+    expect(without.warnings.some((w) => w.code === 'MOL_UNAVAILABLE')).toBe(true);
     const withMn = computeFormulation(f, { p: 6000, e: 3000 });
-    expect(withMn).toEqual(without);
     expect(withMn.errors).toEqual([]);
     const solid = withMn.results.solid!;
     expect(solid.components[0].wtPct.value).toBeCloseTo(80, 8);
     expect(solid.components[1].wtPct.value).toBeCloseTo(20, 8);
-    expect(solid.components[0].molPct.value).toBeNull();
-    expect(solid.components[1].molPct.value).toBeNull();
-    expect(withMn.warnings.some((w) => w.code === 'MOL_UNAVAILABLE')).toBe(true);
-    // 質量：Solid 總重 4 g 依 wt% 分配
+    // 以鏈計：P 80/6000、E 20/3000 → 莫耳比 0.013333 : 0.006667 = 2 : 1
+    expect(solid.components[0].molPct.value).toBeCloseTo((2 / 3) * 100, 8);
+    expect(solid.components[1].molPct.value).toBeCloseTo((1 / 3) * 100, 8);
+    // 質量：Solid 總重 4 g 依 wt% 分配（不受 mol% 基準影響）
     expect(solid.components[0].massG?.value).toBeCloseTo(3.2, 8);
     expect(solid.components[1].massG?.value).toBeCloseTo(0.8, 8);
   });
 
-  it('mol% 單位含聚合物 → 與任務 014 相同，整區報錯（U02）', () => {
+  it('mol% 單位含聚合物且缺分子量 → 整區報錯（MISSING_MW）', () => {
     const f = polymerFormulation();
     f.solid.unit = 'mol';
-    const outcome = computeFormulation(f, { p: 6000, e: 3000 });
-    expect(outcome.errors.some((e) => e.code === 'POLYMER_MOL_BASIS')).toBe(true);
+    const outcome = computeFormulation(f, {});
+    expect(outcome.errors.some((e) => e.code === 'MISSING_MW')).toBe(true);
     expect(outcome.results.solid).toBeNull();
+  });
+
+  it('配方檔的聚合物 mol% 基準：unit 會存下並讀回；沒有這個欄位的舊檔視為整條鏈', () => {
+    const f = { ...polymerFormulation(), polymerMolBasis: 'unit' as const };
+    const back = parseFormulation(serializeFormulation(f));
+    expect(back.ok && back.formulation.polymerMolBasis).toBe('unit');
+    const old = parseFormulation(serializeFormulation(polymerFormulation()));
+    expect(old.ok && old.formulation.polymerMolBasis).toBeUndefined();
   });
 
   it('指定 Solid 總重後，Solid Content 與目標反推可算', () => {
@@ -270,7 +281,7 @@ describe('配方編輯狀態：聚合物欄位', () => {
     expect(f.solid.components[1].polymer).toBeUndefined();
     expect(f.solid.components[0]).not.toHaveProperty('polymerEdit');
     const back = fromFormulation(f);
-    expect(back.solidRows[0].polymerEdit).toEqual({ basis: 'dp', text: '21' });
+    expect(back.solidRows[0].polymerEdit).toEqual({ basis: 'dp', text: '21', pdiText: '' });
     expect(toFormulation(back)).toEqual(f);
   });
 
@@ -278,12 +289,14 @@ describe('配方編輯狀態：聚合物欄位', () => {
     const state = emptyState();
     const row = newRow('solid', { name: 'E', canonicalSmiles: validateStructure(RDKit, E_UNIT).canonicalSmiles });
     row.amountText = '1';
-    expect(row.polymerEdit).toEqual({ basis: 'mn', text: '' });
+    expect(row.polymerEdit).toEqual({ basis: 'mw', text: '', pdiText: '' });
     state.solidRows = [row];
     expect(toFormulation(state).solid.components[0].polymer).toBeUndefined();
-    row.polymerEdit = { basis: 'mn', text: 'abc' };
+    row.polymerEdit = { basis: 'mn', text: 'abc', pdiText: '' };
     expect(toFormulation(state).solid.components[0].polymer).toBeUndefined();
-    row.polymerEdit = { basis: 'mn', text: '-5' };
+    row.polymerEdit = { basis: 'mn', text: '-5', pdiText: '' };
+    expect(toFormulation(state).solid.components[0].polymer).toBeUndefined();
+    row.polymerEdit = { basis: 'mw', text: '6000', pdiText: 'abc' };
     expect(toFormulation(state).solid.components[0].polymer).toBeUndefined();
   });
 });

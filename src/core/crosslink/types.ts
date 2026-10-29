@@ -36,6 +36,8 @@ export interface ComponentAnalysis {
   dp: number | null;
   /** 每分子質量（g/mol）：小分子為平均分子量，聚合物為 Mn；算不出為 null。只供第 1 層計算，不顯示（D09） */
   molarMass: number | null;
+  /** 聚合物的分子量分布資料（Mw、Mn、重複單元分子量；任務 019）。只供第 1 層的兩成分近似，不顯示（D09）；非聚合物或算不出為 null */
+  distribution: { mw: number; mn: number; mUnit: number } | null;
   /** 有位點的官能基（聚合物已排除涉及連接點 * 的匹配） */
   groups: GroupSites[];
   /** 分析上的問題（無法解析、聚合物缺 Mn／DP 等）；沒有問題為 null */
@@ -96,7 +98,7 @@ export const VERDICT_LABEL: Record<Verdict, string> = {
   network: '配方具形成網路的結構條件；是否凝膠與交聯程度見第 1 層',
   chain: '具鏈延長的結構條件',
   capping: '具封端／接枝的結構條件',
-  undetermined: '無法判定（聚合物缺少 Mn 或 DP）',
+  undetermined: '無法判定（聚合物缺少分子量）',
   none: '無反應',
 };
 

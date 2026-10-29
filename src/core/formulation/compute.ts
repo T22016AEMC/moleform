@@ -7,14 +7,17 @@ import {
   SOLID_CATEGORIES,
   type AreaName,
   type AreaResult,
+  POLYMER_MOL_NOTE,
   type Component,
   type ComponentResult,
+  type ComputeOptions,
   type Formulation,
   type FormulationIssue,
   type FormulationOutcome,
   type IssueCode,
   type MolecularWeights,
   type OverallResult,
+  type PolymerMolBasis,
   type TargetSolidContentResult,
 } from './types';
 
@@ -24,7 +27,7 @@ export const SUM_TOLERANCE = 0.01;
 const EPSILON = 1e-9;
 
 export const MESSAGE_VOL_NOT_SUPPORTED = 'vol% 需要溶劑密度，將於 Phase 8 提供';
-export const MESSAGE_POLYMER_MOL = '聚合物的 mol% 基準將於 Phase 5 決定（U02）';
+export const MESSAGE_POLYMER_NO_MW = '聚合物缺少分子量（需填 Mw、Mn 或 DP），無法以 mol% 換算';
 export const MESSAGE_SOLID_CONTENT_NEEDS_TOTAL = '無法計算 Solid Content，請補填 Solid 總重／Liquid 總重';
 
 function calc(value: number | null, unit: string, notApplicable?: string): CalcResult {
@@ -40,8 +43,7 @@ function calc(value: number | null, unit: string, notApplicable?: string): CalcR
 
 const num = (value: number) => String(Number(value.toFixed(6)));
 const isValidNumber = (value: unknown): value is number => typeof value === 'number' && Number.isFinite(value);
-// 含 `*` 的成分是聚合物：即使呼叫端傳入了它的 Mn（每鏈質量），這裡也不用來算 mol%（U02 尚未決定），
-// Mn 只保留給之後的官能度計算（任務 017）。
+// 含 `*` 的成分是聚合物：mol% 依基準換算（D46）——整條鏈用 Mn（molecularWeights），重複單元用 M_unit（options.unitWeights）。
 const hasPolymerMark = (smiles: string) => smiles.includes('*');
 const areaLabel = (area: AreaName) => (area === 'solid' ? 'Solid 區' : 'Liquid 區');
 const labelOf = (c: Component, index: number) => c.name.trim() || `第 ${index + 1} 項`;
@@ -74,6 +76,8 @@ function processArea(
   comps: Component[],
   rawTotalG: number | undefined,
   mw: MolecularWeights,
+  basis: PolymerMolBasis,
+  unitWeights: MolecularWeights,
   sink: Sink,
 ): AreaState {
   const label = areaLabel(area);
@@ -112,7 +116,7 @@ function processArea(
   if (comps.length === 0) {
     if (rawTotalG !== undefined) error('EMPTY_AREA_WITH_SETTINGS', `${label}沒有任何成分，但填了總重；請先加入成分或清除總重`);
     if (sink.errors.length > errorsBefore) return failedState(unit, comps);
-    return { ok: true, empty: true, unit, comps, rel: [], totalRel: 0, mass: 0, result: { unit, components: [] } };
+    return { ok: true, empty: true, unit, comps, rel: [], totalRel: 0, mass: 0, result: { unit, components: [], polymerMolNote: null } };
   }
 
   // 成分基本檢查
@@ -127,7 +131,7 @@ function processArea(
   });
 
   const usableMw = (c: Component): number | null => {
-    const value = mw[c.id];
+    const value = hasPolymerMark(c.canonicalSmiles) && basis === 'unit' ? unitWeights[c.id] : mw[c.id];
     return isValidNumber(value) && value > 0 ? value : null;
   };
 
@@ -151,8 +155,10 @@ function processArea(
   }
   if (unit === 'mol') {
     comps.forEach((c, i) => {
-      if (hasPolymerMark(c.canonicalSmiles)) error('POLYMER_MOL_BASIS', `「${labelOf(c, i)}」：${MESSAGE_POLYMER_MOL}`, c.id);
-      else if (usableMw(c) === null) error('MISSING_MW', `${label}的「${labelOf(c, i)}」缺少分子量，無法以 mol% 換算`, c.id);
+      if (usableMw(c) === null) {
+        const text = hasPolymerMark(c.canonicalSmiles) ? MESSAGE_POLYMER_NO_MW : '缺少分子量，無法以 mol% 換算';
+        error('MISSING_MW', `${label}的「${labelOf(c, i)}」${text}`, c.id);
+      }
     });
   }
 
@@ -176,9 +182,8 @@ function processArea(
     mass = totalG;
   }
 
-  // mol%：只要有任何成分無法換算（含 `*` 或缺分子量），整區都不輸出 mol%（使用者 2026-10-29 決定），不使用部分基準
+  // mol%：只要有任何成分無法換算（缺分子量；含連接點的聚合物缺 Mw、Mn、DP 也算），整區都不輸出 mol%（任務 014），不使用部分基準
   const moles = comps.map((c, i) => {
-    if (hasPolymerMark(c.canonicalSmiles)) return null;
     const m = usableMw(c);
     return m === null ? null : rel[i] / m;
   });
@@ -186,7 +191,7 @@ function processArea(
   let molBlockedMessage: string | null = null;
   if (blockedIndex >= 0) {
     const blocked = comps[blockedIndex];
-    const reason = hasPolymerMark(blocked.canonicalSmiles) ? '含連接點 *，聚合物的 mol% 基準將於 Phase 5 決定（U02）' : '缺少分子量';
+    const reason = hasPolymerMark(blocked.canonicalSmiles) ? '聚合物缺少分子量（需填 Mw、Mn 或 DP）' : '缺少分子量';
     molBlockedMessage = `${labelOf(blocked, blockedIndex)} 無法換算 mol%（${reason}），本區不提供 mol% 以免數值不完整`;
     warn('MOL_UNAVAILABLE', `${label}：${molBlockedMessage}`, blocked.id);
   }
@@ -209,17 +214,21 @@ function processArea(
     };
   });
 
-  return { ok: true, empty: false, unit, comps, rel, totalRel, mass, result: { unit, components } };
+  const polymerMolNote = molBlockedMessage === null && comps.some((c) => hasPolymerMark(c.canonicalSmiles)) ? POLYMER_MOL_NOTE[basis] : null;
+  return { ok: true, empty: false, unit, comps, rel, totalRel, mass, result: { unit, components, polymerMolNote } };
 }
 
 /**
  * 換算整份配方。有錯誤時仍盡量回傳能算的部分（某一區有錯誤，另一區照常；整體數字依賴有錯誤的區域時為 null）。
- * @param molecularWeights 成分 id → 平均分子量（g/mol），由呼叫端以 RDKit 計算；只用於計算
+ * @param molecularWeights 成分 id → 平均分子量（g/mol），由呼叫端以 RDKit 計算（聚合物為 Mn）；只用於計算
+ * @param options 聚合物以重複單元計 mol% 時，需傳入 unitWeights（成分 id → 重複單元分子量）
  */
-export function computeFormulation(formulation: Formulation, molecularWeights: MolecularWeights = {}): FormulationOutcome {
+export function computeFormulation(formulation: Formulation, molecularWeights: MolecularWeights = {}, options: ComputeOptions = {}): FormulationOutcome {
   const sink: Sink = { errors: [], warnings: [] };
-  const solid = processArea('solid', formulation.solid.unit, formulation.solid.components, formulation.solidTotalG, molecularWeights, sink);
-  const liquid = processArea('liquid', formulation.liquid.unit, formulation.liquid.components, formulation.liquidTotalG, molecularWeights, sink);
+  const basis = formulation.polymerMolBasis ?? 'chain';
+  const unitWeights = options.unitWeights ?? {};
+  const solid = processArea('solid', formulation.solid.unit, formulation.solid.components, formulation.solidTotalG, molecularWeights, basis, unitWeights, sink);
+  const liquid = processArea('liquid', formulation.liquid.unit, formulation.liquid.components, formulation.liquidTotalG, molecularWeights, basis, unitWeights, sink);
 
   // 整體：Solid Content
   const na = (reason: string) => calc(null, 'g', reason);

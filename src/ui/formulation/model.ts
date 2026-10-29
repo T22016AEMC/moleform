@@ -2,13 +2,13 @@
 import { newId } from '../../core/library/library';
 import type { PolymerSpec } from '../../core/polymer/types';
 import { editFromSpec, specFromEdit, type PolymerEdit } from '../polymer/model';
-import type { Component, Formulation, LiquidCategory, LiquidUnit, SolidCategory, SolidUnit } from '../../core/formulation/types';
+import type { Component, Formulation, LiquidCategory, LiquidUnit, PolymerMolBasis, SolidCategory, SolidUnit } from '../../core/formulation/types';
 
 /** amountTouched：使用者輸入過或離開過用量欄位（只在畫面使用，不存進配方）；在那之前空白用量不顯示錯誤 */
 export type Row = Omit<Component, 'amount' | 'polymer'> & {
   amountText: string;
   amountTouched?: boolean;
-  /** 聚合物的 Mn 或 DP 輸入（含 `*` 的成分才會用到）；存檔時轉成 Component.polymer */
+  /** 聚合物的 Mw／Mn／DP 與 PDI 輸入（含 `*` 的成分才會用到）；存檔時轉成 Component.polymer */
   polymerEdit?: PolymerEdit;
 };
 
@@ -31,6 +31,8 @@ export interface EditorState {
   solidTotalText: string;
   liquidTotalText: string;
   targetText: string;
+  /** 聚合物 mol% 的基準（D46）：整條鏈（預設）或重複單元 */
+  polymerMolBasis: PolymerMolBasis;
 }
 
 export const emptyState = (): EditorState => ({
@@ -42,6 +44,7 @@ export const emptyState = (): EditorState => ({
   solidTotalText: '',
   liquidTotalText: '',
   targetText: '',
+  polymerMolBasis: 'chain',
 });
 
 /** 空白或無法解析的文字變成 NaN，由換算核心指出「數值無效」 */
@@ -74,6 +77,7 @@ export function toFormulation(state: EditorState): Formulation {
   if (solidTotal !== undefined) f.solidTotalG = solidTotal;
   if (liquidTotal !== undefined) f.liquidTotalG = liquidTotal;
   if (target !== undefined) f.targetSolidContentPct = target;
+  if (state.polymerMolBasis === 'unit') f.polymerMolBasis = 'unit'; // 預設（整條鏈）不寫入，舊檔與新檔一致
   return f;
 }
 
@@ -94,6 +98,7 @@ export function fromFormulation(f: Formulation): EditorState {
     solidTotalText: textOf(f.solidTotalG),
     liquidTotalText: textOf(f.liquidTotalG),
     targetText: textOf(f.targetSolidContentPct),
+    polymerMolBasis: f.polymerMolBasis ?? 'chain',
   };
 }
 
@@ -111,7 +116,7 @@ export function newRow(
     ...(area === 'solid' ? { isResin: false, volatileFlag: false } : {}),
     ...(input.molfile ? { molfile: input.molfile } : {}),
     ...(input.compoundId ? { compoundId: input.compoundId } : {}),
-    // 含連接點的成分都附 Mn／DP 輸入欄（來自化合物庫或「分子工具」分頁時帶入已填的值）
+    // 含連接點的成分都附 Mw／Mn／DP 與 PDI 輸入欄（來自化合物庫或「分子工具」分頁時帶入已填的值）
     ...(input.canonicalSmiles.includes('*') ? { polymerEdit: editFromSpec(input.polymer) } : {}),
   };
 }
