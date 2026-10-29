@@ -5,7 +5,7 @@ import { connectionPointNotice, inputMessages, rejectionMessages, type InputCate
 import { isReactionMolfile, molfileFeatures } from './molfileChecks';
 
 export type ProblemLevel = 'error' | 'info';
-export type ProblemCode = InputCategory | 'REACTION' | 'QUERY' | 'RGROUP' | 'POLYMER' | 'CONNECTION_POINT';
+export type ProblemCode = InputCategory | 'REACTION' | 'QUERY' | 'RGROUP' | 'POLYMER' | 'CONNECTION_POINT' | 'MULTIPLE_FRAGMENTS';
 
 export interface StructureProblem {
   level: ProblemLevel;
@@ -150,6 +150,10 @@ export function validateStructure(RDKit: RDKitModule, rawInput: string): Structu
     const problems: StructureProblem[] = [];
     if (canonicalSmiles.includes('*')) {
       problems.push({ level: 'info', code: 'CONNECTION_POINT', message: connectionPointNotice });
+    }
+    const fragments = canonicalSmiles.split('.').length; // SMILES 的 . 只會出現在片段之間
+    if (fragments > 1) {
+      problems.push({ level: 'info', code: 'MULTIPLE_FRAGMENTS', message: `含 ${fragments} 個分離片段` });
     }
     return result({ valid: true, canonicalSmiles, molblock, problems });
   } finally {

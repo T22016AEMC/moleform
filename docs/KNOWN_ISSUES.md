@@ -14,7 +14,7 @@
 | K06 | **CheMScutter 的 `lightningcss`（MPL-2.0，弱 copyleft）**由 vite 帶入，僅建置期使用、不隨網頁發布；Ketcher 相依樹中另有一個授權欄位為空的 `eve-raphael`（0.5.0）與 `asap`（1.0.0，以舊式 `licenses` 欄位標示 MIT） | 已決（D29）：接受 | 發布時沿用 CheMScutter 的 THIRD-PARTY-NOTICES 產生方式；對外商用前重新檢查 |
 | K07 | **OpenChemLib 的 MMFF94 沒有退路力場**：含硼（例如 BF₃–胺錯合物催化劑）、SF₆ 型硫等缺參數時會直接拋錯 | 已知（任務 005） | 改顯示初始構象並標示「未經力場最佳化」（PLAN 2.5） |
 | K08 | **OpenChemLib 的 MMFF94 能量單位在型別定義中未註明** | 未確認 | PLAN 2.5b 以 MMFF94 官方驗證資料集比對；確認前不顯示相對能量 |
-| K09 | **Ketcher 自己匯入 SMILES 時，會把連接點 `[*:1]` 轉成 R 基團標籤（R1、R2）**，匯出成 Molfile 為 `R#` 加 `RGROUPS`，不是 `*`；另外 Indigo 的 `check` 會把 `*` 原子也報成「查詢特徵」。純 `*` 原子（star atom）可正常顯示、匯出與來回（任務 010 在 Ketcher 3.18.0 實測） | 已處理（任務 010）：SMILES 含 `*` 時改送 RDKit 產生的 Molfile（連接點寫成 `*`，原子映射編號保留）給 Ketcher；不使用 Indigo 的 `query` 檢查，改由 KET／Molfile 文字自行判斷查詢結構；Ketcher 中使用者自己畫的 R 基團標籤（R1…）仍被拒絕（沿用 CheMScutter 的限制） | 使用者在瀏覽器確認 `[*:1]CC[*:2]` 的顯示；Phase 5 設計重複單元輸入時再檢討 |
+| K09 | **Ketcher 自己匯入 SMILES 時，會把連接點 `[*:1]` 轉成 R 基團標籤（R1、R2）**，匯出成 Molfile 為 `R#` 加 `RGROUPS`，不是 `*`；另外 Indigo 的 `check` 會把 `*` 原子也報成「查詢特徵」。純 `*` 原子（star atom）可正常顯示、匯出與來回（任務 010 在 Ketcher 3.18.0 實測） | 已處理（任務 010）：SMILES 含 `*` 時改送 RDKit 產生的 Molfile（連接點寫成 `*`，原子映射編號保留）給 Ketcher；不使用 Indigo 的 `query` 檢查，改由 KET／Molfile 文字自行判斷查詢結構；Ketcher 中使用者自己畫的 R 基團標籤（R1…）仍被拒絕（沿用 CheMScutter 的限制） | 使用者在瀏覽器確認 `[*:1]CC[*:2]` 的顯示；使用者已決定（2026-10-29）：R1／R2 暫不接受為連接點，維持現狀，Phase 5 再決定 |
 
 ## 模型精度限制（要在介面上誠實標示）
 

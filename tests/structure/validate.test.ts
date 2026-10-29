@@ -235,6 +235,25 @@ describe('匯出一律是 V2000', () => {
   });
 });
 
+describe('多片段結構', () => {
+  it('CC.O 合法，提示含 2 個分離片段', () => {
+    const v = validateStructure(RDKit, 'CC.O');
+    expect(v.valid).toBe(true);
+    expect(v.problems).toEqual([{ level: 'info', code: 'MULTIPLE_FRAGMENTS', message: '含 2 個分離片段' }]);
+  });
+
+  it('CC.O.N 提示 3 個；CCO 與 BADGE 沒有此提示', () => {
+    expect(validateStructure(RDKit, 'CC.O.N').problems[0].message).toBe('含 3 個分離片段');
+    expect(validateStructure(RDKit, 'CCO').problems).toEqual([]);
+    expect(validateStructure(RDKit, BADGE).problems).toEqual([]);
+  });
+
+  it('連接點與多片段可同時提示', () => {
+    const codes = validateStructure(RDKit, '*C.O').problems.map((p) => p.code);
+    expect(codes).toEqual(['CONNECTION_POINT', 'MULTIPLE_FRAGMENTS']);
+  });
+});
+
 describe('座標', () => {
   it('SMILES 輸入會產生 2D 座標；Molfile 已有的座標不被改動', () => {
     const first = validateStructure(RDKit, 'CCO');
