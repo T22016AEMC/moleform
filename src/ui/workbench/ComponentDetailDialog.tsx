@@ -5,7 +5,7 @@ import type { RepeatUnitAnalysis } from '../../core/polymer/types';
 import type { StructureValidation } from '../../core/structure/validate';
 import { analyzeRepeatUnitInWorker, validateInput } from '../../worker/client';
 import type { Row } from '../formulation/model';
-import { emptyPolymerEdit } from '../polymer/model';
+import { analysisKey, emptyPolymerEdit, specFromEdit } from '../polymer/model';
 import { PolymerFields } from '../polymer/PolymerFields';
 import { Conformer3DCard } from '../structure/Conformer3DCard';
 import { saveCompoundToLibrary } from './libraryBridge';
@@ -46,18 +46,22 @@ export function ComponentDetailDialog({ row, area, onChange, onClose }: Props) {
   const source = polymer ? row.canonicalSmiles : molblock || row.canonicalSmiles;
   const drawing = useStructureDrawing({ source, width: 440, height: 300, mark: true, polymer });
 
-  const [analysis, setAnalysis] = useState<{ smiles: string; value: RepeatUnitAnalysis | null } | null>(null);
+  const [analysis, setAnalysis] = useState<{ key: string; value: RepeatUnitAnalysis | null } | null>(null);
+  const polymerSpec = polymer && row.polymerEdit ? specFromEdit(row.polymerEdit, row.canonicalSmiles) : null;
+  const polymerKey = analysisKey(row.canonicalSmiles, polymerSpec);
   useEffect(() => {
     if (!polymer) return;
     let cancelled = false;
-    void analyzeRepeatUnitInWorker(row.canonicalSmiles).then((value) => {
-      if (!cancelled) setAnalysis({ smiles: row.canonicalSmiles, value });
+    void analyzeRepeatUnitInWorker(row.canonicalSmiles, polymerSpec).then((value) => {
+      if (!cancelled) setAnalysis({ key: polymerKey, value });
     });
     return () => {
       cancelled = true;
     };
-  }, [polymer, row.canonicalSmiles]);
-  const currentAnalysis = analysis?.smiles === row.canonicalSmiles ? analysis.value : null;
+    // polymerSpec 的內容由 polymerKey 決定
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [polymer, polymerKey]);
+  const currentAnalysis = analysis?.key === polymerKey ? analysis.value : null;
 
   // ---- 用 Ketcher 編輯 ----
   const [editing, setEditing] = useState(false);
@@ -128,7 +132,7 @@ export function ComponentDetailDialog({ row, area, onChange, onClose }: Props) {
 
       {polymer ? (
         <div className="modal-section polymer-row">
-          <h3>均聚物設定</h3>
+          <h3>聚合物設定</h3>
           {currentAnalysis?.ok === false ? (
             <p className="form-error" role="alert">{currentAnalysis.problem.message}</p>
           ) : (
@@ -137,6 +141,7 @@ export function ComponentDetailDialog({ row, area, onChange, onClose }: Props) {
               edit={row.polymerEdit ?? emptyPolymerEdit()}
               onChange={(polymerEdit) => onChange((r) => ({ ...r, polymerEdit }))}
               analysis={currentAnalysis}
+              firstSmiles={row.canonicalSmiles}
             />
           )}
           <small>聚合物不提供 3D（D05）。</small>

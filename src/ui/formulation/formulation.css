@@ -81,3 +81,9 @@
 .polymer-row { grid-column: 1 / -1; padding-top: var(--space-gap-sm); border-top: 1px dashed var(--color-border-row); }
 .polymer-tag { display: inline-block; margin-left: var(--space-gap-sm); padding: 0 var(--space-gap-sm); background: var(--color-tint); border: 1px solid var(--color-border-tint); border-radius: var(--radius-control); color: var(--color-heading); font-size: var(--font-size-small); }.polymer-basis .check { display: inline-flex; gap: var(--space-gap-sm); align-items: center; margin-top: 0; font-weight: normal; }
 .polymer-basis input[type='radio'] { width: auto; padding: 0; }
+/* 共聚物的單元清單（任務 020） */
+.polymer-units { display: grid; gap: var(--space-gap-sm); }
+.polymer-unit-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-gap-sm); }
+.polymer-unit-row > input[type='text'] { flex: 1 1 12rem; min-width: 8rem; }
+.polymer-unit-blank { display: inline-block; width: 96px; height: 64px; }
+.polymer-add-unit { justify-self: start; }

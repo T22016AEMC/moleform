@@ -26,6 +26,14 @@ export interface GroupSites {
   sites: number[][];
 }
 
+/** 共聚物的一種單元（任務 020）：各自辨識的官能基位點，原子索引以該單元的 SMILES 為準 */
+export interface UnitAnalysis {
+  smiles: string;
+  /** 莫耳分率 x_i（合計 1） */
+  molFraction: number;
+  groups: GroupSites[];
+}
+
 export interface ComponentAnalysis {
   id: string;
   name: string;
@@ -38,8 +46,12 @@ export interface ComponentAnalysis {
   molarMass: number | null;
   /** 聚合物的分子量分布資料（Mw、Mn、重複單元分子量；任務 019）。只供第 1 層的兩成分近似，不顯示（D09）；非聚合物或算不出為 null */
   distribution: { mw: number; mn: number; mUnit: number } | null;
-  /** 有位點的官能基（聚合物已排除涉及連接點 * 的匹配） */
+  /** 有位點的官能基（聚合物已排除涉及連接點 * 的匹配）。共聚物：含任一單元有的官能基，sites 為第一種單元的位點（可能為空） */
   groups: GroupSites[];
+  /** 聚合物各單元的辨識結果（含第一種）；小分子為 null */
+  units: UnitAnalysis[] | null;
+  /** 聚合物每個平均重複單元的官能基數 Σ x_i·(單元 i 的位點數)，依官能基分開；小分子為空。只供計算，不顯示（D09） */
+  unitGroupCounts: Record<string, number>;
   /** 分析上的問題（無法解析、聚合物缺 Mn／DP 等）；沒有問題為 null */
   problem: string | null;
 }
@@ -89,6 +101,8 @@ export interface CrosslinkResult {
   components: ComponentAnalysis[];
   /** 每個參與反應的成分要標記的反應原子（0 起算） */
   markedAtoms: Record<string, number[]>;
+  /** 共聚物（兩種以上單元）每種單元要標記的反應原子（0 起算，依單元順序）；其他成分沒有此項 */
+  markedUnitAtoms: Record<string, number[][]>;
   warnings: string[];
   /** 用到的、尚未審核（pending）的規則與官能基 id */
   pendingReview: { rules: string[]; groups: string[] };

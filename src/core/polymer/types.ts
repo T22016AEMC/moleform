@@ -19,7 +19,25 @@ export interface PolymerSpec {
   dpInput?: number;
   /** 多分散指數 PDI = Mw／Mn（≥ 1）；省略時使用 DEFAULT_PDI */
   pdiInput?: number;
+  /**
+   * Random 共聚物（任務 020，D04）：所有重複單元與比例（含第一種單元，其 smiles 與成分的 canonicalSmiles 相同）。
+   * 省略＝均聚物（只有成分的 canonicalSmiles 一種單元，100 mol%）；只有一種單元的共聚物與均聚物結果完全相同。
+   */
+  units?: PolymerUnit[];
+  /** units 的比例基準（mol%／wt%）；省略視為 mol */
+  fractionBasis?: FractionBasis;
 }
+
+/** 共聚物的一種重複單元：含兩個連接點的 SMILES 與比例（依 fractionBasis，合計 100） */
+export interface PolymerUnit {
+  smiles: string;
+  fraction: number;
+}
+
+export type FractionBasis = 'mol' | 'wt';
+
+/** 結果附註：共聚物的組成分布近似（任務 020） */
+export const COPOLYMER_NOTE = '共聚物以平均組成計算，未考慮鏈間組成分布';
 
 export interface Homopolymer extends PolymerSpec {
   name: string;
@@ -35,10 +53,10 @@ export type RepeatUnitProblemCode =
   | 'NO_ATTACHMENT'
   | 'TOO_FEW_ATTACHMENTS'
   | 'TOO_MANY_ATTACHMENTS'
-  | 'SAME_ATOM'
   | 'DANGLING_ATTACHMENT'
   | 'ATTACHMENT_TO_ATTACHMENT'
-  | 'BAD_NUMBERING';
+  | 'BAD_NUMBERING'
+  | 'BAD_FRACTION';
 
 export interface RepeatUnitProblem {
   code: RepeatUnitProblemCode;
@@ -57,4 +75,16 @@ export interface RepeatUnitInfo {
   formula: string;
 }
 
-export type RepeatUnitAnalysis = ({ ok: true } & RepeatUnitInfo) | { ok: false; problem: RepeatUnitProblem };
+/** 共聚物分析中的一種單元（只供計算，不顯示，D09） */
+export interface UnitComposition {
+  smiles: string;
+  mUnit: number;
+  /** 莫耳分率 x_i（合計 1） */
+  molFraction: number;
+}
+
+/**
+ * 重複單元分析。共聚物時 mUnit 為平均重複單元質量 M̄_unit = Σ x_i·M_unit,i，formula 為第一種單元；
+ * units 列出各單元（均聚物為單一單元，莫耳分率 1）。
+ */
+export type RepeatUnitAnalysis = ({ ok: true; units?: UnitComposition[] } & RepeatUnitInfo) | { ok: false; problem: RepeatUnitProblem };

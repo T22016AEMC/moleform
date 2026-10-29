@@ -20,6 +20,8 @@ export const LAYER1_DIRECT_MODEL_NAME = '官能基計量（交聯第 1 層）';
 export const MESSAGE_NOT_GELLED = '未凝膠，不適用';
 export const MESSAGE_NEVER_GELS = '理論上不會凝膠';
 export const NOTE_MASS_BASIS = '以質量為基準，未換算體積';
+/** 共聚物的組成分布近似（任務 020） */
+export const NOTE_COPOLYMER = '共聚物以平均組成計算，未考慮鏈間組成分布';
 export const NOTE_NON_INTEGER = '官能度以相鄰整數混合近似';
 /** 取代 D42 的 Mn 近似附註（D47） */
 export const NOTE_DISTRIBUTION = '分子量分布以兩成分（等重量）近似；凝膠點只取決於 Mw，溶膠分率與交聯密度為近似值';
@@ -32,6 +34,8 @@ export interface Layer1Component {
   name: string;
   side: 'A' | 'B';
   isPolymer: boolean;
+  /** 聚合物有兩種以上重複單元（Random 共聚物，以平均組成計算） */
+  isCopolymer?: boolean;
   /** 質量（相對值，與 totalMass 同一基準；通常為每 100 g 固體的 g 數） */
   mass: number;
   /** 每分子質量（g/mol）：小分子為平均分子量，聚合物為 Mn。只供計算，不顯示（D09） */
@@ -89,6 +93,8 @@ export interface Layer1Result {
   usedMixtureApprox: boolean;
   /** 含聚合物（分子量分布以兩成分近似，D47） */
   hasPolymer: boolean;
+  /** 含共聚物（以平均組成計算，任務 020） */
+  hasCopolymer: boolean;
 }
 
 const fmt = (v: number) => String(Number(v.toFixed(2)));
@@ -173,5 +179,6 @@ export function computeLayer1(setup: Layer1Setup, q: number): Layer1Result | nul
     mcGPerMol: dens && dens.chains > 0 ? setup.totalMass / dens.chains : null,
     usedMixtureApprox: mixture,
     hasPolymer: setup.components.some((c) => c.isPolymer),
+    hasCopolymer: setup.components.some((c) => c.isCopolymer),
   };
 }

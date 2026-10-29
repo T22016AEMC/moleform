@@ -187,6 +187,9 @@ export function exportLibrarySdf(entries: readonly SdfEntry[]): string {
         if (compound.polymer.mwInput !== undefined) props.push(`> <MoleForm_Mw>\n${compound.polymer.mwInput}\n`);
         if (compound.polymer.mnInput !== undefined) props.push(`> <MoleForm_Mn>\n${compound.polymer.mnInput}\n`);
         if (compound.polymer.dpInput !== undefined) props.push(`> <MoleForm_DP>\n${compound.polymer.dpInput}\n`);
+        if (compound.polymer.units) props.push(`> <MoleForm_Units>
+${JSON.stringify({ units: compound.polymer.units, fractionBasis: compound.polymer.fractionBasis ?? 'mol' })}
+`);
         if (compound.polymer.pdiInput !== undefined) props.push(`> <MoleForm_PDI>\n${compound.polymer.pdiInput}\n`);
       }
       return `${lines.join('\n')}\n${props.join('\n')}\n$$$$\n`;
@@ -230,7 +233,15 @@ export async function importLibrarySdf(
       const mn = record.properties.MoleForm_Mn?.trim();
       const dp = record.properties.MoleForm_DP?.trim();
       const pdi = record.properties.MoleForm_PDI?.trim();
+      let copolymer: Record<string, unknown> = {};
+      try {
+        const raw = record.properties.MoleForm_Units?.trim();
+        if (raw) copolymer = JSON.parse(raw) as Record<string, unknown>;
+      } catch {
+        copolymer = { units: 'invalid' };
+      }
       const parsed = parsePolymerSpec({
+        ...copolymer,
         ...(mw ? { mwInput: Number(mw) } : {}),
         ...(mn ? { mnInput: Number(mn) } : {}),
         ...(dp ? { dpInput: Number(dp) } : {}),

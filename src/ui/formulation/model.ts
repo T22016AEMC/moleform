@@ -60,7 +60,7 @@ const optional = (text: string): number | undefined => (text.trim() === '' ? und
 
 function toComponent(row: Row): Component {
   const { amountText, amountTouched: _touched, polymerEdit, ...rest } = row;
-  const polymer = polymerEdit && rest.canonicalSmiles.includes('*') ? specFromEdit(polymerEdit) : null;
+  const polymer = polymerEdit && rest.canonicalSmiles.includes('*') ? specFromEdit(polymerEdit, rest.canonicalSmiles) : null;
   return { ...rest, amount: parseNumberText(amountText), ...(polymer ? { polymer } : {}) };
 }
 

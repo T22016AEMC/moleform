@@ -1,6 +1,6 @@
 // Mw／Mn／DP 與 PDI 的換算（任務 015、019，D47）：Mn = Mw ÷ PDI；DP_n = Mn ÷ M_unit；DP_w = Mw ÷ M_unit。
 // 端基忽略（Phase 5 才處理），所以換算結果都要附註「未計入端基」（END_GROUP_NOTE）。
-import { DEFAULT_PDI, END_GROUP_NOTE, type PolymerSpec } from './types';
+import { DEFAULT_PDI, END_GROUP_NOTE, type PolymerSpec, type PolymerUnit } from './types';
 
 const isPositive = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v) && v > 0;
 const isPdi = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v) && v >= 1;
@@ -103,5 +103,23 @@ export function parsePolymerSpec(value: unknown): { ok: true; spec: PolymerSpec 
   if (count === 0) return { ok: false, reason: '聚合物缺少 Mw、Mn 或 DP' };
   const spec: PolymerSpec = mw !== undefined ? { mwInput: mw as number } : mn !== undefined ? { mnInput: mn as number } : { dpInput: dp as number };
   if (pdi !== undefined) spec.pdiInput = pdi as number;
+  // 共聚物（任務 020）：舊檔沒有 units，視為均聚物
+  const { units, fractionBasis } = value as Record<string, unknown>;
+  if (units !== undefined && units !== null) {
+    if (!Array.isArray(units) || units.length === 0) return { ok: false, reason: '共聚物的單元清單格式錯誤' };
+    const list: PolymerUnit[] = [];
+    for (const u of units) {
+      if (!u || typeof u !== 'object') return { ok: false, reason: '共聚物的單元格式錯誤' };
+      const { smiles, fraction } = u as Record<string, unknown>;
+      if (typeof smiles !== 'string' || !smiles.includes('*')) return { ok: false, reason: '共聚物的單元需有 SMILES 與連接點（*）' };
+      if (typeof fraction !== 'number' || !Number.isFinite(fraction) || fraction <= 0) return { ok: false, reason: '共聚物單元的比例必須是大於 0 的數字' };
+      list.push({ smiles, fraction });
+    }
+    if (fractionBasis !== undefined && fractionBasis !== null && fractionBasis !== 'mol' && fractionBasis !== 'wt') {
+      return { ok: false, reason: '共聚物的比例基準必須是 mol 或 wt' };
+    }
+    spec.units = list;
+    if (fractionBasis === 'mol' || fractionBasis === 'wt') spec.fractionBasis = fractionBasis;
+  }
   return { ok: true, spec };
 }

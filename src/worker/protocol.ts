@@ -1,6 +1,6 @@
 // 主執行緒與化學 Worker 之間的訊息格式。
 import type { CrosslinkComponent, CrosslinkResult } from '../core/crosslink/types';
-import type { RepeatUnitAnalysis } from '../core/polymer/types';
+import type { FractionBasis, PolymerUnit, RepeatUnitAnalysis } from '../core/polymer/types';
 import type { StructureValidation } from '../core/structure/validate';
 
 export interface StatusRequest {
@@ -27,6 +27,9 @@ export interface RepeatUnitRequest {
   type: 'repeatUnit';
   id: number;
   smiles: string;
+  /** 共聚物的單元與比例基準（任務 020）；省略＝均聚物 */
+  units?: PolymerUnit[];
+  fractionBasis?: FractionBasis;
 }
 
 /** 交聯第 0 層：官能基辨識、配對、判定，並畫出參與反應成分的反應原子標記圖（任務 016） */

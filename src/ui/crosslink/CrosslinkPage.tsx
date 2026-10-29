@@ -176,15 +176,24 @@ function Result({ result, svgs }: { result: CrosslinkResult; svgs: Record<string
             以強調色標出參與反應的原子；編號從 1 起算，與「分子工具」分頁 3D 畫面的原子編號一致。聚合物顯示重複單元。
           </p>
           <div className="crosslink-structures">
-            {shown.map((c) => (
-              <figure key={c.id} className="crosslink-figure">
-                <div className="crosslink-svg" role="img" aria-label={`${c.name} 的反應原子標記圖`} dangerouslySetInnerHTML={{ __html: svgs[c.id] }} />
-                <figcaption>
-                  {c.name}
-                  {c.isPolymer ? '（重複單元）' : ''}
-                </figcaption>
-              </figure>
-            ))}
+            {shown.flatMap((c) => {
+              const count = c.units && c.units.length > 1 ? c.units.length : 1;
+              return Array.from({ length: count }, (_, k) => {
+                const svg = svgs[k === 0 ? c.id : `${c.id}#${k}`];
+                if (!svg) return null;
+                // 共聚物：每種單元各一張，標出單元序號與比例（使用者輸入的組成）
+                const unitNote = count > 1 ? `單元 ${k + 1}／${count}（${Number((c.units![k].molFraction * 100).toFixed(2))} mol%）` : '（重複單元）';
+                return (
+                  <figure key={`${c.id}-${k}`} className="crosslink-figure">
+                    <div className="crosslink-svg" role="img" aria-label={`${c.name} 的反應原子標記圖${count > 1 ? `（單元 ${k + 1}）` : ''}`} dangerouslySetInnerHTML={{ __html: svg }} />
+                    <figcaption>
+                      {c.name}
+                      {c.isPolymer ? unitNote : ''}
+                    </figcaption>
+                  </figure>
+                );
+              });
+            })}
           </div>
         </>
       )}

@@ -13,14 +13,25 @@ const OUTPUT = resolve(root, 'docs', 'verification', 'phase4-輸出.md');
 
 // ---------- 測試體系（docs/verification/phase4-測試體系.md，使用者 2026-10-29 提供） ----------
 type Comp = Record<string, any>;
+const UNIT_A = '[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O'; // 單元 A（雙酚茀）
+const UNIT_B = '[*:1]C([*:2])c1ccc2ccccc2c1'; // 單元 B（萘基次甲基）
 const COMPONENTS: Comp[] = [
   {
     id: 'P',
-    name: 'P 雙酚茀–萘甲醛型酚醛樹脂（均聚物）',
-    canonicalSmiles: '[*:1]c1ccc(C2(c3ccc(C([*:2])c4ccc5ccccc5c4)c(O)c3)c3ccccc3-c3ccccc32)cc1O',
+    name: 'P 雙酚茀–萘甲醛型酚醛樹脂（Random 共聚物）',
+    // 單元 A（雙酚茀）是成分本身的結構；單元 B（萘基次甲基）在 polymer.units
+    canonicalSmiles: UNIT_A,
     category: 'Resin',
-    polymer: { mwInput: 6000, pdiInput: 1.8 },
-    note: 'Mw ≈ 6000、PDI = 1.8（Mn ≈ 3333）',
+    polymer: {
+      mwInput: 6000,
+      pdiInput: 1.8,
+      units: [
+        { smiles: UNIT_A, fraction: 66.67 },
+        { smiles: UNIT_B, fraction: 33.33 },
+      ],
+      fractionBasis: 'mol',
+    },
+    note: 'Mw ≈ 6000、PDI = 1.8（Mn ≈ 3333）；單元 A：B = 2：1（mol%：66.67、33.33）',
   },
   {
     id: 'E',
@@ -45,8 +56,15 @@ const COMPONENTS: Comp[] = [
     note: '溶劑',
   },
 ];
-// 任務 017–018 的舊分子量輸入（只有 Mn 或 DP）。只用來產生新舊對照
-const OLD_POLYMER: Record<string, Comp> = { P: { mnInput: 6000 }, E: { dpInput: 21 } };
+// 任務 019 的 P：兩種單體視為 1:1 合成一個重複單元的均聚物（Mw 6000、PDI 1.8）。只用來產生新舊對照
+const OLD_OVERRIDE: Record<string, Comp> = {
+  P: {
+    canonicalSmiles: '[*:1]c1ccc(C2(c3ccc(C([*:2])c4ccc5ccccc5c4)c(O)c3)c3ccccc3-c3ccccc32)cc1O',
+    polymer: { mwInput: 6000, pdiInput: 1.8 },
+  },
+};
+// 共聚物各單元的 M_unit（僅供驗證文件）；RDKit 載入後才有值
+let unitMass: (smiles: string) => number | null = () => null;
 const byId = (ids: string[]) => ids.map((id) => COMPONENTS.find((c) => c.id === id)!);
 
 const FORMULATIONS: { title: string; description: string; ids: string[]; amounts: Record<string, number> }[] = [
@@ -72,12 +90,17 @@ try {
   const PREP = await server.ssrLoadModule('/src/core/crosslink/layer1/prepare.ts');
   const ST = await server.ssrLoadModule('/src/core/crosslink/layer1/stoich.ts');
   const { computeFormulation } = await server.ssrLoadModule('/src/core/formulation/compute.ts');
+  const { analyzeRepeatUnit } = await server.ssrLoadModule('/src/core/polymer/repeatUnit.ts');
   const DIST = await server.ssrLoadModule('/src/core/polymer/distribution.ts');
   const RDKit = await getRDKit();
   const { tables } = loadTables(bundledTexts);
   const groups = tables.functionalGroups.rows;
   const rules = tables.reactionRules.rows;
   const T = { functionalGroups: groups, reactionRules: rules };
+  unitMass = (smiles: string) => {
+    const r = analyzeRepeatUnit(RDKit, smiles);
+    return r.ok ? r.mUnit : null;
+  };
   const groupName = (id: string) => groups.find((g: any) => g.id === id)?.name_zh ?? id;
 
   const lines: string[] = [];
@@ -118,6 +141,20 @@ try {
     for (const c of COMPONENTS) {
       const a = analyzeComponent(RDKit, c, groups);
       const kind = a.isPolymer ? `聚合物${a.dp === null ? '' : `，${c.note}；DP_n = ${num(a.dp)}`}` : c.note;
+      if (a.units && a.units.length > 1) {
+        // 共聚物：每種單元分別列出（僅此文件，D09）
+        a.units.forEach((u: any, k: number) => {
+          const head = `${c.name} 單元 ${k + 1}（${num(u.molFraction * 100)} mol%，M_unit = ${num(unitMass(u.smiles))}）`;
+          if (u.groups.length === 0) out(`| ${head} | \`${u.smiles}\` | （無） | 0 | 0 | — |`);
+          for (const g of u.groups) {
+            const atoms = g.sites.map((s: number[]) => `(${s.map((x: number) => x + 1).join('、')})`).join(' ');
+            out(`| ${head} | \`${u.smiles}\` | ${groupName(g.groupId)}（\`${g.groupId}\`） | ${g.sites.length} | ${num(g.sites.length * u.molFraction * (a.dp ?? 0))}（此單元的貢獻） | ${atoms} |`);
+          }
+        });
+        const perUnit = Object.entries(a.unitGroupCounts as Record<string, number>);
+        out(`| ${c.name} 合計 | 平均重複單元 M̄_unit = ${num(a.distribution?.mUnit)}（${kind}） | ${perUnit.map(([id, n]) => `${groupName(id)} ${num(n)} 個／平均單元`).join('；') || '（無）'} | — | ${perUnit.map(([id, n]) => `${groupName(id)} ${num(n * (a.dp ?? 0))}`).join('；') || '—'} | — |`);
+        continue;
+      }
       if (a.groups.length === 0) {
         out(`| ${c.name} | \`${c.canonicalSmiles}\`（${kind}） | （無） | 0 | 0 | — |`);
         continue;
@@ -174,9 +211,9 @@ try {
     out('Miller–Macosko 為理想化模型，未考慮環化、副反應與分子量分布。公式取自 Miller & Macosko, Macromolecules 1976, 9, 206（式號見 `docs/MODELS.md`）。');
     out('各成分的官能基莫耳數**只列在本文件**（D09）；理論最大成鍵數、交聯密度、Mc 等網路計算結果網站照常顯示（D44）。轉化率 = 限量官能基轉化率。質量基準：每 100 g 固體（Solid 區，含不參與反應的固體成分）。');
 
-    // useOld：改用任務 017–018 的舊分子量輸入（Mn 6000／DP 21）且不做分布近似（單一成分），重現任務 017 的結果供對照
+    // useOld：P 改用任務 019 的 1:1 均聚物，重現任務 019 的結果供對照
     const build = (ids: string[], amounts: Record<string, number>, useOld: boolean) => {
-      const comps = byId(ids).map((c: Comp) => ({ ...c, ...(useOld && OLD_POLYMER[c.id] ? { polymer: OLD_POLYMER[c.id] } : {}), amount: amounts[c.id] ?? 100 }));
+      const comps = byId(ids).map((c: Comp) => ({ ...c, ...(useOld && OLD_OVERRIDE[c.id] ? OLD_OVERRIDE[c.id] : {}), amount: amounts[c.id] ?? 100 }));
       const solidComps = comps.filter((c: Comp) => c.category !== 'Solvent');
       const liquidComps = comps.filter((c: Comp) => c.category === 'Solvent');
       const formulation = {
@@ -191,9 +228,6 @@ try {
       for (const a of result.components) mw[a.id] = a.molarMass ?? undefined;
       const outcome = computeFormulation(formulation, mw);
       const prep = PREP.prepareLayer1(result, formulation, outcome);
-      if (useOld && prep.ok) {
-        prep.setup = { ...prep.setup, components: prep.setup.components.map(({ distribution: _d, ...rest }: any) => rest) };
-      }
       return { result, prep };
     };
 
@@ -252,16 +286,16 @@ try {
       out(`  - 已形成的鍵（指定轉化率下已反應的鍵數，直接計算）：${fx(r.bondsFormedMolPerKg, 5)} mol/kg 固體`);
       out(`  - 詳細：連入網路的分子數 [X]（式 49）：${r.junctionsMolPerKg === null ? L1.MESSAGE_NOT_GELLED : fx(r.junctionsMolPerKg, 5) + ' mol/kg 固體'}。Miller–Macosko 將每個多官能分子計為一個交聯點；聚合物對聚合物的體系中，此值不等於交聯鍵數`);
       out(`  - 殘留官能基：${setup.nameA} ${fx(r.residualAPct, 3)}%、${setup.nameB} ${fx(r.residualBPct, 3)}%（相對初始量，直接計算）`);
-      out(`- 附註：${[r.usedMixtureApprox ? L1.NOTE_NON_INTEGER : null, r.hasPolymer ? L1.NOTE_DISTRIBUTION : null, L1.NOTE_M06, L1.NOTE_MC_DEFINITION].filter(Boolean).join('；')}`);
+      out(`- 附註：${[r.usedMixtureApprox ? L1.NOTE_NON_INTEGER : null, r.hasPolymer ? L1.NOTE_DISTRIBUTION : null, r.hasCopolymer ? L1.NOTE_COPOLYMER : null, L1.NOTE_M06, L1.NOTE_MC_DEFINITION].filter(Boolean).join('；')}`);
 
-      // 新舊對照：任務 017 的舊輸入（P Mn 6000、E DP 21，單一成分）→ 本任務的新輸入（兩成分近似）
+      // 新舊對照：任務 019 的 P（1:1 均聚物）→ 本任務的 P（2:1 Random 共聚物）
       const oldBuilt = build(ids, amounts, true);
       if (oldBuilt.prep.ok) {
         const o = L1.computeLayer1(oldBuilt.prep.setup, 1);
         out();
         out('#### 新舊對照（轉化率 100%）');
         out();
-        out('| 項目 | 舊（任務 017：P Mn 6000、E DP 21，單一成分） | 新（本任務：P Mw 6000／PDI 1.8、E Mw 4500／預設 PDI 2，兩成分近似） |');
+        out('| 項目 | 舊（任務 019：P 為 1:1 均聚物，Mw 6000／PDI 1.8） | 新（本任務：P 為 2:1 Random 共聚物，Mw 6000／PDI 1.8；E 不變） |');
         out('|---|---|---|');
         const row = (label: string, a: string, b: string) => out(`| ${label} | ${a} | ${b} |`);
         row('反應官能基比', o.ratioText, r.ratioText + (o.ratioText === r.ratioText ? '（不變）' : '（改變）'));

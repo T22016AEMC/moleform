@@ -198,7 +198,7 @@ export function CompoundLibrary({ structure, polymer, onLoad, storage: storagePr
     }
     let next = noted.value;
     if (editing.polymer) {
-      const spec = specFromEdit(editing.polymer);
+      const spec = specFromEdit(editing.polymer, library.find((c) => c.id === editing.id)?.canonicalSmiles);
       if (!spec) {
         setEditError('請輸入大於 0 的 Mw（或 Mn、DP），PDI 若有填需為數字');
         return;

@@ -4,7 +4,7 @@ import { analyzeCrosslink } from '../core/crosslink/analyze';
 import { drawMarkedStructure, reactiveAtomsOf } from '../core/crosslink/draw';
 import { bundledTexts, loadTables } from '../core/data/load';
 import { averageMolecularWeight } from '../core/formulation/molecularWeight';
-import { analyzeRepeatUnit } from '../core/polymer/repeatUnit';
+import { analyzePolymerUnits } from '../core/polymer/copolymer';
 import { validateStructure } from '../core/structure/validate';
 import { isChemRequest, type ChemRequest, type ChemResponse } from './protocol';
 
@@ -40,7 +40,7 @@ async function handle(request: ChemRequest): Promise<ChemResponse> {
   if (request.type === 'repeatUnit') {
     try {
       const rdkit = await loadRDKit();
-      return { type: 'repeatUnit', id: request.id, ok: true, analysis: analyzeRepeatUnit(rdkit, request.smiles) };
+      return { type: 'repeatUnit', id: request.id, ok: true, analysis: analyzePolymerUnits(rdkit, request.smiles, { units: request.units, fractionBasis: request.fractionBasis }) };
     } catch (e) {
       return { type: 'repeatUnit', id: request.id, ok: false, error: message(e) };
     }
@@ -55,6 +55,18 @@ async function handle(request: ChemRequest): Promise<ChemResponse> {
         if (!marked) continue; // 不參與反應的成分不畫
         const svg = drawMarkedStructure(rdkit, analysis.source, marked, { color: request.color });
         if (svg) svgs[analysis.id] = svg;
+        // 共聚物：第二種以後的單元各畫一張，鍵為「成分編號#單元序號」（序號從 1 起算，第 0 種用成分編號）
+        const perUnit = result.markedUnitAtoms[analysis.id];
+        if (perUnit && analysis.units) {
+          for (let k = 1; k < analysis.units.length; k++) {
+            const unitSvg = drawMarkedStructure(rdkit, analysis.units[k].smiles, perUnit[k] ?? [], { color: request.color });
+            if (unitSvg) svgs[`${analysis.id}#${k}`] = unitSvg;
+          }
+          if (analysis.units[0] && perUnit[0]) {
+            const first = drawMarkedStructure(rdkit, analysis.units[0].smiles, perUnit[0], { color: request.color });
+            if (first) svgs[analysis.id] = first;
+          }
+        }
       }
       return { type: 'crosslink', id: request.id, ok: true, result, svgs };
     } catch (e) {

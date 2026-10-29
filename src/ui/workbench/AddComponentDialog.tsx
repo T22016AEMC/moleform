@@ -10,6 +10,7 @@ import type { StructureValidation } from '../../core/structure/validate';
 import { analyzeRepeatUnitInWorker, validateInput } from '../../worker/client';
 import type { Row } from '../formulation/model';
 import { createIndexedDbStorage } from '../library/storage';
+import { analysisKey, specFromEdit } from '../polymer/model';
 import { PolymerFields } from '../polymer/PolymerFields';
 import { saveCompoundToLibrary } from './libraryBridge';
 import { KetcherPane } from './KetcherPane';
@@ -62,7 +63,7 @@ export function AddComponentDialog({ area, existingCount, onAdd, onClose }: Prop
 
   const [form, setForm] = useState<AddForm>(() => initialForm(null, existingCount, defaultCategory));
   const [nameTouched, setNameTouched] = useState(false);
-  const [analysis, setAnalysis] = useState<{ smiles: string; value: RepeatUnitAnalysis | null } | null>(null);
+  const [analysis, setAnalysis] = useState<{ key: string; value: RepeatUnitAnalysis | null } | null>(null);
   const [message, setMessage] = useState('');
   const [duplicate, setDuplicate] = useState<string | null>(null);
   const [confirmClose, setConfirmClose] = useState(false);
@@ -124,17 +125,21 @@ export function AddComponentDialog({ area, existingCount, onAdd, onClose }: Prop
 
   // 聚合物：分析重複單元（不顯示 M_unit，D09）
   const polymerSmiles = polymer && candidate ? candidate.canonicalSmiles : '';
+  const polymerSpec = polymerSmiles ? specFromEdit(form.polymerEdit, polymerSmiles) : null;
+  const polymerKey = polymerSmiles ? analysisKey(polymerSmiles, polymerSpec) : '';
   useEffect(() => {
     if (!polymerSmiles) return;
     let cancelled = false;
-    void analyzeRepeatUnitInWorker(polymerSmiles).then((value) => {
-      if (!cancelled) setAnalysis({ smiles: polymerSmiles, value });
+    void analyzeRepeatUnitInWorker(polymerSmiles, polymerSpec).then((value) => {
+      if (!cancelled) setAnalysis({ key: polymerKey, value });
     });
     return () => {
       cancelled = true;
     };
-  }, [polymerSmiles]);
-  const currentAnalysis = analysis?.smiles === polymerSmiles ? analysis.value : null;
+    // polymerSpec 的內容由 polymerKey 決定
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [polymerKey]);
+  const currentAnalysis = analysis?.key === polymerKey ? analysis.value : null;
 
   function requestClose() {
     if (method === 'ketcher' && ketcherDirty && ketcher !== null && !confirmClose) {
@@ -273,11 +278,11 @@ export function AddComponentDialog({ area, existingCount, onAdd, onClose }: Prop
 
           {polymer && (
             <div className="polymer-row">
-              <span className="field-label">聚合物（Mn 與 DP 擇一）</span>
+              <span className="field-label">聚合物（Mw、Mn、DP 擇一；可加單元成為共聚物）</span>
               {currentAnalysis?.ok === false ? (
                 <p className="form-error" role="alert">{currentAnalysis.problem.message}</p>
               ) : (
-                <PolymerFields idPrefix="add-polymer" edit={form.polymerEdit} onChange={(polymerEdit) => setForm((f) => ({ ...f, polymerEdit }))} analysis={currentAnalysis} />
+                <PolymerFields idPrefix="add-polymer" edit={form.polymerEdit} onChange={(polymerEdit) => setForm((f) => ({ ...f, polymerEdit }))} analysis={currentAnalysis} firstSmiles={polymerSmiles} />
               )}
             </div>
           )}

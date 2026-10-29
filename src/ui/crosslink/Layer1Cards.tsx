@@ -9,6 +9,7 @@ import {
   NOTE_M06,
   NOTE_MASS_BASIS,
   NOTE_MC_DEFINITION,
+  NOTE_COPOLYMER,
   NOTE_DISTRIBUTION,
   NOTE_NON_INTEGER,
   computeLayer1,
@@ -123,7 +124,7 @@ function Layer1Output({ prep, conv }: { prep: Extract<PrepareOutcome, { ok: true
   const name = (side: 'A' | 'B' | null) => (side === 'A' ? setup.nameA : side === 'B' ? setup.nameB : '');
   const direct = LAYER1_DIRECT_MODEL_NAME;
   const mm = LAYER1_MODEL_NAME;
-  const notes = [r.usedMixtureApprox ? NOTE_NON_INTEGER : null, r.hasPolymer ? NOTE_DISTRIBUTION : null, NOTE_MASS_BASIS].filter((n): n is string => n !== null);
+  const notes = [r.usedMixtureApprox ? NOTE_NON_INTEGER : null, r.hasPolymer ? NOTE_DISTRIBUTION : null, r.hasCopolymer ? NOTE_COPOLYMER : null, NOTE_MASS_BASIS].filter((n): n is string => n !== null);
 
   return (
     <>

@@ -3,7 +3,9 @@
 // 重複單元分子量 M_unit 不顯示，結果區也不顯示分子量（D09）。
 import { DEFAULT_PDI, END_GROUP_NOTE, type RepeatUnitAnalysis } from '../../core/polymer/types';
 import { MESSAGE_PDI_DEFAULT, MESSAGE_PDI_RANGE, resolvePolymer, type PolymerBasis } from '../../core/polymer/convert';
-import { specFromEdit, type PolymerEdit } from './model';
+import { FRACTION_TOLERANCE } from '../../core/polymer/copolymer';
+import { StructureImage } from '../workbench/StructureImage';
+import { specFromEdit, type PolymerEdit, type UnitEdit } from './model';
 
 interface Props {
   /** 用來產生欄位編號，同一頁面內不可重複 */
@@ -12,6 +14,8 @@ interface Props {
   onChange: (edit: PolymerEdit) => void;
   /** 重複單元的分析結果；null 表示還在計算 */
   analysis: RepeatUnitAnalysis | null;
+  /** 成分本身的結構（共聚物的第一種單元）；省略時不顯示共聚物的單元清單 */
+  firstSmiles?: string;
 }
 
 const BASIS_LABEL: Record<PolymerBasis, string> = { mw: 'Mw（g/mol）', mn: 'Mn（g/mol）', dp: 'DP（數量平均，重複單元數）' };
@@ -26,9 +30,9 @@ function pdiHelper(edit: PolymerEdit): string {
   return value < 1 ? MESSAGE_PDI_RANGE : '';
 }
 
-function helper(edit: PolymerEdit, analysis: RepeatUnitAnalysis | null): string {
+function helper(edit: PolymerEdit, analysis: RepeatUnitAnalysis | null, firstSmiles: string | undefined): string {
   if (edit.text.trim() === '') return `請輸入 ${BASIS_SHORT[edit.basis]}`;
-  const spec = specFromEdit(edit);
+  const spec = specFromEdit(edit, firstSmiles);
   if (!spec) return Number.isFinite(Number(edit.text.trim())) && Number(edit.text.trim()) > 0 ? '' : '請輸入大於 0 的數字';
   if (!analysis) return '計算中…';
   if (!analysis.ok) return '';
@@ -41,11 +45,89 @@ function helper(edit: PolymerEdit, analysis: RepeatUnitAnalysis | null): string 
   return `${parts.join('、')}（${END_GROUP_NOTE}）`;
 }
 
-export function PolymerFields({ idPrefix, edit, onChange, analysis }: Props) {
+/** 共聚物的單元清單（任務 020）：第一種單元是成分本身的結構；其他單元貼 SMILES（含兩個 *）。比例合計須為 100 */
+function UnitList({ idPrefix, edit, onChange, firstSmiles }: { idPrefix: string; edit: PolymerEdit; onChange: (edit: PolymerEdit) => void; firstSmiles: string }) {
+  const extras = edit.extraUnits ?? [];
+  const basis = edit.fractionBasis ?? 'mol';
+  const label = basis === 'mol' ? 'mol%' : 'wt%';
+  const fractions = [edit.firstFractionText ?? '', ...extras.map((u) => u.fractionText)];
+  const numbers = fractions.map((t) => (t.trim() === '' ? Number.NaN : Number(t)));
+  const sum = numbers.reduce((t, v) => t + (Number.isFinite(v) ? v : 0), 0);
+  const complete = numbers.every((v) => Number.isFinite(v) && v > 0);
+  const sumBad = complete && Math.abs(sum - 100) > FRACTION_TOLERANCE + 1e-9;
+  const setExtra = (index: number, patch: Partial<UnitEdit>) =>
+    onChange({ ...edit, extraUnits: extras.map((u, i) => (i === index ? { ...u, ...patch } : u)) });
+  return (
+    <div className="polymer-units" role="group" aria-label="共聚物的重複單元">
+      <div className="polymer-basis" role="radiogroup" aria-label="比例基準">
+        {(['mol', 'wt'] as const).map((b) => (
+          <label key={b} className="check">
+            <input type="radio" name={`${idPrefix}-fraction-basis`} checked={basis === b} onChange={() => onChange({ ...edit, fractionBasis: b })} />
+            {b === 'mol' ? 'mol%' : 'wt%'}
+          </label>
+        ))}
+      </div>
+      <div className="polymer-unit-row">
+        <StructureImage label="單元 1 的結構" source={firstSmiles} width={96} height={64} polymer />
+        <span>單元 1（目前結構）</span>
+        <div className="amount-input">
+          <input
+            type="text"
+            inputMode="decimal"
+            aria-label={`單元 1 的比例（${label}）`}
+            value={edit.firstFractionText ?? ''}
+            onChange={(e) => onChange({ ...edit, firstFractionText: e.target.value })}
+          />
+          <span className="amount-unit">{label}</span>
+        </div>
+      </div>
+      {extras.map((u, i) => (
+        <div className="polymer-unit-row" key={i}>
+          {u.smiles.trim() !== '' ? <StructureImage label={`單元 ${i + 2} 的結構`} source={u.smiles.trim()} width={96} height={64} polymer /> : <span className="polymer-unit-blank" />}
+          <input
+            type="text"
+            aria-label={`單元 ${i + 2} 的 SMILES（含兩個 *）`}
+            placeholder="貼上 SMILES（含兩個 *，如 [*:1]CC[*:2]）"
+            value={u.smiles}
+            onChange={(e) => setExtra(i, { smiles: e.target.value })}
+          />
+          <div className="amount-input">
+            <input type="text" inputMode="decimal" aria-label={`單元 ${i + 2} 的比例（${label}）`} value={u.fractionText} onChange={(e) => setExtra(i, { fractionText: e.target.value })} />
+            <span className="amount-unit">{label}</span>
+          </div>
+          <button
+            type="button"
+            className="secondary"
+            onClick={() => {
+              const rest = extras.filter((_, k) => k !== i);
+              onChange(rest.length === 0 ? { ...edit, extraUnits: [], firstFractionText: '' } : { ...edit, extraUnits: rest });
+            }}
+          >
+            刪除
+          </button>
+        </div>
+      ))}
+      {sumBad && (
+        <p className="form-error" role="alert">
+          各單元的 {label} 合計為 {Number(sum.toFixed(6))}，應為 100（容差 ±0.01）
+        </p>
+      )}
+    </div>
+  );
+}
+
+export function PolymerFields({ idPrefix, edit, onChange, analysis, firstSmiles }: Props) {
   const name = `${idPrefix}-basis`;
   const pdiMessage = pdiHelper(edit);
+  const extras = edit.extraUnits ?? [];
   return (
     <div className="polymer-fields">
+      {firstSmiles !== undefined && extras.length > 0 && <UnitList idPrefix={idPrefix} edit={edit} onChange={onChange} firstSmiles={firstSmiles} />}
+      {firstSmiles !== undefined && (
+        <button type="button" className="secondary polymer-add-unit" onClick={() => onChange({ ...edit, extraUnits: [...extras, { smiles: '', fractionText: '' }] })}>
+          ＋新增單元（共聚物）
+        </button>
+      )}
       <div className="polymer-basis" role="radiogroup" aria-label="輸入方式">
         {(['mw', 'mn', 'dp'] as const).map((basis) => (
           <label key={basis} className="check">
@@ -79,7 +161,7 @@ export function PolymerFields({ idPrefix, edit, onChange, analysis }: Props) {
           />
         </div>
       </div>
-      <small className="polymer-helper" role="status">{helper(edit, analysis)}</small>
+      <small className="polymer-helper" role="status">{helper(edit, analysis, firstSmiles)}</small>
       <small className="polymer-helper" role="status">{pdiMessage}</small>
     </div>
   );

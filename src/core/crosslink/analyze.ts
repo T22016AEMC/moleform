@@ -3,7 +3,7 @@
 import type { FunctionalGroupRow, ReactionRuleRow } from '../data/types';
 import { resolvePolymer } from '../polymer/convert';
 import { averageMolecularWeight } from '../formulation/molecularWeight';
-import { analyzeRepeatUnit } from '../polymer/repeatUnit';
+import { analyzePolymerUnits } from '../polymer/copolymer';
 import type { RDKitModule } from '../rdkit/types';
 import { findGroupSites, parseStructure } from './groups';
 import { judgeFormulation, judgePair } from './judge';
@@ -15,9 +15,11 @@ import {
   type ComponentAnalysis,
   type CrosslinkComponent,
   type CrosslinkResult,
+  type GroupSites,
   type PairCatalyst,
   type PairEnd,
   type PairResult,
+  type UnitAnalysis,
 } from './types';
 
 export interface CrosslinkTables {
@@ -30,7 +32,7 @@ export function analyzeComponent(RDKit: RDKitModule, c: CrosslinkComponent, grou
   const isPolymer = c.canonicalSmiles.includes('*');
   // 小分子優先用 Molfile：原子索引與「分子工具」分頁的 3D 畫面一致；聚合物用 SMILES（與重複單元分析一致）
   const source = !isPolymer && c.molfile && c.molfile.trim() !== '' ? c.molfile : c.canonicalSmiles;
-  const base: ComponentAnalysis = { id: c.id, name: c.name, isPolymer, source, dp: null, molarMass: null, distribution: null, groups: [], problem: null };
+  const base: ComponentAnalysis = { id: c.id, name: c.name, isPolymer, source, dp: null, molarMass: null, distribution: null, groups: [], units: null, unitGroupCounts: {}, problem: null };
 
   const mol = parseStructure(RDKit, source);
   if (!mol) return { ...base, problem: '無法解析這個成分的結構' };
@@ -42,8 +44,34 @@ export function analyzeComponent(RDKit: RDKitModule, c: CrosslinkComponent, grou
 
   if (!isPolymer) base.molarMass = averageMolecularWeight(RDKit, c.canonicalSmiles);
   if (isPolymer) {
-    const unit = analyzeRepeatUnit(RDKit, c.canonicalSmiles);
+    // 共聚物（任務 020）：各單元分別辨識，以莫耳分率加權得到每個平均單元的官能基數；均聚物＝單一單元 100%
+    const unit = analyzePolymerUnits(RDKit, c.canonicalSmiles, c.polymer);
     if (!unit.ok) return { ...base, problem: unit.problem.message };
+    const composition = unit.units ?? [];
+    const copolymer = !!c.polymer?.units && composition.length > 1;
+    const unitAnalyses: UnitAnalysis[] = [];
+    const counts: Record<string, number> = {};
+    for (const u of composition) {
+      const unitMol = parseStructure(RDKit, u.smiles);
+      let sites: GroupSites[] = [];
+      if (unitMol) {
+        try {
+          sites = findGroupSites(RDKit, unitMol, groups, true);
+        } finally {
+          unitMol.delete();
+        }
+      }
+      unitAnalyses.push({ smiles: u.smiles, molFraction: u.molFraction, groups: sites });
+      for (const g of sites) counts[g.groupId] = (counts[g.groupId] ?? 0) + u.molFraction * g.sites.length;
+    }
+    base.units = unitAnalyses;
+    base.unitGroupCounts = counts;
+    if (copolymer) {
+      // 第一種單元的位點；其他單元才有的官能基以空位點列出，讓配對判斷知道這個成分含有它
+      const first = unitAnalyses[0].groups;
+      const extra = Object.keys(counts).filter((id) => !first.some((g) => g.groupId === id)).map((groupId) => ({ groupId, sites: [] }));
+      base.groups = [...first, ...extra];
+    }
     if (!c.polymer) return { ...base, problem: '聚合物需要填入 Mw（或 Mn、DP），才能判定' };
     const resolved = resolvePolymer(c.polymer, unit.mUnit);
     if (!resolved.ok) return { ...base, problem: resolved.error };
@@ -57,7 +85,7 @@ export function analyzeComponent(RDKit: RDKitModule, c: CrosslinkComponent, grou
 /** 此成分每分子平均的反應官能度：位點數 × 規則官能度（每個基團形成的鍵數）；聚合物再乘聚合度。 */
 function functionalityOf(a: ComponentAnalysis, groupId: string, perGroup: number): number | null {
   const sites = a.groups.find((g) => g.groupId === groupId)?.sites.length ?? 0;
-  if (a.isPolymer) return a.dp === null ? null : sites * perGroup * a.dp;
+  if (a.isPolymer) return a.dp === null ? null : (a.unitGroupCounts[groupId] ?? sites) * perGroup * a.dp;
   return sites * perGroup;
 }
 
@@ -87,10 +115,18 @@ export function analyzeCrosslink(RDKit: RDKitModule, components: readonly Crossl
     isPolymer: a.isPolymer,
     f: functionalityOf(a, groupId, perGroup),
   });
+  const unitMarks = new Map<string, Set<number>[]>();
   const mark = (a: ComponentAnalysis, groupId: string) => {
     const set = marks.get(a.id) ?? new Set<number>();
     for (const site of a.groups.find((g) => g.groupId === groupId)?.sites ?? []) site.forEach((atom) => set.add(atom));
     marks.set(a.id, set);
+    if (a.units && a.units.length > 1) {
+      const perUnit = unitMarks.get(a.id) ?? a.units.map(() => new Set<number>());
+      a.units.forEach((u, k) => {
+        for (const site of u.groups.find((g) => g.groupId === groupId)?.sites ?? []) site.forEach((atom) => perUnit[k].add(atom));
+      });
+      unitMarks.set(a.id, perUnit);
+    }
   };
 
   for (const rule of tables.reactionRules) {
@@ -156,6 +192,8 @@ export function analyzeCrosslink(RDKit: RDKitModule, components: readonly Crossl
 
   const markedAtoms: Record<string, number[]> = {};
   for (const [id, set] of marks) markedAtoms[id] = [...set].sort((x, y) => x - y);
+  const markedUnitAtoms: Record<string, number[][]> = {};
+  for (const [id, sets] of unitMarks) markedUnitAtoms[id] = sets.map((s) => [...s].sort((x, y) => x - y));
 
   return {
     modelName: CROSSLINK_MODEL_NAME,
@@ -165,6 +203,7 @@ export function analyzeCrosslink(RDKit: RDKitModule, components: readonly Crossl
     nonParticipants: analyses.filter((a) => !participating.has(a.id)).map((a) => ({ id: a.id, name: a.name })),
     components: analyses,
     markedAtoms,
+    markedUnitAtoms,
     warnings,
     pendingReview: {
       rules: tables.reactionRules.filter((r) => usedRules.has(r.id) && r.review_status === 'pending').map((r) => r.id),

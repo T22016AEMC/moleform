@@ -27,8 +27,6 @@ describe('連接點規則', () => {
     ['1 個（未編號）', '*CC', 'TOO_FEW_ATTACHMENTS'],
     ['3 個', '[*:1]CC([*:2])C[*:3]', 'TOO_MANY_ATTACHMENTS'],
     ['3 個未編號', '*CC(*)C*', 'TOO_MANY_ATTACHMENTS'],
-    ['兩個連在同一個原子', '[*:1]C([*:2])CC', 'SAME_ATOM'],
-    ['兩個未編號連在同一個原子', '*C(*)CC', 'SAME_ATOM'],
     ['連接點沒有連到原子', '*.CC.*', 'DANGLING_ATTACHMENT'],
     ['連接點直接相連', '*[*:1].CC', 'ATTACHMENT_TO_ATTACHMENT'],
     ['只編一個號', '[*:1]CC*', 'BAD_NUMBERING'],
@@ -44,8 +42,15 @@ describe('連接點規則', () => {
     const r = analyzeRepeatUnit(RDKit, '[*:1]CC([*:2])C[*:3]');
     expect(r.ok).toBe(false);
     if (!r.ok) expect(r.problem.message).toMatch(/恰好兩個連接點.*3 個/);
-    const same = analyzeRepeatUnit(RDKit, '[*:1]C([*:2])CC');
-    if (!same.ok) expect(same.problem.message).toContain('同一個原子');
+  });
+
+  it('兩個連接點連在同一個原子上是合法的（次甲基單元；使用者 2026-10-30 決定放寬，取消 SAME_ATOM）', () => {
+    for (const smiles of ['[*:1]C([*:2])CC', '*C(*)CC', '[*:1]C([*:2])c1ccc2ccccc2c1']) {
+      const r = analyzeRepeatUnit(RDKit, smiles);
+      expect(r.ok).toBe(true);
+    }
+    const b = analyzeRepeatUnit(RDKit, '[*:1]C([*:2])c1ccc2ccccc2c1');
+    expect(b.ok && b.formula).toBe('C11H8');
   });
 
   it('[*:1]、[*:2] 合法，順序顛倒也合法並記下順序', () => {

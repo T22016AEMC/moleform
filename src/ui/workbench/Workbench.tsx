@@ -7,7 +7,7 @@ import type { AreaResult, Formulation, FormulationIssue, FormulationOutcome } fr
 import { LIQUID_CATEGORIES, SOLID_CATEGORIES } from '../../core/formulation/types';
 import { confidenceLabel, type CalcResult } from '../../core/result';
 import { resolvePolymer } from '../../core/polymer/convert';
-import type { RepeatUnitAnalysis } from '../../core/polymer/types';
+import type { PolymerSpec, RepeatUnitAnalysis } from '../../core/polymer/types';
 import { analyzeRepeatUnitInWorker, averageWeightOf } from '../../worker/client';
 import { CrosslinkPage } from '../crosslink/CrosslinkPage';
 import { UnifiedNote } from '../components/UnifiedNote';
@@ -26,7 +26,7 @@ import {
 } from '../formulation/model';
 import type { FormulationStorage } from '../formulation/storage';
 import '../formulation/formulation.css';
-import { polymerLabel, specFromEdit } from '../polymer/model';
+import { analysisKey, polymerLabel, specFromEdit } from '../polymer/model';
 import { AddComponentDialog } from './AddComponentDialog';
 import { ComponentDetailDialog } from './ComponentDetailDialog';
 import { drawSource, isPolymerSmiles } from './model';
@@ -79,7 +79,7 @@ function IssueList({ issues }: { issues: SeverityIssue[] }) {
 
 /** 聚合物成分在列上的簡短說明（Mn、DP 是使用者的輸入，可以顯示；細節在成分詳細彈窗） */
 function polymerSummary(row: Row): string {
-  const spec = row.polymerEdit ? specFromEdit(row.polymerEdit) : null;
+  const spec = row.polymerEdit ? specFromEdit(row.polymerEdit, row.canonicalSmiles) : null;
   if (!spec) return '尚未設定 Mw／PDI';
   return polymerLabel(spec);
 }
@@ -176,7 +176,8 @@ function AreaCard({ area, state, setState, issues, units, onAdd, onOpenDetail }:
             const rowIssues = issues.filter((i) => i.componentId === row.id);
             const invalid = rowIssues.some((i) => i.severity === 'error');
             const polymer = isPolymerSmiles(row.canonicalSmiles);
-            const unitProblem = polymer && units[row.canonicalSmiles]?.ok === false ? (units[row.canonicalSmiles] as Extract<RepeatUnitAnalysis, { ok: false }>).problem.message : '';
+            const rowKey = analysisKey(row.canonicalSmiles, row.polymerEdit ? specFromEdit(row.polymerEdit, row.canonicalSmiles) : null);
+            const unitProblem = polymer && units[rowKey]?.ok === false ? (units[rowKey] as Extract<RepeatUnitAnalysis, { ok: false }>).problem.message : '';
             const menuOpen = menuId === row.id;
             return (
               <li key={row.id} id={`field-comp-${row.id}`} className={`component-item comp-row${invalid ? ' has-error' : ''}`}>
@@ -188,7 +189,7 @@ function AreaCard({ area, state, setState, issues, units, onAdd, onOpenDetail }:
                     <button type="button" className="name-link" onClick={() => onOpenDetail(row.id)} title="開啟成分詳細">
                       {row.name.trim() === '' ? '（未命名）' : row.name}
                     </button>
-                    {polymer && <span className="polymer-tag">聚合物</span>}
+                    {polymer && <span className="polymer-tag">{(row.polymerEdit?.extraUnits?.length ?? 0) > 0 ? '共聚物' : '聚合物'}</span>}
                     {polymer && <small className="comp-polymer-summary">{polymerSummary(row)}</small>}
                   </div>
                   <div className="comp-fields">
@@ -417,25 +418,28 @@ export function Workbench({ storage }: Props) {
   }, [needed, weights]);
 
   // 聚合物（含 *）：由 Worker 分析重複單元，取得 M_unit 以換算 Mn／DP；不顯示 M_unit（D09）
-  const polymerSmiles = useMemo(() => {
-    const smiles = new Set<string>();
+  // 共聚物（任務 020）：單元或比例不同就是不同的分析，快取鍵含單元清單；M_unit 在此為平均單元質量
+  const polymerTargets = useMemo(() => {
+    const targets = new Map<string, { smiles: string; spec: PolymerSpec | null }>();
     for (const row of [...state.solidRows, ...state.liquidRows]) {
-      if (row.canonicalSmiles.includes('*')) smiles.add(row.canonicalSmiles);
+      if (!row.canonicalSmiles.includes('*')) continue;
+      const spec = row.polymerEdit ? specFromEdit(row.polymerEdit, row.canonicalSmiles) : null;
+      targets.set(analysisKey(row.canonicalSmiles, spec), { smiles: row.canonicalSmiles, spec });
     }
-    return [...smiles];
+    return targets;
   }, [state.solidRows, state.liquidRows]);
 
   useEffect(() => {
-    const missing = polymerSmiles.filter((s) => !(s in units));
+    const missing = [...polymerTargets].filter(([key]) => !(key in units));
     if (!missing.length) return;
     let cancelled = false;
-    void Promise.all(missing.map(async (s) => [s, await analyzeRepeatUnitInWorker(s)] as const)).then((entries) => {
+    void Promise.all(missing.map(async ([key, t]) => [key, await analyzeRepeatUnitInWorker(t.smiles, t.spec)] as const)).then((entries) => {
       if (!cancelled) setUnits((u) => ({ ...u, ...Object.fromEntries(entries) }));
     });
     return () => {
       cancelled = true;
     };
-  }, [polymerSmiles, units]);
+  }, [polymerTargets, units]);
 
   const ready = needed.every((s) => s in weights);
   const outcome = useMemo<FormulationOutcome | null>(() => {
@@ -445,7 +449,7 @@ export function Workbench({ storage }: Props) {
     for (const c of [...debounced.solid.components, ...debounced.liquid.components]) {
       if (c.canonicalSmiles.includes('*')) {
         // 聚合物：整條鏈基準用 Mn、重複單元基準用 M_unit（D46）；只用於計算，不顯示（D09）
-        const unit = units[c.canonicalSmiles];
+        const unit = units[analysisKey(c.canonicalSmiles, c.polymer)];
         const resolved = c.polymer && unit?.ok ? resolvePolymer(c.polymer, unit.mUnit) : null;
         byId[c.id] = resolved?.ok ? resolved.mn : undefined;
         unitWeights[c.id] = resolved?.ok && unit?.ok ? unit.mUnit : undefined;

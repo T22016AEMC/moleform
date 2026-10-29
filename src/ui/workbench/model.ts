@@ -72,7 +72,7 @@ export function rowFromCandidate(area: 'solid' | 'liquid', candidate: Candidate,
 
 /** 勾選「同時存進化合物庫」時，要新增的化合物 */
 export function libraryInputFromRow(row: Pick<Row, 'name' | 'canonicalSmiles' | 'molfile' | 'polymerEdit'>): NewCompoundInput {
-  const polymer = isPolymerSmiles(row.canonicalSmiles) && row.polymerEdit ? specFromEdit(row.polymerEdit) : null;
+  const polymer = isPolymerSmiles(row.canonicalSmiles) && row.polymerEdit ? specFromEdit(row.polymerEdit, row.canonicalSmiles) : null;
   return {
     name: row.name,
     canonicalSmiles: row.canonicalSmiles,

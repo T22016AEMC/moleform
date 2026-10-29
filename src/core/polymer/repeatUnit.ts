@@ -73,10 +73,7 @@ export function analyzeRepeatUnit(RDKit: RDKitModule, smiles: string): RepeatUni
       if (n.length === 0) return fail('DANGLING_ATTACHMENT', '有連接點（*）沒有連到任何原子。');
       if (n.some((x) => atoms[x].z === 0)) return fail('ATTACHMENT_TO_ATTACHMENT', '兩個連接點（*）不可直接相連。');
     }
-    const [first, second] = dummies.map((d) => neighbors.get(d)!);
-    if (first.some((x) => second.includes(x))) {
-      return fail('SAME_ATOM', '兩個連接點（*）連在同一個原子上，無法形成重複單元。請讓它們連在不同的原子上。');
-    }
+    // 兩個連接點可以連在同一個原子上（例如次甲基 -CH(Ar)-；使用者 2026-10-30 決定放寬，原任務 015 的 SAME_ATOM 錯誤已取消）
 
     // 編號：[*:1]、[*:2]（順序不拘），或兩個都不編號（依出現順序視為 1、2）
     const maps = atomMaps(mol.get_v2Kmolblock(), atoms.length);
