@@ -115,9 +115,9 @@ describe('舊資料相容（任務 015–018 存下的檔案只有 Mn 或 DP）'
       const r = resolvePolymer(parsed.ok ? parsed.spec : {}, 142.15);
       expect(r).toMatchObject({ ok: true, pdi: 2, pdiIsDefault: true, legacy: true });
     }
-    expect(MESSAGE_PDI_LEGACY).toBe('舊資料：PDI 使用預設值 2');
-    expect(polymerLabel({ mnInput: 6000 })).toContain('舊資料：PDI 使用預設值 2');
-    expect(polymerLabel({ dpInput: 21 })).toContain('舊資料：PDI 使用預設值 2');
+    expect(MESSAGE_PDI_LEGACY).toBe('PDI 未填，使用預設值 2');
+    expect(polymerLabel({ mnInput: 6000 })).toContain('PDI 未填，使用預設值 2');
+    expect(polymerLabel({ dpInput: 21 })).toContain('PDI 未填，使用預設值 2');
     expect(polymerLabel({ mwInput: 4500 })).toContain('使用預設 PDI = 2');
     expect(polymerLabel({ mwInput: 6000, pdiInput: 1.8 })).toBe('Mw 6,000 g/mol，PDI 1.8');
   });

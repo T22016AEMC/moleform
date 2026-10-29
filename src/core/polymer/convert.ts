@@ -10,7 +10,7 @@ export const mnFromDp = (dp: number, mUnit: number): number => dp * mUnit;
 
 export const MESSAGE_PDI_RANGE = 'PDI 必須是大於或等於 1 的數字。';
 export const MESSAGE_PDI_DEFAULT = '使用預設 PDI = 2';
-export const MESSAGE_PDI_LEGACY = '舊資料：PDI 使用預設值 2';
+export const MESSAGE_PDI_LEGACY = 'PDI 未填，使用預設值 2';
 
 export type PolymerBasis = 'mw' | 'mn' | 'dp';
 
@@ -31,7 +31,7 @@ export type ResolvedPolymer =
       pdi: number;
       /** 使用者沒填 PDI，用了預設值 2 */
       pdiIsDefault: boolean;
-      /** 舊資料（只有 Mn 或 DP、沒有 PDI）；畫面標示「舊資料：PDI 使用預設值 2」 */
+      /** 舊資料（只有 Mn 或 DP、沒有 PDI）；畫面標示「PDI 未填，使用預設值 2」（新舊資料都適用） */
       legacy: boolean;
       /** 換算附註：未計入端基 */
       note: string;

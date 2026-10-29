@@ -30,7 +30,7 @@ export function specFromEdit(edit: PolymerEdit): PolymerSpec | null {
   return spec;
 }
 
-/** 已儲存的聚合物設定的簡短說明（使用者自己輸入的值）；舊資料（只有 Mn 或 DP）標示 PDI 使用預設值 */
+/** 已儲存的聚合物設定的簡短說明（使用者自己輸入的值）；沒填 PDI 的 Mn 或 DP 標示 PDI 使用預設值 */
 export function polymerLabel(spec: PolymerSpec): string {
   const main =
     spec.mwInput !== undefined
