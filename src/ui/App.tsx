@@ -25,20 +25,20 @@ export function App() {
   return (
     <main>
       <Header />
-      <div className="tabs" role="tablist" aria-label="功能分頁">
+      <div className="tab-cards" aria-label="功能分頁">
         {TABS.map(([id, label]) => (
-          <button key={id} type="button" role="tab" id={`tab-${id}`} aria-selected={tab === id} aria-controls={`panel-${id}`} onClick={() => setTab(id)}>
+          <button key={id} type="button" aria-pressed={tab === id} aria-controls={`panel-${id}`} onClick={() => setTab(id)}>
             {label}
           </button>
         ))}
       </div>
       {/* 兩個分頁都保持掛載（只是隱藏），切換時不會清除各頁的內容，也不會重新載入 Ketcher */}
-      <div id="panel-structure" role="tabpanel" aria-labelledby="tab-structure" hidden={tab !== 'structure'}>
+      <div id="panel-structure" hidden={tab !== 'structure'}>
         <StructureInput onStructureChange={setStructure} loadRequest={loadRequest} />
         <CompoundLibrary structure={structure} onLoad={loadIntoStructure} />
         <Conformer3DCard structure={structure} />
       </div>
-      <div id="panel-formulation" role="tabpanel" aria-labelledby="tab-formulation" hidden={tab !== 'formulation'}>
+      <div id="panel-formulation" hidden={tab !== 'formulation'}>
         <FormulationPage structure={structure} />
       </div>
       {DevPreview && (

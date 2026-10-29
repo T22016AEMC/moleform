@@ -17,6 +17,8 @@ import {
   fromFormulation,
   LIQUID_UNIT_OPTIONS,
   newRow,
+  pendingAmountIds,
+  visibleIssues,
   SOLID_UNIT_OPTIONS,
   toFormulation,
   UNIT_SUFFIX,
@@ -203,11 +205,14 @@ function AreaCard({ area, state, setState, issues, structure }: AreaCardProps) {
                         type="text"
                         inputMode="decimal"
                         value={row.amountText}
+                        placeholder="請輸入用量"
                         aria-invalid={invalid}
-                        onChange={(e) => patchRow(row.id, { amountText: e.target.value })}
+                        onChange={(e) => patchRow(row.id, { amountText: e.target.value, amountTouched: true })}
+                        onBlur={() => !row.amountTouched && patchRow(row.id, { amountTouched: true })}
                       />
                       <span className="amount-unit">{UNIT_SUFFIX[unit] ?? unit}</span>
                     </div>
+                    {!row.amountTouched && row.amountText.trim() === '' && <small className="amount-hint">請輸入用量</small>}
                   </div>
                 </div>
                 {isSolid && (
@@ -432,12 +437,18 @@ export function FormulationPage({ structure, storage }: Props) {
     return computeFormulation(debounced, byId);
   }, [debounced, weights, ready]);
 
+  // 新加入、尚未填用量的成分先不顯示數值錯誤（輸入過或離開欄位後才顯示）
+  const pending = useMemo(() => pendingAmountIds([...state.solidRows, ...state.liquidRows]), [state.solidRows, state.liquidRows]);
   const issues = useMemo<SeverityIssue[]>(
-    () => [
-      ...(outcome?.errors ?? []).map((i) => ({ ...i, severity: 'error' as const })),
-      ...(outcome?.warnings ?? []).map((i) => ({ ...i, severity: 'warning' as const })),
-    ],
-    [outcome],
+    () =>
+      visibleIssues(
+        [
+          ...(outcome?.errors ?? []).map((i) => ({ ...i, severity: 'error' as const })),
+          ...(outcome?.warnings ?? []).map((i) => ({ ...i, severity: 'warning' as const })),
+        ],
+        pending,
+      ),
+    [outcome, pending],
   );
   const targetIssues = issues.filter((i) => i.area === 'formulation' && i.code.startsWith('TARGET'));
   const otherFormulationIssues = issues.filter((i) => i.area === 'formulation' && !i.code.startsWith('TARGET'));
@@ -484,7 +495,9 @@ export function FormulationPage({ structure, storage }: Props) {
         <p className="result-meta">
           模型：配方換算　<span className="confidence-tag confidence-direct">{confidenceLabel('direct')}</span>
         </p>
-        {outcome === null ? (
+        {pending.size > 0 ? (
+          <p role="status">尚未填完用量</p>
+        ) : outcome === null ? (
           <p role="status">計算中…</p>
         ) : (
           <>

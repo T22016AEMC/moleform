@@ -70,13 +70,13 @@
 
 開工前需要使用者決定：無
 
-- [ ] 3.1 Solid／Liquid 兩區輸入介面，成分數量不限，每項可繪圖或輸入 SMILES，成分分類依 spec（Solid 區含 Catalyst/Initiator，DECISIONS D26）
-- [ ] 3.2 背景計算分子量與官能基需要的基礎量（不在結果頁顯示，DECISIONS D09）
-- [ ] 3.3 換算核心：g、重量份、wt%、mol%、phr；總重、Solid Content
-- [ ] 3.4 單位一致性檢查與錯誤提示
-- [ ] 3.5 Solid 成分可標記「在指定條件下揮發或分解」
-- [ ] 3.6 配方存檔與讀檔（本機，DECISIONS D23）
-- [ ] 3.7 使用者驗證清單：幾組手算過的配方換算
+- [x] 3.1 Solid／Liquid 兩區輸入介面，成分數量不限，每項可繪圖或輸入 SMILES，成分分類依 spec（Solid 區含 Catalyst/Initiator，DECISIONS D26）
+- [x] 3.2 背景計算分子量與官能基需要的基礎量（不在結果頁顯示，DECISIONS D09）
+- [x] 3.3 換算核心：g、重量份、wt%、mol%、phr；總重、Solid Content
+- [x] 3.4 單位一致性檢查與錯誤提示
+- [x] 3.5 Solid 成分可標記「在指定條件下揮發或分解」
+- [x] 3.6 配方存檔與讀檔（本機，DECISIONS D23）
+- [x] 3.7 使用者驗證清單：幾組手算過的配方換算
 - 註：Liquid 區的 vol% 需要溶劑密度，延到 Phase 8 建好溶劑資料表後再做
 
 ## Phase 4：打通第一條路（酚醛樹脂＋環氧樹脂，交聯第 0、1 層）

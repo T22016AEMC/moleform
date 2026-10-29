@@ -14,7 +14,7 @@ import {
 import type { Formulation } from '../../src/core/formulation/types';
 import { summaryText } from '../../src/core/library/types';
 import { createFormulationIndexedDbStorage, createFormulationMemoryStorage } from '../../src/ui/formulation/storage';
-import { fromFormulation, toFormulation, emptyState } from '../../src/ui/formulation/model';
+import { emptyState, fromFormulation, pendingAmountIds, toFormulation, visibleIssues } from '../../src/ui/formulation/model';
 
 const T1 = new Date('2026-10-01T00:00:00.000Z');
 const T2 = new Date('2026-10-02T00:00:00.000Z');
@@ -203,5 +203,35 @@ describe('畫面的編輯狀態與配方互轉', () => {
     expect(Number.isNaN(f.solid.components[0].amount)).toBe(true);
     expect(f.solidTotalG).toBeUndefined();
     expect(Number.isNaN(f.liquidTotalG as number)).toBe(true);
+  });
+});
+
+describe('尚未填用量的成分（使用者 2026-10-29 決定）', () => {
+  const row = (id: string, amountText: string, amountTouched?: boolean) => ({
+    id, name: id, canonicalSmiles: 'CCO', category: 'Small Molecule', amountText, ...(amountTouched === undefined ? {} : { amountTouched }),
+  });
+
+  it('空白且沒輸入過、沒離開過欄位的成分算「尚未填用量」；輸入過、離開過或有值就不算', () => {
+    const pending = pendingAmountIds([row('a', ''), row('b', '  '), row('c', '', true), row('d', '5'), row('e', '', false)]);
+    expect([...pending].sort()).toEqual(['a', 'b', 'e']);
+  });
+
+  it('只濾掉尚未填用量成分的「數值無效」錯誤，其他錯誤與其他成分照常顯示', () => {
+    const issues = [
+      { code: 'INVALID_AMOUNT', componentId: 'a' },
+      { code: 'INVALID_AMOUNT', componentId: 'c' },
+      { code: 'SUM_NOT_100' },
+      { code: 'MISSING_MW', componentId: 'a' },
+    ];
+    const shown = visibleIssues(issues, new Set(['a']));
+    expect(shown).toEqual([{ code: 'INVALID_AMOUNT', componentId: 'c' }, { code: 'SUM_NOT_100' }, { code: 'MISSING_MW', componentId: 'a' }]);
+  });
+
+  it('畫面專用的 amountTouched 不會進入配方；離開欄位（touched）後空白就算無效數值', () => {
+    const state = emptyState();
+    state.solidRows = [row('a', '', true)];
+    const f = toFormulation(state);
+    expect(JSON.stringify(f)).not.toContain('amountTouched');
+    expect(Number.isNaN(f.solid.components[0].amount)).toBe(true);
   });
 });

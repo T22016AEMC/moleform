@@ -2,7 +2,18 @@
 import { newId } from '../../core/library/library';
 import type { Component, Formulation, LiquidCategory, LiquidUnit, SolidCategory, SolidUnit } from '../../core/formulation/types';
 
-export type Row = Omit<Component, 'amount'> & { amountText: string };
+/** amountTouched：使用者輸入過或離開過用量欄位（只在畫面使用，不存進配方）；在那之前空白用量不顯示錯誤 */
+export type Row = Omit<Component, 'amount'> & { amountText: string; amountTouched?: boolean };
+
+/** 尚未填用量（空白且還沒輸入過、沒離開過欄位）的成分編號 */
+export function pendingAmountIds(rows: readonly Row[]): Set<string> {
+  return new Set(rows.filter((r) => r.amountText.trim() === '' && !r.amountTouched).map((r) => r.id));
+}
+
+/** 濾掉「尚未填用量」成分的數值錯誤（其他錯誤照常顯示） */
+export function visibleIssues<T extends { code: string; componentId?: string }>(issues: readonly T[], pending: ReadonlySet<string>): T[] {
+  return issues.filter((i) => !(i.code === 'INVALID_AMOUNT' && i.componentId !== undefined && pending.has(i.componentId)));
+}
 
 export interface EditorState {
   name: string;
@@ -38,7 +49,7 @@ export function parseNumberText(text: string): number {
 const optional = (text: string): number | undefined => (text.trim() === '' ? undefined : parseNumberText(text));
 
 function toComponent(row: Row): Component {
-  const { amountText, ...rest } = row;
+  const { amountText, amountTouched: _touched, ...rest } = row;
   return { ...rest, amount: parseNumberText(amountText) };
 }
 
