@@ -35,9 +35,9 @@
 
 開工前需要使用者準備：在 GitHub 建立空的 `moleform` repo（DECISIONS D32）
 
-- [ ] 1.1 專案骨架：從 CheMScutter 複製 Vite、React、TypeScript、Vitest、npm 的設定（DECISIONS D16、D20、D27），初始化 git 並連上 GitHub `moleform` repo
-- [ ] 1.2 目錄分層：`src/core/`、`src/data/`、`src/ui/`；加自動檢查，確保 `src/core/` 不引用 React
-- [ ] 1.3 CI：從 CheMScutter 複製 `deploy.yml`，型別檢查、測試、建置全部通過才部署到 GitHub Pages（DECISIONS D24、D32）；不含 golden 步驟（D30）
+- [x] 1.1 專案骨架：從 CheMScutter 複製 Vite、React、TypeScript、Vitest、npm 的設定（DECISIONS D16、D20、D27），初始化 git 並連上 GitHub `moleform` repo
+- [x] 1.2 目錄分層：`src/core/`、`src/data/`、`src/ui/`；加自動檢查，確保 `src/core/` 不引用 React
+- [x] 1.3 CI：從 CheMScutter 複製 `deploy.yml`，型別檢查、測試、建置全部通過才部署到 GitHub Pages（DECISIONS D24、D32）；不含 golden 步驟（D30）
 - [ ] 1.4 RDKit.js 共用包裝：只初始化一次、統一錯誤處理、載入中的畫面
 - [ ] 1.5 結果顯示共用元件：數值、單位、模型名稱、可信度（直接計算／理論估算／參考趨勢）、統一備註、出處
 - [ ] 1.5a 頁首與版本顯示：`assets/logo.png`、版本號與建置時間（複製 CheMScutter 的 `build-info.mjs`）；介面風格依 `assets/style-reference.png`，顏色、圓角、間距集中定義在 `src/ui/theme.css`，規則寫進 `docs/DESIGN.md`
