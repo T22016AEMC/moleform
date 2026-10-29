@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit && vite build && npm run build --prefix packages/ketcher-frame",
+    "build": "tsc --noEmit && vite build && node scripts/third-party-notices.mjs && npm run build --prefix packages/ketcher-frame",
     "preview": "vite preview",
     "test": "vitest run",
     "test:clean": "node -e \"for (const d of ['node_modules/.vitest-cache','node_modules/.vite/vitest']) require('fs').rmSync(d,{recursive:true,force:true})\" && vitest run",
@@ -13,6 +13,8 @@
   },
   "dependencies": {
     "@rdkit/rdkit": "^2026.9.1",
+    "3dmol": "2.5.5",
+    "openchemlib": "9.25.2",
     "react": "^19.3.1",
     "react-dom": "^19.3.1"
   },

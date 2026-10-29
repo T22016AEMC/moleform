@@ -38,7 +38,7 @@ function failedView(source: Source, message: string, code: StructureProblem['cod
   };
 }
 
-export function StructureInput() {
+export function StructureInput({ onStructureChange }: { onStructureChange?: (structure: StructureValidation | null) => void }) {
   const [smilesText, setSmilesText] = useState('');
   const [view, setView] = useState<View | null>(null);
   const [frameState, setFrameState] = useState<'loading' | 'ready' | 'failed'>('loading');
@@ -200,6 +200,10 @@ export function StructureInput() {
   }
 
   const result = view?.result;
+  // 把目前驗證結果交給下方的 3D 卡片（只在結果物件改變時通知）
+  useEffect(() => {
+    onStructureChange?.(result ?? null);
+  }, [result, onStructureChange]);
   const exportable = !!result?.valid;
 
   return (

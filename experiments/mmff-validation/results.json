@@ -1,0 +1,1055 @@
+[
+ {
+  "name": "AGLYSL01",
+  "title": "AMMONIUM GLYCINIUM SULFATE (NEUTRON STUDY) PEPSEQ A=1 GLY",
+  "atoms": 10,
+  "ref": 26.87431,
+  "ocl": 26.874313846884068,
+  "ratio": 1.0000001431435475,
+  "diff": 0.0000038468840664052095
+ },
+ {
+  "name": "BEVJER10",
+  "title": "BIS(DIMETHYLAMMONIUM) (3,4-BIS(DICYANOMETHYLENE)-1-CYCLOBUT",
+  "atoms": 24,
+  "ref": 18.75343,
+  "ocl": 18.753472115898113,
+  "ratio": 1.0000022457704063,
+  "diff": 0.00004211589811120575
+ },
+ {
+  "name": "BUYTOE10",
+  "title": "1-BETA-D-RIBOFURANOSYLIMIDAZO(1,2-B)PYRAZOLE-7-CARBONITRILE",
+  "atoms": 31,
+  "ref": 144.89777,
+  "ocl": 144.8977807193953,
+  "ratio": 1.000000073979022,
+  "diff": 0.000010719395305613943
+ },
+ {
+  "name": "CEWYIM30",
+  "title": "1,2,6-TRIMETHYL-4-PYRIDONE 1,8-BIPHENYLENEDIOL CLATHRATE (A",
+  "atoms": 22,
+  "ref": 66.7753,
+  "ocl": 66.77530608627607,
+  "ratio": 1.0000000911456193,
+  "diff": 0.000006086276073347108
+ },
+ {
+  "name": "CIHWUL10",
+  "title": "1,2.3,4.5,6-TRIANHYDRO-D-IDITOL",
+  "atoms": 17,
+  "ref": 15.14485,
+  "ocl": 15.144855971273246,
+  "ratio": 1.000000394277477,
+  "diff": 0.000005971273246530018
+ },
+ {
+  "name": "CILWUP11",
+  "title": "1,2,3-TRIAZINE (AT 100 DEG.K)",
+  "atoms": 9,
+  "ref": 0.68501,
+  "ocl": 0.6850111185235963,
+  "ratio": 1.0000016328573251,
+  "diff": 0.0000011185235962996032
+ },
+ {
+  "name": "CIPVOM",
+  "title": "3,6-DIMETHYL-3H-PYRAZOLO(1,5-D)TETRAZOLE-7-CARBOXYLIC ACID",
+  "atoms": 26,
+  "ref": -2.841,
+  "ocl": -2.8409915067847744,
+  "ratio": 0.999997010483905,
+  "diff": 0.000008493215225779949
+ },
+ {
+  "name": "CIPYAB10",
+  "title": "TETRAMETHYLAMMONIUM HEXACYANOTRIMETHYLENECYCLOPROPANIDE (TR",
+  "atoms": 18,
+  "ref": 34.87235,
+  "ocl": 34.87236524696721,
+  "ratio": 1.0000004372222466,
+  "diff": 0.000015246967215887253
+ },
+ {
+  "name": "CIVLAU02",
+  "title": "EXO,EXO-4,5-DICARBOMETHOXYSPIRO(BICYCLO(1.1.1)PENTANE-2,2'-",
+  "atoms": 31,
+  "ref": 16.12615,
+  "ocl": 16.126160411651743,
+  "ratio": 1.0000006456377835,
+  "diff": 0.000010411651743424954
+ },
+ {
+  "name": "CIXWAH",
+  "title": "ENDO-7-HYDROXY-2,4-DIOXA-3-OXOBICYCLO(3.3.1)NONANE",
+  "atoms": 21,
+  "ref": -15.95417,
+  "ocl": -15.954160744251286,
+  "ratio": 0.9999994198539496,
+  "diff": 0.000009255748713243861
+ },
+ {
+  "name": "COCXUN",
+  "title": "N,N'-DICYANO-1,4-NAPHTHOQUINONE-DI-IMINE TETRATHIAFULVALENE",
+  "atoms": 22,
+  "ref": 24.42247,
+  "ocl": 24.42247708908289,
+  "ratio": 1.000000290268875,
+  "diff": 0.000007089082888711573
+ },
+ {
+  "name": "COMKAQ",
+  "title": "(1SR,5SR,6SR)-4-OXO-3-OXABICYCLO(3.2.0)HEPTANE-6-CARBONITRI",
+  "atoms": 17,
+  "ref": -7.6177,
+  "ocl": -7.617702394630607,
+  "ratio": 1.000000314350868,
+  "diff": -0.0000023946306066946477
+ },
+ {
+  "name": "COMWOQ",
+  "title": "1H-INDOLE-3-CARBOXALDEHYDE",
+  "atoms": 18,
+  "ref": 31.051,
+  "ocl": 31.051002802955225,
+  "ratio": 1.0000000902694028,
+  "diff": 0.000002802955226144377
+ },
+ {
+  "name": "COMWUW",
+  "title": "N,N-DIMETHYL-1H-INDOLE-3-METHANAMINE GRAMINE",
+  "atoms": 27,
+  "ref": 23.74581,
+  "ocl": 23.745825925270967,
+  "ratio": 1.000000670656043,
+  "diff": 0.00001592527096860863
+ },
+ {
+  "name": "COSWIQ",
+  "title": "5-CYANO-2-METHOXY-8-VINYL-PERHYDROAZOCINE",
+  "atoms": 24,
+  "ref": 27.25872,
+  "ocl": 27.258720574875706,
+  "ratio": 1.0000000210896076,
+  "diff": 5.74875706149669e-7
+ },
+ {
+  "name": "COVMAB",
+  "title": "N,N'-DI-T-BUTYLETHANE-DI-IMINE (AT 98 DEG.K)",
+  "atoms": 32,
+  "ref": 54.88679,
+  "ocl": 54.88680064066546,
+  "ratio": 1.0000001938656908,
+  "diff": 0.000010640665465189159
+ },
+ {
+  "name": "CUCDAF",
+  "title": "4,5-DIMETHYL-2,3-EPOXY-4-HYDROXY-1-OXO-1,2,3,4-TETRAHYDRO-N",
+  "atoms": 27,
+  "ref": 62.58536,
+  "ocl": 62.585366511457835,
+  "ratio": 1.00000010404123,
+  "diff": 0.00000651145783336915
+ },
+ {
+  "name": "CUCHOX",
+  "title": "(1ALPHA,4BETA,5ALPHA)-1,5-DIACETYL-4-HYDROXY-4-METHYLBICYCL",
+  "atoms": 29,
+  "ref": 12.51668,
+  "ocl": 12.516690814729603,
+  "ratio": 1.0000008640254128,
+  "diff": 0.000010814729604291529
+ },
+ {
+  "name": "CUFFAK",
+  "title": "FLUORESCIN METHANOL",
+  "atoms": 37,
+  "ref": 48.34575,
+  "ocl": 48.345766693783034,
+  "ratio": 1.000000345299908,
+  "diff": 0.000016693783031485054
+ },
+ {
+  "name": "CUYRAP",
+  "title": "2-ACETYL-4,6-DIMETHOXYBENZOFURAN CALEBERTIN A",
+  "atoms": 28,
+  "ref": 43.42514,
+  "ocl": 43.42514715868254,
+  "ratio": 1.0000001648511103,
+  "diff": 0.000007158682542751649
+ },
+ {
+  "name": "CYANAM01",
+  "title": "CYANAMIDE (AT 108 DEG.K)",
+  "atoms": 5,
+  "ref": -36.48459,
+  "ocl": -36.484585683610824,
+  "ratio": 0.9999998816928141,
+  "diff": 0.0000043163891731978765
+ },
+ {
+  "name": "DABLIB",
+  "title": "ANTI-4,4,8,8-TETRAFLUOROTRICYCLO(5.1.0.0-3,5-)OCTANE (FOR S",
+  "atoms": 20,
+  "ref": -0.78636,
+  "ocl": -0.786356688311693,
+  "ratio": 0.9999957885849904,
+  "diff": 0.000003311688306917304
+ },
+ {
+  "name": "DADDAN",
+  "title": "(+)-7-METHYL-2,3,5,7A-TETRAHYDRO-1H-PYRROLIZINE-1,8-DIYL SU",
+  "atoms": 32,
+  "ref": -14.11976,
+  "ocl": -14.11975482015569,
+  "ratio": 0.9999996331492667,
+  "diff": 0.000005179844309921577
+ },
+ {
+  "name": "DADLEZ",
+  "title": "4-ACETYL-3-AMINO-2-IMINO-5-METHYLENE-2,5-DIHYDROFURAN",
+  "atoms": 19,
+  "ref": 39.20451,
+  "ocl": 39.204518661400996,
+  "ratio": 1.000000220928689,
+  "diff": 0.00000866140099731183
+ },
+ {
+  "name": "DAFKIE",
+  "title": "3-METHYL-1-P-TOLYL-TRIAZENE",
+  "atoms": 22,
+  "ref": 18.68792,
+  "ocl": 18.68792999609755,
+  "ratio": 1.0000005348962084,
+  "diff": 0.000009996097553255368
+ },
+ {
+  "name": "DARZEB",
+  "title": "3-ETHYL-4-HYDROXY-1,2,3(4H)-BENZOTRIAZINE",
+  "atoms": 24,
+  "ref": -2.51092,
+  "ocl": -2.510903178950393,
+  "ratio": 0.999993300842079,
+  "diff": 0.000016821049606985383
+ },
+ {
+  "name": "DAZVEF",
+  "title": "TRISPIRO(2.1.2.1.2.1)DODECANE-4,8,12-TRIONE",
+  "atoms": 27,
+  "ref": 69.37451,
+  "ocl": 69.3745183257776,
+  "ratio": 1.0000001200120563,
+  "diff": 0.000008325777599793582
+ },
+ {
+  "name": "DEGRIQ",
+  "title": "DIOXANE 1,5,13-TRIMETHYL-1-AZONIA-9-AZATETRACYCLO(7.7.1.0-2",
+  "atoms": 37,
+  "ref": -13.92177,
+  "ocl": -13.921763011063385,
+  "ratio": 0.9999994979850539,
+  "diff": 0.00000698893661521538
+ },
+ {
+  "name": "DESYOP",
+  "title": "2-AMINOPROPENENITRILE (AT 97DEG.K)",
+  "atoms": 9,
+  "ref": 26.36673,
+  "ocl": 26.36673592818962,
+  "ratio": 1.0000002248359816,
+  "diff": 0.00000592818961919761
+ },
+ {
+  "name": "DEWHOC",
+  "title": "1-ETHYL-1,4-DIHYDRO-4-OXO(1,3)DIOXOLO(4,5G)CINNOLINE-3-CARB",
+  "atoms": 29,
+  "ref": 87.84014,
+  "ocl": 87.84015008431639,
+  "ratio": 1.0000001148030546,
+  "diff": 0.000010084316386382852
+ },
+ {
+  "name": "DEZDUH",
+  "title": "1,2,2,5,6,6-HEXAFLUORO-TRICYCLO(3.3.0.0-6,8-)OCTANE (AT -10",
+  "atoms": 20,
+  "ref": 50.63786,
+  "ocl": 50.637867466468556,
+  "ratio": 1.000000147448343,
+  "diff": 0.000007466468552763672
+ },
+ {
+  "name": "DIDYOE",
+  "title": "5-(1',2'-DIHYDROXY-2'-METHOXYCARBONYLETHYL)-ISOXAZOLINE",
+  "atoms": 24,
+  "ref": 60.09139,
+  "ocl": 60.09140035567607,
+  "ratio": 1.0000001723321108,
+  "diff": 0.000010355676074880193
+ },
+ {
+  "name": "DIHTET",
+  "title": "1,6-DIMETHYL-1H-INDAZOLE-4,7-DIONE",
+  "atoms": 21,
+  "ref": 9.87683,
+  "ocl": 9.876834297925406,
+  "ratio": 1.0000004351523115,
+  "diff": 0.00000429792540579399
+ },
+ {
+  "name": "DIKWID",
+  "title": "14-OXA-7,15,16-TRIAZATETRACYCLO(11.2.1.0-1,6-.0-8,13-)HEXAD",
+  "atoms": 38,
+  "ref": 145.34404,
+  "ocl": 145.34405530190745,
+  "ratio": 1.000000105280598,
+  "diff": 0.0000153019074389249
+ },
+ {
+  "name": "DISHES",
+  "title": "2,6-DIHYDRO-6-OXO-2,2,4-TRIMETHYLQUINOLINE",
+  "atoms": 27,
+  "ref": 13.80187,
+  "ocl": 13.801879270426404,
+  "ratio": 1.000000671679012,
+  "diff": 0.000009270426405194598
+ },
+ {
+  "name": "DIVTUX",
+  "title": "2-OXATRICYCLO(6.4.0.0-3,6-)DODECA-1(12),8,10-TRIEN-7-OL",
+  "atoms": 25,
+  "ref": 23.87164,
+  "ocl": 23.871663046897478,
+  "ratio": 1.0000009654509485,
+  "diff": 0.000023046897478451456
+ },
+ {
+  "name": "DIVWEK",
+  "title": "5-BENZYLIDENE-4,5-DIHYDRO-4-OXO-3-PHENYLFURAN-2-CARBOXYLIC",
+  "atoms": 34,
+  "ref": 47.22938,
+  "ocl": 47.229407092785536,
+  "ratio": 1.0000005736426254,
+  "diff": 0.000027092785536808606
+ },
+ {
+  "name": "DIYDIY",
+  "title": "2-FORMYL-PHENOXYACETIC ACID",
+  "atoms": 21,
+  "ref": 42.18619,
+  "ocl": 42.18621172242689,
+  "ratio": 1.0000005149179598,
+  "diff": 0.000021722426886583435
+ },
+ {
+  "name": "DMEOXA01",
+  "title": "DIMETHYL OXALATE",
+  "atoms": 14,
+  "ref": 53.54773,
+  "ocl": 53.547728031991305,
+  "ratio": 0.9999999632475793,
+  "diff": -0.0000019680086964513066
+ },
+ {
+  "name": "DOXZOF",
+  "title": "2H-BENZOCYCLOBUTEN-1-ONE OXIME",
+  "atoms": 17,
+  "ref": 65.56067,
+  "ocl": 65.56067540667189,
+  "ratio": 1.000000082468222,
+  "diff": 0.000005406671888863457
+ },
+ {
+  "name": "DUGMUN",
+  "title": "HYDROXY-IMINO-PHENYL-ACETONITRILE (AT -60 DEG.C)",
+  "atoms": 17,
+  "ref": 83.65885,
+  "ocl": 83.65886359530415,
+  "ratio": 1.0000001625088577,
+  "diff": 0.000013595304153568577
+ },
+ {
+  "name": "DUJMEA",
+  "title": "10-(2-FURYL)-4,8-DIMETHYL-4,8-DIAZA-1,5-DIOXADECALIN",
+  "atoms": 35,
+  "ref": 143.61644,
+  "ocl": 143.61646350101788,
+  "ratio": 1.0000001636373792,
+  "diff": 0.000023501017864191454
+ },
+ {
+  "name": "DUYNOA",
+  "title": "4,9-DIAMINO-1,3,5,7-TETRAMETHYL-2,4,9-OXADIAZA-ADAMANTANE",
+  "atoms": 38,
+  "ref": 66.17564,
+  "ocl": 66.17565662297484,
+  "ratio": 1.0000002511947725,
+  "diff": 0.00001662297484017472
+ },
+ {
+  "name": "FACYAJ",
+  "title": "1-CYANO-5,6-(METHYLENEDIOXY)BENZO(C)FURAN",
+  "atoms": 19,
+  "ref": 41.11543,
+  "ocl": 41.115438087721095,
+  "ratio": 1.000000196707686,
+  "diff": 0.000008087721091953881
+ },
+ {
+  "name": "FAGVEO",
+  "title": "STRONTIUM SQUARATE TRIHYDRATE (TYPE I)",
+  "atoms": 8,
+  "ref": 90.1971,
+  "ocl": 90.1970990812893,
+  "ratio": 0.9999999898144096,
+  "diff": -9.187107110619763e-7
+ },
+ {
+  "name": "FECXEQ",
+  "title": "4,5-DIHYDRO-5-ISOPROPYLIDENE-1-METHYL-1H-1,2-DIAZEPIN-4-ONE",
+  "atoms": 24,
+  "ref": 89.73554,
+  "ocl": 89.73555470191226,
+  "ratio": 1.0000001638360037,
+  "diff": 0.000014701912263603845
+ },
+ {
+  "name": "FIGYID",
+  "title": "AMINOCYCLOPROPANE (AT 170.5 DEG.K)",
+  "atoms": 11,
+  "ref": -4.04373,
+  "ocl": -4.043719247035091,
+  "ratio": 0.9999973408301472,
+  "diff": 0.000010752964908711249
+ },
+ {
+  "name": "FIKJAK",
+  "title": "2,4,4,6,6-PENTACYANOCYCLOHEXENAMINE",
+  "atoms": 23,
+  "ref": 42.79221,
+  "ocl": 42.79223495564358,
+  "ratio": 1.0000005831819292,
+  "diff": 0.000024955643581847653
+ },
+ {
+  "name": "FITGIY",
+  "title": "ETHYL 3-AMINO-2-HYDROXY-2,5-DIMETHYL-2H-PYRROLE-4-CARBOXYLA",
+  "atoms": 28,
+  "ref": 3.768,
+  "ocl": 3.7680275468217874,
+  "ratio": 1.0000073107276506,
+  "diff": 0.00002754682178762735
+ },
+ {
+  "name": "FITSEG",
+  "title": "TRANS-CYCLOPROPANE-1,2,3-TRICARBONITRILE (FOR STEREOISOMER",
+  "atoms": 12,
+  "ref": -18.54718,
+  "ocl": -18.547169334099596,
+  "ratio": 0.9999994249314232,
+  "diff": 0.000010665900404660533
+ },
+ {
+  "name": "FOVJIJ",
+  "title": "(RS)-6-ACETOXY-3,6-DIMETHYLBICYCLO(3.1.0)HEX-3-EN-2-ONE",
+  "atoms": 25,
+  "ref": 22.56614,
+  "ocl": 22.566158187738,
+  "ratio": 1.0000008059747036,
+  "diff": 0.00001818773800010831
+ },
+ {
+  "name": "FOWZAS",
+  "title": "3-OXOTETRACYCLO(6.2.1.0-2,6-.0-5,10-)UNDEC-9-YL FORMATE",
+  "atoms": 29,
+  "ref": 41.93185,
+  "ocl": 41.93186827411821,
+  "ratio": 1.0000004358051984,
+  "diff": 0.00001827411821153646
+ },
+ {
+  "name": "FUDPOJ",
+  "title": "2,3-DIHYDROXYCYCLOPROPEN-1-ONE (AT 135 DEG.K) DELTIC ACID",
+  "atoms": 8,
+  "ref": 99.29055,
+  "ocl": 99.29054875702934,
+  "ratio": 0.9999999874814808,
+  "diff": -0.0000012429706544025976
+ },
+ {
+  "name": "FUHFAP",
+  "title": "N,N-DIMETHOXYAMINE (AT -120 DEG.C)",
+  "atoms": 12,
+  "ref": 15.71718,
+  "ocl": 15.717190971649735,
+  "ratio": 1.0000006980673208,
+  "diff": 0.000010971649734514699
+ },
+ {
+  "name": "FUNXOB",
+  "title": "3-(4-METHOXYBENZOYL)FURAN",
+  "atoms": 25,
+  "ref": 54.89022,
+  "ocl": 54.89022894102449,
+  "ratio": 1.0000001628892086,
+  "diff": 0.0000089410244896726
+ },
+ {
+  "name": "FUPZEV",
+  "title": "1-HYDROXY-2,6,6-TRIMETHYL-ENDO-7-ACETOXYBICYCLO(3.2.0)HEPT-",
+  "atoms": 33,
+  "ref": 24.61971,
+  "ocl": 24.61972664303101,
+  "ratio": 1.000000676004348,
+  "diff": 0.00001664303101023279
+ },
+ {
+  "name": "FUVDOP",
+  "title": "6,8,9-TRIACETOXY-2,3,4-TRIAZATETRACYCLO(3.3.1.0-2,4-.0-3,7-",
+  "atoms": 36,
+  "ref": 28.5477,
+  "ocl": 28.54771909527354,
+  "ratio": 1.000000668890087,
+  "diff": 0.000019095273540159496
+ },
+ {
+  "name": "FUVNEP",
+  "title": "4,4'-BIS(DIMETHYLAMINO)BENZOPHENONE PENTAFLUOROPHENOL (AT -",
+  "atoms": 40,
+  "ref": 72.90969,
+  "ocl": 72.90970234653122,
+  "ratio": 1.0000001693400593,
+  "diff": 0.000012346531221396617
+ },
+ {
+  "name": "GAKGOO",
+  "title": "3,9-DIMETHYL-2,5,6,7-TETRAHYDROFURO(2,3-B)INDOLIZIN-2-ONE",
+  "atoms": 28,
+  "ref": 2.677,
+  "ocl": 2.6770230972868627,
+  "ratio": 1.000008628048884,
+  "diff": 0.000023097286862672206
+ },
+ {
+  "name": "GANHUY",
+  "title": "1-HYDROXYCYCLOBUTENE-3,4-DIONE (AT 133 DEG.K, GROWTH REGULA",
+  "atoms": 9,
+  "ref": 60.73197,
+  "ocl": 60.73197544233005,
+  "ratio": 1.0000000896122758,
+  "diff": 0.000005442330049731936
+ },
+ {
+  "name": "GEKXEZ",
+  "title": "T-BUTYLHYDRAZINE HYDROCHLORIDE",
+  "atoms": 18,
+  "ref": 47.02326,
+  "ocl": 47.023275423323916,
+  "ratio": 1.0000003279935061,
+  "diff": 0.000015423323915797482
+ },
+ {
+  "name": "GEMCEG",
+  "title": "CIS-1,2-DICYANO-1,2-DIMETHYLCYCLOPROPANE",
+  "atoms": 17,
+  "ref": 19.14746,
+  "ocl": 19.147477609303834,
+  "ratio": 1.0000009196678743,
+  "diff": 0.000017609303835541823
+ },
+ {
+  "name": "GEMCOQ",
+  "title": "CIS-1,2-DICYANO-1,2-DIMETHOXYCYCLOPROPANE",
+  "atoms": 19,
+  "ref": 37.25987,
+  "ocl": 37.25988578564709,
+  "ratio": 1.0000004236635043,
+  "diff": 0.000015785647093480293
+ },
+ {
+  "name": "GEMDAD",
+  "title": "TRANS-1,2-DICYANO-1,2-BIS(DIMETHYLAMINO)-CYCLOPROPANE",
+  "atoms": 27,
+  "ref": 67.23109,
+  "ocl": 67.23111075563529,
+  "ratio": 1.0000003087207912,
+  "diff": 0.00002075563529047031
+ },
+ {
+  "name": "GESNIB",
+  "title": "1H-CYCLOPROPABENZENE (AT 120 DEG.K)",
+  "atoms": 13,
+  "ref": 67.12883,
+  "ocl": 67.12883913668267,
+  "ratio": 1.0000001361066873,
+  "diff": 0.000009136682677990393
+ },
+ {
+  "name": "GEWTAD",
+  "title": "1-PHENYL-1H-PYRROL-3(2H)-ONE",
+  "atoms": 21,
+  "ref": 51.0959,
+  "ocl": 51.09591517508517,
+  "ratio": 1.0000002969922277,
+  "diff": 0.00001517508516712951
+ },
+ {
+  "name": "GIGCEE",
+  "title": "PYRIDO(2,3-H)PYRROLO(1,2-A)QUINOXALINE 7,7,8,8-TETRACYANO-P",
+  "atoms": 26,
+  "ref": 42.32187,
+  "ocl": 42.32189814279186,
+  "ratio": 1.0000006649704245,
+  "diff": 0.000028142791862251215
+ },
+ {
+  "name": "GIHZEC",
+  "title": "DIMETHYL 3-OXOTRICYCLO(2.1.0.0-2,5-)PENTANE-1,5-DICARBOXYLA",
+  "atoms": 22,
+  "ref": 18.85082,
+  "ocl": 18.850835932766735,
+  "ratio": 1.0000008452028473,
+  "diff": 0.000015932766736170834
+ },
+ {
+  "name": "GIKTUP",
+  "title": "2,6,9-TRIOXABICYCLO(3.3.1)NONA-3,7-DIENE-4,8-DICARBALDEHYDE",
+  "atoms": 19,
+  "ref": -36.16502,
+  "ocl": -36.16500392430989,
+  "ratio": 0.9999995554906341,
+  "diff": 0.000016075690105310514
+ },
+ {
+  "name": "JAKJOU",
+  "title": "4,N-DIMETHYL-2-NITROSOANILINE",
+  "atoms": 21,
+  "ref": 53.34609,
+  "ocl": 53.34609698498776,
+  "ratio": 1.000000130937202,
+  "diff": 0.000006984987763303252
+ },
+ {
+  "name": "JATBIP",
+  "title": "TETRAMETHOXYFORMALDAZINE",
+  "atoms": 24,
+  "ref": -4.42045,
+  "ocl": -4.420440782936923,
+  "ratio": 0.9999979149038952,
+  "diff": 0.000009217063076327747
+ },
+ {
+  "name": "JAWMAV",
+  "title": "3-AZETIDINOL (AT 110 DEG.K)",
+  "atoms": 12,
+  "ref": 33.08004,
+  "ocl": 33.08004396078214,
+  "ratio": 1.0000001197332937,
+  "diff": 0.000003960782144929453
+ },
+ {
+  "name": "JAWVEI",
+  "title": "5-(3-METHYLBUTA-1,3-DIENYLIDENE)-2,3-EPOXYCYCLOHEXANE-1,4-D",
+  "atoms": 28,
+  "ref": 26.97104,
+  "ocl": 26.971058441581548,
+  "ratio": 1.0000006837549293,
+  "diff": 0.00001844158154895581
+ },
+ {
+  "name": "JEMWUT",
+  "title": "6-TRIFLUOROMETHYL-5-PERFLUOROETHYL-7,7-DIFLUORO-2,3-DIHYDRO",
+  "atoms": 24,
+  "ref": 27.84541,
+  "ocl": 27.845427888518504,
+  "ratio": 1.0000006424225214,
+  "diff": 0.00001788851850292872
+ },
+ {
+  "name": "JEVXIR",
+  "title": "5,5-DIMETHYL-2-(N-HYDROXY)AMINOMETHYLENE-M-BENZOQUINONE 2-(",
+  "atoms": 26,
+  "ref": 42.45553,
+  "ocl": 42.45554792589483,
+  "ratio": 1.0000004222275596,
+  "diff": 0.000017925894823633826
+ },
+ {
+  "name": "JEYBUK",
+  "title": "5-HYDROXYINDOLE-3-ACETIC ACID",
+  "atoms": 23,
+  "ref": 2.50214,
+  "ocl": 2.5021495408208474,
+  "ratio": 1.000003813064356,
+  "diff": 0.000009540820847586673
+ },
+ {
+  "name": "JIXBAT",
+  "title": "(E,E)-4-AMINO-3-CYANO-1-(4-HYDROXYPHENYL)-4-METHOXY-2-AZA-1",
+  "atoms": 27,
+  "ref": 58.99277,
+  "ocl": 58.99278867735686,
+  "ratio": 1.000000316604168,
+  "diff": 0.000018677356862895067
+ },
+ {
+  "name": "JIYJAC",
+  "title": "4,5,6,7-TETRAFLUORO-8-METHOXY-2H-CYCLOHEPTA(B)FURAN-2-ONE",
+  "atoms": 21,
+  "ref": 32.582,
+  "ocl": 32.58201850625562,
+  "ratio": 1.000000567990167,
+  "diff": 0.000018506255621275614
+ },
+ {
+  "name": "KAGBOJ",
+  "title": "2-(2,6-DIMETHOXYPHENYL)-4H-1-BENZOPYRAN-4-ONE ACETIC ACID S",
+  "atoms": 35,
+  "ref": 78.37129,
+  "ocl": 78.37131470357585,
+  "ratio": 1.0000003152120611,
+  "diff": 0.00002470357584627436
+ },
+ {
+  "name": "KASBOV",
+  "title": "(3,4-DIMETHOXYPHENYL)PROPIOLIC ACID",
+  "atoms": 25,
+  "ref": 7.1702,
+  "ocl": 7.170211886824108,
+  "ratio": 1.0000016578092812,
+  "diff": 0.000011886824107243399
+ },
+ {
+  "name": "KAVTEG",
+  "title": "(4S*,6R*)-(8-OXO-3,9-DIOXA-1-AZA-4-BICYCLO(4.3.0)NONANYL)ME",
+  "atoms": 28,
+  "ref": -0.392,
+  "ocl": -0.3919782907336121,
+  "ratio": 0.9999446192183983,
+  "diff": 0.000021709266387892612
+ },
+ {
+  "name": "KHDFRM11",
+  "title": "POTASSIUM HYDROGEN DIFORMATE (NEUTRON STUDY)",
+  "atoms": 5,
+  "ref": -20.67992,
+  "ocl": -20.679913449084776,
+  "ratio": 0.9999996832233768,
+  "diff": 0.000006550915223613174
+ },
+ {
+  "name": "KOHVIM",
+  "title": "ETHYNYL BENZOATE",
+  "atoms": 17,
+  "ref": 40.77334,
+  "ocl": 40.77335787049687,
+  "ratio": 1.000000438288766,
+  "diff": 0.00001787049687607123
+ },
+ {
+  "name": "KOJKID",
+  "title": "N,N'-DIMETHYL-1,6-DIAZACYCLODECA-3,8-DIYNE",
+  "atoms": 26,
+  "ref": 2.90851,
+  "ocl": 2.9085244426538535,
+  "ratio": 1.000004965653841,
+  "diff": 0.00001444265385330823
+ },
+ {
+  "name": "SANKEX10",
+  "title": "1-(2-DEOXY-BETA-D-ERYTHRO-PENTOFURANOSYL)-1H-PYRAZOLO(3,4-B",
+  "atoms": 31,
+  "ref": 98.14771,
+  "ocl": 98.14773355718451,
+  "ratio": 1.0000002400176684,
+  "diff": 0.000023557184505307305
+ },
+ {
+  "name": "SAWKEG10",
+  "title": "1-AMINO-3-PHENYLPYRAZOLE",
+  "atoms": 21,
+  "ref": -41.22035,
+  "ocl": -41.220323811516096,
+  "ratio": 0.999999364670996,
+  "diff": 0.000026188483907674254
+ },
+ {
+  "name": "SEJDAM",
+  "title": "3-(8-OXODISPIRO(2.1.2.1)OCTAN-4-YLIDENE)TETRAHYDROFURAN-2-O",
+  "atoms": 27,
+  "ref": 61.79333,
+  "ocl": 61.79334552279163,
+  "ratio": 1.0000002512049704,
+  "diff": 0.00001552279163519188
+ },
+ {
+  "name": "SEKKIC",
+  "title": "2-(BUTA-1,2-DIENYL)-2-METHYLCYCLOHEXANONE OXIME",
+  "atoms": 30,
+  "ref": 38.05399,
+  "ocl": 38.05401342832778,
+  "ratio": 1.000000615660218,
+  "diff": 0.000023428327779129177
+ },
+ {
+  "name": "SEKPED",
+  "title": "2-AMINOBENZOTRIAZOLE",
+  "atoms": 16,
+  "ref": -67.45408,
+  "ocl": -67.45405801440836,
+  "ratio": 0.9999996740657994,
+  "diff": 0.000021985591644124725
+ },
+ {
+  "name": "SEMXOX",
+  "title": "METHYL (E)-2-CYANO-2-(1-PHENYL-4,5-DIHYDRO-1H-TETRAZOL-5-YL",
+  "atoms": 27,
+  "ref": 30.67184,
+  "ocl": 30.671862444107205,
+  "ratio": 1.000000731749618,
+  "diff": 0.000022444107205643604
+ },
+ {
+  "name": "SIZJIU",
+  "title": "(1R,2R,3R,4R)-1-(BETA-D-GLUCOPYRANOSYLOXY)-2,3-EPOXY-4-HYDR",
+  "atoms": 38,
+  "ref": 132.88205,
+  "ocl": 132.8820759373473,
+  "ratio": 1.0000001951907525,
+  "diff": 0.000025937347317039894
+ },
+ {
+  "name": "TAPSAE",
+  "title": "2-(4-AMINOPHENYL)-1,3-PROPANEDINITRILE",
+  "atoms": 19,
+  "ref": 34.83021,
+  "ocl": 34.8302201656181,
+  "ratio": 1.000000291862096,
+  "diff": 0.000010165618100188567
+ },
+ {
+  "name": "TMTCHD01",
+  "title": "1,2,5,6-TETRAMETHYLTRICYCLO(3.1.0.0-2,6-)HEXANE-3,4-DIONE (",
+  "atoms": 24,
+  "ref": 89.46568,
+  "ocl": 89.46570123100065,
+  "ratio": 1.0000002373088837,
+  "diff": 0.000021231000644661435
+ },
+ {
+  "name": "VABROF",
+  "title": "2-FORMYL-3,4-(O,O-ISOPROPYLIDENEDIOXY)-5-METHOXY-TETRAHYDRO",
+  "atoms": 28,
+  "ref": 53.81788,
+  "ocl": 53.817898603687624,
+  "ratio": 1.0000003456785667,
+  "diff": 0.000018603687621521203
+ },
+ {
+  "name": "VASDOI",
+  "title": "2,6-DIMETHYL-5H-FURO(3,2-B)PYRAN-5-ONE",
+  "atoms": 20,
+  "ref": 13.85039,
+  "ocl": 13.850396580510528,
+  "ratio": 1.0000004751137352,
+  "diff": 0.000006580510527598449
+ },
+ {
+  "name": "VENYUI",
+  "title": "3,7,9-TRIMETHYLENE-TETRACYCLO(3.3.1.0-2,8-.0-4,6-)NONANE TR",
+  "atoms": 24,
+  "ref": 29.55129,
+  "ocl": 29.551307644125036,
+  "ratio": 1.000000597067845,
+  "diff": 0.000017644125033910996
+ },
+ {
+  "name": "VEXKOY",
+  "title": "3-CYANO-4-AZADIBENZOFURAN",
+  "atoms": 21,
+  "ref": 67.06387,
+  "ocl": 67.06389064493716,
+  "ratio": 1.0000003078399318,
+  "diff": 0.000020644937166025557
+ },
+ {
+  "name": "VEXMOA",
+  "title": "(E)-PHENYL 2-PYRIDYL KETONE OXIME",
+  "atoms": 25,
+  "ref": 101.95271,
+  "ocl": 101.95272460376125,
+  "ratio": 1.0000001432405403,
+  "diff": 0.000014603761258058512
+ },
+ {
+  "name": "VIGTUA",
+  "title": "1,2,3-METHYLIDYNE-2,3-DIHYDRO-1H-CYCLOPENTA(B)QUINOXALINE",
+  "atoms": 22,
+  "ref": 124.75411,
+  "ocl": 124.75412994402062,
+  "ratio": 1.000000159866642,
+  "diff": 0.000019944020621665004
+ },
+ {
+  "name": "VIWCOT",
+  "title": "(E)-3-PHENYLMETHYLENE-2-OXETANONE",
+  "atoms": 20,
+  "ref": 16.5436,
+  "ocl": 16.543615416056475,
+  "ratio": 1.0000009318441254,
+  "diff": 0.000015416056474037987
+ },
+ {
+  "name": "VUXGOK",
+  "title": "2-ACETYL-3-AMINOBENZOFURAN",
+  "atoms": 22,
+  "ref": 40.70548,
+  "ocl": 40.70549570007829,
+  "ratio": 1.0000003856993773,
+  "diff": 0.000015700078286329244
+ },
+ {
+  "name": "VUXREL",
+  "title": "ETHYL 4H-FURO(3,2-B)PYRROLE-5-CARBOXYLATE",
+  "atoms": 22,
+  "ref": -4.36876,
+  "ocl": -4.36874187824176,
+  "ratio": 0.9999958519675515,
+  "diff": 0.000018121758239786345
+ },
+ {
+  "name": "AR14A",
+  "title": "OXAZOLE",
+  "atoms": 8,
+  "ref": 5.70457,
+  "ocl": 5.704578687191773,
+  "ratio": 1.0000015228477823,
+  "diff": 0.000008687191773049108
+ },
+ {
+  "name": "CA04A",
+  "title": "GLYOXYLIC ACID",
+  "atoms": 7,
+  "ref": 21.28839,
+  "ocl": 21.288394270253246,
+  "ratio": 1.0000002005907092,
+  "diff": 0.000004270253246119182
+ },
+ {
+  "name": "CE05A",
+  "title": "VINYL FORMATE",
+  "atoms": 9,
+  "ref": 15.67142,
+  "ocl": 15.67142633798271,
+  "ratio": 1.0000004044293824,
+  "diff": 0.000006337982711102086
+ },
+ {
+  "name": "CO01A",
+  "title": "FORMALDEHYDE",
+  "atoms": 4,
+  "ref": 0.05416,
+  "ocl": 0.05416564011636725,
+  "ratio": 1.0001041380422313,
+  "diff": 0.00000564011636725037
+ },
+ {
+  "name": "CO08A",
+  "title": "BUT-3-ENEAL C-C-C-C ANTI",
+  "atoms": 11,
+  "ref": 22.31754,
+  "ocl": 22.317542246518293,
+  "ratio": 1.0000001006615555,
+  "diff": 0.0000022465182922815075
+ },
+ {
+  "name": "IM02A",
+  "title": "N-METHYLFORMALDEHYDEIMINE",
+  "atoms": 8,
+  "ref": 7.42929,
+  "ocl": 7.429298699181126,
+  "ratio": 1.000001170930348,
+  "diff": 0.000008699181125670918
+ },
+ {
+  "name": "NH10A",
+  "title": "AMMONIA",
+  "atoms": 4,
+  "ref": 0,
+  "ocl": 0.0000036386389695574997,
+  "ratio": null,
+  "diff": 0.0000036386389695574997
+ },
+ {
+  "name": "NH23A",
+  "title": "ETHYLHYDROXYLAMINE, ONCC GAUCHE",
+  "atoms": 11,
+  "ref": 17.23512,
+  "ocl": 17.235130741000546,
+  "ratio": 1.0000006232042797,
+  "diff": 0.000010741000547653812
+ },
+ {
+  "name": "OH10A",
+  "title": "trans-VINYL ALCOHOL",
+  "atoms": 7,
+  "ref": 1.51461,
+  "ocl": 1.5146159726168409,
+  "ratio": 1.0000039433364634,
+  "diff": 0.00000597261684087691
+ },
+ {
+  "name": "HL11A",
+  "title": "CYCLOPROPYL FLUORIDE",
+  "atoms": 9,
+  "ref": 4.68132,
+  "ocl": 4.681325632534618,
+  "ratio": 1.0000012031936756,
+  "diff": 0.0000056325346173835555
+ },
+ {
+  "name": "HL13A",
+  "title": "VINYL FLUORIDE",
+  "atoms": 6,
+  "ref": 0.8866,
+  "ocl": 0.8866004864415693,
+  "ratio": 1.0000005486595638,
+  "diff": 4.864415692473756e-7
+ },
+ {
+  "name": "NO03A",
+  "title": "NITROSOMETHANE",
+  "atoms": 6,
+  "ref": -0.17493,
+  "ocl": -0.17492363685916912,
+  "ratio": 0.9999636246451101,
+  "diff": 0.000006363140830883962
+ },
+ {
+  "name": "ERULE_06",
+  "title": "",
+  "atoms": 10,
+  "ref": 1.58172,
+  "ocl": 1.5813573611421121,
+  "ratio": 0.9997707313191413,
+  "diff": -0.00036263885788789807
+ },
+ {
+  "name": "ERULE_07",
+  "title": "",
+  "atoms": 14,
+  "ref": 3.16775,
+  "ocl": 3.167554112231975,
+  "ratio": 0.9999381618599874,
+  "diff": -0.00019588776802503816
+ },
+ {
+  "name": "ERULE_08",
+  "title": "",
+  "atoms": 13,
+  "ref": 34.41382,
+  "ocl": 34.41382525968199,
+  "ratio": 1.0000001528363311,
+  "diff": 0.000005259681991276466
+ }
+]

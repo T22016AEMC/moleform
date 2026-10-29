@@ -54,3 +54,19 @@
 @media (max-width: 600px) {
   .structure-input .smiles-row { grid-template-columns: 1fr; }
 }
+
+/* 3D 結構卡片 */
+.conformer-card .conformer-theory { color: var(--color-text-muted); font-weight: 600; }
+.conformer-select { display: flex; flex-wrap: wrap; gap: var(--space-gap); align-items: center; margin: var(--space-gap) 0; }
+.conformer-select label { margin-top: 0; }
+.conformer-progress { font-weight: 600; }
+.conformer-energy, .conformer-timing { margin-top: var(--space-gap-lg); }
+.conformer-timing ul { margin: 0; padding-left: 1.2em; }
+
+.viewer3d-toolbar { display: flex; flex-wrap: wrap; gap: var(--space-gap-lg); align-items: center; margin-bottom: var(--space-gap-sm); }
+.viewer3d-toolbar label { margin-top: 0; display: inline-flex; gap: var(--space-gap-sm); align-items: center; }
+.viewer3d-canvas { position: relative; width: 100%; height: 440px; margin: var(--space-gap-sm) 0; border: 1px solid var(--color-border-strong); border-radius: var(--radius-panel); overflow: hidden; }
+.viewer3d-measure { margin-top: var(--space-gap); padding: var(--padding-panel); background: var(--color-tint-subtle); border: 1px solid var(--color-border); border-radius: var(--radius-panel); }
+.viewer3d-measure h4, .viewer3d-measure p { margin: 0 0 var(--space-gap-sm); }
+.viewer3d-toolbar input[type='checkbox'] { width: auto; flex: none; padding: 0; }
+.viewer3d-toolbar select, .conformer-select select { width: auto; max-width: 100%; }
