@@ -17,6 +17,7 @@
 .crosslink-svg svg { max-width: 100%; height: auto; }
 
 /* 第 1 層與理論配比（任務 017） */
+.crosslink-details { margin: var(--space-gap-lg) 0; }
 .crosslink-page > .card + .card { margin-top: var(--space-gap-lg); }
 .crosslink-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: var(--space-gap-lg); }
 .crosslink-grid h4 { margin: var(--space-gap) 0 0; font-size: var(--font-size-h3); }

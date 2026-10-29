@@ -160,6 +160,10 @@ try {
 
   // ---------- 第 1 層（任務 017） ----------
   const layer1 = () => {
+    const scan0Ratio = (s: any) => {
+      const t = L1.groupTotals(s);
+      return t.nB / t.nA;
+    };
     const fx = (v: number | null | undefined, d = 4) => (v === null || v === undefined ? '—' : String(Number(v.toFixed(d))));
     const sci = (v: number | null | undefined) => (v === null || v === undefined ? '—' : v === 0 ? '0' : Number(v).toExponential(4));
     out('## 第 1 層：化學計量、Miller–Macosko、理論配比與比例掃描');
@@ -216,9 +220,10 @@ try {
       out(`- 凝膠點（限量官能基轉化率）：${r.gelConversion === null ? L1.MESSAGE_NEVER_GELS : fx(r.gelConversion * 100, 3) + '%'}`);
       out('- 轉化率 100% 時：');
       out(`  - 溶膠分率 w_s：${fx(r.solFraction * 100, 4)}%`);
-      out(`  - 交聯密度（有效交聯點 [X]）：${r.junctionsMolPerKg === null ? L1.MESSAGE_NOT_GELLED : fx(r.junctionsMolPerKg, 5) + ' mol/kg 固體'}`);
-      out(`  - 有效網目鏈 ν_c：${r.effectiveChainsMolPerKg === null ? L1.MESSAGE_NOT_GELLED : fx(r.effectiveChainsMolPerKg, 5) + ' mol/kg 固體'}`);
-      out(`  - 網目分子量 Mc：${r.mcGPerMol === null ? L1.MESSAGE_NOT_GELLED : fx(r.mcGPerMol, 1) + ' g/mol'}（${L1.NOTE_MASS_BASIS}）`);
+      out(`  - 交聯密度 ν_c（式 51；網中撐住網路的有效網目鏈濃度，彈性有效）：${r.effectiveChainsMolPerKg === null ? L1.MESSAGE_NOT_GELLED : fx(r.effectiveChainsMolPerKg, 5) + ' mol/kg 固體'}`);
+      out(`  - 網目分子量 Mc = 1／ν_c（數字越小，網越密）：${r.mcGPerMol === null ? L1.MESSAGE_NOT_GELLED : fx(r.mcGPerMol, 1) + ' g/mol'}（${L1.NOTE_MASS_BASIS}）`);
+      out(`  - 已形成的鍵（指定轉化率下已反應的鍵數，直接計算）：${fx(r.bondsFormedMolPerKg, 5)} mol/kg 固體`);
+      out(`  - 詳細：連入網路的分子數 [X]（式 49）：${r.junctionsMolPerKg === null ? L1.MESSAGE_NOT_GELLED : fx(r.junctionsMolPerKg, 5) + ' mol/kg 固體'}。Miller–Macosko 將每個多官能分子計為一個交聯點；聚合物對聚合物的體系中，此值不等於交聯鍵數`);
       out(`  - 殘留官能基：${setup.nameA} ${fx(r.residualAPct, 3)}%、${setup.nameB} ${fx(r.residualBPct, 3)}%（相對初始量，直接計算）`);
       out(`- 附註：${[r.usedMixtureApprox ? L1.NOTE_NON_INTEGER : null, r.hasPolymer ? L1.NOTE_MN_ONLY : null, L1.NOTE_M06, L1.NOTE_MC_DEFINITION].filter(Boolean).join('；')}`);
 
@@ -235,11 +240,13 @@ try {
       }
 
       const option = ST.SCAN_OPTIONS[0];
-      const scan = ST.scanRatio(setup, 1, option);
+      const scanSettings = ST.defaultScanSettings(scan0Ratio(setup));
+      const scan = ST.scanRatio(setup, 1, option, scanSettings);
       out();
       out(`#### 比例掃描：${option.label}，轉化率 100%（可信度：參考趨勢；${ST.SCAN_DISCLAIMER}）`);
       out();
-      out(`目前配方的當量比（${setup.nameB}／${setup.nameA}）= ${fx(scan.currentRatio, 4)}；範圍 ${ST.DEFAULT_SCAN.min}–${ST.DEFAULT_SCAN.max}，${ST.DEFAULT_SCAN.points} 點。`);
+      out(`目前配方的當量比（${setup.nameB}／${setup.nameA}）= ${fx(scan.currentRatio, 4)}；預設範圍 ${fx(scanSettings.min, 3)}–${fx(scanSettings.max, 3)}（下限 0.5，上限 max(1.5, 目前當量比 × 1.2)），${scanSettings.points} 點。`);
+      if (scan.bestIndex === 0 || scan.bestIndex === scan.points.length - 1) out('注意：最佳點落在掃描範圍的邊界，範圍外可能更佳。');
       out();
       out(`| 當量比 | ${option.label}（${option.unit}） | 最佳點 |`);
       out('|---|---|---|');

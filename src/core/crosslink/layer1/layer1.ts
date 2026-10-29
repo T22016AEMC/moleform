@@ -61,6 +61,8 @@ export interface Layer1Result {
   maxBondsMolPer100g: number;
   /** 使用者指定的限量官能基轉化率（0–1） */
   conversion: number;
+  /** 指定轉化率下已反應的鍵數，mol／kg 固體（直接計算） */
+  bondsFormedMolPerKg: number;
   /** 兩類官能基各自殘留的百分比（相對初始量） */
   residualAPct: number;
   residualBPct: number;
@@ -138,6 +140,7 @@ export function computeLayer1(setup: Layer1Setup, q: number): Layer1Result | nul
     excessPct: (nExcess / nLim - 1) * 100,
     maxBondsMolPer100g: (nLim / setup.totalMass) * 100,
     conversion: q,
+    bondsFormedMolPerKg: ((q * nLim) / setup.totalMass) * 1000,
     residualAPct: (1 - pA) * 100,
     residualBPct: (1 - pB) * 100,
     residualTotalPct: (1 - (pA * nA + pB * nB) / (nA + nB)) * 100,

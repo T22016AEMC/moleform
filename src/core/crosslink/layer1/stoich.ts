@@ -5,7 +5,13 @@ import { computeLayer1, groupTotals, type Layer1Result, type Layer1Setup } from 
 
 export const SCAN_DISCLAIMER = '未考慮副反應與反應不完全，實際最佳配比以實驗為準';
 export const SCAN_MODEL_NAME = 'Miller–Macosko 比例掃描';
-export const DEFAULT_SCAN = { min: 0.6, max: 1.4, points: 41 } as const;
+export const DEFAULT_SCAN_POINTS = 41;
+export const SCAN_MIN_DEFAULT = 0.5;
+export const SCAN_MAX_FLOOR = 1.5;
+/** 預設掃描範圍自動包含目前配方的當量比：下限 0.5，上限 max(1.5, 目前當量比 × 1.2)（使用者 2026-10-29 決定） */
+export function defaultScanSettings(currentRatio: number): ScanSettings {
+  return { min: SCAN_MIN_DEFAULT, max: Math.max(SCAN_MAX_FLOOR, currentRatio * 1.2), points: DEFAULT_SCAN_POINTS };
+}
 
 /** 把 group_b 側所有成分的質量乘上同一個係數（各成分之間的比例不變）；其餘成分不變 */
 export function scaleSideB(setup: Layer1Setup, factor: number): Layer1Setup {
@@ -73,7 +79,7 @@ export function expressAmounts(unit: string, items: readonly AmountItem[]): numb
 
 // ---------- 比例掃描 ----------
 
-export type ScanProperty = 'crosslinkDensity' | 'mc' | 'gelConversion' | 'residual';
+export type ScanProperty = 'crosslinkDensity' | 'networkMolecules' | 'mc' | 'gelConversion' | 'residualA' | 'residualB' | 'residualTotal';
 export type ScanDirection = 'max' | 'min';
 
 export interface ScanOption {
@@ -83,26 +89,35 @@ export interface ScanOption {
   unit: string;
 }
 
-/** Phase 4 可選的目標物性與方向（任務 017 D-20） */
+/** Phase 4 可選的目標物性與方向（任務 017 D-20；使用者 2026-10-29：預設為交聯密度 ν_c 最大） */
 export const SCAN_OPTIONS: readonly ScanOption[] = [
-  { property: 'crosslinkDensity', direction: 'max', label: '交聯密度（最大）', unit: 'mol/kg' },
+  { property: 'crosslinkDensity', direction: 'max', label: '交聯密度 ν_c（最大）', unit: 'mol/kg' },
+  { property: 'networkMolecules', direction: 'max', label: '連入網路的分子數（最大）', unit: 'mol/kg' },
   { property: 'mc', direction: 'min', label: 'Mc（最小）', unit: 'g/mol' },
   { property: 'mc', direction: 'max', label: 'Mc（最大）', unit: 'g/mol' },
   { property: 'gelConversion', direction: 'min', label: '凝膠轉化率（最小）', unit: '%' },
   { property: 'gelConversion', direction: 'max', label: '凝膠轉化率（最大）', unit: '%' },
-  { property: 'residual', direction: 'min', label: '殘留官能基百分比（最小）', unit: '%' },
+  { property: 'residualA', direction: 'min', label: '殘留官能基：A 側（最小）', unit: '%' },
+  { property: 'residualB', direction: 'min', label: '殘留官能基：B 側（最小）', unit: '%' },
+  { property: 'residualTotal', direction: 'min', label: '殘留官能基：兩類合計（最小）', unit: '%' },
 ];
 
-/** 取出掃描物性的數值；不適用（未凝膠等）時為 null。交聯密度未凝膠視為 0（沒有網路）。 */
+/** 取出掃描物性的數值；不適用（未凝膠等）時為 null。交聯密度與連入網路的分子數未凝膠視為 0（沒有網路）。 */
 export function scanValue(r: Layer1Result, property: ScanProperty): number | null {
   switch (property) {
     case 'crosslinkDensity':
+      return r.gelled ? (r.effectiveChainsMolPerKg as number) : 0;
+    case 'networkMolecules':
       return r.gelled ? (r.junctionsMolPerKg as number) : 0;
     case 'mc':
       return r.mcGPerMol;
     case 'gelConversion':
       return r.gelConversion === null ? null : r.gelConversion * 100;
-    case 'residual':
+    case 'residualA':
+      return r.residualAPct;
+    case 'residualB':
+      return r.residualBPct;
+    case 'residualTotal':
       return r.residualTotalPct;
   }
 }
@@ -139,8 +154,10 @@ export function checkScanSettings(s: ScanSettings): string | null {
 }
 
 /** 比例掃描：保持 group_a 側與其他成分不變，調整 group_b 側；轉化率沿用使用者的限量官能基轉化率 */
-export function scanRatio(setup: Layer1Setup, q: number, option: ScanOption, settings: ScanSettings = DEFAULT_SCAN): ScanResult | null {
+export function scanRatio(setup: Layer1Setup, q: number, option: ScanOption, settings?: ScanSettings): ScanResult | null {
   const { nA, nB } = groupTotals(setup);
+  if (!(nA > 0) || !(nB > 0)) return null;
+  settings ??= defaultScanSettings(nB / nA);
   if (!(nA > 0) || !(nB > 0) || checkScanSettings(settings) !== null) return null;
   const points: ScanPoint[] = [];
   let bestIndex: number | null = null;

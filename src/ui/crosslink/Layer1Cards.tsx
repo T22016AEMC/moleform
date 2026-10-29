@@ -13,13 +13,14 @@ import {
   NOTE_NON_INTEGER,
   computeLayer1,
 } from '../../core/crosslink/layer1/layer1';
+import { groupTotals } from '../../core/crosslink/layer1/layer1';
 import { describeAmounts, prepareLayer1, type PrepareOutcome } from '../../core/crosslink/layer1/prepare';
 import {
-  DEFAULT_SCAN,
   SCAN_DISCLAIMER,
   SCAN_MODEL_NAME,
   SCAN_OPTIONS,
   checkScanSettings,
+  defaultScanSettings,
   scanRatio,
   stoichiometricSetup,
   type ScanResult,
@@ -144,6 +145,10 @@ function Layer1Output({ prep, conv }: { prep: Extract<PrepareOutcome, { ok: true
           <ResultValue result={calc(r.maxBondsMolPer100g, 'mol／100 g 固體', direct, 'direct')} />
         </div>
         <div>
+          <h4>已形成的鍵（指定轉化率）</h4>
+          <ResultValue result={calc(r.bondsFormedMolPerKg, 'mol/kg 固體', direct, 'direct')} />
+        </div>
+        <div>
           <h4>殘留{setup.nameA}</h4>
           <ResultValue result={calc(r.residualAPct, '%（相對初始量）', direct, 'direct')} />
         </div>
@@ -166,14 +171,22 @@ function Layer1Output({ prep, conv }: { prep: Extract<PrepareOutcome, { ok: true
           <ResultValue result={calc(r.solFraction * 100, '%', mm, 'estimate')} />
         </div>
         <div>
-          <h4>交聯密度（有效交聯點）</h4>
-          <ResultValue result={calc(r.junctionsMolPerKg, 'mol/kg 固體', mm, 'estimate', r.gelled ? undefined : MESSAGE_NOT_GELLED)} />
+          <h4>交聯密度</h4>
+          <ResultValue result={calc(r.effectiveChainsMolPerKg, 'mol/kg 固體', mm, 'estimate', r.gelled ? undefined : MESSAGE_NOT_GELLED)} />
+          <p className="crosslink-notes">網中撐住網路的有效網目鏈濃度（彈性有效）</p>
         </div>
         <div>
           <h4>網目分子量 Mc</h4>
           <ResultValue result={calc(r.mcGPerMol, 'g/mol', mm, 'estimate', r.gelled ? undefined : MESSAGE_NOT_GELLED)} />
+          <p className="crosslink-notes">數字越小，網越密</p>
         </div>
       </div>
+      <details className="crosslink-details">
+        <summary>詳細</summary>
+        <h4>連入網路的分子數</h4>
+        <ResultValue result={calc(r.junctionsMolPerKg, 'mol/kg 固體', mm, 'estimate', r.gelled ? undefined : MESSAGE_NOT_GELLED)} />
+        <p className="crosslink-notes">Miller–Macosko 將每個多官能分子計為一個交聯點；聚合物對聚合物的體系中，此值不等於交聯鍵數</p>
+      </details>
       <ul className="crosslink-notes">
         {notes.map((n) => (
           <li key={n}>{n}</li>
@@ -192,9 +205,15 @@ function Layer1Output({ prep, conv }: { prep: Extract<PrepareOutcome, { ok: true
 
 function TheoryCard({ prep, conv }: { prep: Extract<PrepareOutcome, { ok: true }>; conv: number }) {
   const [optionIndex, setOptionIndex] = useState(0);
-  const [minText, setMinText] = useState(String(DEFAULT_SCAN.min));
-  const [maxText, setMaxText] = useState(String(DEFAULT_SCAN.max));
-  const [pointsText, setPointsText] = useState(String(DEFAULT_SCAN.points));
+  // 預設範圍自動包含目前配方的當量比；使用者改過之後就保留使用者的值
+  const totals = groupTotals(prep.setup);
+  const auto = defaultScanSettings(totals.nA > 0 ? totals.nB / totals.nA : 1);
+  const [minEdit, setMinText] = useState<string | null>(null);
+  const [maxEdit, setMaxText] = useState<string | null>(null);
+  const [pointsEdit, setPointsText] = useState<string | null>(null);
+  const minText = minEdit ?? String(round(auto.min, 6));
+  const maxText = maxEdit ?? String(round(auto.max, 6));
+  const pointsText = pointsEdit ?? String(auto.points);
   const option = SCAN_OPTIONS[optionIndex];
   const settings = { min: parseNumber(minText), max: parseNumber(maxText), points: parseNumber(pointsText) };
   const settingsError = checkScanSettings(settings);

@@ -3,7 +3,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { analyzeCrosslink } from '../../../src/core/crosslink/analyze';
 import { computeLayer1, groupTotals, MESSAGE_NOT_GELLED, type Layer1Setup } from '../../../src/core/crosslink/layer1/layer1';
 import { describeAmounts, prepareLayer1, MESSAGE_MULTI_RULE } from '../../../src/core/crosslink/layer1/prepare';
-import { SCAN_OPTIONS, scanRatio, setupAtRatio, stoichiometricSetup, checkScanSettings } from '../../../src/core/crosslink/layer1/stoich';
+import { SCAN_OPTIONS, scanRatio, setupAtRatio, stoichiometricSetup, checkScanSettings, defaultScanSettings, type ScanProperty } from '../../../src/core/crosslink/layer1/stoich';
 import type { CrosslinkComponent } from '../../../src/core/crosslink/types';
 import { bundledTexts, loadTables } from '../../../src/core/data/load';
 import { computeFormulation } from '../../../src/core/formulation/compute';
@@ -126,6 +126,16 @@ describe('4A 的第 1 層數值', () => {
     expect(r.residualAPct).toBeCloseTo(0, 9);
     expect(r.residualBPct).toBeCloseTo((1 - 1 / r.ratioBToA) * 100, 9);
   });
+  it('已形成的鍵 = 轉化率 × 限量官能基量（直接計算）', () => {
+    const r1 = computeLayer1(setup(), 1)!;
+    const r5 = computeLayer1(setup(), 0.5)!;
+    expect(r5.bondsFormedMolPerKg).toBeCloseTo(r1.bondsFormedMolPerKg / 2, 9);
+    expect(r1.bondsFormedMolPerKg).toBeCloseTo(r1.maxBondsMolPer100g * 10, 9);
+  });
+  it('Mc = 1／ν_c（每克固體基準）', () => {
+    const r = computeLayer1(setup(), 1)!;
+    expect(r.mcGPerMol).toBeCloseTo(1000 / (r.effectiveChainsMolPerKg as number), 9);
+  });
   it('低於凝膠點：溶膠分率 1，交聯密度與 Mc 不適用（null）', () => {
     const s = setup();
     const gel = computeLayer1(s, 1)!.gelConversion as number;
@@ -211,44 +221,76 @@ describe('化學計量配比', () => {
   });
 });
 
+const opt = (property: ScanProperty, direction: 'max' | 'min') => SCAN_OPTIONS.find((o) => o.property === property && o.direction === direction)!;
+const RANGE = { min: 0.6, max: 1.4, points: 41 }; // 含當量比 1 的固定範圍
+
 describe('比例掃描', () => {
   const s = () => setupOf(F4A);
-  const density = SCAN_OPTIONS[0];
+  const density = opt('crosslinkDensity', 'max');
+
+  it('預設目標是交聯密度 ν_c（最大）；預設範圍自動包含目前當量比', () => {
+    expect(SCAN_OPTIONS[0]).toBe(density);
+    const cur = computeLayer1(s(), 1)!.ratioBToA; // 4A 約 2.33
+    const auto = defaultScanSettings(cur);
+    expect(auto).toEqual({ min: 0.5, max: cur * 1.2, points: 41 });
+    expect(defaultScanSettings(1)).toEqual({ min: 0.5, max: 1.5, points: 41 });
+    const scan = scanRatio(s(), 1, density)!;
+    expect(scan.points[0].ratio).toBeCloseTo(0.5, 12);
+    expect(scan.points[40].ratio).toBeCloseTo(cur * 1.2, 12);
+    expect(scan.currentRatio).toBeGreaterThan(scan.points[0].ratio);
+    expect(scan.currentRatio).toBeLessThan(scan.points[40].ratio);
+  });
 
   it('預設 0.6–1.4、41 點；當量比為 1 的點與化學計量配比一致', () => {
-    const scan = scanRatio(s(), 1, density)!;
+    const scan = scanRatio(s(), 1, density, RANGE)!;
     expect(scan.points).toHaveLength(41);
     expect(scan.points[0].ratio).toBeCloseTo(0.6, 12);
     expect(scan.points[40].ratio).toBeCloseTo(1.4, 12);
     const one = scan.points.find((p) => Math.abs(p.ratio - 1) < 1e-9)!;
     const st = computeLayer1(stoichiometricSetup(s())!, 1)!;
-    expect(one.value).toBeCloseTo(st.junctionsMolPerKg as number, 9);
+    expect(one.value).toBeCloseTo(st.effectiveChainsMolPerKg as number, 9);
     const atOne = setupAtRatio(s(), 1)!;
-    expect(computeLayer1(atOne, 1)!.junctionsMolPerKg).toBeCloseTo(st.junctionsMolPerKg as number, 9);
+    expect(computeLayer1(atOne, 1)!.effectiveChainsMolPerKg).toBeCloseTo(st.effectiveChainsMolPerKg as number, 9);
   });
   it('目前配方的當量比 = B／A 官能基比', () => {
     expect(scanRatio(s(), 1, density)!.currentRatio).toBeCloseTo(computeLayer1(s(), 1)!.ratioBToA, 9);
   });
   it('交聯密度（最大）：最佳點的值不小於所有點，且附有對應配方', () => {
-    const scan = scanRatio(s(), 1, density)!;
+    const scan = scanRatio(s(), 1, density, RANGE)!;
     const best = scan.points[scan.bestIndex as number].value as number;
     for (const p of scan.points) expect(p.value as number).toBeLessThanOrEqual(best + 1e-12);
     expect(scan.bestSetup).not.toBeNull();
   });
   it('Mc（最小）與交聯密度（最大）在近 1 的位置一致；最小與最大選項方向相反', () => {
-    const mcMin = scanRatio(s(), 1, SCAN_OPTIONS[1])!;
-    const mcMax = scanRatio(s(), 1, SCAN_OPTIONS[2])!;
+    const mcMin = scanRatio(s(), 1, opt('mc', 'min'))!;
+    const mcMax = scanRatio(s(), 1, opt('mc', 'max'))!;
     const vals = mcMin.points.map((p) => p.value).filter((v): v is number => v !== null);
     expect(mcMin.points[mcMin.bestIndex as number].value).toBe(Math.min(...vals));
     expect(mcMax.points[mcMax.bestIndex as number].value).toBe(Math.max(...vals));
   });
   it('凝膠轉化率與殘留官能基百分比（最小）', () => {
-    const gel = scanRatio(s(), 1, SCAN_OPTIONS[3])!;
+    const gel = scanRatio(s(), 1, opt('gelConversion', 'min'))!;
     const vals = gel.points.map((p) => p.value).filter((v): v is number => v !== null);
     expect(gel.points[gel.bestIndex as number].value).toBe(Math.min(...vals));
-    const res = scanRatio(s(), 1, SCAN_OPTIONS[5])!;
-    // 殘留最少發生在當量比 1（兩類官能基同時耗盡）
+    const res = scanRatio(s(), 1, opt('residualTotal', 'min'), RANGE)!;
+    // 兩類合計的殘留最少發生在當量比 1（兩類官能基同時耗盡）
     expect(res.points[res.bestIndex as number].ratio).toBeCloseTo(1, 9);
+  });
+  it('殘留官能基有 A 側、B 側、兩類合計三個選項', () => {
+    const props = SCAN_OPTIONS.filter((o) => o.property.startsWith('residual')).map((o) => o.property);
+    expect(props).toEqual(['residualA', 'residualB', 'residualTotal']);
+    const a = scanRatio(s(), 1, opt('residualA', 'min'), RANGE)!;
+    const b = scanRatio(s(), 1, opt('residualB', 'min'), RANGE)!;
+    // 當量比 < 1（B 限量）時 A 過量，A 側殘留 > 0；當量比 > 1 時 A 側殘留為 0
+    expect(a.points[0].value as number).toBeGreaterThan(0);
+    expect(a.points[40].value as number).toBeCloseTo(0, 9);
+    expect(b.points[0].value as number).toBeCloseTo(0, 9);
+    expect(b.points[40].value as number).toBeGreaterThan(0);
+  });
+  it('「連入網路的分子數」（式 49 的 [X]）可選，且不小於 0', () => {
+    const x = scanRatio(s(), 1, opt('networkMolecules', 'max'), RANGE)!;
+    expect(x.bestIndex).not.toBeNull();
+    for (const p of x.points) expect(p.value as number).toBeGreaterThanOrEqual(0);
   });
   it('範圍與點數可調整；不合法的設定被拒絕', () => {
     const scan = scanRatio(s(), 1, density, { min: 0.8, max: 1.2, points: 5 })!;
