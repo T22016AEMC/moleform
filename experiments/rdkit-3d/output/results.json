@@ -1,0 +1,261 @@
+{
+  "rdkit": {
+    "package": "@rdkit/rdkit",
+    "packageVersion": "2026.9.1",
+    "license": "BSD-3-Clause",
+    "rdkitVersion": "2026.09.1",
+    "wasmFileBytes": 7379879,
+    "initMs": 68.4,
+    "node": "v24.22.0"
+  },
+  "api": {
+    "moduleHas3DNames": {
+      "EmbedMolecule": false,
+      "embed_molecule": false,
+      "MMFFOptimizeMolecule": false,
+      "UFFOptimizeMolecule": false,
+      "EmbedMultipleConfs": false,
+      "get_conformers": false
+    },
+    "molHasNames": {
+      "embed": false,
+      "embed_molecule": false,
+      "embed_multiple_confs": false,
+      "generate_conformers": false,
+      "add_conformer": false,
+      "get_conformer": false,
+      "mmff_optimize": false,
+      "mmff_optimize_molecule": false,
+      "uff_optimize": false,
+      "uff_optimize_molecule": false,
+      "optimize": false,
+      "get_mmff_energy": false,
+      "get_num_conformers": false,
+      "get_coords": true,
+      "get_new_coords": true,
+      "set_new_coords": true,
+      "has_coords": true,
+      "add_hs": true,
+      "get_molblock": true,
+      "get_v3Kmolblock": true
+    },
+    "allMolMethods": [
+      "$$",
+      "add_hs",
+      "add_hs_in_place",
+      "add_to_png_blob",
+      "clear_prop",
+      "clone",
+      "combine_with",
+      "condense_abbreviations",
+      "convert_to_aromatic_form",
+      "convert_to_kekule_form",
+      "copy",
+      "delete",
+      "deleteLater",
+      "draw_to_canvas",
+      "draw_to_canvas_with_highlights",
+      "draw_to_canvas_with_offset",
+      "generate_aligned_coords",
+      "get_aromatic_form",
+      "get_as_uint8array",
+      "get_atom_pair_fp",
+      "get_atom_pair_fp_as_uint8array",
+      "get_coords",
+      "get_cxsmarts",
+      "get_cxsmiles",
+      "get_descriptors",
+      "get_frags",
+      "get_inchi",
+      "get_json",
+      "get_kekule_form",
+      "get_maccs_fp",
+      "get_maccs_fp_as_uint8array",
+      "get_mmpa_frags",
+      "get_molblock",
+      "get_morgan_fp",
+      "get_morgan_fp_as_uint8array",
+      "get_new_coords",
+      "get_num_atoms",
+      "get_num_bonds",
+      "get_pattern_fp",
+      "get_pattern_fp_as_uint8array",
+      "get_prop",
+      "get_prop_list",
+      "get_rdkit_fp",
+      "get_rdkit_fp_as_uint8array",
+      "get_smarts",
+      "get_smiles",
+      "get_stereo_tags",
+      "get_substruct_match",
+      "get_substruct_matches",
+      "get_svg",
+      "get_svg_with_highlights",
+      "get_topological_torsion_fp",
+      "get_topological_torsion_fp_as_uint8array",
+      "get_v2Kmolblock",
+      "get_v3Kmolblock",
+      "has_coords",
+      "has_prop",
+      "isAliasOf",
+      "isDeleted",
+      "is_valid",
+      "normalize_depiction",
+      "remove_hs",
+      "remove_hs_in_place",
+      "set_new_coords",
+      "set_prop",
+      "straighten_depiction"
+    ],
+    "allModuleFunctions": [
+      "JSMolListList",
+      "Log",
+      "Mol",
+      "MolList",
+      "RGroupDecomposition",
+      "Reaction",
+      "StringList",
+      "SubstructLibrary",
+      "allow_non_tetrahedral_chirality",
+      "disable_logging",
+      "enable_logging",
+      "get_inchikey_for_inchi",
+      "get_mcs_as_json",
+      "get_mcs_as_mol",
+      "get_mcs_as_smarts",
+      "get_mol",
+      "get_mol_copy",
+      "get_mol_from_png_blob",
+      "get_mol_from_uint8array",
+      "get_mols_from_png_blob",
+      "get_qmol",
+      "get_rgd",
+      "get_rxn",
+      "molzip",
+      "prefer_coordgen",
+      "set_log_capture",
+      "set_log_tee",
+      "use_legacy_stereo_perception",
+      "version"
+    ]
+  },
+  "molecules": {
+    "ethanol": {
+      "smiles": "CCO",
+      "checks": {
+        "coords3D": {
+          "supported": "不支援",
+          "api": "Mol.set_new_coords / get_new_coords（只產生 2D 座標）",
+          "note": "沒有 ETKDG／距離幾何 API"
+        },
+        "forceField": {
+          "supported": "不支援",
+          "api": "無",
+          "note": "MMFF94／UFF 力場 API 不在 minimal 版"
+        },
+        "conformersEnergy": {
+          "supported": "不支援",
+          "api": "無",
+          "note": "Mol 物件沒有構象列表或能量 API"
+        },
+        "molSdfOutput": {
+          "supported": "部分支援",
+          "api": "Mol.get_molblock / get_v3Kmolblock（SDF 由 molblock 加 $$$$ 自行組成）",
+          "note": "可輸出含座標的 MOL，但座標是 2D；沒有 3D 座標可輸出"
+        },
+        "geometryMeasure": {
+          "supported": "不支援（RDKit.js 無 API）；可由座標自行計算",
+          "api": "自行解析 get_molblock 座標；本腳本已用純函式算出",
+          "sample2D": {
+            "bondLengthFirstBond": 1.5,
+            "angle": {
+              "atoms": [
+                1,
+                0,
+                3
+              ],
+              "deg": 90
+            },
+            "dihedral": {
+              "atoms": [
+                3,
+                0,
+                1,
+                2
+              ],
+              "deg": 0
+            }
+          },
+          "note": "示範值來自 2D 座標，不具化學意義，只證明公式可由座標算出"
+        }
+      },
+      "valid": true,
+      "timing2DMs": 14.6,
+      "zRange": [
+        0,
+        0
+      ],
+      "atomCountWithH": 9,
+      "output2D": "output/ethanol_2D_with_H.mol（2D，z 全為 0，不是 3D 構型）"
+    },
+    "propylene_oxide": {
+      "smiles": "CC1CO1",
+      "checks": {
+        "coords3D": {
+          "supported": "不支援",
+          "api": "Mol.set_new_coords / get_new_coords（只產生 2D 座標）",
+          "note": "沒有 ETKDG／距離幾何 API"
+        },
+        "forceField": {
+          "supported": "不支援",
+          "api": "無",
+          "note": "MMFF94／UFF 力場 API 不在 minimal 版"
+        },
+        "conformersEnergy": {
+          "supported": "不支援",
+          "api": "無",
+          "note": "Mol 物件沒有構象列表或能量 API"
+        },
+        "molSdfOutput": {
+          "supported": "部分支援",
+          "api": "Mol.get_molblock / get_v3Kmolblock（SDF 由 molblock 加 $$$$ 自行組成）",
+          "note": "可輸出含座標的 MOL，但座標是 2D；沒有 3D 座標可輸出"
+        },
+        "geometryMeasure": {
+          "supported": "不支援（RDKit.js 無 API）；可由座標自行計算",
+          "api": "自行解析 get_molblock 座標；本腳本已用純函式算出",
+          "sample2D": {
+            "bondLengthFirstBond": 1.5000374828650116,
+            "angle": {
+              "atoms": [
+                1,
+                0,
+                4
+              ],
+              "deg": 89.99707386172793
+            },
+            "dihedral": {
+              "atoms": [
+                4,
+                0,
+                1,
+                2
+              ],
+              "deg": 180
+            }
+          },
+          "note": "示範值來自 2D 座標，不具化學意義，只證明公式可由座標算出"
+        }
+      },
+      "valid": true,
+      "timing2DMs": 2.4,
+      "zRange": [
+        0,
+        0
+      ],
+      "atomCountWithH": 10,
+      "output2D": "output/propylene_oxide_2D_with_H.mol（2D，z 全為 0，不是 3D 構型）"
+    }
+  },
+  "timing2DAvgMs": 0.79
+}

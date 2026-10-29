@@ -1,0 +1,21 @@
+node_modules/
+dist/
+*.zip
+__pycache__/
+.env
+.env.local
+.DS_Store
+*.log
+coverage/
+
+# 瀏覽器測試報告、截圖與暫存資料
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+
+# MoleForm
+experiments/*/node_modules/
+.env.*
+!.env.example
+assets/style-reference.png

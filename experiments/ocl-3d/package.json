@@ -1,0 +1,17 @@
+{
+  "name": "moleform-ocl-3d-experiment",
+  "version": "1.0.0",
+  "description": "任務 005 暫時測試，非正式專案",
+  "scripts": {
+    "test3d": "node run.mjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@rdkit/rdkit": "^2026.9.1",
+    "openchemlib": "^9.25.2"
+  },
+  "private": true
+}

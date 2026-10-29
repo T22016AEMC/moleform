@@ -1,0 +1,679 @@
+{
+  "ocl": {
+    "package": "openchemlib",
+    "packageVersion": "9.25.2",
+    "libVersionString": "9.25.2",
+    "license": "BSD-3-Clause",
+    "runtimeDependencies": {},
+    "distFilesBytes": {
+      "openchemlib.d.ts": 138640,
+      "openchemlib.debug.js": 3488765,
+      "openchemlib.js": 1100632,
+      "resources.json": 1351963
+    },
+    "node": "v24.22.0",
+    "registerResourcesMs": 8,
+    "firstMoleculeCallMs": 0.3
+  },
+  "rdkit": {
+    "packageVersion": "2026.9.1",
+    "license": "BSD-3-Clause",
+    "initMs": 96.1
+  },
+  "molecules": {
+    "ethanol": {
+      "smiles": "CCO",
+      "checks": {
+        "coords3D": {
+          "supported": "支援",
+          "api": "ConformerGenerator(seed).getOneConformerAsMolecule(mol)（Molecule.is3D() 亦可確認）"
+        },
+        "molSdfOutput": {
+          "supported": "支援",
+          "api": "Molecule.toMolfile()／toMolfileV3()（含 z 座標）；SDF 為 molfile 加 $$$$（自行組成）；另有 SDFileParser 可讀 SDF"
+        },
+        "geometry": {
+          "supported": "部分支援",
+          "api": "getBondLength(bond)、calculateTorsion(atoms[4])（弧度）、getBondAngle(a,b)（只是鍵方向角，不是鍵角）；鍵角需自行由座標計算",
+          "sample": {
+            "bondLength_own": 1.506206774755527,
+            "bondLength_getBondLength": 0.37608530429987463,
+            "lengthsAgree": false,
+            "angle_own_deg": 109.69344859368043,
+            "torsion_calculateTorsion_deg": 59.33357817003435
+          }
+        },
+        "mmff": {
+          "supported": "支援",
+          "api": "new ForceFieldMMFF94(molecule, \"MMFF94\" | \"MMFF94s\" | \"MMFF94s+\") → getTotalEnergy()、minimise()（回傳碼，0 為成功）；ForceFieldMMFF94.size()",
+          "fallback": "型別定義中沒有其他力場類別（沒有 UFF 等退路）"
+        },
+        "conformers": {
+          "supported": "部分支援（只得到 1 個構象）",
+          "api": "ConformerGenerator.initializeConformers(mol, {strategy, maxTorsionSets, use60degreeSteps})、getNextConformerAsMolecule()、getConformerCount()、getPotentialConformerCount()、molecules()；能量用 ForceFieldMMFF94.getTotalEnergy()（需自己對每個構象建力場）"
+        },
+        "rdkitMapping": {
+          "supported": "見 atomMappingWithRdkit",
+          "api": "Molecule.fromMolfile／fromMolfileWithAtomMap、getAtomicNo、getAllAtoms、getBondAtom"
+        }
+      },
+      "heavyAtomsFromSmiles": 3,
+      "timingFirstConformerMs": 436.7,
+      "atomsWithH": 9,
+      "zRange": [
+        -3.5107939747724712,
+        -0.029193425210641354
+      ],
+      "is3D": true,
+      "molfileRoundTripZRange": [
+        -3.5108,
+        -0.0292
+      ],
+      "mmffZRange": [
+        -3.613331499802784,
+        0.045668723925992485
+      ],
+      "forceField": {
+        "MMFF94": {
+          "ok": true,
+          "returnCode": 0,
+          "energyBefore": 37.654838540312845,
+          "energyAfter": -1.5170975689518587,
+          "ms": 38.9,
+          "size": 9
+        },
+        "MMFF94s": {
+          "ok": true,
+          "returnCode": 0,
+          "energyBefore": 37.654838540312845,
+          "energyAfter": -1.5170975689518587,
+          "ms": 24.3,
+          "size": 9
+        },
+        "MMFF94s+": {
+          "ok": true,
+          "returnCode": 0,
+          "energyBefore": 37.654838540312845,
+          "energyAfter": -1.5170975689518587,
+          "ms": 22.8,
+          "size": 9
+        }
+      },
+      "timingConformerGenMs": 215.3,
+      "potentialConformerCount": 1,
+      "rotatableBonds": 0,
+      "timingMinimiseAllMs": 3.9,
+      "conformers": {
+        "requestedMax": 30,
+        "delivered": 1,
+        "energies": [
+          {
+            "i": 0,
+            "E": -1.337,
+            "relE": 0
+          }
+        ],
+        "energyUnit": "未在型別定義註明（MMFF94 通常為 kcal/mol；本報告不下結論，待使用者或官方文件確認）"
+      },
+      "reproducibility": {
+        "sameSeedIdentical": true,
+        "differentSeedIdentical": false
+      },
+      "atomMappingWithRdkit": {
+        "rdkit_molblock_no_H": {
+          "rdkitAtomCount": 3,
+          "oclAtomCountAfterParse": 3,
+          "fromMolfileWithAtomMap_map": [
+            0,
+            1,
+            2
+          ],
+          "sameOrderAsRdkitAfterParse": true,
+          "oclAtomCountAfter3D": 9,
+          "heavyAtomOrderSameAfter3D_firstNIndexes": true,
+          "hydrogensAfterHeavyAtoms": true,
+          "firstHydrogenIndexAfter3D": 3,
+          "heavyBondsIdenticalByIndex": true
+        },
+        "rdkit_molblock_with_H": {
+          "rdkitAtomCount": 9,
+          "oclAtomCountAfterParse": 9,
+          "fromMolfileWithAtomMap_map": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "sameOrderAsRdkitAfterParse": true,
+          "oclAtomCountAfter3D": 9,
+          "heavyAtomOrderSameAfter3D_firstNIndexes": true,
+          "hydrogensAfterHeavyAtoms": true,
+          "firstHydrogenIndexAfter3D": 3,
+          "heavyBondsIdenticalByIndex": true
+        }
+      }
+    },
+    "propylene_oxide": {
+      "smiles": "CC1CO1",
+      "checks": {
+        "coords3D": {
+          "supported": "支援",
+          "api": "ConformerGenerator(seed).getOneConformerAsMolecule(mol)（Molecule.is3D() 亦可確認）"
+        },
+        "molSdfOutput": {
+          "supported": "支援",
+          "api": "Molecule.toMolfile()／toMolfileV3()（含 z 座標）；SDF 為 molfile 加 $$$$（自行組成）；另有 SDFileParser 可讀 SDF"
+        },
+        "geometry": {
+          "supported": "部分支援",
+          "api": "getBondLength(bond)、calculateTorsion(atoms[4])（弧度）、getBondAngle(a,b)（只是鍵方向角，不是鍵角）；鍵角需自行由座標計算",
+          "sample": {
+            "bondLength_own": 1.5249,
+            "bondLength_getBondLength": 1.5011555327576733,
+            "lengthsAgree": false,
+            "angle_own_deg": 110.75836118856638,
+            "torsion_calculateTorsion_deg": 164.41054488754594
+          }
+        },
+        "mmff": {
+          "supported": "支援",
+          "api": "new ForceFieldMMFF94(molecule, \"MMFF94\" | \"MMFF94s\" | \"MMFF94s+\") → getTotalEnergy()、minimise()（回傳碼，0 為成功）；ForceFieldMMFF94.size()",
+          "fallback": "型別定義中沒有其他力場類別（沒有 UFF 等退路）"
+        },
+        "conformers": {
+          "supported": "部分支援（只得到 1 個構象）",
+          "api": "ConformerGenerator.initializeConformers(mol, {strategy, maxTorsionSets, use60degreeSteps})、getNextConformerAsMolecule()、getConformerCount()、getPotentialConformerCount()、molecules()；能量用 ForceFieldMMFF94.getTotalEnergy()（需自己對每個構象建力場）"
+        },
+        "rdkitMapping": {
+          "supported": "見 atomMappingWithRdkit",
+          "api": "Molecule.fromMolfile／fromMolfileWithAtomMap、getAtomicNo、getAllAtoms、getBondAtom"
+        }
+      },
+      "heavyAtomsFromSmiles": 4,
+      "timingFirstConformerMs": 9,
+      "atomsWithH": 10,
+      "zRange": [
+        -2.68785823611954,
+        0.3764048535897219
+      ],
+      "is3D": true,
+      "molfileRoundTripZRange": [
+        -2.6879,
+        0.3764
+      ],
+      "mmffZRange": [
+        -2.9401586773079704,
+        0.21903388110158756
+      ],
+      "forceField": {
+        "MMFF94": {
+          "ok": true,
+          "returnCode": 0,
+          "energyBefore": 39.22371483007951,
+          "energyAfter": 7.540078238656898,
+          "ms": 11.1,
+          "size": 10
+        },
+        "MMFF94s": {
+          "ok": true,
+          "returnCode": 0,
+          "energyBefore": 39.22371483007951,
+          "energyAfter": 7.540078238656898,
+          "ms": 9.2,
+          "size": 10
+        },
+        "MMFF94s+": {
+          "ok": true,
+          "returnCode": 0,
+          "energyBefore": 39.22371483007951,
+          "energyAfter": 7.540078238656898,
+          "ms": 8.2,
+          "size": 10
+        }
+      },
+      "timingConformerGenMs": 83.4,
+      "potentialConformerCount": 1,
+      "rotatableBonds": 0,
+      "timingMinimiseAllMs": 5.9,
+      "conformers": {
+        "requestedMax": 30,
+        "delivered": 1,
+        "energies": [
+          {
+            "i": 0,
+            "E": 7.54,
+            "relE": 0
+          }
+        ],
+        "energyUnit": "未在型別定義註明（MMFF94 通常為 kcal/mol；本報告不下結論，待使用者或官方文件確認）"
+      },
+      "reproducibility": {
+        "sameSeedIdentical": true,
+        "differentSeedIdentical": false
+      },
+      "atomMappingWithRdkit": {
+        "rdkit_molblock_no_H": {
+          "rdkitAtomCount": 4,
+          "oclAtomCountAfterParse": 4,
+          "fromMolfileWithAtomMap_map": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "sameOrderAsRdkitAfterParse": true,
+          "oclAtomCountAfter3D": 10,
+          "heavyAtomOrderSameAfter3D_firstNIndexes": true,
+          "hydrogensAfterHeavyAtoms": true,
+          "firstHydrogenIndexAfter3D": 4,
+          "heavyBondsIdenticalByIndex": true
+        },
+        "rdkit_molblock_with_H": {
+          "rdkitAtomCount": 10,
+          "oclAtomCountAfterParse": 10,
+          "fromMolfileWithAtomMap_map": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "sameOrderAsRdkitAfterParse": true,
+          "oclAtomCountAfter3D": 10,
+          "heavyAtomOrderSameAfter3D_firstNIndexes": true,
+          "hydrogensAfterHeavyAtoms": true,
+          "firstHydrogenIndexAfter3D": 4,
+          "heavyBondsIdenticalByIndex": true
+        }
+      }
+    },
+    "BADGE": {
+      "smiles": "CC(C)(c1ccc(OCC2CO2)cc1)c1ccc(OCC2CO2)cc1",
+      "checks": {
+        "coords3D": {
+          "supported": "支援",
+          "api": "ConformerGenerator(seed).getOneConformerAsMolecule(mol)（Molecule.is3D() 亦可確認）"
+        },
+        "molSdfOutput": {
+          "supported": "支援",
+          "api": "Molecule.toMolfile()／toMolfileV3()（含 z 座標）；SDF 為 molfile 加 $$$$（自行組成）；另有 SDFileParser 可讀 SDF"
+        },
+        "geometry": {
+          "supported": "部分支援",
+          "api": "getBondLength(bond)、calculateTorsion(atoms[4])（弧度）、getBondAngle(a,b)（只是鍵方向角，不是鍵角）；鍵角需自行由座標計算",
+          "sample": {
+            "bondLength_own": 1.5464147752103816,
+            "bondLength_getBondLength": 1.4214110601276007,
+            "lengthsAgree": false,
+            "angle_own_deg": 111.42182821251942,
+            "torsion_calculateTorsion_deg": 47.00037264502946
+          }
+        },
+        "mmff": {
+          "supported": "支援",
+          "api": "new ForceFieldMMFF94(molecule, \"MMFF94\" | \"MMFF94s\" | \"MMFF94s+\") → getTotalEnergy()、minimise()（回傳碼，0 為成功）；ForceFieldMMFF94.size()",
+          "fallback": "型別定義中沒有其他力場類別（沒有 UFF 等退路）"
+        },
+        "conformers": {
+          "supported": "支援",
+          "api": "ConformerGenerator.initializeConformers(mol, {strategy, maxTorsionSets, use60degreeSteps})、getNextConformerAsMolecule()、getConformerCount()、getPotentialConformerCount()、molecules()；能量用 ForceFieldMMFF94.getTotalEnergy()（需自己對每個構象建力場）"
+        },
+        "rdkitMapping": {
+          "supported": "見 atomMappingWithRdkit",
+          "api": "Molecule.fromMolfile／fromMolfileWithAtomMap、getAtomicNo、getAllAtoms、getBondAtom"
+        }
+      },
+      "heavyAtomsFromSmiles": 25,
+      "timingFirstConformerMs": 1993.9,
+      "atomsWithH": 49,
+      "zRange": [
+        -5.875170771353004,
+        4.835628973705944
+      ],
+      "is3D": true,
+      "molfileRoundTripZRange": [
+        -5.8752,
+        4.8356
+      ],
+      "mmffZRange": [
+        -5.61979550606339,
+        6.3073654785848445
+      ],
+      "forceField": {
+        "MMFF94": {
+          "ok": true,
+          "returnCode": 0,
+          "energyBefore": 235.63830023744688,
+          "energyAfter": 98.82470240416622,
+          "ms": 545,
+          "size": 49
+        },
+        "MMFF94s": {
+          "ok": true,
+          "returnCode": 0,
+          "energyBefore": 235.63830023744688,
+          "energyAfter": 98.82470240416622,
+          "ms": 458.3,
+          "size": 49
+        },
+        "MMFF94s+": {
+          "ok": true,
+          "returnCode": 0,
+          "energyBefore": 235.63830023744688,
+          "energyAfter": 98.82470240416622,
+          "ms": 491.1,
+          "size": 49
+        }
+      },
+      "timingConformerGenMs": 2004.5,
+      "potentialConformerCount": 20736,
+      "rotatableBonds": 8,
+      "timingMinimiseAllMs": 8600.3,
+      "conformers": {
+        "requestedMax": 30,
+        "delivered": 30,
+        "energies": [
+          {
+            "i": 0,
+            "E": 93.717,
+            "relE": 0.164
+          },
+          {
+            "i": 1,
+            "E": 97.628,
+            "relE": 4.075
+          },
+          {
+            "i": 2,
+            "E": 95.694,
+            "relE": 2.14
+          },
+          {
+            "i": 3,
+            "E": 95.694,
+            "relE": 2.14
+          },
+          {
+            "i": 4,
+            "E": 93.558,
+            "relE": 0.004
+          },
+          {
+            "i": 5,
+            "E": 93.883,
+            "relE": 0.33
+          },
+          {
+            "i": 6,
+            "E": 93.717,
+            "relE": 0.164
+          },
+          {
+            "i": 7,
+            "E": 95.884,
+            "relE": 2.33
+          },
+          {
+            "i": 8,
+            "E": 93.871,
+            "relE": 0.318
+          },
+          {
+            "i": 9,
+            "E": 95.757,
+            "relE": 2.204
+          },
+          {
+            "i": 10,
+            "E": 95.431,
+            "relE": 1.877
+          },
+          {
+            "i": 11,
+            "E": 95.634,
+            "relE": 2.08
+          },
+          {
+            "i": 12,
+            "E": 97.762,
+            "relE": 4.209
+          },
+          {
+            "i": 13,
+            "E": 97.842,
+            "relE": 4.289
+          },
+          {
+            "i": 14,
+            "E": 95.694,
+            "relE": 2.14
+          },
+          {
+            "i": 15,
+            "E": 95.833,
+            "relE": 2.279
+          },
+          {
+            "i": 16,
+            "E": 99.853,
+            "relE": 6.299
+          },
+          {
+            "i": 17,
+            "E": 95.431,
+            "relE": 1.877
+          },
+          {
+            "i": 18,
+            "E": 93.553,
+            "relE": 0
+          },
+          {
+            "i": 19,
+            "E": 95.634,
+            "relE": 2.08
+          },
+          {
+            "i": 20,
+            "E": 95.833,
+            "relE": 2.279
+          },
+          {
+            "i": 21,
+            "E": 97.666,
+            "relE": 4.112
+          },
+          {
+            "i": 22,
+            "E": 93.721,
+            "relE": 0.168
+          },
+          {
+            "i": 23,
+            "E": 97.504,
+            "relE": 3.95
+          },
+          {
+            "i": 24,
+            "E": 95.431,
+            "relE": 1.877
+          },
+          {
+            "i": 25,
+            "E": 95.694,
+            "relE": 2.14
+          },
+          {
+            "i": 26,
+            "E": 93.717,
+            "relE": 0.164
+          },
+          {
+            "i": 27,
+            "E": 93.717,
+            "relE": 0.164
+          },
+          {
+            "i": 28,
+            "E": 95.694,
+            "relE": 2.14
+          },
+          {
+            "i": 29,
+            "E": 93.871,
+            "relE": 0.318
+          }
+        ],
+        "energyUnit": "未在型別定義註明（MMFF94 通常為 kcal/mol；本報告不下結論，待使用者或官方文件確認）"
+      },
+      "reproducibility": {
+        "sameSeedIdentical": true,
+        "differentSeedIdentical": false
+      },
+      "atomMappingWithRdkit": {
+        "rdkit_molblock_no_H": {
+          "rdkitAtomCount": 25,
+          "oclAtomCountAfterParse": 25,
+          "fromMolfileWithAtomMap_map": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24
+          ],
+          "sameOrderAsRdkitAfterParse": true,
+          "oclAtomCountAfter3D": 49,
+          "heavyAtomOrderSameAfter3D_firstNIndexes": true,
+          "hydrogensAfterHeavyAtoms": true,
+          "firstHydrogenIndexAfter3D": 25,
+          "heavyBondsIdenticalByIndex": true
+        },
+        "rdkit_molblock_with_H": {
+          "rdkitAtomCount": 49,
+          "oclAtomCountAfterParse": 49,
+          "fromMolfileWithAtomMap_map": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48
+          ],
+          "sameOrderAsRdkitAfterParse": true,
+          "oclAtomCountAfter3D": 49,
+          "heavyAtomOrderSameAfter3D_firstNIndexes": true,
+          "hydrogensAfterHeavyAtoms": true,
+          "firstHydrogenIndexAfter3D": 25,
+          "heavyBondsIdenticalByIndex": true
+        }
+      }
+    }
+  },
+  "extra": {
+    "missingParams": {
+      "trimethylborane": {
+        "smiles": "CB(C)C",
+        "mmff": {
+          "ok": false,
+          "error": "Error: Class$S187: Couldn't assign an atom type to atom 1 (B)"
+        }
+      },
+      "tetramethylsilane": {
+        "smiles": "C[Si](C)(C)C",
+        "mmff": {
+          "ok": true,
+          "code": 0,
+          "energy": -0.191785762731374
+        }
+      },
+      "SF6": {
+        "smiles": "FS(F)(F)(F)(F)F",
+        "mmff": {
+          "ok": false,
+          "error": "Error: Class$S187: Couldn't assign an atom type to atom 1 (S)"
+        }
+      },
+      "trimethylphosphine": {
+        "smiles": "CP(C)C",
+        "mmff": {
+          "ok": true,
+          "code": 0,
+          "energy": 1.4839844296505116
+        }
+      }
+    }
+  }
+}
