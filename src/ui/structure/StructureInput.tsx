@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
 import type { InputCategory } from '../../core/structure/inputErrors';
 import { parseSdf, sdfRecordLabel, toSdf, type SdfRecord } from '../../core/structure/sdf';
-import type { StructureProblem, StructureValidation } from '../../core/structure/validate';
+import { detectFormat, type StructureProblem, type StructureValidation } from '../../core/structure/validate';
 import { FRAME_CHANNEL, fromExpectedWindow, isFrameResponse, type FrameRequest, type FrameResponse } from '../../shared/ketcherProtocol';
 import { validateInput } from '../../worker/client';
 import { downloadText } from '../download';
@@ -15,12 +15,25 @@ const FRAME_URL = `${import.meta.env.BASE_URL}ketcher/`;
 const MAX_FILE_BYTES = 10 * 1024 * 1024;
 const CHANGE_DEBOUNCE_MS = 300;
 
-type Source = 'smiles' | 'canvas' | 'file';
+type Source = 'smiles' | 'canvas' | 'file' | 'library';
 const SOURCE_LABEL: Record<Source, string> = {
   smiles: '來源：SMILES 輸入',
   canvas: '來源：Ketcher 繪圖區',
   file: '來源：匯入的檔案',
+  library: '來源：我的化合物',
 };
+
+/** 從外部（例如「我的化合物」）要求載入一個結構；id 每次不同才會觸發載入 */
+export interface LoadRequest {
+  id: number;
+  /** Molfile 或 SMILES */
+  input: string;
+}
+
+interface Props {
+  onStructureChange?: (structure: StructureValidation | null) => void;
+  loadRequest?: LoadRequest | null;
+}
 
 interface View {
   source: Source;
@@ -38,7 +51,7 @@ function failedView(source: Source, message: string, code: StructureProblem['cod
   };
 }
 
-export function StructureInput({ onStructureChange }: { onStructureChange?: (structure: StructureValidation | null) => void }) {
+export function StructureInput({ onStructureChange, loadRequest }: Props) {
   const [smilesText, setSmilesText] = useState('');
   const [view, setView] = useState<View | null>(null);
   const [frameState, setFrameState] = useState<'loading' | 'ready' | 'failed'>('loading');
@@ -153,6 +166,18 @@ export function StructureInput({ onStructureChange }: { onStructureChange?: (str
     // 含連接點時改送 RDKit 產生的 Molfile（連接點寫成 *），Ketcher 才會顯示成 * 原子。
     void showAndLoad('smiles', smilesText, (r) => (r.canonicalSmiles.includes('*') ? r.molblock : smilesText.trim()));
   }
+
+  // 外部要求載入：Molfile 原樣送進繪圖器（保留圖面排列），SMILES 比照「載入」按鈕
+  useEffect(() => {
+    if (!loadRequest) return;
+    const { input } = loadRequest;
+    const isMolfile = detectFormat(input) === 'molfile';
+    void showAndLoad('library', input, (r) =>
+      isMolfile ? input : r.canonicalSmiles.includes('*') ? r.molblock : input.trim(),
+    );
+    // 只在新的要求（id 改變）時載入
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loadRequest?.id]);
 
   async function onPickFile(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];

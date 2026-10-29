@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:clean": "node -e \"for (const d of ['node_modules/.vitest-cache','node_modules/.vite/vitest']) require('fs').rmSync(d,{recursive:true,force:true})\" && vitest run",
-    "typecheck": "tsc --noEmit && npm run typecheck --prefix packages/ketcher-frame"
+    "typecheck": "tsc --noEmit && npm run typecheck --prefix packages/ketcher-frame",
+    "verify:phase2": "node scripts/verification/phase2.mjs"
   },
   "dependencies": {
     "@rdkit/rdkit": "^2026.9.1",

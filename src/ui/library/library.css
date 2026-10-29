@@ -1,0 +1,64 @@
+/* 「我的化合物」卡片。只使用 theme.css 的變數；響應式斷點 600px 沿用 structure.css。 */
+.compound-library .library-warning {
+  margin: var(--space-gap) 0;
+  padding: var(--space-gap-md);
+  background: var(--color-warn-soft-bg);
+  border-left: 4px solid var(--color-warn-soft-border);
+  border-radius: var(--radius-control);
+}
+.compound-library .library-last-export { margin: 0 0 var(--space-gap); color: var(--color-text-muted); font-size: var(--font-size-small); }
+
+.library-save, .library-tools {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: var(--space-gap);
+  align-items: center;
+  margin: var(--space-gap-lg) 0;
+}
+.library-save label, .library-tools label { margin-top: 0; }
+.library-tools { grid-template-columns: auto 1fr auto auto; }
+.library-tools select { width: auto; max-width: 100%; }
+
+.library-duplicate {
+  margin: var(--space-gap) 0;
+  padding: var(--space-gap-md);
+  background: var(--color-warn-bg);
+  border: 1px solid var(--color-warn-border);
+  border-radius: var(--radius-panel);
+}
+.library-duplicate p { margin: 0 0 var(--space-gap-sm); }
+
+.library-empty { color: var(--color-text-muted); }
+.library-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-gap); }
+.library-item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-gap-lg);
+  align-items: start;
+  padding: var(--padding-panel);
+  background: var(--color-tint-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-panel);
+}
+.library-item-main { display: grid; gap: 2px; min-width: 0; }
+.library-smiles {
+  font-family: var(--font-mono);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.library-date { color: var(--color-text-muted); }
+.library-notes { margin: var(--space-gap-sm) 0 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.library-row-actions { display: flex; flex-wrap: wrap; gap: var(--space-gap-sm); }
+.library-edit { grid-column: 1 / -1; display: grid; gap: var(--space-gap-sm); }
+.library-edit label { margin-top: 0; }
+.library-danger { border-color: var(--color-error-border); color: var(--color-error); }
+
+.library-transfer { display: flex; flex-wrap: wrap; gap: var(--space-gap); margin: var(--space-gap-lg) 0 var(--space-gap-sm); }
+.library-message { margin: var(--space-gap) 0 0; padding: var(--space-gap-md); background: var(--color-tint); border-left: 4px solid var(--color-accent); border-radius: var(--radius-control); }
+.compound-library .error { margin: var(--space-gap) 0; }
+
+@media (max-width: 600px) {
+  .library-save, .library-tools { grid-template-columns: 1fr; }
+  .library-item { grid-template-columns: 1fr; }
+}
