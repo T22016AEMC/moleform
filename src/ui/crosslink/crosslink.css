@@ -1,4 +1,4 @@
-/* 交聯分頁。只使用 theme.css 的變數；響應式斷點 600px。 */
+/* 交聯結果。只使用 theme.css 的變數；響應式斷點 600px。 */
 .crosslink-page > .card:first-child { margin-top: var(--space-gap-lg); }
 
 .crosslink-verdict { margin: var(--space-gap-lg) 0; padding: var(--padding-panel); background: var(--color-tint); border: 1px solid var(--color-border-tint); border-radius: var(--radius-panel); }

@@ -1,4 +1,4 @@
-// 「均聚物設定」卡片（任務 015，D42）：「結構」分頁的結構含連接點時出現，填 Mn 或 DP 擇一。
+// 「均聚物設定」卡片（任務 015，D42）：「分子工具」分頁的結構含連接點時出現，填 Mn 或 DP 擇一。
 // 不提供 3D（D05）；共聚物、Mw、PDI、端基在 Phase 5。
 import type { PolymerEdit } from './model';
 import { PolymerFields } from './PolymerFields';

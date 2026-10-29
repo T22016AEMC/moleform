@@ -111,7 +111,7 @@ export function newRow(
     ...(area === 'solid' ? { isResin: false, volatileFlag: false } : {}),
     ...(input.molfile ? { molfile: input.molfile } : {}),
     ...(input.compoundId ? { compoundId: input.compoundId } : {}),
-    // 含連接點的成分都附 Mn／DP 輸入欄（來自化合物庫或「結構」分頁時帶入已填的值）
+    // 含連接點的成分都附 Mn／DP 輸入欄（來自化合物庫或「分子工具」分頁時帶入已填的值）
     ...(input.canonicalSmiles.includes('*') ? { polymerEdit: editFromSpec(input.polymer) } : {}),
   };
 }

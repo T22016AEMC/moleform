@@ -1,4 +1,4 @@
-// 「我的化合物」卡片（任務 012，Phase 2.8）：儲存、搜尋、載入、改名、刪除、匯出入。
+// 「化合物庫」卡片（任務 012，Phase 2.8）：儲存、搜尋、載入、改名、刪除、匯出入。
 // 資料只存在使用者自己的瀏覽器（IndexedDB，D23），不經過任何伺服器；不存也不顯示分子量、官能基數量或當量（D09）。
 // 刪除用畫面內的確認按鈕，不使用瀏覽器對話框。
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -292,7 +292,7 @@ export function CompoundLibrary({ structure, polymer, onLoad, storage: storagePr
 
   return (
     <section className="card compound-library" aria-labelledby="library-title">
-      <h2 id="library-title">我的化合物</h2>
+      <h2 id="library-title">化合物庫</h2>
       <p className="library-warning">
         資料只存在這台電腦的這個瀏覽器。清除瀏覽器資料、換電腦或換瀏覽器都會看不到，請定期匯出備份。
       </p>

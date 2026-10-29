@@ -35,11 +35,11 @@ export function prepareLayer1(result: CrosslinkResult, formulation: Formulation,
   if (undetermined) return { ok: false, reason: `「${undetermined.name}」：${undetermined.problem}` };
 
   const solidResult = outcome?.results.solid;
-  if (!solidResult) return { ok: false, reason: '請先修正「配方」分頁 Solid 區的用量錯誤，才能計算第 1 層' };
+  if (!solidResult) return { ok: false, reason: '請先修正「配方工作台」 Solid 區的用量錯誤，才能計算第 1 層' };
   const solidComps = formulation.solid.components;
   const wt = new Map(solidResult.components.map((c) => [c.id, c.wtPct.value]));
   if (solidComps.length === 0 || solidComps.some((c) => wt.get(c.id) == null)) {
-    return { ok: false, reason: '請先填完「配方」分頁 Solid 區的用量' };
+    return { ok: false, reason: '請先填完「配方工作台」 Solid 區的用量' };
   }
 
   // 每個參與成分在 A、B 兩側的每分子官能度（來自第 0 層各配對的兩端）

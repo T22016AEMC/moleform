@@ -1,5 +1,5 @@
 // 反應原子標記（任務 016，4.4）：用 RDKit 畫 2D 結構圖（SVG），反應原子以強調色標出並加上編號。
-// 編號從 1 起算（= RDKit 原子索引 + 1），與「結構」分頁 3D 畫面的原子編號一致。
+// 編號從 1 起算（= RDKit 原子索引 + 1），與「分子工具」分頁 3D 畫面的原子編號一致。
 import { ELEMENTS } from '../polymer/repeatUnit';
 import type { CommonChemJson, RDKitModule } from '../rdkit/types';
 import { findGroupSites, parseStructure } from './groups';
@@ -54,7 +54,7 @@ export function drawMarkedStructure(RDKit: RDKitModule, source: string, marked: 
 
 /**
  * 結構上所有「已登錄在反應規則裡的官能基」的反應原子（0 起算，排序去重）。
- * 用於「結構」分頁的 3D 標記：與配方無關，只看這個結構本身有沒有可反應的官能基。
+ * 用於「分子工具」分頁的 3D 標記：與配方無關，只看這個結構本身有沒有可反應的官能基。
  */
 export function reactiveAtomsOf(
   RDKit: RDKitModule,

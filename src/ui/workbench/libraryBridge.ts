@@ -1,4 +1,4 @@
-// 工作台的彈窗把成分存進「我的化合物」（任務 018）。寫入瀏覽器儲存後發出事件，「化合物庫」分頁據此重新讀取，
+// 工作台的彈窗把成分存進「化合物庫」（任務 018）。寫入瀏覽器儲存後發出事件，「化合物庫」分頁據此重新讀取，
 // 避免它畫面上的舊清單之後覆蓋新存的資料。資料只存在使用者自己的瀏覽器（D23）。
 import { addCompound, findDuplicates, type NewCompoundInput } from '../../core/library/library';
 import type { Compound } from '../../core/library/types';

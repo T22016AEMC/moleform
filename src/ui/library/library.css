@@ -1,4 +1,4 @@
-/* 「我的化合物」卡片。只使用 theme.css 的變數；響應式斷點 600px 沿用 structure.css。 */
+/* 「化合物庫」卡片。只使用 theme.css 的變數；響應式斷點 600px 沿用 structure.css。 */
 .compound-library .library-warning {
   margin: var(--space-gap) 0;
   padding: var(--space-gap-md);

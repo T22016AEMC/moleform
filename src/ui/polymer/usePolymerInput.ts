@@ -1,4 +1,4 @@
-// 「結構」分頁的均聚物設定狀態（任務 015）：目前結構含連接點時，分析重複單元並保存 Mn／DP 輸入。
+// 「分子工具」分頁的均聚物設定狀態（任務 015）：目前結構含連接點時，分析重複單元並保存 Mn／DP 輸入。
 import { useEffect, useMemo, useState } from 'react';
 import type { PolymerSpec, RepeatUnitAnalysis } from '../../core/polymer/types';
 import type { StructureValidation } from '../../core/structure/validate';

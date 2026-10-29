@@ -1,4 +1,4 @@
-/* 配方分頁。只使用 theme.css 的變數；「我的配方」卡片沿用 library.css 的 compound-library 樣式；響應式斷點 600px。 */
+/* 配方工作台。只使用 theme.css 的變數；「我的配方」卡片沿用 library.css 的 compound-library 樣式；響應式斷點 600px。 */
 .formulation-page > .card:first-child { margin-top: var(--space-gap-lg); }
 
 .form-row-inline {

@@ -20,10 +20,10 @@ const SOURCE_LABEL: Record<Source, string> = {
   smiles: '來源：SMILES 輸入',
   canvas: '來源：Ketcher 繪圖區',
   file: '來源：匯入的檔案',
-  library: '來源：我的化合物',
+  library: '來源：化合物庫',
 };
 
-/** 從外部（例如「我的化合物」）要求載入一個結構；id 每次不同才會觸發載入 */
+/** 從外部（例如「化合物庫」）要求載入一個結構；id 每次不同才會觸發載入 */
 export interface LoadRequest {
   id: number;
   /** Molfile 或 SMILES */

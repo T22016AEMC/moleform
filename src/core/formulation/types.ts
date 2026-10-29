@@ -36,7 +36,7 @@ export interface Component<Category extends string = string> {
   isResin?: boolean;
   /** 僅 Solid：是否在指定條件下揮發或分解 */
   volatileFlag?: boolean;
-  /** 若來自「我的化合物」 */
+  /** 若來自「化合物庫」 */
   compoundId?: string;
   /** 使用者畫的 2D Molfile（若有）；讓配方檔不依賴化合物庫也能完整還原 */
   molfile?: string;

@@ -1,5 +1,5 @@
 // 「我的配方」卡片（任務 014，Phase 3.6）：儲存、另存、清單、搜尋、載入、改名、刪除、匯出入、上次備份。
-// 仿照「我的化合物」（任務 012），但使用另一個 IndexedDB 資料庫，不動到化合物庫的資料。
+// 仿照「化合物庫」（任務 012），但使用另一個 IndexedDB 資料庫，不動到化合物庫的資料。
 // 資料只存在使用者自己的瀏覽器（D23）；刪除用畫面內確認，不使用瀏覽器對話框。
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
@@ -217,7 +217,7 @@ export function FormulationLibrary({ formulation, currentId, onLoad, onSaved, st
         <button type="button" disabled={items.length === 0} onClick={exportAll}>匯出全部 JSON（備份）</button>
         <button type="button" onClick={() => fileInput.current?.click()}>匯入 JSON</button>
       </div>
-      <small>匯入只在瀏覽器內讀取檔案，不會上傳。配方檔內含每個成分的結構，不依賴「我的化合物」也能還原。</small>
+      <small>匯入只在瀏覽器內讀取檔案，不會上傳。配方檔內含每個成分的結構，不依賴「化合物庫」也能還原。</small>
       {message && (
         <p className={message.kind === 'error' ? 'error' : 'library-message'} role={message.kind === 'error' ? 'alert' : 'status'}>
           {message.text}

@@ -28,7 +28,7 @@ export interface CrosslinkTables {
 /** 分析單一成分：解析結構、找官能基位點；聚合物排除連接點並換算聚合度 */
 export function analyzeComponent(RDKit: RDKitModule, c: CrosslinkComponent, groups: readonly FunctionalGroupRow[]): ComponentAnalysis {
   const isPolymer = c.canonicalSmiles.includes('*');
-  // 小分子優先用 Molfile：原子索引與「結構」分頁的 3D 畫面一致；聚合物用 SMILES（與重複單元分析一致）
+  // 小分子優先用 Molfile：原子索引與「分子工具」分頁的 3D 畫面一致；聚合物用 SMILES（與重複單元分析一致）
   const source = !isPolymer && c.molfile && c.molfile.trim() !== '' ? c.molfile : c.canonicalSmiles;
   const base: ComponentAnalysis = { id: c.id, name: c.name, isPolymer, source, dp: null, molarMass: null, groups: [], problem: null };
 

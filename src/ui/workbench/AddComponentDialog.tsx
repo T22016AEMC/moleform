@@ -96,7 +96,7 @@ export function AddComponentDialog({ area, existingCount, onAdd, onClose }: Prop
       .then((loaded) => {
         if (cancelled) return;
         setCompounds(loaded.ok ? loaded.value : []);
-        if (!loaded.ok) setLibraryNote('無法讀取「我的化合物」（瀏覽器儲存不可用）');
+        if (!loaded.ok) setLibraryNote('無法讀取「化合物庫」（瀏覽器儲存不可用）');
       });
     return () => {
       cancelled = true;
@@ -197,7 +197,7 @@ export function AddComponentDialog({ area, existingCount, onAdd, onClose }: Prop
           {compounds === null ? (
             <small role="status">讀取中…</small>
           ) : compounds.length === 0 ? (
-            <p className="library-empty">「我的化合物」還沒有資料。</p>
+            <p className="library-empty">「化合物庫」還沒有資料。</p>
           ) : shownCompounds.length === 0 ? (
             <p className="library-empty">沒有符合「{query}」的化合物。</p>
           ) : (
