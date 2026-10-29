@@ -43,3 +43,7 @@
 |---|---|
 | U02 | 「聚合物 mol% 以重複單元為基準或以鏈為基準」的預設值尚未決定（規格要求可選） |
 | U03 | 多成分配方的相容性判斷（RED 閾值等）只屬參考趨勢，不要宣稱為溶解度預測 |
+
+- **建置時出現 
+ode:fs／
+ode:crypto externalized 警告（任務 008）**：Vite 建置 @rdkit/rdkit 時印出 Module "node:fs" has been externalized for browser compatibility。RDKit 的 JS 檔含 Node 專用分支，瀏覽器不會執行到，建置仍成功。CheMScutter 使用同一個套件，預期有同樣訊息。待在瀏覽器確認 RDKit 實際載入成功後可視為無害。
