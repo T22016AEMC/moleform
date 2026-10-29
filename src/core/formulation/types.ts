@@ -37,6 +37,8 @@ export interface Component<Category extends string = string> {
   volatileFlag?: boolean;
   /** 若來自「我的化合物」 */
   compoundId?: string;
+  /** 使用者畫的 2D Molfile（若有）；讓配方檔不依賴化合物庫也能完整還原 */
+  molfile?: string;
 }
 
 export interface Area<Unit extends string, Category extends string> {
@@ -82,7 +84,7 @@ export type IssueCode =
   | 'TARGET_NEEDS_SOLID_MASS'
   | 'SOLID_CONTENT_NEEDS_TOTAL'
   | 'TOTAL_IGNORED'
-  | 'MOL_PARTIAL';
+  | 'MOL_UNAVAILABLE';
 
 export interface FormulationIssue {
   area: AreaName | 'formulation';

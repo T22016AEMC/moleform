@@ -1,0 +1,74 @@
+/* 配方分頁。只使用 theme.css 的變數；「我的配方」卡片沿用 library.css 的 compound-library 樣式；響應式斷點 600px。 */
+.formulation-page > .card:first-child { margin-top: var(--space-gap-lg); }
+
+.form-row-inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-gap);
+  align-items: center;
+  margin: var(--space-gap) 0;
+}
+.form-row-inline label { margin-top: 0; }
+.form-row-inline input[type='text'], .form-row-inline select { width: auto; flex: 1 1 12rem; max-width: 100%; }
+.form-row-inline > .amount-input { flex: 0 1 12rem; }
+
+.amount-input {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-control);
+  background: var(--color-surface);
+  min-width: 0;
+}
+.amount-input input { border: 0; background: transparent; flex: 1 1 auto; min-width: 0; width: 100%; }
+.amount-input:focus-within { outline: 3px solid var(--color-focus); outline-offset: 2px; }
+.amount-input input:focus-visible { outline: none; }
+.amount-unit { padding: 0 var(--space-gap); color: var(--color-text-muted); font-size: var(--font-size-small); white-space: nowrap; }
+
+.component-list { list-style: none; margin: var(--space-gap-lg) 0; padding: 0; display: grid; gap: var(--space-gap); }
+.component-item {
+  padding: var(--padding-panel);
+  background: var(--color-tint-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-panel);
+  display: grid;
+  gap: var(--space-gap);
+}
+.component-item.has-error { border-color: var(--color-error-border); }
+.component-fields { display: grid; grid-template-columns: 2fr 2fr 1.5fr 1.5fr; gap: var(--space-gap); align-items: start; }
+.component-fields .field { display: grid; gap: 4px; min-width: 0; }
+.component-fields label, .component-fields .field-label { margin-top: 0; font-weight: var(--weight-label); font-size: var(--font-size-small); }
+.component-checks { display: flex; flex-wrap: wrap; gap: var(--space-gap-lg); }
+.component-checks .check { display: inline-flex; gap: var(--space-gap-sm); align-items: center; margin-top: 0; font-weight: normal; }
+.component-checks input[type='checkbox'] { width: auto; padding: 0; }
+.component-add { margin: var(--space-gap-lg) 0; padding: var(--padding-panel); border: 1px dashed var(--color-border-strong); border-radius: var(--radius-panel); }
+.component-add h3 { margin-bottom: var(--space-gap); }
+
+.form-issues { list-style: none; margin: var(--space-gap-sm) 0 0; padding: 0; display: grid; gap: var(--space-gap-sm); }
+.form-error, .form-warning { padding: var(--space-gap) var(--space-gap-md); border-left: 4px solid; border-radius: var(--radius-control); overflow-wrap: anywhere; }
+.form-error { color: var(--color-error); background: var(--color-error-bg); border-color: var(--color-error-border); }
+.form-warning { color: var(--color-text); background: var(--color-warn-bg); border-color: var(--color-warn-border); }
+
+.issue-summary { margin-bottom: var(--space-gap-lg); }
+.issue-summary ul { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-gap-sm); }
+.issue-link { width: 100%; text-align: left; justify-self: stretch; cursor: pointer; font: inherit; }
+.issue-link.form-error { border: 0; border-left: 4px solid var(--color-error-border); }
+.issue-link.form-warning { border: 0; border-left: 4px solid var(--color-warn-border); }
+
+.result-meta { margin: 0 0 var(--space-gap-lg); color: var(--color-text-muted); }
+.table-wrap { overflow-x: auto; margin: var(--space-gap-lg) 0; }
+.result-table { border-collapse: collapse; width: 100%; }
+.result-table th, .result-table td { padding: var(--padding-cell); border-bottom: 1px solid var(--color-border-row); text-align: right; }
+.result-table th[scope='row'], .result-table thead th:first-child { text-align: left; }
+.result-table thead th { background: var(--color-tint); border-bottom: 1px solid var(--color-border-tint); }
+.cell-na { color: var(--color-text-muted); cursor: help; }
+
+/* 分頁按鈕組 */
+.tabs { display: flex; flex-wrap: wrap; gap: var(--space-gap-sm); margin-top: var(--space-gap-lg); }
+.tabs button { background: var(--color-surface); color: var(--color-accent); border: 1px solid var(--color-accent); }
+.tabs button[aria-selected='true'] { background: var(--color-accent); color: var(--color-on-accent); }
+
+@media (max-width: 600px) {
+  .component-fields { grid-template-columns: 1fr 1fr; }
+  :root { --padding-cell: 10px 8px; }
+}

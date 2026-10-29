@@ -13,9 +13,18 @@ export interface ValidateRequest {
   input: string;
 }
 
-export type ChemRequest = StatusRequest | ValidateRequest;
+/** 計算平均分子量（配方換算用，不顯示在畫面上，D09） */
+export interface WeightRequest {
+  type: 'weight';
+  id: number;
+  smiles: string;
+}
+
+export type ChemRequest = StatusRequest | ValidateRequest | WeightRequest;
 
 export type ChemResponse =
+  | { type: 'weight'; id: number; ok: true; weight: number | null }
+  | { type: 'weight'; id: number; ok: false; error: string }
   | { type: 'status'; id: number; ready: true; version: string }
   | { type: 'status'; id: number; ready: false; error: string }
   | { type: 'validate'; id: number; ok: true; result: StructureValidation }
@@ -26,5 +35,6 @@ export function isChemRequest(value: unknown): value is ChemRequest {
   const request = value as Record<string, unknown>;
   if (typeof request.id !== 'number' || !Number.isSafeInteger(request.id)) return false;
   if (request.type === 'status') return true;
+  if (request.type === 'weight') return typeof request.smiles === 'string';
   return request.type === 'validate' && typeof request.input === 'string';
 }

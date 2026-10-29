@@ -174,24 +174,29 @@ function processArea(
     mass = totalG;
   }
 
-  // mol%：含 `*` 或缺分子量的成分不輸出，其餘以可換算的成分為基準
+  // mol%：只要有任何成分無法換算（含 `*` 或缺分子量），整區都不輸出 mol%（使用者 2026-10-29 決定），不使用部分基準
   const moles = comps.map((c, i) => {
     if (hasPolymerMark(c.canonicalSmiles)) return null;
     const m = usableMw(c);
     return m === null ? null : rel[i] / m;
   });
-  const molTotal = moles.reduce<number>((s, m) => s + (m ?? 0), 0);
-  if (unit !== 'mol' && moles.some((m) => m === null) && molTotal > 0) {
-    warn('MOL_PARTIAL', `${label}有成分無法換算 mol%（含連接點 * 或缺少分子量），其餘成分的 mol% 以可換算的成分合計為基準`);
+  const blockedIndex = moles.findIndex((m) => m === null);
+  let molBlockedMessage: string | null = null;
+  if (blockedIndex >= 0) {
+    const blocked = comps[blockedIndex];
+    const reason = hasPolymerMark(blocked.canonicalSmiles) ? '含連接點 *，聚合物的 mol% 基準將於 Phase 5 決定（U02）' : '缺少分子量';
+    molBlockedMessage = `${labelOf(blocked, blockedIndex)} 無法換算 mol%（${reason}），本區不提供 mol% 以免數值不完整`;
+    warn('MOL_UNAVAILABLE', `${label}：${molBlockedMessage}`, blocked.id);
   }
+  const molTotal = moles.reduce<number>((s, m) => s + (m ?? 0), 0);
 
   const resinRel = area === 'solid' ? comps.reduce((s, c, i) => s + (c.isResin ? rel[i] : 0), 0) : 0;
 
   const components: ComponentResult[] = comps.map((c, i) => {
-    let molPct: CalcResult;
-    if (hasPolymerMark(c.canonicalSmiles)) molPct = calc(null, '%', MESSAGE_POLYMER_MOL);
-    else if (moles[i] === null) molPct = calc(null, '%', '缺少分子量');
-    else molPct = calc(molTotal > 0 ? ((moles[i] as number) / molTotal) * 100 : null, '%');
+    const molPct =
+      molBlockedMessage !== null
+        ? calc(null, '%', molBlockedMessage)
+        : calc(molTotal > 0 ? ((moles[i] as number) / molTotal) * 100 : null, '%');
     return {
       id: c.id,
       name: c.name,

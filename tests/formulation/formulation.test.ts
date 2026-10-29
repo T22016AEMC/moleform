@@ -146,18 +146,31 @@ describe('Solid mol', () => {
 });
 
 describe('含 * 的成分用 g、parts、wt', () => {
-  it('質量相關結果正常；該成分不輸出 mol%，其餘以可換算的成分為基準並附警告', () => {
-    // A（含 *）50 g、B 50 g：wt% 各 50；B 莫耳數 50/50 = 1，A 不計 → B mol% = 100
-    const polymer = solidC('A', 50, { canonicalSmiles: '[*:1]CC[*:2]', category: 'Resin' });
+  it('質量相關結果正常；整區都不輸出 mol%（不使用部分基準）並說明原因', () => {
+    // A（含 *）50 g、B 50 g：wt% 各 50；A 無法換算 mol% → B 的 mol% 也不輸出（使用者 2026-10-29 決定）
+    const polymer = solidC('A', 50, { canonicalSmiles: '[*:1]CC[*:2]', category: 'Resin', name: '樹脂P' });
     const out = computeFormulation(formulation({ unit: 'g', components: [polymer, solidC('B', 50)] }), MW);
     expect(out.errors).toEqual([]);
     const [a, b] = out.results.solid!.components;
     near(value(a.wtPct), 50);
     near(value(a.massG), 50);
+    for (const c of [a, b]) {
+      expect(c.molPct.value).toBeNull();
+      expect(c.molPct.notApplicable).toBe(
+        '樹脂P 無法換算 mol%（含連接點 *，聚合物的 mol% 基準將於 Phase 5 決定（U02）），本區不提供 mol% 以免數值不完整',
+      );
+    }
+    expect(out.warnings.map((w) => w.code)).toContain('MOL_UNAVAILABLE');
+    expect(out.warnings.map((w) => w.code)).not.toContain('MOL_PARTIAL');
+  });
+
+  it('缺分子量（非 mol 單位）同樣整區不輸出 mol%，其他結果不受影響', () => {
+    const out = computeFormulation(formulation({ unit: 'g', components: [solidC('A', 50), solidC('X', 50)] }), MW);
+    expect(out.errors).toEqual([]);
+    const [a, x] = out.results.solid!.components;
     expect(a.molPct.value).toBeNull();
-    expect(a.molPct.notApplicable).toBe(MESSAGE_POLYMER_MOL);
-    near(value(b.molPct), 100);
-    expect(out.warnings.map((w) => w.code)).toContain('MOL_PARTIAL');
+    expect(x.molPct.notApplicable).toBe('成分X 無法換算 mol%（缺少分子量），本區不提供 mol% 以免數值不完整');
+    near(value(a.wtPct), 50);
   });
 });
 

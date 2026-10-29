@@ -58,6 +58,12 @@ export async function getChemStatus(): Promise<ChemStatus> {
 
 export type ValidateOutcome = { ok: true; result: StructureValidation } | { ok: false; error: string };
 
+/** 請 Worker 計算平均分子量；失敗或無法計算時回傳 null。只用於配方換算，不顯示（D09）。 */
+export async function averageWeightOf(smiles: string): Promise<number | null> {
+  const response = await request((id) => ({ type: 'weight', id, smiles }));
+  return response.type === 'weight' && response.ok ? response.weight : null;
+}
+
 /** 請 Worker 中的 RDKit 驗證 SMILES 或 Molfile。 */
 export async function validateInput(input: string): Promise<ValidateOutcome> {
   const response = await request((id) => ({ type: 'validate', id, input }));

@@ -1,5 +1,6 @@
 import wasmUrl from '@rdkit/rdkit/RDKit_minimal.wasm?url';
 import { getRDKit } from '../core/rdkit/loader';
+import { averageMolecularWeight } from '../core/formulation/molecularWeight';
 import { validateStructure } from '../core/structure/validate';
 import { isChemRequest, type ChemRequest, type ChemResponse } from './protocol';
 
@@ -17,6 +18,14 @@ async function handle(request: ChemRequest): Promise<ChemResponse> {
       return { type: 'status', id: request.id, ready: true, version: rdkit.version() };
     } catch (e) {
       return { type: 'status', id: request.id, ready: false, error: message(e) };
+    }
+  }
+  if (request.type === 'weight') {
+    try {
+      const rdkit = await loadRDKit();
+      return { type: 'weight', id: request.id, ok: true, weight: averageMolecularWeight(rdkit, request.smiles) };
+    } catch (e) {
+      return { type: 'weight', id: request.id, ok: false, error: message(e) };
     }
   }
   try {

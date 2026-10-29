@@ -12,7 +12,7 @@ const isRecord = (value: unknown): value is Record<string, unknown> => !!value &
 
 function parseComponent(value: unknown, where: string): Component | string {
   if (!isRecord(value)) return `${where}不是成分資料`;
-  const { id, name, canonicalSmiles, category, amount, isResin, volatileFlag, compoundId } = value;
+  const { id, name, canonicalSmiles, category, amount, isResin, volatileFlag, compoundId, molfile } = value;
   if (typeof id !== 'string' || id === '') return `${where}缺少 id`;
   if (typeof name !== 'string') return `${where}缺少名稱`;
   if (typeof canonicalSmiles !== 'string') return `${where}缺少 SMILES`;
@@ -22,6 +22,7 @@ function parseComponent(value: unknown, where: string): Component | string {
   if (typeof isResin === 'boolean') component.isResin = isResin;
   if (typeof volatileFlag === 'boolean') component.volatileFlag = volatileFlag;
   if (typeof compoundId === 'string') component.compoundId = compoundId;
+  if (typeof molfile === 'string') component.molfile = molfile;
   return component;
 }
 
@@ -50,6 +51,11 @@ export function parseFormulation(text: string): ParseResult {
   } catch {
     return { ok: false, error: '這不是有效的 JSON 檔案' };
   }
+  return parseFormulationData(data);
+}
+
+/** 檢查已解析的 JSON 資料（配方庫匯入時，每個配方用這個檢查） */
+export function parseFormulationData(data: unknown): ParseResult {
   if (!isRecord(data)) return { ok: false, error: '檔案格式不是 MoleForm 的配方' };
   if (data.schemaVersion !== FORMULATION_SCHEMA_VERSION) {
     return { ok: false, error: `不認得的資料版本（schemaVersion），本程式只支援版本 ${FORMULATION_SCHEMA_VERSION}` };
