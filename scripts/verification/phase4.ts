@@ -213,7 +213,7 @@ try {
       out();
       out(`- 反應官能基比：**${r.ratioText}**`);
       out(`- 限量官能基：${r.limiting === 'A' ? setup.nameA : r.limiting === 'B' ? setup.nameB : '（等量）'}；過量官能基：${r.excess === null ? '（無）' : r.excess === 'A' ? setup.nameA : setup.nameB}，過量 ${fx(r.excessPct, 2)}%`);
-      out(`- 理論最大成鍵數（限量官能基完全反應）：${fx(r.maxBondsMolPer100g, 6)} mol／100 g 固體`);
+      out(`- 理論最大成鍵數（限量官能基完全反應）：${fx(r.maxBondsMolPerKg, 5)} mol/kg 固體`);
       out();
       out('#### Miller–Macosko（可信度：理論估算；模型：' + L1.LAYER1_MODEL_NAME + '）');
       out();

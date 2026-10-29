@@ -57,8 +57,8 @@ export interface Layer1Result {
   /** 過量的官能基（equal 時為 null） */
   excess: 'A' | 'B' | null;
   excessPct: number;
-  /** 理論最大成鍵數（限量官能基完全反應），mol／100 g 固體 */
-  maxBondsMolPer100g: number;
+  /** 理論最大成鍵數（限量官能基完全反應），mol／kg 固體 */
+  maxBondsMolPerKg: number;
   /** 使用者指定的限量官能基轉化率（0–1） */
   conversion: number;
   /** 指定轉化率下已反應的鍵數，mol／kg 固體（直接計算） */
@@ -138,7 +138,7 @@ export function computeLayer1(setup: Layer1Setup, q: number): Layer1Result | nul
     limiting,
     excess,
     excessPct: (nExcess / nLim - 1) * 100,
-    maxBondsMolPer100g: (nLim / setup.totalMass) * 100,
+    maxBondsMolPerKg: (nLim / setup.totalMass) * 1000,
     conversion: q,
     bondsFormedMolPerKg: ((q * nLim) / setup.totalMass) * 1000,
     residualAPct: (1 - pA) * 100,

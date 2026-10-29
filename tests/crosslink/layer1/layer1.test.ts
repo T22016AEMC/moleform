@@ -85,7 +85,7 @@ describe('官能基比（手算核對，D17：以程式算出的 M_unit 為準�
     expect(r.limiting).toBe('A');
     expect(r.excess).toBe('B');
     expect(r.excessPct).toBeCloseTo((hand - 1) * 100, 6);
-    expect(r.maxBondsMolPer100g).toBeCloseTo(20 / mE, 9); // 限量的環氧基完全反應
+    expect(r.maxBondsMolPerKg).toBeCloseTo((20 / mE) * 10, 9); // 限量的環氧基完全反應
   });
 
   // 手算 4B：S 為小分子（M ≈ 308.4，2 個酚羥基）：酚羥基 = 0.3275×(79.2/80) + 1×2/M_S，環氧基 = 0.1407×(19.8/20)
@@ -130,7 +130,7 @@ describe('4A 的第 1 層數值', () => {
     const r1 = computeLayer1(setup(), 1)!;
     const r5 = computeLayer1(setup(), 0.5)!;
     expect(r5.bondsFormedMolPerKg).toBeCloseTo(r1.bondsFormedMolPerKg / 2, 9);
-    expect(r1.bondsFormedMolPerKg).toBeCloseTo(r1.maxBondsMolPer100g * 10, 9);
+    expect(r1.bondsFormedMolPerKg).toBeCloseTo(r1.maxBondsMolPerKg, 9);
   });
   it('Mc = 1／ν_c（每克固體基準）', () => {
     const r = computeLayer1(setup(), 1)!;

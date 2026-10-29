@@ -87,19 +87,21 @@ export interface ScanOption {
   direction: ScanDirection;
   label: string;
   unit: string;
+  /** 白話說明（顯示在下拉選單旁） */
+  description: string;
 }
 
 /** Phase 4 可選的目標物性與方向（任務 017 D-20；使用者 2026-10-29：預設為交聯密度 ν_c 最大） */
 export const SCAN_OPTIONS: readonly ScanOption[] = [
-  { property: 'crosslinkDensity', direction: 'max', label: '交聯密度 ν_c（最大）', unit: 'mol/kg' },
-  { property: 'networkMolecules', direction: 'max', label: '連入網路的分子數（最大）', unit: 'mol/kg' },
-  { property: 'mc', direction: 'min', label: 'Mc（最小）', unit: 'g/mol' },
-  { property: 'mc', direction: 'max', label: 'Mc（最大）', unit: 'g/mol' },
-  { property: 'gelConversion', direction: 'min', label: '凝膠轉化率（最小）', unit: '%' },
-  { property: 'gelConversion', direction: 'max', label: '凝膠轉化率（最大）', unit: '%' },
-  { property: 'residualA', direction: 'min', label: '殘留官能基：A 側（最小）', unit: '%' },
-  { property: 'residualB', direction: 'min', label: '殘留官能基：B 側（最小）', unit: '%' },
-  { property: 'residualTotal', direction: 'min', label: '殘留官能基：兩類合計（最小）', unit: '%' },
+  { property: 'crosslinkDensity', direction: 'max', label: '交聯密度 ν_c（最大）', unit: 'mol/kg', description: '網最密' },
+  { property: 'networkMolecules', direction: 'max', label: '連入網路的分子數（最大）', unit: 'mol/kg', description: '最多分子被連進網路（聚合物體系中不代表網較密）' },
+  { property: 'mc', direction: 'min', label: 'Mc（最小）', unit: 'g/mol', description: '網最密' },
+  { property: 'mc', direction: 'max', label: 'Mc（最大）', unit: 'g/mol', description: '網最鬆' },
+  { property: 'gelConversion', direction: 'min', label: '凝膠轉化率（最小）', unit: '%', description: '最早凝膠' },
+  { property: 'gelConversion', direction: 'max', label: '凝膠轉化率（最大）', unit: '%', description: '最晚凝膠' },
+  { property: 'residualA', direction: 'min', label: '殘留官能基：A 側（最小）', unit: '%', description: 'A 側官能基殘留最少' },
+  { property: 'residualB', direction: 'min', label: '殘留官能基：B 側（最小）', unit: '%', description: 'B 側官能基殘留最少' },
+  { property: 'residualTotal', direction: 'min', label: '殘留官能基：兩類合計（最小）', unit: '%', description: '兩類官能基合計殘留最少' },
 ];
 
 /** 取出掃描物性的數值；不適用（未凝膠等）時為 null。交聯密度與連入網路的分子數未凝膠視為 0（沒有網路）。 */

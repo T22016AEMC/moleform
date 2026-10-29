@@ -142,7 +142,7 @@ function Layer1Output({ prep, conv }: { prep: Extract<PrepareOutcome, { ok: true
         </div>
         <div>
           <h4>理論最大成鍵數（限量官能基完全反應）</h4>
-          <ResultValue result={calc(r.maxBondsMolPer100g, 'mol／100 g 固體', direct, 'direct')} />
+          <ResultValue result={calc(r.maxBondsMolPerKg, 'mol/kg 固體', direct, 'direct')} />
         </div>
         <div>
           <h4>已形成的鍵（指定轉化率）</h4>
@@ -252,11 +252,14 @@ function TheoryCard({ prep, conv }: { prep: Extract<PrepareOutcome, { ok: true }
         <select id="scan-property" value={optionIndex} onChange={(e) => setOptionIndex(Number(e.target.value))}>
           {SCAN_OPTIONS.map((o, i) => (
             <option key={o.label} value={i}>
-              {o.label}
+              {o.label}：{o.description}
             </option>
           ))}
         </select>
       </div>
+      <p className="crosslink-notes" id="scan-description">
+        {option.label}：{option.description}
+      </p>
       <div className="form-row-inline">
         <label htmlFor="scan-min">當量比範圍</label>
         <input id="scan-min" type="text" inputMode="decimal" value={minText} aria-label="當量比下限" onChange={(e) => setMinText(e.target.value)} />
