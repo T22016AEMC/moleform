@@ -17,7 +17,7 @@ import type { JSMol, RDKitModule } from '../rdkit/types';
 import { atomicWeight } from './atomicWeights';
 import { readGraph, type MolGraph } from './molGraph';
 
-/** 氫鍵鏈判定：單元內有這些基團時，–CH2– 取氫鍵鏈的值（p.138–139 Fig. 6.3：聚醯胺、聚胺基甲酸酯、聚脲） */
+/** 氫鍵鏈判定：單元內有這些基團時，–CH2– 取氫鍵鏈的值（書頁 139 Fig. 6.3 說明與 6.2.2.4 文字：聚醯胺、聚胺基甲酸酯、聚脲；4.3 值見 Table 6.1，書頁 133） */
 export const HYDROGEN_BOND_FAMILIES: readonly string[] = ['A.urethane', 'A.urea', 'B.CONH'];
 /** ΣMi 與分子（重複單元）質量允許的差（g/mol）；超過時在結果中標示 */
 export const TG_MASS_TOLERANCE = 0.01;
@@ -259,6 +259,7 @@ export function computeTg(RDKit: RDKitModule, smiles: string, options: TgOptions
           if (mainChain !== null && !mainChain.has(h.atoms[0])) note = '側鏈 –CH2–（書中要用式 6.6–6.8，程式未實作）';
           else cond = hydrogenBonded ? 'hb' : 'gen';
         } else if (f.id === 'A.C(CH3)2') {
+          // 受阻＝夾在兩個芳香環之間取 15，否則取自由值 8.5（書頁 140 6.2.2.4 文字第一個例子；Table 6.1 書頁 133）
           const exits = exitsOf(h.atoms);
           cond = exits.length === 2 && exits.every((x) => x !== null && g.aromatic[x]) ? 'hindered' : 'free';
         } else note = `${f.name} 沒有條件判定規則`;
