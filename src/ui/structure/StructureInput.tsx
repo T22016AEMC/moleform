@@ -9,6 +9,7 @@ import { detectFormat, type StructureProblem, type StructureValidation } from '.
 import { FRAME_CHANNEL, fromExpectedWindow, isFrameResponse, type FrameRequest, type FrameResponse } from '../../shared/ketcherProtocol';
 import { validateInput } from '../../worker/client';
 import { downloadText } from '../download';
+import { canvasRestoreInput } from './canvasRestore';
 import './structure.css';
 
 const FRAME_URL = `${import.meta.env.BASE_URL}ketcher/`;
@@ -85,6 +86,8 @@ export function StructureInput({ onStructureChange, loadRequest, active = true, 
   onUnverifiedRef.current = onUnverifiedChange;
   /** 上一次匯出之後，畫布又有新的修改 */
   const changedAfterExport = useRef(false);
+  /** 畫布最近一次匯出的 Molfile（離開分頁或借用 Ketcher 後用來還原，即使驗證沒通過，K12） */
+  const lastExported = useRef<string | undefined>(undefined);
 
   const sendFrame = useCallback((request: FrameRequest) => {
     iframe.current?.contentWindow?.postMessage(request, location.origin);
@@ -117,6 +120,7 @@ export function StructureInput({ onStructureChange, loadRequest, active = true, 
         return;
       }
       loadId.current = ++frameId.current;
+      lastExported.current = undefined; // 畫布換了內容，舊的匯出作廢；載入完成後會重新匯出
       sendFrame({ channel: FRAME_CHANNEL, type: 'load', id: loadId.current, input });
     },
     [sendFrame],
@@ -143,6 +147,7 @@ export function StructureInput({ onStructureChange, loadRequest, active = true, 
       loadId.current = 0;
       requestExport();
     } else if (response.type === 'structure' && response.id === exportId.current) {
+      lastExported.current = response.structure.molfile;
       void validateAndShow('canvas', response.structure.molfile).then((applied) => {
         if (applied && !changedAfterExport.current) onUnverifiedRef.current?.(false);
       });
@@ -163,8 +168,10 @@ export function StructureInput({ onStructureChange, loadRequest, active = true, 
   useEffect(() => {
     if (active) {
       openedAt.current = performance.now();
-      const last = latestResult.current;
-      if (last?.valid && pendingLoad.current === null) pendingLoad.current = last.molblock;
+      if (pendingLoad.current === null) {
+        const restore = canvasRestoreInput(lastExported.current, latestResult.current);
+        if (restore !== undefined) pendingLoad.current = restore;
+      }
     } else {
       frameReady.current = false;
       loadId.current = 0;

@@ -4,7 +4,7 @@ import type { BackboneTemplateRow } from '../../core/data/backboneTemplates';
 import type { PolymerEdit } from './model';
 import { UnitDrawPanel } from './UnitDrawPanel';
 import type { UnitDrawing } from './useUnitDrawing';
-import { PolymerFields } from './PolymerFields';
+import { BackboneTemplatePicker, PolymerFields } from './PolymerFields';
 import type { PolymerContext } from './usePolymerInput';
 
 interface Props {
@@ -17,7 +17,15 @@ interface Props {
 }
 
 export function PolymerSettings({ context, onChange, draw, onApplyTemplate }: Props) {
-  if (!context.hasMark) return null;
+  // 結構尚未輸入或不含連接點：只提供「從骨架範本填入」，選了就填入單元並切換為聚合物設定（任務 024 後續）
+  if (!context.hasMark) {
+    return (
+      <section className="card polymer-settings" aria-labelledby="polymer-title">
+        <h2 id="polymer-title">聚合物設定</h2>
+        <BackboneTemplatePicker idPrefix="structure-polymer" edit={context.edit} firstSmiles={context.smiles} onApply={onApplyTemplate} />
+      </section>
+    );
+  }
   const { analysis } = context;
   return (
     <section className="card polymer-settings" aria-labelledby="polymer-title">

@@ -71,6 +71,21 @@ export function applyBackboneTemplate(edit: PolymerEdit, row: Pick<BackboneTempl
   return { ...rest, end1: endEditOf(row.end1Smiles, row.end1PresetId), end2: endEditOf(row.end2Smiles, row.end2PresetId) };
 }
 
+/** 已填任何端基，或有第二種以後的單元：選範本會丟失這些內容（任務 024 後續） */
+export const templateHasOtherContent = (edit: PolymerEdit): boolean => endFromEdit(edit.end1) !== null || endFromEdit(edit.end2) !== null || (edit.extraUnits ?? []).length > 0;
+
+/**
+ * 選骨架範本時要不要先確認取代（任務 024 後續）：只在會丟失內容時才問，符合任一項：
+ *  - 已填任何端基　- 有第二種以後的單元　- 目前第一個單元與範本單元不同（比較正規化 SMILES）
+ * 目前沒有結構（firstSmiles 空白）不算「不同」；範本單元無法正規化（templateCanonical 為 null）時保守地詢問。
+ * 從空白選範本，或重選同一個範本（且沒有端基與其他單元）不問。
+ */
+export function templateReplaceNeedsConfirm(edit: PolymerEdit, firstSmiles: string, templateCanonical: string | null): boolean {
+  if (templateHasOtherContent(edit)) return true;
+  if (firstSmiles.trim() === '') return false;
+  return templateCanonical === null || firstSmiles.trim() !== templateCanonical;
+}
+
 export const emptyPolymerEdit = (): PolymerEdit => ({ basis: 'mw', text: '', pdiText: '' });
 
 const positive = (text: string): number | null => {

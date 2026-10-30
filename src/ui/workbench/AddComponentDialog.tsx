@@ -12,7 +12,7 @@ import { analyzeRepeatUnitInWorker, validateInput } from '../../worker/client';
 import type { Row } from '../formulation/model';
 import { createIndexedDbStorage } from '../library/storage';
 import { analysisKey, applyBackboneTemplate, specFromEdit, type PolymerEdit } from '../polymer/model';
-import { PolymerFields } from '../polymer/PolymerFields';
+import { BackboneTemplatePicker, PolymerFields } from '../polymer/PolymerFields';
 import { UnitDrawPanel } from '../polymer/UnitDrawPanel';
 import { useUnitDrawing } from '../polymer/useUnitDrawing';
 import { saveCompoundToLibrary } from './libraryBridge';
@@ -288,6 +288,14 @@ export function AddComponentDialog({ area, existingCount, onAdd, onClose }: Prop
           <p className="structure-placeholder">{method === 'library' ? '請從清單選一個化合物。' : '還沒有可用的結構。'}</p>
         )}
       </div>
+
+      {/* 結構尚未輸入或不含連接點時，也能從骨架範本填入（任務 024 後續）；含連接點時選單在下方的聚合物設定裡 */}
+      {!polymer && (
+        <div className="modal-section">
+          <BackboneTemplatePicker idPrefix="add-polymer-empty" edit={form.polymerEdit} firstSmiles={candidate?.canonicalSmiles ?? ''} onApply={applyTemplate} />
+          {templateError && <p className="form-error" role="alert">{templateError}</p>}
+        </div>
+      )}
 
       {candidate && (
         <div className="modal-section modal-form">

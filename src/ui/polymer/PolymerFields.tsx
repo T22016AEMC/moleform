@@ -8,7 +8,8 @@ import { DEFAULT_PDI, type RepeatUnitAnalysis } from '../../core/polymer/types';
 import { MESSAGE_PDI_DEFAULT, MESSAGE_PDI_RANGE, resolvePolymer, type PolymerBasis } from '../../core/polymer/convert';
 import { FRACTION_TOLERANCE } from '../../core/polymer/copolymer';
 import { StructureImage } from '../workbench/StructureImage';
-import { BACKBONE_TEMPLATE_CONFIRM, BACKBONE_TEMPLATE_HINT, endFromEdit, endGroupHint, specFromEdit, type EndEdit, type DrawTarget, type PolymerEdit, type UnitEdit } from './model';
+import { validateInput } from '../../worker/client';
+import { BACKBONE_TEMPLATE_CONFIRM, BACKBONE_TEMPLATE_HINT, endFromEdit, endGroupHint, specFromEdit, templateHasOtherContent, templateReplaceNeedsConfirm,type EndEdit, type DrawTarget, type PolymerEdit, type UnitEdit } from './model';
 
 interface Props {
   /** 用來產生欄位編號，同一頁面內不可重複 */
@@ -184,9 +185,22 @@ function UnitList({ idPrefix, edit, onChange, firstSmiles, onReplaceFirst, onDra
   );
 }
 
-/** 骨架範本選單（任務 023，D51）：選了先確認取代，確定後才套用 */
-function BackboneTemplatePicker({ idPrefix, onApply }: { idPrefix: string; onApply: (row: BackboneTemplateRow) => void }) {
+/**
+ * 骨架範本選單（任務 023，D51）：只在會丟失內容時才先確認取代（任務 024 後續），其餘直接套用。
+ * edit、firstSmiles 是目前的單元與端基；結構尚未輸入時 firstSmiles 為空字串。
+ */
+export function BackboneTemplatePicker({ idPrefix, edit, firstSmiles, onApply }: { idPrefix: string; edit: PolymerEdit; firstSmiles: string; onApply: (row: BackboneTemplateRow) => void }) {
   const [pending, setPending] = useState<BackboneTemplateRow | null>(null);
+  async function choose(row: BackboneTemplateRow) {
+    // 有端基或其他單元一定會丟失；否則只在目前結構與範本單元不同時才比較（正規化 SMILES）
+    let canonical: string | null = null;
+    if (!templateHasOtherContent(edit) && firstSmiles.trim() !== '') {
+      const outcome = await validateInput(row.unitSmiles);
+      canonical = outcome.ok && outcome.result.valid ? outcome.result.canonicalSmiles : null;
+    }
+    if (templateReplaceNeedsConfirm(edit, firstSmiles, canonical)) setPending(row);
+    else onApply(row);
+  }
   return (
     <div className="polymer-template">
       <label htmlFor={`${idPrefix}-template`}>從骨架範本填入</label>
@@ -194,7 +208,9 @@ function BackboneTemplatePicker({ idPrefix, onApply }: { idPrefix: string; onApp
         id={`${idPrefix}-template`}
         value=""
         onChange={(e) => {
-          setPending(BACKBONE_TEMPLATES.find((t) => t.id === e.target.value) ?? null);
+          const row = BACKBONE_TEMPLATES.find((t) => t.id === e.target.value);
+          setPending(null);
+          if (row) void choose(row);
         }}
       >
         <option value="">選擇範本…</option>
@@ -235,7 +251,7 @@ export function PolymerFields({ idPrefix, edit, onChange, analysis, firstSmiles,
   const extras = edit.extraUnits ?? [];
   return (
     <div className="polymer-fields">
-      {firstSmiles !== undefined && onApplyTemplate && <BackboneTemplatePicker idPrefix={idPrefix} onApply={onApplyTemplate} />}
+      {firstSmiles !== undefined && onApplyTemplate && <BackboneTemplatePicker idPrefix={idPrefix} edit={edit} firstSmiles={firstSmiles} onApply={onApplyTemplate} />}
       {firstSmiles !== undefined && extras.length > 0 && <UnitList idPrefix={idPrefix} edit={edit} onChange={onChange} firstSmiles={firstSmiles} onReplaceFirst={onReplaceFirst} onDrawUnit={onDrawUnit} />}
       {firstSmiles !== undefined && (
         <button type="button" className="secondary polymer-add-unit" onClick={() => onChange({ ...edit, extraUnits: [...extras, { smiles: '', fractionText: '' }] })}>
