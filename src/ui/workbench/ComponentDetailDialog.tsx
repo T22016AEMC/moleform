@@ -5,7 +5,8 @@ import type { RepeatUnitAnalysis } from '../../core/polymer/types';
 import type { StructureValidation } from '../../core/structure/validate';
 import { analyzeRepeatUnitInWorker, validateInput } from '../../worker/client';
 import type { Row } from '../formulation/model';
-import { analysisKey, emptyPolymerEdit, endFromEdit, specFromEdit } from '../polymer/model';
+import type { BackboneTemplateRow } from '../../core/data/backboneTemplates';
+import { analysisKey, applyBackboneTemplate, emptyPolymerEdit, endFromEdit, specFromEdit } from '../polymer/model';
 import { PolymerFields } from '../polymer/PolymerFields';
 import { UnitDrawPanel } from '../polymer/UnitDrawPanel';
 import { useUnitDrawing } from '../polymer/useUnitDrawing';
@@ -44,6 +45,19 @@ function useMolblock(row: Row): string {
 
 export function ComponentDetailDialog({ row, area, onChange, onClose }: Props) {
   const polymer = isPolymerSmiles(row.canonicalSmiles);
+  const [templateError, setTemplateError] = useState('');
+  // 骨架範本（任務 023，D51）：結構換成範本的單元（與手動輸入同樣經 RDKit 驗證與正規化），端基換成範本的端基
+  const applyTemplate = (tpl: BackboneTemplateRow) => {
+    setTemplateError('');
+    void validateInput(tpl.unitSmiles).then((outcome) => {
+      const candidate = outcome.ok ? candidateFromValidation(outcome.result) : null;
+      if (!candidate) {
+        setTemplateError('無法套用這個範本（結構驗證未完成），請稍後再試。');
+        return;
+      }
+      onChange((r) => ({ ...applyStructureToRow(r, candidate), polymerEdit: applyBackboneTemplate(r.polymerEdit ?? emptyPolymerEdit(), tpl) }));
+    });
+  };
   const molblock = useMolblock(row);
   const source = polymer ? row.canonicalSmiles : molblock || row.canonicalSmiles;
   const drawing = useStructureDrawing({ source, width: 440, height: 300, mark: true, polymer });
@@ -172,6 +186,7 @@ export function ComponentDetailDialog({ row, area, onChange, onClose }: Props) {
         <div className="modal-section polymer-row">
           <h3>聚合物設定</h3>
           {currentAnalysis?.ok === false && <p className="form-error" role="alert">{currentAnalysis.problem.message}</p>}
+          {templateError && <p className="form-error" role="alert">{templateError}</p>}
           {(
             <PolymerFields
               idPrefix="detail-polymer"
@@ -180,6 +195,7 @@ export function ComponentDetailDialog({ row, area, onChange, onClose }: Props) {
               analysis={currentAnalysis}
               firstSmiles={row.canonicalSmiles}
               onDrawUnit={draw.request}
+              onApplyTemplate={applyTemplate}
               onReplaceFirst={(smiles, polymerEdit) => onChange(({ molfile: _m, compoundId: _c, ...r }) => ({ ...r, canonicalSmiles: smiles, polymerEdit }))}
             />
           )}

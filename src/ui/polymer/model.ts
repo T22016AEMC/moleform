@@ -3,6 +3,7 @@
 // 其他單元放在 extraUnits；沒有 extraUnits 時與均聚物完全相同（畫面與資料都沒有多餘欄位）。
 import { MESSAGE_PDI_DEFAULT, MESSAGE_PDI_LEGACY, type PolymerBasis } from '../../core/polymer/convert';
 import { END_GROUP_PRESETS } from '../../core/data/endGroups';
+import type { BackboneTemplateRow } from '../../core/data/backboneTemplates';
 import type { EndGroup, FractionBasis, PolymerSpec, PolymerUnit } from '../../core/polymer/types';
 
 /** 共聚物中第二種以後的單元：SMILES（使用者貼上或由 Ketcher 帶入）與比例的原始文字 */
@@ -52,6 +53,22 @@ function endToEdit(end: EndGroup | undefined): EndEdit | undefined {
   if (!end) return undefined;
   const row = end.presetId ? END_GROUP_PRESETS.find((p) => p.id === end.presetId && p.smiles === end.smiles) : undefined;
   return row ? { choice: row.id, custom: '' } : { choice: 'custom', custom: end.smiles };
+}
+
+/** 骨架範本選單旁的說明（任務 023，D51） */
+export const BACKBONE_TEMPLATE_HINT = '範本只填入結構；分子量（Mw、PDI 等）請依產品資料填寫。';
+export const BACKBONE_TEMPLATE_CONFIRM = '會取代目前的單元與端基，確定嗎？';
+
+const endEditOf = (smiles: string, presetId: string): EndEdit => (presetId === '' ? { choice: 'custom', custom: smiles } : { choice: presetId, custom: '' });
+
+/**
+ * 選了骨架範本（任務 023，D51）：單元清單換成範本的一種單元（單元結構本身由呼叫端換成 row.unitSmiles），
+ * 兩個端基換成範本的端基（有對應 id 選該項，沒有就用自訂 SMILES）。分子量欄位（基準、數值、PDI）不動。
+ * 填入後的狀態和使用者自己輸入的完全一樣：共聚物欄位（extraUnits、firstFractionText、fractionBasis）一律移除。
+ */
+export function applyBackboneTemplate(edit: PolymerEdit, row: Pick<BackboneTemplateRow, 'end1Smiles' | 'end1PresetId' | 'end2Smiles' | 'end2PresetId'>): PolymerEdit {
+  const { extraUnits: _extra, firstFractionText: _first, fractionBasis: _basis, ...rest } = edit;
+  return { ...rest, end1: endEditOf(row.end1Smiles, row.end1PresetId), end2: endEditOf(row.end2Smiles, row.end2PresetId) };
 }
 
 export const emptyPolymerEdit = (): PolymerEdit => ({ basis: 'mw', text: '', pdiText: '' });

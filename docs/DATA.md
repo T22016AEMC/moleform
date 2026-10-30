@@ -140,6 +140,22 @@ MoleForm 的化學資料放在 `src/data/` 的四個 CSV。**目前只有任務 
 
 格式檢查（`src/core/data/endGroups.ts`，測試 `tests/polymer/endGroups.test.ts`）：標題列、必填（含出處）、id 唯一、`*` 恰好一個、RDKit 可解析且連接點恰好一個。只確認格式，不判斷化學（D17）。聚合物的端基存在 `polymer.endGroups`（`{ end1?, end2? }`，每個為 `{ smiles, presetId? }`；舊檔沒有此欄位＝兩端都不填，`schemaVersion` 不變）；SDF 另附 `MoleForm_EndGroups`（單行 JSON）。
 
+## 骨架範本資料表 backbone_templates.csv（任務 023，D51）
+
+`src/data/backbone_templates.csv`（UTF-8 BOM，6 列，順序與編號固定 BT01–BT06）。選範本一次填入重複單元與兩端端基。欄位：
+
+| 欄位 | 說明 |
+|---|---|
+| `id` | 範本編號（BT01…），唯一 |
+| `名稱` | 中文名稱 |
+| `單元 SMILES` | 重複單元，恰好 `[*:1]`、`[*:2]` 各一個 |
+| `端基 1 SMILES`、`端基 2 SMILES` | 端基，各恰好一個 `*` |
+| `端基 1 對應端基 id`、`端基 2 對應端基 id` | 端基 SMILES 與 `end_groups.csv` 某一列相同時填該 id（例如 EG01），否則留空（畫面以自訂 SMILES 填入） |
+| `每條鏈的反應官能基（說明）` | 說明文字，不參與計算 |
+| `出處` | 「Claude 依一般化學知識整理，使用者 2026-10-30 同意」 |
+
+格式檢查（`src/core/data/backboneTemplates.ts`，測試 `tests/data/backbone-templates.test.ts`）：標題列、必填（含出處）、id 唯一、單元連接點、端基 `*` 數量、對應端基 id 存在且 SMILES 相同、RDKit 可解析且連接點數量正確。只確認格式，不判斷化學（D17）。範本只在選的當下填入，填入後的狀態和使用者自己輸入的完全一樣；配方檔與化合物庫不另外記錄用了哪個範本。
+
 ## 程式位置
 
 - 讀取程式與檢查：`src/core/data/`（`csv.ts`、`readers.ts`、`validate.ts`、`chemcheck.ts`、`load.ts`）

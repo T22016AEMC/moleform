@@ -94,6 +94,9 @@
 .detail-unit figcaption { color: var(--color-text-muted); font-size: var(--font-size-small); }
 
 /* 聚合物端基（任務 022） */
+.polymer-template { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-gap-sm); }
+.polymer-template select { min-width: 12rem; max-width: 100%; }
+.polymer-template small, .polymer-template .structure-notice { flex-basis: 100%; }
 .polymer-ends { display: grid; gap: var(--space-gap-sm); }
 .polymer-end-field { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-gap-sm); }
 .polymer-end-field select { min-width: 12rem; max-width: 100%; }

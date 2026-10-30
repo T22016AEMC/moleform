@@ -9,7 +9,8 @@ import { CompoundLibrary } from './library/CompoundLibrary';
 import { Workbench } from './workbench/Workbench';
 import { Conformer3DCard } from './structure/Conformer3DCard';
 import type { PolymerSpec } from '../core/polymer/types';
-import { drawTargetNumber, editFromSpec, tabLeaveNeedsConfirm } from './polymer/model';
+import type { BackboneTemplateRow } from '../core/data/backboneTemplates';
+import { applyBackboneTemplate, drawTargetNumber, editFromSpec, tabLeaveNeedsConfirm } from './polymer/model';
 import { PolymerSettings } from './polymer/PolymerSettings';
 import { usePolymerInput } from './polymer/usePolymerInput';
 import { useUnitDrawing } from './polymer/useUnitDrawing';
@@ -53,6 +54,14 @@ export function App() {
     },
     [setPolymerEdit],
   );
+  // 骨架範本（任務 023，D51）：結構換成範本的單元，端基換成範本的端基；分子量欄位不動
+  const applyTemplate = useCallback(
+    (row: BackboneTemplateRow) => {
+      setLoadRequest((prev) => ({ id: (prev?.id ?? 0) + 1, input: row.unitSmiles }));
+      setPolymerEdit((edit) => applyBackboneTemplate(edit, row));
+    },
+    [setPolymerEdit],
+  );
   return (
     <main className={tab === 'workbench' ? 'main-wide' : undefined}>
       <Header />
@@ -87,7 +96,7 @@ export function App() {
       </div>
       <div id="panel-tools" hidden={tab !== 'tools'}>
         <StructureInput onStructureChange={setStructure} loadRequest={loadRequest} active={tab === 'tools' && !unitDrawing.target} onUnverifiedChange={setMainUnverified} />
-        <PolymerSettings context={polymer} onChange={setPolymerEdit} draw={unitDrawing} />
+        <PolymerSettings context={polymer} onChange={setPolymerEdit} draw={unitDrawing} onApplyTemplate={applyTemplate} />
         <Conformer3DCard structure={structure} />
       </div>
       <div id="panel-library" hidden={tab !== 'library'}>

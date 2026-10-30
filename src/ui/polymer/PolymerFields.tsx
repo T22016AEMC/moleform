@@ -1,12 +1,14 @@
 // 均聚物的分子量輸入欄（任務 015、019，D47）：主要輸入 Mw＋PDI，也可切換為 Mn＋PDI 或 DP＋PDI。
 // Mw、Mn、DP、PDI 是使用者的輸入，換算出的其他值顯示在旁邊當作輸入輔助（D09 不適用於使用者輸入）；
 // 重複單元分子量 M_unit 不顯示，結果區也不顯示分子量（D09）。
+import { useState } from 'react';
+import { BACKBONE_TEMPLATES, type BackboneTemplateRow } from '../../core/data/backboneTemplates';
 import { END_GROUP_PRESETS } from '../../core/data/endGroups';
 import { DEFAULT_PDI, type RepeatUnitAnalysis } from '../../core/polymer/types';
 import { MESSAGE_PDI_DEFAULT, MESSAGE_PDI_RANGE, resolvePolymer, type PolymerBasis } from '../../core/polymer/convert';
 import { FRACTION_TOLERANCE } from '../../core/polymer/copolymer';
 import { StructureImage } from '../workbench/StructureImage';
-import { endFromEdit, endGroupHint, specFromEdit, type EndEdit, type DrawTarget, type PolymerEdit, type UnitEdit } from './model';
+import { BACKBONE_TEMPLATE_CONFIRM, BACKBONE_TEMPLATE_HINT, endFromEdit, endGroupHint, specFromEdit, type EndEdit, type DrawTarget, type PolymerEdit, type UnitEdit } from './model';
 
 interface Props {
   /** 用來產生欄位編號，同一頁面內不可重複 */
@@ -21,6 +23,8 @@ interface Props {
   onReplaceFirst?: (smiles: string, edit: PolymerEdit) => void;
   /** 用 Ketcher 畫單元（任務 021）：提供時，第二種單元以後的每一列與「新增單元」旁有「用 Ketcher 畫」按鈕 */
   onDrawUnit?: (target: DrawTarget) => void;
+  /** 從骨架範本填入（任務 023，D51）：提供時，單元清單上方出現範本選單；呼叫端負責把單元結構與編輯狀態換成範本的內容 */
+  onApplyTemplate?: (row: BackboneTemplateRow) => void;
 }
 
 const BASIS_LABEL: Record<PolymerBasis, string> = { mw: 'Mw（g/mol）', mn: 'Mn（g/mol）', dp: 'DP（數量平均，重複單元數）' };
@@ -180,12 +184,58 @@ function UnitList({ idPrefix, edit, onChange, firstSmiles, onReplaceFirst, onDra
   );
 }
 
-export function PolymerFields({ idPrefix, edit, onChange, analysis, firstSmiles, onReplaceFirst, onDrawUnit }: Props) {
+/** 骨架範本選單（任務 023，D51）：選了先確認取代，確定後才套用 */
+function BackboneTemplatePicker({ idPrefix, onApply }: { idPrefix: string; onApply: (row: BackboneTemplateRow) => void }) {
+  const [pending, setPending] = useState<BackboneTemplateRow | null>(null);
+  return (
+    <div className="polymer-template">
+      <label htmlFor={`${idPrefix}-template`}>從骨架範本填入</label>
+      <select
+        id={`${idPrefix}-template`}
+        value=""
+        onChange={(e) => {
+          setPending(BACKBONE_TEMPLATES.find((t) => t.id === e.target.value) ?? null);
+        }}
+      >
+        <option value="">選擇範本…</option>
+        {BACKBONE_TEMPLATES.map((t) => (
+          <option key={t.id} value={t.id}>
+            {t.name}
+          </option>
+        ))}
+      </select>
+      <small>{BACKBONE_TEMPLATE_HINT}</small>
+      {pending && (
+        <div className="structure-notice" role="alertdialog" aria-label="取代確認">
+          <p>{BACKBONE_TEMPLATE_CONFIRM}</p>
+          <div className="library-row-actions">
+            <button
+              type="button"
+              className="library-danger"
+              onClick={() => {
+                onApply(pending);
+                setPending(null);
+              }}
+            >
+              確定取代
+            </button>
+            <button type="button" className="secondary" onClick={() => setPending(null)}>
+              取消
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export function PolymerFields({ idPrefix, edit, onChange, analysis, firstSmiles, onReplaceFirst, onDrawUnit, onApplyTemplate }: Props) {
   const name = `${idPrefix}-basis`;
   const pdiMessage = pdiHelper(edit);
   const extras = edit.extraUnits ?? [];
   return (
     <div className="polymer-fields">
+      {firstSmiles !== undefined && onApplyTemplate && <BackboneTemplatePicker idPrefix={idPrefix} onApply={onApplyTemplate} />}
       {firstSmiles !== undefined && extras.length > 0 && <UnitList idPrefix={idPrefix} edit={edit} onChange={onChange} firstSmiles={firstSmiles} onReplaceFirst={onReplaceFirst} onDrawUnit={onDrawUnit} />}
       {firstSmiles !== undefined && (
         <button type="button" className="secondary polymer-add-unit" onClick={() => onChange({ ...edit, extraUnits: [...extras, { smiles: '', fractionText: '' }] })}>

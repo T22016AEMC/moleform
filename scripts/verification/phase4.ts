@@ -286,7 +286,7 @@ try {
       out(`  - 已形成的鍵（指定轉化率下已反應的鍵數，直接計算）：${fx(r.bondsFormedMolPerKg, 5)} mol/kg 固體`);
       out(`  - 詳細：連入網路的分子數 [X]（式 49）：${r.junctionsMolPerKg === null ? L1.MESSAGE_NOT_GELLED : fx(r.junctionsMolPerKg, 5) + ' mol/kg 固體'}。Miller–Macosko 將每個多官能分子計為一個交聯點；聚合物對聚合物的體系中，此值不等於交聯鍵數`);
       out(`  - 殘留官能基：${setup.nameA} ${fx(r.residualAPct, 3)}%、${setup.nameB} ${fx(r.residualBPct, 3)}%（相對初始量，直接計算）`);
-      out(`- 附註：${[r.usedMixtureApprox ? L1.NOTE_NON_INTEGER : null, r.hasPolymer ? L1.NOTE_DISTRIBUTION : null, r.hasCopolymer ? L1.NOTE_COPOLYMER : null, L1.NOTE_M06, L1.NOTE_MC_DEFINITION].filter(Boolean).join('；')}`);
+      out(`- 附註：${[r.usedMixtureApprox ? L1.NOTE_NON_INTEGER : null, r.hasPolymer ? L1.NOTE_DISTRIBUTION : null, r.usedLowMwCorrection ? L1.NOTE_LOW_MW : null, r.hasCopolymer ? L1.NOTE_COPOLYMER : null, L1.NOTE_M06, L1.NOTE_MC_DEFINITION].filter(Boolean).join('；')}`);
 
       // 新舊對照：任務 019 的 P（1:1 均聚物）→ 本任務的 P（2:1 Random 共聚物）
       const oldBuilt = build(ids, amounts, true);

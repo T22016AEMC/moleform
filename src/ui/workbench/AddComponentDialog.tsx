@@ -1,7 +1,8 @@
 // 「加入成分」彈窗（任務 018，D45）：貼 SMILES、從化合物庫搜尋、用 Ketcher 畫，三種方式擇一。
 // 結構通過驗證（任務 010）後顯示 2D 預覽；含連接點 * 時直接設定 Mn 或 DP（任務 015）。
 // 不顯示分子量、官能基數量與當量（D09）；不使用瀏覽器對話框。
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import type { BackboneTemplateRow } from '../../core/data/backboneTemplates';
 import { LIQUID_CATEGORIES, SOLID_CATEGORIES } from '../../core/formulation/types';
 import { searchCompounds } from '../../core/library/library';
 import type { Compound } from '../../core/library/types';
@@ -10,7 +11,7 @@ import type { StructureValidation } from '../../core/structure/validate';
 import { analyzeRepeatUnitInWorker, validateInput } from '../../worker/client';
 import type { Row } from '../formulation/model';
 import { createIndexedDbStorage } from '../library/storage';
-import { analysisKey, specFromEdit } from '../polymer/model';
+import { analysisKey, applyBackboneTemplate, specFromEdit, type PolymerEdit } from '../polymer/model';
 import { PolymerFields } from '../polymer/PolymerFields';
 import { UnitDrawPanel } from '../polymer/UnitDrawPanel';
 import { useUnitDrawing } from '../polymer/useUnitDrawing';
@@ -121,11 +122,35 @@ export function AddComponentDialog({ area, existingCount, onAdd, onClose }: Prop
   const candidateKey = candidate ? `${method}|${candidate.canonicalSmiles}|${candidate.compoundId ?? ''}` : '';
   const polymer = candidate ? isPolymerSmiles(candidate.canonicalSmiles) : false;
 
+  // 骨架範本（任務 023，D51）：結構換成範本的單元時，保留範本填好的聚合物設定
+  const templatePending = useRef<{ key: string; edit: PolymerEdit } | null>(null);
+  const [templateError, setTemplateError] = useState('');
+  function applyTemplate(tpl: BackboneTemplateRow) {
+    setTemplateError('');
+    const edit = applyBackboneTemplate(form.polymerEdit, tpl);
+    void validateInput(tpl.unitSmiles).then((outcome) => {
+      const next = outcome.ok ? candidateFromValidation(outcome.result) : null;
+      if (!outcome.ok || !next) {
+        setTemplateError('無法套用這個範本（結構驗證未完成），請稍後再試。');
+        return;
+      }
+      // 與使用者自己貼上同樣的 SMILES 完全相同：切到「貼 SMILES」，結構經同一套驗證
+      templatePending.current = { key: `smiles|${next.canonicalSmiles}|`, edit };
+      setMethod('smiles');
+      setSmilesText(tpl.unitSmiles);
+      setSmilesView({ validation: outcome.result, busy: false, failed: false });
+      setForm((f) => ({ ...f, polymerEdit: edit }));
+    });
+  }
+
   // 結構改變：名稱（沒改過才換）與 Mn／DP 重設
   useEffect(() => {
+    // 剛選了骨架範本：結構換成範本的單元後，保留範本填好的端基與分子量欄位（只在結構正是範本的單元時）
+    const pending = templatePending.current;
+    templatePending.current = null;
     setForm((f) => {
       const fresh = initialForm(candidate, existingCount, f.category);
-      return { ...f, name: nameTouched && !candidate?.name ? f.name : fresh.name, polymerEdit: fresh.polymerEdit };
+      return { ...f, name: nameTouched && !candidate?.name ? f.name : fresh.name, polymerEdit: pending && pending.key === candidateKey ? pending.edit : fresh.polymerEdit };
     });
     setDuplicate(null);
     setMessage('');
@@ -295,7 +320,8 @@ export function AddComponentDialog({ area, existingCount, onAdd, onClose }: Prop
             <div className="polymer-row">
               <span className="field-label">聚合物（Mw、Mn、DP 擇一；可加單元成為共聚物）</span>
               {currentAnalysis?.ok === false && <p className="form-error" role="alert">{currentAnalysis.problem.message}</p>}
-              <PolymerFields idPrefix="add-polymer" edit={form.polymerEdit} onChange={(polymerEdit) => setForm((f) => ({ ...f, polymerEdit }))} analysis={currentAnalysis} firstSmiles={polymerSmiles} onDrawUnit={draw.request} />
+              {templateError && <p className="form-error" role="alert">{templateError}</p>}
+              <PolymerFields idPrefix="add-polymer" edit={form.polymerEdit} onChange={(polymerEdit) => setForm((f) => ({ ...f, polymerEdit }))} analysis={currentAnalysis} firstSmiles={polymerSmiles} onDrawUnit={draw.request} onApplyTemplate={applyTemplate} />
             </div>
           )}
 

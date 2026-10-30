@@ -2,7 +2,7 @@
 // 交聯密度、網目分子量 Mc、殘留官能基。純 TypeScript，不可引用 React。
 // 「直接計算」：官能基比、過量、理論最大成鍵數、殘留百分比；「理論估算」：凝膠點、溶膠分率、交聯密度、Mc（Miller–Macosko）。
 // 各成分的官能基莫耳數只在內部使用，結果型別不含各成分的官能基數量（D09、D44）。
-import { twoComponentMasses } from '../../polymer/distribution';
+import { twoComponentSpecies } from '../../polymer/distribution';
 import {
   conversions,
   finiteProbability,
@@ -25,6 +25,8 @@ export const NOTE_COPOLYMER = '共聚物以平均組成計算，未考慮鏈間�
 export const NOTE_NON_INTEGER = '官能度以相鄰整數混合近似';
 /** 取代 D42 的 Mn 近似附註（D47） */
 export const NOTE_DISTRIBUTION = '分子量分布以兩成分（等重量）近似；凝膠點只取決於 Mw，溶膠分率與交聯密度為近似值';
+/** 低分子量修正（任務 023，D51）：附在分布附註之後 */
+export const NOTE_LOW_MW = '低分子量：以 n = 0 分子與較重成分兩成分近似';
 export const NOTE_MC_DEFINITION = 'Mc 為依 Miller–Macosko 式 51 推導的質量基準定義（每克固體的有效網目鏈莫耳數的倒數），非論文原式';
 /** 凝膠點與交聯相關結果的限制說明（KNOWN_ISSUES M06 的重點） */
 export const NOTE_M06 = '理想模型未考慮分子內環化、官能基活性差異與副反應；實際凝膠點通常比理論晚，實際交聯密度通常比理論低。';
@@ -92,6 +94,8 @@ export interface Layer1Result {
   mcGPerMol: number | null;
   /** 官能度以相鄰整數混合近似過 */
   usedMixtureApprox: boolean;
+  /** 使用了低分子量修正（M₁ < M_ends，D51） */
+  usedLowMwCorrection: boolean;
   /** 含聚合物（分子量分布以兩成分近似，D47） */
   hasPolymer: boolean;
   /** 含共聚物（以平均組成計算，任務 020） */
@@ -110,30 +114,35 @@ export function ratioText(nameA: string, nameB: string, ratioBToA: number): stri
  * 聚合物（有分子量分布）以兩個等重量的虛擬成分表示（D47，本專案推導）；PDI = 1 時為單一成分，與任務 017 相同。
  * 非整數官能度拆成相鄰整數的虛擬成分（B-8）。
  */
-export function buildSystem(setup: Layer1Setup): { sys: MMSystem; mixture: boolean } {
+export function buildSystem(setup: Layer1Setup): { sys: MMSystem; mixture: boolean; lowMw: boolean } {
   let mixture = false;
   const split = (f: number, n: number, mass: number): MMSpecies[] => {
     const parts = splitFunctionality(f, n, mass);
     if (parts.length > 1) mixture = true;
     return parts;
   };
+  let lowMw = false;
   const species = (c: Layer1Component): MMSpecies[] => {
     const d = c.distribution;
     if (d) {
-      const { m1, m2, single } = twoComponentMasses(d.mw, d.mn);
-      if (!single) {
-        // 每個虛擬成分：重量分率 0.5、分子數 = 質量 ÷ M、官能度 = (M ÷ M_unit) × 每重複單元官能基數
-        // f(M) 是 M 的一次式（端基 D50）；M 小於端基質量時鏈長以 0 計
-        const mEnds = d.mEnds ?? 0;
-        const fOf = (m: number) => (Math.max(m - mEnds, 0) / d.mUnit) * d.groupsPerUnit + (d.endGroups ?? 0);
-        return [m1, m2].flatMap((m) => split(fOf(m), (0.5 * c.mass) / m, 0.5 * c.mass));
+      const mEnds = d.mEnds ?? 0;
+      const dist = twoComponentSpecies(d.mw, d.mn, mEnds);
+      if (dist.species.length > 1) {
+        // 每個虛擬成分：重量分率（預設各 0.5）、分子數 = 質量 ÷ M、官能度 = ((M − M_ends) ÷ M̄_unit) × 每平均單元官能基數 + 端基官能基數
+        // f(M) 是 M 的一次式（端基 D50）。M₁ < M_ends 時改用 n = 0 分子＋較重成分（D51，見 twoComponentSpecies）
+        if (dist.lowMw) lowMw = true;
+        const fOf = (m: number) => {
+          if (m < mEnds) throw new Error(`內部錯誤：成分分子量 ${m} 小於端基質量合計 ${mEnds}`);
+          return ((m - mEnds) / d.mUnit) * d.groupsPerUnit + (d.endGroups ?? 0);
+        };
+        return dist.species.flatMap(({ m, weightFraction }) => split(fOf(m), (weightFraction * c.mass) / m, weightFraction * c.mass));
       }
     }
     return split(c.groupsPerMolecule, c.mass / c.molarMass, c.mass);
   };
   const a = setup.components.filter((c) => c.side === 'A').flatMap(species);
   const b = setup.components.filter((c) => c.side === 'B').flatMap(species);
-  return { sys: { a, b }, mixture };
+  return { sys: { a, b }, mixture, lowMw };
 }
 
 /** 兩類官能基的總莫耳數（以 setup 的質量基準；內部使用） */
@@ -144,7 +153,7 @@ export function groupTotals(setup: Layer1Setup): { nA: number; nB: number } {
 
 /** 依目前配方與限量官能基轉化率 q（0–1）計算第 1 層。nA 或 nB 為 0 時回傳 null。 */
 export function computeLayer1(setup: Layer1Setup, q: number): Layer1Result | null {
-  const { sys, mixture } = buildSystem(setup);
+  const { sys, mixture, lowMw } = buildSystem(setup);
   const nA = groupMoles(sys.a);
   const nB = groupMoles(sys.b);
   if (!(nA > 0) || !(nB > 0) || !(setup.totalMass > 0)) return null;
@@ -182,6 +191,7 @@ export function computeLayer1(setup: Layer1Setup, q: number): Layer1Result | nul
     effectiveChainsMolPerKg: dens ? perKg(dens.chains) : null,
     mcGPerMol: dens && dens.chains > 0 ? setup.totalMass / dens.chains : null,
     usedMixtureApprox: mixture,
+    usedLowMwCorrection: lowMw,
     hasPolymer: setup.components.some((c) => c.isPolymer),
     hasCopolymer: setup.components.some((c) => c.isCopolymer),
   };

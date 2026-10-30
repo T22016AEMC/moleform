@@ -1,5 +1,6 @@
 // 「均聚物設定」卡片（任務 015，D42）：「分子工具」分頁的結構含連接點時出現，填 Mn 或 DP 擇一。
 // 不提供 3D（D05）；共聚物、端基在 Phase 5。
+import type { BackboneTemplateRow } from '../../core/data/backboneTemplates';
 import type { PolymerEdit } from './model';
 import { UnitDrawPanel } from './UnitDrawPanel';
 import type { UnitDrawing } from './useUnitDrawing';
@@ -11,9 +12,11 @@ interface Props {
   onChange: (edit: PolymerEdit) => void;
   /** 用 Ketcher 畫單元（任務 021） */
   draw: UnitDrawing;
+  /** 從骨架範本填入（任務 023） */
+  onApplyTemplate: (row: BackboneTemplateRow) => void;
 }
 
-export function PolymerSettings({ context, onChange, draw }: Props) {
+export function PolymerSettings({ context, onChange, draw, onApplyTemplate }: Props) {
   if (!context.hasMark) return null;
   const { analysis } = context;
   return (
@@ -25,7 +28,7 @@ export function PolymerSettings({ context, onChange, draw }: Props) {
         <>
           {!analysis.ok && <p className="error" role="alert">{analysis.problem.message}</p>}
           <p>目前的結構是聚合物的重複單元（兩個連接點）；要做 Random 共聚物，按「＋新增單元」再貼其他單元。請填入 Mw 與 PDI（PDI 留空時使用預設值 2）；也可改填 Mn 或 DP，其他值會自動換算，供配方與交聯計算使用。</p>
-          <PolymerFields idPrefix="structure-polymer" edit={context.edit} onChange={onChange} analysis={analysis} firstSmiles={context.smiles} onDrawUnit={draw.request} />
+          <PolymerFields idPrefix="structure-polymer" edit={context.edit} onChange={onChange} analysis={analysis} firstSmiles={context.smiles} onDrawUnit={draw.request} onApplyTemplate={onApplyTemplate} />
           <UnitDrawPanel draw={draw} edit={context.edit} onEditChange={onChange} />
           <small>聚合物不提供 3D 結構。</small>
         </>

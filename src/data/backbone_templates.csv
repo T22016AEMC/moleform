@@ -1,0 +1,7 @@
+﻿id,名稱,單元 SMILES,端基 1 SMILES,端基 1 對應端基 id,端基 2 SMILES,端基 2 對應端基 id,每條鏈的反應官能基（說明）,出處
+BT01,苯酚 Novolac（PN）,[*:1]Cc1cc([*:2])ccc1O,[*]c1ccccc1O,EG12,[*][H],EG01,酚羥基 n+1,Claude 依一般化學知識整理，使用者 2026-10-30 同意
+BT02,鄰甲酚 Novolac,[*:1]Cc1cc([*:2])cc(C)c1O,[*]c1cccc(C)c1O,,[*][H],EG01,酚羥基 n+1,Claude 依一般化學知識整理，使用者 2026-10-30 同意
+BT03,酚醛環氧（EPN）,[*:1]Cc1cc([*:2])ccc1OCC2CO2,[*]c1ccccc1OCC1CO1,,[*][H],EG01,環氧基 n+1,Claude 依一般化學知識整理，使用者 2026-10-30 同意
+BT04,甲酚醛環氧（ECN）,[*:1]Cc1cc([*:2])cc(C)c1OCC2CO2,[*]c1cccc(C)c1OCC1CO1,,[*][H],EG01,環氧基 n+1,Claude 依一般化學知識整理，使用者 2026-10-30 同意
+BT05,雙酚 A 環氧（BADGE 型）,[*:1]Oc1ccc(cc1)C(C)(C)c1ccc(cc1)OCC(O)C[*:2],[*]CC1CO1,EG09,[*]Oc1ccc(cc1)C(C)(C)c1ccc(cc1)OCC1CO1,,環氧基 2（與 n 無關）；單元的二級羥基依現有 SMARTS 判斷,Claude 依一般化學知識整理，使用者 2026-10-30 同意
+BT06,雙酚茀環氧（Cardo）,[*:1]Oc1ccc(cc1)C1(c2ccccc2-c2ccccc21)c1ccc(cc1)OCC(O)C[*:2],[*]CC1CO1,EG09,[*]Oc1ccc(cc1)C1(c2ccccc2-c2ccccc21)c1ccc(cc1)OCC1CO1,,環氧基 2（與 n 無關）,Claude 依一般化學知識整理，使用者 2026-10-30 同意
