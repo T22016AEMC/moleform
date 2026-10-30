@@ -1,5 +1,6 @@
 import type { CrosslinkComponent, CrosslinkResult } from '../core/crosslink/types';
 import type { PolymerSpec, RepeatUnitAnalysis } from '../core/polymer/types';
+import type { UnitFragment } from '../core/polymer/unitFragment';
 import type { StructureValidation } from '../core/structure/validate';
 import type { ChemRequest, ChemResponse } from './protocol';
 
@@ -113,6 +114,15 @@ export async function drawStructureInWorker(options: {
 }): Promise<DrawnStructure | null> {
   const response = await request((id) => ({ type: 'draw', id, ...options }));
   return response.type === 'draw' && response.ok ? { svg: response.svg, marked: response.marked } : null;
+}
+
+export type UnitFragmentOutcome = { ok: true; fragment: UnitFragment; reactiveAtoms: number[] } | { ok: false; message: string };
+
+/** 重複單元的 3D 片段（連接點改成甲基）與反應原子（任務 024）；Worker 失敗時回傳 null */
+export async function unitFragmentInWorker(smiles: string): Promise<UnitFragmentOutcome | null> {
+  const response = await request((id) => ({ type: 'unitFragment', id, smiles }));
+  if (response.type !== 'unitFragment' || !response.ok) return null;
+  return response.fragment ? { ok: true, fragment: response.fragment, reactiveAtoms: response.reactiveAtoms } : { ok: false, message: response.message };
 }
 
 /** 結構上已登錄反應官能基的反應原子（0 起算）；Worker 失敗時回傳 null */

@@ -10,7 +10,7 @@ import type { RepeatUnitAnalysis, RepeatUnitProblemCode } from './types';
 const fail = (code: RepeatUnitProblemCode, message: string): RepeatUnitAnalysis => ({ ok: false, problem: { code, message } });
 
 /** Hill 順序：有碳時 C、H 在前，其餘依字母；沒有碳時全部依字母 */
-function hillFormula(counts: Map<string, number>): string {
+export function hillFormula(counts: Map<string, number>): string {
   const symbols = [...counts.keys()].sort((a, b) => a.localeCompare(b));
   const ordered = counts.has('C') ? ['C', ...(counts.has('H') ? ['H'] : []), ...symbols.filter((s) => s !== 'C' && s !== 'H')] : symbols;
   return ordered.map((s) => `${s}${counts.get(s)! > 1 ? counts.get(s) : ''}`).join('');

@@ -22,6 +22,9 @@ interface PickedAtom {
 
 const MAX_PICKED = 4;
 const SELECT_COLOR = '#ff8c00';
+/** 封端甲基碳（單元片段 3D，任務 024）的標示色，與反應原子的強調色區分 */
+const CAP_COLOR = '#7a7a7a';
+export const CAP_LEGEND = '封端甲基：代替相鄰單元，不屬於本單元';
 
 const styleSpec = (style: ViewStyle) =>
   style === 'stick'
@@ -45,11 +48,14 @@ export function Viewer3D({
   molfile,
   optimized = true,
   markedAtoms = [],
+  cappedAtoms = [],
 }: {
   molfile: string;
   optimized?: boolean;
   /** 要標記的反應原子（0 起算的原子索引，與原子編號減 1 相同，任務 016）；空陣列代表不標記 */
   markedAtoms?: readonly number[];
+  /** 重複單元片段的封端甲基碳（0 起算，任務 024）；空陣列代表不是單元片段 */
+  cappedAtoms?: readonly number[];
 }) {
   const container = useRef<HTMLDivElement>(null);
   const viewer = useRef<$3Dmol.GLViewer | null>(null);
@@ -62,6 +68,7 @@ export function Viewer3D({
   pickedRef.current = picked;
   const lastMolfile = useRef<string | null>(null);
   const markKey = markedAtoms.join(',');
+  const capKey = cappedAtoms.join(',');
 
   // 建立檢視器（只一次）
   useEffect(() => {
@@ -134,6 +141,22 @@ export function Viewer3D({
         });
       }
     }
+    if (capKey !== '') {
+      for (const index of capKey.split(',').map(Number)) {
+        const atom = atoms.find((a) => a.index === index);
+        if (!atom) continue;
+        v.addStyle({ index }, { sphere: { color: CAP_COLOR, radius: 0.5, opacity: 0.5 } });
+        v.addLabel(`${atom.elem ?? ''}${index + 1}（封端）`, {
+          position: { x: atom.x ?? 0, y: atom.y ?? 0, z: atom.z ?? 0 },
+          fontSize: 12,
+          fontColor: 'white',
+          backgroundColor: CAP_COLOR,
+          backgroundOpacity: 0.9,
+          alignment: 'bottomCenter',
+          inFront: true,
+        });
+      }
+    }
     picked.forEach((p, order) => {
       v.addStyle({ index: p.index }, { sphere: { color: SELECT_COLOR, radius: 0.5, opacity: 0.55 } });
       v.addLabel(`選取 ${order + 1}`, {
@@ -163,7 +186,7 @@ export function Viewer3D({
     });
     if (newModel) v.zoomTo();
     v.render();
-  }, [molfile, style, showNumbers, showHydrogens, picked, markKey]);
+  }, [molfile, style, showNumbers, showHydrogens, picked, markKey, capKey]);
 
   const measurement = useMemo(() => {
     const [a, b, c, d] = picked;
@@ -202,6 +225,7 @@ export function Viewer3D({
           顯示氫原子
         </label>
       </div>
+      {capKey !== '' && <small className="viewer3d-legend">灰色標示：{CAP_LEGEND}。</small>}
       {showNumbers && <small>編號從 1 起算（對應結構原子索引加 1；氫原子編號接在重原子之後）。</small>}
 
       <div ref={container} className="viewer3d-canvas" aria-label="3D 分子模型" />

@@ -1,4 +1,4 @@
-import { lazy, Suspense, useCallback, useEffect, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import './theme.css';
 import './base.css';
 import { Header } from './Header';
@@ -12,6 +12,7 @@ import type { PolymerSpec } from '../core/polymer/types';
 import type { BackboneTemplateRow } from '../core/data/backboneTemplates';
 import { applyBackboneTemplate, drawTargetNumber, editFromSpec, tabLeaveNeedsConfirm } from './polymer/model';
 import { PolymerSettings } from './polymer/PolymerSettings';
+import { UnitFragment3D } from './polymer/UnitFragment3D';
 import { usePolymerInput } from './polymer/usePolymerInput';
 import { useUnitDrawing } from './polymer/useUnitDrawing';
 
@@ -53,6 +54,11 @@ export function App() {
       setTab('tools');
     },
     [setPolymerEdit],
+  );
+  // 重複單元片段的 3D（任務 024）：第一種單元是目前的結構，其餘依單元清單順序
+  const fragmentUnits = useMemo(
+    () => [polymer.smiles, ...(polymer.edit.extraUnits ?? []).map((u) => u.smiles.trim()).filter((s) => s !== '' && s.includes('*'))],
+    [polymer.smiles, polymer.edit.extraUnits],
   );
   // 骨架範本（任務 023，D51）：結構換成範本的單元，端基換成範本的端基；分子量欄位不動
   const applyTemplate = useCallback(
@@ -97,7 +103,7 @@ export function App() {
       <div id="panel-tools" hidden={tab !== 'tools'}>
         <StructureInput onStructureChange={setStructure} loadRequest={loadRequest} active={tab === 'tools' && !unitDrawing.target} onUnverifiedChange={setMainUnverified} />
         <PolymerSettings context={polymer} onChange={setPolymerEdit} draw={unitDrawing} onApplyTemplate={applyTemplate} />
-        <Conformer3DCard structure={structure} />
+        {polymer.hasMark ? <UnitFragment3D units={fragmentUnits} /> : <Conformer3DCard structure={structure} />}
       </div>
       <div id="panel-library" hidden={tab !== 'library'}>
         <CompoundLibrary structure={structure} polymer={polymer} onLoad={loadIntoStructure} />

@@ -1,5 +1,5 @@
 // 「成分詳細」彈窗（任務 018，D45）：大的 2D 結構（標出反應原子）、小分子 3D、聚合物的 Mn／DP、用 Ketcher 修改結構、存進化合物庫。
-// 不顯示分子量、官能基數量與當量（D09）；聚合物不提供 3D（D05）；不使用瀏覽器對話框。
+// 不顯示分子量、官能基數量與當量（D09）；聚合物顯示重複單元片段的 3D（連接處以甲基代替，D05、任務 024）；不使用瀏覽器對話框。
 import { useEffect, useState } from 'react';
 import type { RepeatUnitAnalysis } from '../../core/polymer/types';
 import type { StructureValidation } from '../../core/structure/validate';
@@ -9,6 +9,7 @@ import type { BackboneTemplateRow } from '../../core/data/backboneTemplates';
 import { analysisKey, applyBackboneTemplate, emptyPolymerEdit, endFromEdit, specFromEdit } from '../polymer/model';
 import { PolymerFields } from '../polymer/PolymerFields';
 import { UnitDrawPanel } from '../polymer/UnitDrawPanel';
+import { UnitFragment3D } from '../polymer/UnitFragment3D';
 import { useUnitDrawing } from '../polymer/useUnitDrawing';
 import { Conformer3DCard } from '../structure/Conformer3DCard';
 import { saveCompoundToLibrary } from './libraryBridge';
@@ -65,6 +66,8 @@ export function ComponentDetailDialog({ row, area, onChange, onClose }: Props) {
   // 共聚物：所有單元並排顯示（第一種單元是成分本身的結構）
   const extraUnits = polymer ? (row.polymerEdit?.extraUnits ?? []) : [];
   const copolymerUnits = extraUnits.length > 0 ? [{ smiles: row.canonicalSmiles, fractionText: row.polymerEdit?.firstFractionText ?? '' }, ...extraUnits.map((u) => ({ smiles: u.smiles.trim(), fractionText: u.fractionText }))].filter((u) => u.smiles !== '') : [];
+  // 單元片段 3D（任務 024）：第一種單元是成分本身的結構，其餘依單元清單順序
+  const fragmentUnits = polymer ? [row.canonicalSmiles, ...extraUnits.map((u) => u.smiles.trim()).filter((s) => s !== '' && s.includes('*'))] : [];
   // 端基：有填的端基在單元圖旁各畫一張小圖（標出反應原子）
   const endFigures = polymer && row.polymerEdit
     ? ([1, 2] as const).flatMap((which) => {
@@ -200,7 +203,7 @@ export function ComponentDetailDialog({ row, area, onChange, onClose }: Props) {
             />
           )}
           <UnitDrawPanel draw={draw} edit={row.polymerEdit ?? emptyPolymerEdit()} onEditChange={(polymerEdit) => onChange((r) => ({ ...r, polymerEdit }))} />
-          <small>聚合物不提供 3D（D05）。</small>
+          <UnitFragment3D units={fragmentUnits} />
         </div>
       ) : (
         <Conformer3DCard structure={molblock ? { valid: true, molblock, canonicalSmiles: row.canonicalSmiles } : null} />

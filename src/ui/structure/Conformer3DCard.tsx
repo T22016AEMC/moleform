@@ -1,5 +1,5 @@
 // 「3D 結構」卡片（Phase 2.5–2.7）：按「產生 3D」後才啟動 Worker 與 3D 顯示函式庫。
-// 3D 只用於單體與小分子（D05）；結構只在使用者自己的瀏覽器內處理（D23）。
+// 3D 只用於單體、小分子與聚合物重複單元的片段（連接處以甲基代替，D05、任務 024）；結構只在使用者自己的瀏覽器內處理（D23）。
 import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import type { CalcResult } from '../../core/result';
 import {
@@ -51,7 +51,15 @@ interface Run {
 
 const seconds = (ms: number) => `${(ms / 1000).toFixed(ms < 100 ? 3 : 2)} 秒`;
 
-export function Conformer3DCard({ structure }: { structure: StructureForCard | null }) {
+/** 重複單元片段（任務 024）：structure 是連接點改成甲基後的結構；封端甲基碳與反應原子的編號與 2D 單元圖相同 */
+export interface UnitFragmentInfo {
+  cappedAtoms: number[];
+  reactiveAtoms: number[];
+}
+
+export const UNIT_THEORY_NOTE = '重複單元片段的理論構型：連接處以甲基代替，依 MMFF94 力場估算，不代表聚合物鏈構象，非實測結構。';
+
+export function Conformer3DCard({ structure, unit }: { structure: StructureForCard | null; unit?: UnitFragmentInfo }) {
   const molblock = structure?.valid ? structure.molblock : '';
   const support = useMemo(() => checkConformerSupport(molblock), [molblock]);
   const [phase, setPhase] = useState<Phase>({ kind: 'idle' });
@@ -82,6 +90,10 @@ export function Conformer3DCard({ structure }: { structure: StructureForCard | n
   // 結構上已登錄反應官能基的反應原子（與配方無關；用同一份 Molfile，原子編號才會與 3D 畫面一致）
   useEffect(() => {
     setReactiveAtoms(null);
+    if (unit) {
+      setReactiveAtoms(unit.reactiveAtoms); // 以原單元計算（排除連接點），編號與 2D 單元圖相同
+      return;
+    }
     if (!molblock || !support.supported) return;
     let cancelled = false;
     void reactiveAtomsInWorker(molblock).then((atoms) => {
@@ -90,7 +102,9 @@ export function Conformer3DCard({ structure }: { structure: StructureForCard | n
     return () => {
       cancelled = true;
     };
-  }, [molblock, support.supported]);
+    // unit 的內容由 identity 決定
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [molblock, support.supported, unit?.reactiveAtoms.join(',')]);
 
   function start(target: number, more: boolean) {
     const startedFor = identity;
@@ -156,9 +170,11 @@ export function Conformer3DCard({ structure }: { structure: StructureForCard | n
 
   return (
     <section className="card conformer-card" aria-labelledby="conformer-title">
-      <h2 id="conformer-title">3D 結構</h2>
+      <h2 id="conformer-title">{unit ? '3D 結構（重複單元片段）' : '3D 結構'}</h2>
       <p>
-        由上方的結構產生 3D 構象並以 MMFF94 力場最佳化（OpenChemLib JS，在背景執行）。3D 只用於單體與小分子。
+        {unit
+          ? '由重複單元產生 3D 構象並以 MMFF94 力場最佳化（OpenChemLib JS，在背景執行）：把連接點（*）換成甲基後，當成小分子計算；這是單元片段，不是聚合物鏈。'
+          : '由上方的結構產生 3D 構象並以 MMFF94 力場最佳化（OpenChemLib JS，在背景執行）。3D 只用於單體與小分子。'}
         計算只在您的瀏覽器內進行，不會上傳。
       </p>
 
@@ -206,7 +222,7 @@ export function Conformer3DCard({ structure }: { structure: StructureForCard | n
           {batch.optimizationNote && (
             <p className="structure-notice" role="status">{batch.optimizationNote}</p>
           )}
-          <p className="conformer-theory">理論構型：依 MMFF94 力場估算，非實測結構。</p>
+          <p className="conformer-theory">{unit ? UNIT_THEORY_NOTE : '理論構型：依 MMFF94 力場估算，非實測結構。'}</p>
 
           <div className="conformer-select">
             <label htmlFor="conformer-pick">構象</label>
@@ -240,7 +256,7 @@ export function Conformer3DCard({ structure }: { structure: StructureForCard | n
               </label>
               {reactiveAtoms && reactiveAtoms.length === 0 && <small>這個結構沒有已登錄的反應官能基。</small>}
             </div>
-            <Viewer3D molfile={current.molfile} optimized={batch.optimized} markedAtoms={markReactive && reactiveAtoms ? reactiveAtoms : []} />
+            <Viewer3D molfile={current.molfile} optimized={batch.optimized} markedAtoms={markReactive && reactiveAtoms ? reactiveAtoms : []} cappedAtoms={unit?.cappedAtoms} />
           </Suspense>
 
           {energyResult && (
@@ -266,6 +282,8 @@ export function Conformer3DCard({ structure }: { structure: StructureForCard | n
             </ul>
           </div>
 
+          {!unit && (
+          <>
           <div className="structure-actions">
             <button
               type="button"
@@ -281,6 +299,8 @@ export function Conformer3DCard({ structure }: { structure: StructureForCard | n
             </button>
           </div>
           <small>3D MOL 為目前顯示的構象（含氫）；3D SDF 含全部構象{batch.optimized ? '，每筆附構象序號、種子與能量（kcal/mol）' : '，每筆附構象序號與種子'}。</small>
+          </>
+          )}
         </div>
       )}
     </section>

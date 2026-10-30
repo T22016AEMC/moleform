@@ -5,6 +5,7 @@ import { drawMarkedStructure, reactiveAtomsOf } from '../core/crosslink/draw';
 import { bundledTexts, loadTables } from '../core/data/load';
 import { averageMolecularWeight } from '../core/formulation/molecularWeight';
 import { analyzePolymerUnits } from '../core/polymer/copolymer';
+import { capRepeatUnit } from '../core/polymer/unitFragment';
 import { validateStructure } from '../core/structure/validate';
 import { isChemRequest, type ChemRequest, type ChemResponse } from './protocol';
 
@@ -95,6 +96,19 @@ async function handle(request: ChemRequest): Promise<ChemResponse> {
       return { type: 'draw', id: request.id, ok: true, svg, marked: marked.length };
     } catch (e) {
       return { type: 'draw', id: request.id, ok: false, error: message(e) };
+    }
+  }
+  if (request.type === 'unitFragment') {
+    try {
+      const rdkit = await loadRDKit();
+      const capped = capRepeatUnit(rdkit, request.smiles);
+      if (!capped.ok) return { type: 'unitFragment', id: request.id, ok: true, fragment: null, message: capped.message, reactiveAtoms: [] };
+      const t = tables();
+      // 反應原子以原單元計算並排除連接點，與 2D 單元圖相同；封端不改變原子順序，所以編號直接適用於 3D
+      const reactiveAtoms = reactiveAtomsOf(rdkit, request.smiles, t.functionalGroups, t.reactionRules, true);
+      return { type: 'unitFragment', id: request.id, ok: true, fragment: capped.fragment, message: '', reactiveAtoms };
+    } catch (e) {
+      return { type: 'unitFragment', id: request.id, ok: false, error: message(e) };
     }
   }
   if (request.type === 'reactiveAtoms') {

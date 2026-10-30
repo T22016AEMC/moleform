@@ -1,5 +1,6 @@
 // 主執行緒與化學 Worker 之間的訊息格式。
 import type { CrosslinkComponent, CrosslinkResult } from '../core/crosslink/types';
+import type { UnitFragment } from '../core/polymer/unitFragment';
 import type { EndGroups, FractionBasis, PolymerUnit, RepeatUnitAnalysis } from '../core/polymer/types';
 import type { StructureValidation } from '../core/structure/validate';
 
@@ -64,9 +65,18 @@ export interface DrawRequest {
   polymer: boolean;
 }
 
-export type ChemRequest = StatusRequest | ValidateRequest | WeightRequest | RepeatUnitRequest | CrosslinkRequest | ReactiveAtomsRequest | DrawRequest;
+/** 重複單元的 3D 片段（任務 024）：連接點改成甲基；同時回傳反應原子（以原單元計算，排除連接點，編號與 2D 單元圖相同） */
+export interface UnitFragmentRequest {
+  type: 'unitFragment';
+  id: number;
+  smiles: string;
+}
+
+export type ChemRequest = StatusRequest | ValidateRequest | WeightRequest | RepeatUnitRequest | CrosslinkRequest | ReactiveAtomsRequest | DrawRequest | UnitFragmentRequest;
 
 export type ChemResponse =
+  | { type: 'unitFragment'; id: number; ok: true; fragment: UnitFragment | null; message: string; reactiveAtoms: number[] }
+  | { type: 'unitFragment'; id: number; ok: false; error: string }
   | { type: 'crosslink'; id: number; ok: true; result: CrosslinkResult; svgs: Record<string, string> }
   | { type: 'crosslink'; id: number; ok: false; error: string }
   | { type: 'draw'; id: number; ok: true; svg: string | null; marked: number }
@@ -90,6 +100,7 @@ export function isChemRequest(value: unknown): value is ChemRequest {
   if (request.type === 'weight' || request.type === 'repeatUnit') return typeof request.smiles === 'string';
   if (request.type === 'crosslink') return Array.isArray(request.components) && typeof request.color === 'string';
   if (request.type === 'reactiveAtoms') return typeof request.source === 'string';
+  if (request.type === 'unitFragment') return typeof request.smiles === 'string';
   if (request.type === 'draw') {
     return typeof request.source === 'string' && typeof request.width === 'number' && typeof request.height === 'number'
       && typeof request.color === 'string' && typeof request.mark === 'boolean' && typeof request.polymer === 'boolean';
