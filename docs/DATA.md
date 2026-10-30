@@ -156,6 +156,24 @@ MoleForm 的化學資料放在 `src/data/` 的四個 CSV。**目前只有任務 
 
 格式檢查（`src/core/data/backboneTemplates.ts`，測試 `tests/data/backbone-templates.test.ts`）：標題列、必填（含出處）、id 唯一、單元連接點、端基 `*` 數量、對應端基 id 存在且 SMILES 相同、RDKit 可解析且連接點數量正確。只確認格式，不判斷化學（D17）。範本只在選的當下填入，填入後的狀態和使用者自己輸入的完全一樣；配方檔與化合物庫不另外記錄用了哪個範本。
 
+## Yg 基團表 yg_groups.csv（任務 026，D08、D22）
+
+`src/data/yg_groups.csv`（UTF-8 BOM）。van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009) Table 6.1（A 非共軛、B 雙鍵系統與芳香環系統）與 Table 6.3（組合基團）中本專案需要的基團，數值逐頁看圖讀取。欄位：
+
+| 欄位 | 說明 |
+|---|---|
+| `id` | 唯一。有共軛狀態或條件的列，id 以 `.n`、`.c`、`.cc` 或 `.gen`、`.hb`、`.free`、`.hindered` 結尾；去掉後綴就是「家族」，同家族的 SMARTS 與 Mi 必須相同 |
+| `基團名稱`、`SMARTS`、`Ygi`（K·kg/mol）、`Mi`（g/mol） | Ygi 若書中以括號標示（暫定值）就去掉括號照抄，稽核狀態須註明「書中標為暫定」 |
+| `共軛狀態` | n／c／cc，依書中 Table 6.1 B；沒有的留空 |
+| `表格區段` | A 非共軛、B 雙鍵系統、B 芳香環系統、6.3 組合基團（程式用「B 雙鍵系統」「B 芳香環系統」判定共軛） |
+| `類型` | 單一基團或組合基團 |
+| `條件` | gen／hb（–CH2– 一般或氫鍵鏈）、free／hindered（–C(CH3)2– 自由或夾在兩個芳香環之間） |
+| `出處` | 書名、表號、區段、書頁碼（缺表號或頁碼報錯） |
+| `稽核狀態` | 目前全部「待使用者審」 |
+| `正例 SMILES`、`反例 SMILES` | 以 `|` 分隔；正例必須命中、反例不得命中 |
+
+格式與 RDKit 檢查（`src/core/data/ygGroups.ts`，測試 `tests/properties/ygGroups.test.ts`）：缺出處、SMARTS 不合法、正例沒命中、反例命中、Mi 與 SMARTS 描述的基團質量差超過 0.1 g/mol 都報錯。切分與 Tg 計算在 `src/core/properties/tgGroupContribution.ts`（規則寫在檔頭），輸出文件見 `docs/verification/phase6-Tg-輸出.md`。
+
 ## 程式位置
 
 - 讀取程式與檢查：`src/core/data/`（`csv.ts`、`readers.ts`、`validate.ts`、`chemcheck.ts`、`load.ts`）
