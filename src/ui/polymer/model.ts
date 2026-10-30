@@ -71,6 +71,12 @@ export function applyBackboneTemplate(edit: PolymerEdit, row: Pick<BackboneTempl
   return { ...rest, end1: endEditOf(row.end1Smiles, row.end1PresetId), end2: endEditOf(row.end2Smiles, row.end2PresetId) };
 }
 
+/**
+ * 只有範本選單的「聚合物設定」卡片何時顯示（任務 025）：目前沒有可用結構（空白），或結構含 `*` 時顯示；
+ * 輸入一般小分子（有結構但不含 `*`）後隱藏。smiles 為目前有效結構的 canonical SMILES，沒有為空字串。
+ */
+export const templateCardVisible = (smiles: string): boolean => smiles.trim() === '' || smiles.includes('*');
+
 /** 已填任何端基，或有第二種以後的單元：選範本會丟失這些內容（任務 024 後續） */
 export const templateHasOtherContent = (edit: PolymerEdit): boolean => endFromEdit(edit.end1) !== null || endFromEdit(edit.end2) !== null || (edit.extraUnits ?? []).length > 0;
 

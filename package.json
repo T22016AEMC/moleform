@@ -12,7 +12,8 @@
     "typecheck": "tsc --noEmit && npm run typecheck --prefix packages/ketcher-frame",
     "verify:phase2": "node scripts/verification/phase2.mjs",
     "verify:phase3": "node scripts/verification/phase3.ts",
-    "verify:phase4": "node scripts/verification/phase4.ts"
+    "verify:phase4": "node scripts/verification/phase4.ts",
+    "verify:phase5": "node scripts/verification/phase5.ts"
   },
   "dependencies": {
     "@rdkit/rdkit": "^2026.9.1",

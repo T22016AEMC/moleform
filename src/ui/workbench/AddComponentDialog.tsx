@@ -11,7 +11,7 @@ import type { StructureValidation } from '../../core/structure/validate';
 import { analyzeRepeatUnitInWorker, validateInput } from '../../worker/client';
 import type { Row } from '../formulation/model';
 import { createIndexedDbStorage } from '../library/storage';
-import { analysisKey, applyBackboneTemplate, specFromEdit, type PolymerEdit } from '../polymer/model';
+import { analysisKey, applyBackboneTemplate, specFromEdit, templateCardVisible, type PolymerEdit } from '../polymer/model';
 import { BackboneTemplatePicker, PolymerFields } from '../polymer/PolymerFields';
 import { UnitDrawPanel } from '../polymer/UnitDrawPanel';
 import { useUnitDrawing } from '../polymer/useUnitDrawing';
@@ -289,8 +289,8 @@ export function AddComponentDialog({ area, existingCount, onAdd, onClose }: Prop
         )}
       </div>
 
-      {/* 結構尚未輸入或不含連接點時，也能從骨架範本填入（任務 024 後續）；含連接點時選單在下方的聚合物設定裡 */}
-      {!polymer && (
+      {/* 結構尚未輸入時，也能從骨架範本填入（任務 024 後續）；輸入一般小分子後隱藏（任務 025）；含連接點時選單在下方的聚合物設定裡 */}
+      {templateCardVisible(candidate?.canonicalSmiles ?? '') && !polymer && (
         <div className="modal-section">
           <BackboneTemplatePicker idPrefix="add-polymer-empty" edit={form.polymerEdit} firstSmiles={candidate?.canonicalSmiles ?? ''} onApply={applyTemplate} />
           {templateError && <p className="form-error" role="alert">{templateError}</p>}

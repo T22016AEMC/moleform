@@ -1,7 +1,7 @@
 // 「均聚物設定」卡片（任務 015，D42）：「分子工具」分頁的結構含連接點時出現，填 Mn 或 DP 擇一。
 // 3D 在下方的「3D 結構」卡片顯示重複單元片段（連接處以甲基代替，D05、任務 024）。
 import type { BackboneTemplateRow } from '../../core/data/backboneTemplates';
-import type { PolymerEdit } from './model';
+import { templateCardVisible, type PolymerEdit } from './model';
 import { UnitDrawPanel } from './UnitDrawPanel';
 import type { UnitDrawing } from './useUnitDrawing';
 import { BackboneTemplatePicker, PolymerFields } from './PolymerFields';
@@ -19,6 +19,7 @@ interface Props {
 export function PolymerSettings({ context, onChange, draw, onApplyTemplate }: Props) {
   // 結構尚未輸入或不含連接點：只提供「從骨架範本填入」，選了就填入單元並切換為聚合物設定（任務 024 後續）
   if (!context.hasMark) {
+    if (!templateCardVisible(context.smiles)) return null; // 一般小分子：隱藏（任務 025）
     return (
       <section className="card polymer-settings" aria-labelledby="polymer-title">
         <h2 id="polymer-title">聚合物設定</h2>

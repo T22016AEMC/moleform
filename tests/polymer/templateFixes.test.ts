@@ -5,7 +5,7 @@ import { BACKBONE_TEMPLATES } from '../../src/core/data/backboneTemplates';
 import { getRDKit } from '../../src/core/rdkit/loader';
 import type { RDKitModule } from '../../src/core/rdkit/types';
 import { validateStructure } from '../../src/core/structure/validate';
-import { applyBackboneTemplate, emptyPolymerEdit, templateReplaceNeedsConfirm, type PolymerEdit } from '../../src/ui/polymer/model';
+import { applyBackboneTemplate, emptyPolymerEdit, templateCardVisible, templateReplaceNeedsConfirm, type PolymerEdit } from '../../src/ui/polymer/model';
 import { canvasRestoreInput } from '../../src/ui/structure/canvasRestore';
 
 let RDKit: RDKitModule;
@@ -39,6 +39,17 @@ describe('從空白狀態選骨架範本', () => {
     const withMw: PolymerEdit = { basis: 'dp', text: '25', pdiText: '1.5' };
     const row = BACKBONE_TEMPLATES[0];
     expect(applyBackboneTemplate(withMw, row)).toMatchObject({ basis: 'dp', text: '25', pdiText: '1.5' });
+  });
+});
+
+describe('範本卡片的顯示條件（任務 025）', () => {
+  it('空白與含 * 時顯示，輸入一般小分子後隱藏', () => {
+    expect(templateCardVisible('')).toBe(true);
+    expect(templateCardVisible('  ')).toBe(true);
+    expect(templateCardVisible('[*:1]CC[*:2]')).toBe(true);
+    expect(templateCardVisible(BACKBONE_TEMPLATES[0].unitSmiles)).toBe(true);
+    expect(templateCardVisible(canonical('CCO'))).toBe(false);
+    expect(templateCardVisible(canonical('c1ccccc1O'))).toBe(false);
   });
 });
 
