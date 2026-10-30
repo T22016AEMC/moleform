@@ -1,7 +1,7 @@
-// TPSA 與 Crippen LogP 的測試（任務 028）：RDKit 的結果與論文表的貢獻值手算比對（差 ≤ 0.01）；聚合物單元回傳「不適用」。
+// TPSA 與 Crippen LogP 的測試（任務 028）：RDKit 的結果與論文表的貢獻值手算比對（差 ≤ 0.01）；聚合物單元把連接點換成甲基後計算並標示。
 // 貢獻值是論文 Table 1 圖像（Ertl, Rohde & Selzer 2000 書頁 3715；Wildman & Crippen 1999 書頁 869）的獨立抄錄，不呼叫 RDKit 取值。
 import { beforeAll, describe, expect, it } from 'vitest';
-import { LOGP_MODEL, POLYMER_NOT_APPLICABLE, TPSA_LOGP_DISCLAIMER, TPSA_MODEL, computeTpsaLogp, type TpsaLogpResult } from '../../src/core/properties/tpsaLogp';
+import { CAPPED_NOTE, LOGP_MODEL, TPSA_LOGP_DISCLAIMER, TPSA_MODEL, computeTpsaLogp, type TpsaLogpResult } from '../../src/core/properties/tpsaLogp';
 import { getRDKit } from '../../src/core/rdkit/loader';
 import type { RDKitModule } from '../../src/core/rdkit/types';
 
@@ -154,18 +154,33 @@ describe('輸出單位與模型名稱', () => {
   });
 });
 
-describe('聚合物重複單元（含 *）：不適用，不自行補封端原子', () => {
-  it('回傳「不適用（聚合物單元）」，沒有數值', () => {
-    for (const smiles of ['[*:1]CC[*:2]', '*CC*', '[*:1]CC([*:2])(C)C(=O)OCC1CO1', '[*]', 'CC*', '[*:1]Cc1cc([*:2])ccc1O']) {
-      const r = computeTpsaLogp(RDKit, smiles);
-      expect(r.status, smiles).toBe('not-applicable');
-      if (r.status === 'not-applicable') {
-        expect(r.reason).toBe(POLYMER_NOT_APPLICABLE);
-        expect(r.reason).toMatch(/不適用（聚合物單元）/);
-      }
-      expect(r).not.toHaveProperty('tpsa');
-      expect(r).not.toHaveProperty('logP');
+describe('聚合物重複單元（含 *）：連接點換成甲基後計算（D05，使用者 2026-10-31 決定）', () => {
+  it('結果等於把 * 直接換成 C 的小分子，並標示「以甲基封端的單元估算；LogP 僅供相對比較」', () => {
+    const pairs: [string, string][] = [
+      ['[*:1]CC[*:2]', 'CCCC'],
+      ['*CC*', 'CCCC'],
+      ['[*:1]CC([*:2])(C)C(=O)OCC1CO1', 'CCC(C)(C)C(=O)OCC1CO1'.replace('CCC(C)(C)', 'CCC(C)(C)')],
+      ['[*:1]Cc1cc([*:2])ccc1O', 'CCc1cc(C)ccc1O'],
+    ];
+    for (const [unit, capped] of pairs) {
+      const r = ok(computeTpsaLogp(RDKit, unit));
+      expect(r.capped, unit).toBe(true);
+      expect(r.note).toBe(CAPPED_NOTE);
+      expect(CAPPED_NOTE).toBe('以甲基封端的單元估算；LogP 僅供相對比較');
+      const small = ok(computeTpsaLogp(RDKit, capped));
+      expect(small.capped).toBe(false);
+      expect(small.note).toBeNull();
+      expect(r.tpsa, unit).toBeCloseTo(small.tpsa, 9);
+      expect(r.logP, unit).toBeCloseTo(small.logP, 9);
     }
+  });
+  it('單元 B（萘基次甲基）封端後 = 2-異丙基萘；TPSA 0（沒有 N、O）', () => {
+    const r = ok(computeTpsaLogp(RDKit, '[*:1]C([*:2])c1ccc2ccccc2c1'));
+    expect(r.tpsa).toBe(0);
+    expect(r.computedSmiles).toBe('CC(C)c1ccc2ccccc2c1');
+  });
+  it('連接點只剩 * 的字串無法計算', () => {
+    expect(computeTpsaLogp(RDKit, '[*]').status).toBe('invalid');
   });
 });
 

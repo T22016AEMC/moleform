@@ -1,6 +1,6 @@
 // Phase 6 van der Waals 體積、TPSA、Crippen LogP 輸出的產生腳本（任務 028）。
 // 對 Phase 2–4 的測試資料與任務單列出的小分子、聚合物重複單元、環氧單元、骨架範本 BT01–BT06 單元，各輸出一列：名稱、SMILES、VW（或缺基團）、TPSA、LogP。
-// 聚合物單元的 TPSA、LogP 寫「不適用」。只列程式輸出，不判斷化學（D17）；分子量、ΣMi 只列在驗證文件中，網站不顯示（D09）。
+// 聚合物單元的 TPSA、LogP：連接點換成甲基後計算，並標示「以甲基封端的單元估算；LogP 僅供相對比較」。只列程式輸出，不判斷化學（D17）；分子量、ΣMi 只列在驗證文件中，網站不顯示（D09）。
 // 執行：npm run verify:phase6-vw-tpsa-logp（Node 直接執行 .ts，只用可抹除的型別語法）。
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
@@ -52,7 +52,7 @@ try {
   const vwMod = await server.ssrLoadModule('/src/core/properties/vanDerWaalsVolume.ts');
   const tlMod = await server.ssrLoadModule('/src/core/properties/tpsaLogp.ts');
   const { computeVdwVolume, countVwGroups, VW_MODEL, VW_DISCLAIMER } = vwMod;
-  const { computeTpsaLogp, TPSA_MODEL, LOGP_MODEL, TPSA_LOGP_DISCLAIMER } = tlMod;
+  const { computeTpsaLogp, TPSA_MODEL, LOGP_MODEL, TPSA_LOGP_DISCLAIMER, CAPPED_NOTE } = tlMod;
   const { VW_GROUPS } = await server.ssrLoadModule('/src/core/data/vwGroups.ts');
   const { BACKBONE_TEMPLATES } = await server.ssrLoadModule('/src/core/data/backboneTemplates.ts');
   const RDKit = await getRDKit();
@@ -82,7 +82,7 @@ try {
   out(`- **Crippen LogP**：${LOGP_MODEL}。無單位。可信度：理論估算。`);
   out('- 本數值為依理論模型估算之參考值，非實測值。實際結果受原料純度、製程條件與反應動力學影響，請以實驗結果為準。');
   out('- VW 切分規則：基團依「基團原子數由大到小」配對，同大小依資料表順序；每個重原子恰好屬於一個基團；配不到的原子回報「缺基團」，不用相近基團或記憶中的數值代用。Table 4.2 的 –O– 書中印兩個括號值（5.5）、（5.0）而沒有標示條件，依使用者指示 VW 留空，含醚結構列為缺基團。');
-  out('- TPSA 與 Crippen LogP 只對小分子計算；含連接點（`*`）的聚合物重複單元列為「不適用（聚合物單元）」，不自行補封端原子。RDKit 的 TPSA 只計 N、O 片段（不含 S、P）。');
+  out('- TPSA 與 Crippen LogP 原為小分子方法。含連接點（`*`）的聚合物重複單元：把連接點換成甲基後計算（與 D05 的單元片段相同，使用者 2026-10-31 決定），數值後標 †，意思是「以甲基封端的單元估算；LogP 僅供相對比較」。RDKit 的 TPSA 只計 N、O 片段（不含 S、P）。');
   out('- 「ΔM」= ΣMi − 分子（重複單元）的精確質量；容許值為各基團 Mi 捨入容許的加總，超過者標「超出」。');
   out('- 重新產生：`npm run verify:phase6-vw-tpsa-logp`。');
   out();
@@ -103,10 +103,13 @@ try {
     const tl = computeTpsaLogp(RDKit, s.smiles);
     const vwText = vw.status === 'ok' ? fx(vw.vw, 2) : vw.status === 'missing' ? '缺基團（見第 2 節）' : `無法計算：${vw.message}`;
     if (vw.status === 'missing') missingNames.push(s.name);
-    const tpsaText = tl.status === 'ok' ? fx(tl.tpsa, 2) : tl.status === 'not-applicable' ? '不適用（聚合物單元）' : `無法計算：${tl.message}`;
-    const logpText = tl.status === 'ok' ? fx(tl.logP, 4) : tl.status === 'not-applicable' ? '不適用（聚合物單元）' : `無法計算：${tl.message}`;
+    const mark = tl.status === 'ok' && tl.capped ? ' †' : '';
+    const tpsaText = tl.status === 'ok' ? fx(tl.tpsa, 2) + mark : `無法計算：${tl.message}`;
+    const logpText = tl.status === 'ok' ? fx(tl.logP, 4) + mark : `無法計算：${tl.message}`;
     out(`| ${cell(s.name)} | ${s.kind} | ${cell(s.extra)} | \`${cell(s.smiles)}\` | ${vwText} | ${tpsaText} | ${logpText} |`);
   }
+  out();
+  out(`† ＝ ${CAPPED_NOTE}。`);
   out();
   out(`VW 缺基團的結構（${missingNames.length} 個）不計算 VW：${missingNames.join('、') || '（無）'}。`);
   out();
