@@ -132,7 +132,7 @@ U02 已由 D46 決定（任務 019）。
 - [ ] 6.3 直接計算類：Bondi 分子體積、TPSA、Crippen LogP（RDKit）
 - [ ] 6.4 Van Krevelen 類：莫耳體積／密度、自由體積分率、極化率、Tg、Tm、Td、CTE、介電常數（Tg 部分完成（任務 026）：`src/core/properties/tgGroupContribution.ts`、輸出 `docs/verification/phase6-Tg-輸出.md`；其餘未做）
 - [ ] 6.5 參考趨勢類：彈性模數、吸濕性；Tm 對不可結晶聚合物標為「不適用」
-- [ ] 6.6 小分子沸點、熔點（Joback，已定 D52）
+- [x] 6.6 小分子沸點、熔點（Joback，已定 D52）（Joback Tb、Tf（D52，任務 027）：`src/data/joback_groups.csv` 41 列「待使用者審」、`src/core/properties/jobackTbTf.ts`、輸出 `docs/verification/phase6-TbTf-輸出.md`；聚合物單元不適用）
 - [ ] 6.7 混合配方：混合密度、Fox／Gordon–Taylor Tg、混合介電常數、共聚比例影響
 - [ ] 6.8 每個公式的自動測試（檢查程式是否照公式算對）
 - [ ] 6.9 使用者驗證清單

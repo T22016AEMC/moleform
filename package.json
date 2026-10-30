@@ -14,7 +14,8 @@
     "verify:phase3": "node scripts/verification/phase3.ts",
     "verify:phase4": "node scripts/verification/phase4.ts",
     "verify:phase5": "node scripts/verification/phase5.ts",
-    "verify:phase6-tg": "node scripts/verification/phase6-tg.ts"
+    "verify:phase6-tg": "node scripts/verification/phase6-tg.ts",
+    "verify:phase6-tbtf": "node scripts/verification/phase6-TbTf.ts"
   },
   "dependencies": {
     "@rdkit/rdkit": "^2026.9.1",

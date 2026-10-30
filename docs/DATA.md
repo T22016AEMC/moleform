@@ -174,6 +174,22 @@ MoleForm 的化學資料放在 `src/data/` 的四個 CSV。**目前只有任務 
 
 格式與 RDKit 檢查（`src/core/data/ygGroups.ts`，測試 `tests/properties/ygGroups.test.ts`）：缺出處、SMARTS 不合法、正例沒命中、反例命中、Mi 與 SMARTS 描述的基團質量差超過 0.1 g/mol 都報錯。切分與 Tg 計算在 `src/core/properties/tgGroupContribution.ts`（規則寫在檔頭），輸出文件見 `docs/verification/phase6-Tg-輸出.md`。
 
+## Joback 基團表 joback_groups.csv（任務 027，D08、D22、D52）
+
+`src/data/joback_groups.csv`（UTF-8 BOM，41 列）。Joback & Reid 1987, Chem. Eng. Commun. 57, 233–243 表 III 的 41 個基團，Tbi、Tfi 兩欄逐列看圖讀取（書頁 235–236）；SMARTS 取自 thermo 0.6.1（MIT，授權聲明見根目錄 `THIRD_PARTY_NOTICES.md`），與表 III 不一致處（J26 醛、J33 >N–）已修正。欄位：
+
+| 欄位 | 說明 |
+|---|---|
+| `id` | J01–J41，依表 III 的順序 |
+| `基團名稱`、`SMARTS` | 名稱依表 III；SMARTS 描述整個基團（含 =O、–OH 等原子） |
+| `原子數` | 基團含幾個重原子（1–3）；切分時大的基團先配對 |
+| `Tbi`、`Tfi` | K。表 III 的 Tf 欄為「—」時 Tfi 留空（只有 J34 –N=（非環）），備註須說明 |
+| `出處` | SMARTS 與數值各自的來源、表號與頁碼（缺表號或頁碼報錯） |
+| `稽核狀態` | 目前全部「待使用者審」 |
+| `備註` | 表 III 其他欄位（Tc、Pc、Vc、ΔHf°、ΔGf°、Cp、ΔHvb、ΔHfus、ηL）本任務未使用，未收錄；與 thermo 不同處的說明 |
+
+正例與反例放在 `tests/properties/jobackCases.ts`（每個基團至少各一）。格式與 RDKit 檢查在 `src/core/data/jobackGroups.ts`，測試 `tests/properties/jobackGroups.test.ts`；切分與計算在 `src/core/properties/jobackTbTf.ts`（規則寫在檔頭），輸出文件見 `docs/verification/phase6-TbTf-輸出.md`。
+
 ## 程式位置
 
 - 讀取程式與檢查：`src/core/data/`（`csv.ts`、`readers.ts`、`validate.ts`、`chemcheck.ts`、`load.ts`）
