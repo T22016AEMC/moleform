@@ -39,6 +39,15 @@ for (const { dir, pkg } of packages) {
   );
 }
 
+// thermo（MIT）的 Joback SMARTS 轉錄在 src/data/joback_groups.csv；聲明取自根目錄 THIRD_PARTY_NOTICES.md（任務 027）
+const thermoNotice = readFileSync(resolve(root, 'THIRD_PARTY_NOTICES.md'), 'utf8');
+sections.push(`第三方資料來源聲明（Joback 基團的 SMARTS）\n${thermoNotice.slice(thermoNotice.indexOf('## thermo 0.6.1'))}`);
+
 if (!existsSync(resolve(root, 'dist'))) throw new Error('dist/ 不存在，請先執行 vite build');
-writeFileSync(resolve(root, 'dist', 'THIRD-PARTY-NOTICES.txt'), sections.join('\n\n'), 'utf8');
+const notices = sections.join('\n\n');
+// 建置後檢查：聲明檔必須含 thermo 與其 MIT 聲明，否則建置失敗
+for (const needle of ['thermo 0.6.1', 'Caleb Bell', 'MIT License', 'Permission is hereby granted']) {
+  if (!notices.includes(needle)) throw new Error(`THIRD-PARTY-NOTICES.txt 缺少 thermo 聲明（找不到「${needle}」）`);
+}
+writeFileSync(resolve(root, 'dist', 'THIRD-PARTY-NOTICES.txt'), notices, 'utf8');
 console.log(`THIRD-PARTY-NOTICES.txt：${packages.map((p) => `${p.pkg.name}@${p.pkg.version}`).join('、')}`);
