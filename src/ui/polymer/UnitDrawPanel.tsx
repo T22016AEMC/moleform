@@ -43,7 +43,19 @@ export function UnitDrawPanel({ draw, edit, onEditChange }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [targetKey]);
 
-  if (!target) return null;
+  // 借用 Ketcher 前的確認（原本的結構畫布有尚未驗證的筆畫）：這時還沒有在畫的單元
+  if (!target) {
+    if (draw.pending === null || draw.pending === 'close') return null;
+    return (
+      <div className="structure-notice" role="alertdialog" aria-label="借用繪圖器確認">
+        <p>畫布上有尚未驗證的修改，改畫單元後會還原成最近一次驗證過的結構。確定要繼續嗎？</p>
+        <div className="library-row-actions">
+          <button type="button" className="library-danger" onClick={draw.confirmPending}>繼續</button>
+          <button type="button" onClick={draw.cancelPending}>取消</button>
+        </div>
+      </div>
+    );
+  }
   const ready = loaded?.key === targetKey;
 
   async function apply() {
@@ -58,7 +70,7 @@ export function UnitDrawPanel({ draw, edit, onEditChange }: Props) {
     draw.close();
   }
 
-  const pendingNumber = draw.pending && draw.pending !== 'close' ? drawTargetNumber(draw.pending, edit) : null;
+  const pendingNumber = draw.pending && draw.pending !== 'close' && !('borrow' in draw.pending) ? drawTargetNumber(draw.pending, edit) : null;
   return (
     <div className="unit-draw-panel" role="group" aria-label={`正在畫：單元 ${number}`}>
       <p className="unit-draw-banner" role="status">
@@ -76,7 +88,7 @@ export function UnitDrawPanel({ draw, edit, onEditChange }: Props) {
       {draw.pending && (
         <div className="structure-notice" role="alertdialog" aria-label="放棄修改確認">
           <p>
-            單元 {number} 的 Ketcher 有尚未套用的修改，確定要{draw.pending === 'close' ? '放棄' : `放棄並改畫單元 ${pendingNumber}`}嗎？
+            單元 {number} 的 Ketcher 有尚未套用的修改，確定要{draw.pending === 'close' ? '放棄' : `放棄並改畫單元 ${pendingNumber ?? ''}`}嗎？
           </p>
           <div className="library-row-actions">
             <button type="button" className="library-danger" onClick={draw.confirmPending}>放棄修改</button>

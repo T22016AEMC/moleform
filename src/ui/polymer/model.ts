@@ -107,6 +107,23 @@ export type DrawTarget = { kind: 'edit'; index: number } | { kind: 'new' };
 export const sameDrawTarget = (a: DrawTarget | null, b: DrawTarget | null) =>
   a !== null && b !== null && a.kind === b.kind && (a.kind === 'new' || (b.kind === 'edit' && a.index === b.index));
 
+/**
+ * 要求畫某個單元時該怎麼做（任務 021 後續）：Ketcher 裡的未套用內容不得悄悄丟失。
+ *  - 沒有在畫、原本的結構畫布有尚未驗證的筆畫 → 先確認（借用後只會還原成最近一次驗證過的結構）
+ *  - 已在畫、有未套用的修改、要換成別的單元 → 先確認
+ *  - 其餘直接進行，不多問
+ */
+export type DrawRequestDecision = 'open' | 'confirm-borrow' | 'confirm-switch' | 'keep';
+export function decideDrawRequest(current: { target: DrawTarget | null; dirty: boolean }, mainUnverified: boolean, next: DrawTarget): DrawRequestDecision {
+  if (current.target === null) return mainUnverified ? 'confirm-borrow' : 'open';
+  if (sameDrawTarget(current.target, next)) return 'keep';
+  return current.dirty ? 'confirm-switch' : 'open';
+}
+
+/** 離開「分子工具」分頁時，單元繪圖有未套用的修改 → 需要確認；沒有則直接收掉單元繪圖 */
+export const tabLeaveNeedsConfirm = (currentTab: string, nextTab: string, drawing: { target: DrawTarget | null; dirty: boolean }): boolean =>
+  currentTab === 'tools' && nextTab !== 'tools' && drawing.target !== null && drawing.dirty;
+
 /** 單元序號（從 1 起算；第一種單元是成分本身的結構，所以可畫的單元從 2 起） */
 export const drawTargetNumber = (target: DrawTarget, edit: PolymerEdit): number => (target.kind === 'new' ? (edit.extraUnits ?? []).length + 2 : target.index + 2);
 

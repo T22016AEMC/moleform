@@ -83,7 +83,9 @@ export function ComponentDetailDialog({ row, area, onChange, onClose }: Props) {
   const [pendingConfirm, setPendingConfirm] = useState<null | 'close' | 'discard'>(null);
   const candidate = candidateFromValidation(ketcher);
   // 共聚物單元用 Ketcher 畫：借用本彈窗唯一的 Ketcher（畫單元時暫時卸下結構編輯的 Ketcher，之後以最近一次的結構還原）
-  const draw = useUnitDrawing();
+  const [mainUnverified, setMainUnverified] = useState(false); // 結構編輯的畫布有尚未驗證的筆畫
+  const [lastCanvas, setLastCanvas] = useState<string | undefined>(undefined); // 畫布最近一次匯出的 Molfile（借用後用來還原，即使驗證沒通過）
+  const draw = useUnitDrawing(mainUnverified);
 
   function requestClose() {
     if (((editing && dirty) || draw.dirty) && pendingConfirm !== 'close') {
@@ -94,6 +96,7 @@ export function ComponentDetailDialog({ row, area, onChange, onClose }: Props) {
   }
 
   function stopEditing() {
+    setLastCanvas(undefined);
     setEditing(false);
     setKetcher(null);
     setDirty(false);
@@ -180,7 +183,7 @@ export function ComponentDetailDialog({ row, area, onChange, onClose }: Props) {
               onReplaceFirst={(smiles, polymerEdit) => onChange(({ molfile: _m, compoundId: _c, ...r }) => ({ ...r, canonicalSmiles: smiles, polymerEdit }))}
             />
           )}
-          {draw.target && <UnitDrawPanel draw={draw} edit={row.polymerEdit ?? emptyPolymerEdit()} onEditChange={(polymerEdit) => onChange((r) => ({ ...r, polymerEdit }))} />}
+          <UnitDrawPanel draw={draw} edit={row.polymerEdit ?? emptyPolymerEdit()} onEditChange={(polymerEdit) => onChange((r) => ({ ...r, polymerEdit }))} />
           <small>聚合物不提供 3D（D05）。</small>
         </div>
       ) : (
@@ -192,7 +195,7 @@ export function ComponentDetailDialog({ row, area, onChange, onClose }: Props) {
         {editing ? (
           <>
             <p>在 Ketcher 修改後，按「套用到這個成分」。成分的名稱、分類與用量不變。</p>
-            {!draw.target && <KetcherPane initialInput={ketcher?.valid ? ketcher.molblock : molblock || row.canonicalSmiles} onStructure={setKetcher} onDirtyChange={setDirty} />}
+            {!draw.target && <KetcherPane initialInput={lastCanvas ?? (ketcher?.valid ? ketcher.molblock : molblock || row.canonicalSmiles)} onStructure={setKetcher} onDirtyChange={setDirty} onUnverifiedChange={setMainUnverified} onExported={setLastCanvas} />}
             {draw.target && <p role="status">正在畫共聚物的單元，結構編輯暫時收合；畫完後會還原。</p>}
             {ketcher && !ketcher.valid && !ketcher.empty && (
               <p className="error" role="alert">{ketcher.problems.find((p) => p.level === 'error')?.message ?? '這不是可用的結構'}</p>

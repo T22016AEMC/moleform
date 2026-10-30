@@ -16,9 +16,16 @@ interface Props {
   onStructure: (structure: StructureValidation | null) => void;
   /** 使用者在畫布上修改過（尚未套用）時為 true */
   onDirtyChange?: (dirty: boolean) => void;
+  /**
+   * 畫布上有「尚未驗證」的筆畫時為 true（任務 021 後續）：使用者修改後，到匯出並經 RDKit 驗證完成為止。
+   * 驗證完成後結構已交給 onStructure，之後還原畫布不會丟失內容。
+   */
+  onUnverifiedChange?: (unverified: boolean) => void;
+  /** 每次從 Ketcher 讀回畫布的 Molfile（不論是否通過驗證）；用來在畫布被借用後還原內容 */
+  onExported?: (molfile: string) => void;
 }
 
-export function KetcherPane({ initialInput, onStructure, onDirtyChange }: Props) {
+export function KetcherPane({ initialInput, onStructure, onDirtyChange, onUnverifiedChange, onExported }: Props) {
   const [frameState, setFrameState] = useState<'loading' | 'ready' | 'failed'>('loading');
   const [message, setMessage] = useState('正在載入繪圖器…');
   const iframe = useRef<HTMLIFrameElement>(null);
@@ -34,6 +41,12 @@ export function KetcherPane({ initialInput, onStructure, onDirtyChange }: Props)
   const onDirtyRef = useRef(onDirtyChange);
   onDirtyRef.current = onDirtyChange;
   const initialRef = useRef(initialInput);
+  const onUnverifiedRef = useRef(onUnverifiedChange);
+  onUnverifiedRef.current = onUnverifiedChange;
+  const onExportedRef = useRef(onExported);
+  onExportedRef.current = onExported;
+  /** 上一次匯出之後，畫布又有新的修改 */
+  const changedAfterExport = useRef(false);
 
   const send = useCallback((request: FrameRequest) => {
     iframe.current?.contentWindow?.postMessage(request, location.origin);
@@ -41,14 +54,16 @@ export function KetcherPane({ initialInput, onStructure, onDirtyChange }: Props)
 
   const requestExport = useCallback(() => {
     exportId.current = ++frameId.current;
+    changedAfterExport.current = false;
     send({ channel: FRAME_CHANNEL, type: 'export', id: exportId.current });
   }, [send]);
 
   const validate = useCallback(async (molfile: string) => {
     const seq = ++validateSeq.current;
     const outcome = await validateInput(molfile);
-    if (seq !== validateSeq.current) return;
+    if (seq !== validateSeq.current) return false;
     onStructureRef.current(outcome.ok ? outcome.result : null);
+    return true;
   }, []);
 
   handler.current = (response) => {
@@ -65,13 +80,19 @@ export function KetcherPane({ initialInput, onStructure, onDirtyChange }: Props)
       // 載入中的變更不算使用者修改，載入完成後會主動讀取一次
       if (loadId.current !== 0) return;
       onDirtyRef.current?.(true);
+      changedAfterExport.current = true;
+      onUnverifiedRef.current?.(true);
       clearTimeout(changeTimer.current);
       changeTimer.current = setTimeout(requestExport, CHANGE_DEBOUNCE_MS);
     } else if (response.type === 'loaded' && response.id === loadId.current) {
       loadId.current = 0;
       requestExport();
     } else if (response.type === 'structure' && response.id === exportId.current) {
-      void validate(response.structure.molfile);
+      onExportedRef.current?.(response.structure.molfile);
+      void validate(response.structure.molfile).then((applied) => {
+        // 驗證完成且之後沒有新的筆畫：畫布上沒有尚未驗證的內容
+        if (applied && !changedAfterExport.current) onUnverifiedRef.current?.(false);
+      });
     } else if (response.type === 'error') {
       if (response.id === null) {
         setFrameState('failed');
@@ -95,6 +116,7 @@ export function KetcherPane({ initialInput, onStructure, onDirtyChange }: Props)
     return () => {
       window.removeEventListener('message', receive);
       clearTimeout(changeTimer.current);
+      onUnverifiedRef.current?.(false); // 畫布卸下後沒有未驗證的內容可以丟
     };
   }, []);
 

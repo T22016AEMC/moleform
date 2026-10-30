@@ -63,7 +63,13 @@ export function AddComponentDialog({ area, existingCount, onAdd, onClose }: Prop
   const [ketcher, setKetcher] = useState<StructureValidation | null>(null);
   const [ketcherDirty, setKetcherDirty] = useState(false);
   // 共聚物單元用 Ketcher 畫：借用本彈窗唯一的 Ketcher（畫單元時暫時卸下主結構的 Ketcher，之後以最近一次的結構還原）
-  const draw = useUnitDrawing();
+  const [mainUnverified, setMainUnverified] = useState(false); // 主結構的畫布有尚未驗證的筆畫
+  const [lastCanvas, setLastCanvas] = useState<string | undefined>(undefined); // 畫布最近一次匯出的 Molfile（借用後用來還原，即使驗證沒通過）
+  const draw = useUnitDrawing(mainUnverified);
+  // 離開「用 Ketcher 畫」方式後，下次回來是空白畫布（和原本一樣）；只有借用 Ketcher 畫單元時才需要還原
+  useEffect(() => {
+    if (method !== 'ketcher') setLastCanvas(undefined);
+  }, [method]);
 
   const [form, setForm] = useState<AddForm>(() => initialForm(null, existingCount, defaultCategory));
   const [nameTouched, setNameTouched] = useState(false);
@@ -228,10 +234,10 @@ export function AddComponentDialog({ area, existingCount, onAdd, onClose }: Prop
       {method === 'ketcher' && !draw.target && (
         <div className="modal-section">
           <p>在下方畫結構；畫好後會自動驗證，通過後可在下面加入。</p>
-          <KetcherPane initialInput={ketcher?.valid ? ketcher.molblock : undefined} onStructure={setKetcher} onDirtyChange={setKetcherDirty} />
+          <KetcherPane initialInput={lastCanvas ?? (ketcher?.valid ? ketcher.molblock : undefined)} onStructure={setKetcher} onDirtyChange={setKetcherDirty} onUnverifiedChange={setMainUnverified} onExported={setLastCanvas} />
         </div>
       )}
-      {draw.target && (
+      {(draw.target || draw.pending) && (
         <div className="modal-section">
           <UnitDrawPanel draw={draw} edit={form.polymerEdit} onEditChange={(polymerEdit) => setForm((f) => ({ ...f, polymerEdit }))} />
         </div>

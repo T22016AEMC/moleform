@@ -26,7 +26,7 @@ export function PolymerSettings({ context, onChange, draw }: Props) {
           {!analysis.ok && <p className="error" role="alert">{analysis.problem.message}</p>}
           <p>目前的結構是聚合物的重複單元（兩個連接點）；要做 Random 共聚物，按「＋新增單元」再貼其他單元。請填入 Mw 與 PDI（PDI 留空時使用預設值 2）；也可改填 Mn 或 DP，其他值會自動換算，供配方與交聯計算使用。</p>
           <PolymerFields idPrefix="structure-polymer" edit={context.edit} onChange={onChange} analysis={analysis} firstSmiles={context.smiles} onDrawUnit={draw.request} />
-          {draw.target && <UnitDrawPanel draw={draw} edit={context.edit} onEditChange={onChange} />}
+          <UnitDrawPanel draw={draw} edit={context.edit} onEditChange={onChange} />
           <small>聚合物不提供 3D 結構。</small>
         </>
       )}

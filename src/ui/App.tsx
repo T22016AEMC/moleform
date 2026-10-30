@@ -9,7 +9,7 @@ import { CompoundLibrary } from './library/CompoundLibrary';
 import { Workbench } from './workbench/Workbench';
 import { Conformer3DCard } from './structure/Conformer3DCard';
 import type { PolymerSpec } from '../core/polymer/types';
-import { editFromSpec } from './polymer/model';
+import { drawTargetNumber, editFromSpec, tabLeaveNeedsConfirm } from './polymer/model';
 import { PolymerSettings } from './polymer/PolymerSettings';
 import { usePolymerInput } from './polymer/usePolymerInput';
 import { useUnitDrawing } from './polymer/useUnitDrawing';
@@ -30,7 +30,14 @@ export function App() {
   const [loadRequest, setLoadRequest] = useState<LoadRequest | null>(null);
   const { context: polymer, setEdit: setPolymerEdit } = usePolymerInput(structure);
   // 共聚物單元用 Ketcher 畫時借用「分子工具」的 Ketcher（同一時間只有一個，D28）
-  const unitDrawing = useUnitDrawing();
+  const [mainUnverified, setMainUnverified] = useState(false); // 分子工具的結構畫布有尚未驗證的筆畫
+  const unitDrawing = useUnitDrawing(mainUnverified);
+  const [pendingTab, setPendingTab] = useState<(typeof TABS)[number][0] | null>(null);
+  // 離開分子工具時，單元繪圖有未套用的修改 → 先確認；沒有就直接切換（單元繪圖由下面的 effect 收掉）
+  const requestTab = (next: (typeof TABS)[number][0]) => {
+    if (tabLeaveNeedsConfirm(tab, next, unitDrawing)) setPendingTab(next);
+    else setTab(next);
+  };
   // 離開「分子工具」就收掉單元繪圖（釋放 Ketcher，避免和配方工作台的彈窗同時有兩個）
   const closeUnitDrawing = unitDrawing.close;
   useEffect(() => {
@@ -51,17 +58,35 @@ export function App() {
       <Header />
       <div className="tab-cards" aria-label="功能分頁">
         {TABS.map(([id, label]) => (
-          <button key={id} type="button" aria-pressed={tab === id} aria-controls={`panel-${id}`} onClick={() => setTab(id)}>
+          <button key={id} type="button" aria-pressed={tab === id} aria-controls={`panel-${id}`} onClick={() => requestTab(id)}>
             {label}
           </button>
         ))}
       </div>
+      {pendingTab && unitDrawing.target && (
+        <div className="structure-notice" role="alertdialog" aria-label="離開分頁確認">
+          <p>單元 {drawTargetNumber(unitDrawing.target, polymer.edit)} 在 Ketcher 裡有尚未套用的修改，離開會放棄這些修改。確定要離開嗎？</p>
+          <div className="library-row-actions">
+            <button
+              type="button"
+              className="library-danger"
+              onClick={() => {
+                setTab(pendingTab);
+                setPendingTab(null);
+              }}
+            >
+              放棄並離開
+            </button>
+            <button type="button" onClick={() => setPendingTab(null)}>取消</button>
+          </div>
+        </div>
+      )}
       {/* 各分頁都保持掛載（只是隱藏），切換時不會清除各頁的內容；Ketcher 只在「分子工具」顯示時才載入 */}
       <div id="panel-workbench" hidden={tab !== 'workbench'}>
         <Workbench />
       </div>
       <div id="panel-tools" hidden={tab !== 'tools'}>
-        <StructureInput onStructureChange={setStructure} loadRequest={loadRequest} active={tab === 'tools' && !unitDrawing.target} />
+        <StructureInput onStructureChange={setStructure} loadRequest={loadRequest} active={tab === 'tools' && !unitDrawing.target} onUnverifiedChange={setMainUnverified} />
         <PolymerSettings context={polymer} onChange={setPolymerEdit} draw={unitDrawing} />
         <Conformer3DCard structure={structure} />
       </div>

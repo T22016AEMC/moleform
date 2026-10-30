@@ -38,6 +38,8 @@ interface Props {
    * 這樣同一時間最多只有一個 Ketcher 實例（成分彈窗也會開 Ketcher）。預設 true。
    */
   active?: boolean;
+  /** 畫布上有「尚未驗證」的筆畫時為 true（任務 021 後續）：修改後到匯出並驗證完成為止 */
+  onUnverifiedChange?: (unverified: boolean) => void;
 }
 
 interface View {
@@ -56,7 +58,7 @@ function failedView(source: Source, message: string, code: StructureProblem['cod
   };
 }
 
-export function StructureInput({ onStructureChange, loadRequest, active = true }: Props) {
+export function StructureInput({ onStructureChange, loadRequest, active = true, onUnverifiedChange }: Props) {
   const [smilesText, setSmilesText] = useState('');
   const [view, setView] = useState<View | null>(null);
   const [frameState, setFrameState] = useState<'loading' | 'ready' | 'failed'>('loading');
@@ -79,6 +81,10 @@ export function StructureInput({ onStructureChange, loadRequest, active = true }
   const openedAt = useRef(performance.now());
   const frameHandler = useRef<(message: FrameResponse) => void>(() => {});
   const latestResult = useRef<StructureValidation | undefined>(undefined);
+  const onUnverifiedRef = useRef(onUnverifiedChange);
+  onUnverifiedRef.current = onUnverifiedChange;
+  /** 上一次匯出之後，畫布又有新的修改 */
+  const changedAfterExport = useRef(false);
 
   const sendFrame = useCallback((request: FrameRequest) => {
     iframe.current?.contentWindow?.postMessage(request, location.origin);
@@ -100,6 +106,7 @@ export function StructureInput({ onStructureChange, loadRequest, active = true }
   /** 向 Ketcher 要目前畫布的結構（之後由 structure 回應交給 RDKit 驗證）。 */
   const requestExport = useCallback(() => {
     exportId.current = ++frameId.current;
+    changedAfterExport.current = false;
     sendFrame({ channel: FRAME_CHANNEL, type: 'export', id: exportId.current });
   }, [sendFrame]);
 
@@ -128,13 +135,17 @@ export function StructureInput({ onStructureChange, loadRequest, active = true }
     } else if (response.type === 'changed') {
       // 載入中的變更不處理，載入完成後會主動讀取一次，避免兩邊互相觸發。
       if (loadId.current !== 0) return;
+      changedAfterExport.current = true;
+      onUnverifiedRef.current?.(true);
       clearTimeout(changeTimer.current);
       changeTimer.current = setTimeout(requestExport, CHANGE_DEBOUNCE_MS);
     } else if (response.type === 'loaded' && response.id === loadId.current) {
       loadId.current = 0;
       requestExport();
     } else if (response.type === 'structure' && response.id === exportId.current) {
-      void validateAndShow('canvas', response.structure.molfile);
+      void validateAndShow('canvas', response.structure.molfile).then((applied) => {
+        if (applied && !changedAfterExport.current) onUnverifiedRef.current?.(false);
+      });
     } else if (response.type === 'error') {
       if (response.id === null) {
         setFrameState('failed');
@@ -157,6 +168,7 @@ export function StructureInput({ onStructureChange, loadRequest, active = true }
     } else {
       frameReady.current = false;
       loadId.current = 0;
+      onUnverifiedRef.current?.(false); // 畫布釋放後沒有未驗證的內容可以丟
       clearTimeout(changeTimer.current);
       setFrameState('loading');
       setFrameMessage('正在載入繪圖器與本機 WASM…');
