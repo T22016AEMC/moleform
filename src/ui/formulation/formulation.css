@@ -99,3 +99,8 @@
 .polymer-end-field select { min-width: 12rem; max-width: 100%; }
 .polymer-end-field input[type='text'] { flex: 1 1 12rem; min-width: 8rem; }
 .detail-ends { display: flex; flex-wrap: wrap; gap: var(--space-gap); margin-top: var(--space-gap-sm); }
+
+/* 共聚物單元用 Ketcher 畫（任務 021） */
+.unit-draw-panel { display: grid; gap: var(--space-gap-sm); padding: var(--space-gap); border: 1px solid var(--color-border-tint); border-radius: var(--radius-control); }
+.unit-draw-banner { margin: 0; }
+.target-basis { display: inline-flex; flex-wrap: wrap; gap: var(--space-gap-sm); align-items: center; }

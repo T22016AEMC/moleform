@@ -2,7 +2,7 @@
 import { newId } from '../../core/library/library';
 import type { PolymerSpec } from '../../core/polymer/types';
 import { editFromSpec, specFromEdit, type PolymerEdit } from '../polymer/model';
-import type { Component, Formulation, LiquidCategory, LiquidUnit, PolymerMolBasis, SolidCategory, SolidUnit } from '../../core/formulation/types';
+import type { Component, Formulation, LiquidCategory, LiquidUnit, PolymerMolBasis, SolidCategory, SolidUnit, TargetBasis } from '../../core/formulation/types';
 
 /** amountTouched：使用者輸入過或離開過用量欄位（只在畫面使用，不存進配方）；在那之前空白用量不顯示錯誤 */
 export type Row = Omit<Component, 'amount' | 'polymer'> & {
@@ -31,6 +31,8 @@ export interface EditorState {
   solidTotalText: string;
   liquidTotalText: string;
   targetText: string;
+  /** 目標固含量對應的 Solid Content（D49）；只有 Solid 區有勾「揮發／分解」的成分時才有作用 */
+  targetBasis: TargetBasis;
   /** 聚合物 mol% 的基準（D46）：整條鏈（預設）或重複單元 */
   polymerMolBasis: PolymerMolBasis;
 }
@@ -44,6 +46,7 @@ export const emptyState = (): EditorState => ({
   solidTotalText: '',
   liquidTotalText: '',
   targetText: '',
+  targetBasis: 'all',
   polymerMolBasis: 'chain',
 });
 
@@ -59,6 +62,9 @@ export function parseNumberText(text: string): number {
 const optional = (text: string): number | undefined => (text.trim() === '' ? undefined : parseNumberText(text));
 
 /** 使用目標固含量時，Liquid 用量改由程式計算；欄位只填溶劑間的相對比例，空白視為 1 */
+/** Solid 區有任何成分勾了「揮發／分解」（目標固含量才需要選基準） */
+export const hasVolatileRow = (state: Pick<EditorState, 'solidRows'>) => state.solidRows.some((r) => r.volatileFlag === true);
+
 export const targetActive = (state: Pick<EditorState, 'targetText'>) => state.targetText.trim() !== '';
 
 function toComponent(row: Row, blankAmount?: number): Component {
@@ -81,6 +87,7 @@ export function toFormulation(state: EditorState): Formulation {
   if (solidTotal !== undefined) f.solidTotalG = solidTotal;
   if (liquidTotal !== undefined) f.liquidTotalG = liquidTotal;
   if (target !== undefined) f.targetSolidContentPct = target;
+  if (targetActive(state) && state.targetBasis === 'excludingVolatile' && hasVolatileRow(state)) f.targetSolidContentBasis = 'excludingVolatile';
   if (targetActive(state)) f.liquidFromTarget = true; // 記錄使用目標固含量；清空目標就回到手動輸入
   if (state.polymerMolBasis === 'unit') f.polymerMolBasis = 'unit'; // 預設（整條鏈）不寫入，舊檔與新檔一致
   return f;
@@ -103,6 +110,7 @@ export function fromFormulation(f: Formulation): EditorState {
     solidTotalText: textOf(f.solidTotalG),
     liquidTotalText: textOf(f.liquidTotalG),
     targetText: textOf(f.targetSolidContentPct),
+    targetBasis: f.targetSolidContentBasis ?? 'all',
     polymerMolBasis: f.polymerMolBasis ?? 'chain',
   };
 }

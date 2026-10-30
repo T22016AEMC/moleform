@@ -12,6 +12,8 @@ import type { Row } from '../formulation/model';
 import { createIndexedDbStorage } from '../library/storage';
 import { analysisKey, specFromEdit } from '../polymer/model';
 import { PolymerFields } from '../polymer/PolymerFields';
+import { UnitDrawPanel } from '../polymer/UnitDrawPanel';
+import { useUnitDrawing } from '../polymer/useUnitDrawing';
 import { saveCompoundToLibrary } from './libraryBridge';
 import { KetcherPane } from './KetcherPane';
 import { Modal } from './Modal';
@@ -60,6 +62,8 @@ export function AddComponentDialog({ area, existingCount, onAdd, onClose }: Prop
   const [picked, setPicked] = useState<Compound | null>(null);
   const [ketcher, setKetcher] = useState<StructureValidation | null>(null);
   const [ketcherDirty, setKetcherDirty] = useState(false);
+  // 共聚物單元用 Ketcher 畫：借用本彈窗唯一的 Ketcher（畫單元時暫時卸下主結構的 Ketcher，之後以最近一次的結構還原）
+  const draw = useUnitDrawing();
 
   const [form, setForm] = useState<AddForm>(() => initialForm(null, existingCount, defaultCategory));
   const [nameTouched, setNameTouched] = useState(false);
@@ -142,7 +146,7 @@ export function AddComponentDialog({ area, existingCount, onAdd, onClose }: Prop
   const currentAnalysis = analysis?.key === polymerKey ? analysis.value : null;
 
   function requestClose() {
-    if (method === 'ketcher' && ketcherDirty && ketcher !== null && !confirmClose) {
+    if (((method === 'ketcher' && ketcherDirty && ketcher !== null) || draw.dirty) && !confirmClose) {
       setConfirmClose(true);
       return;
     }
@@ -221,10 +225,15 @@ export function AddComponentDialog({ area, existingCount, onAdd, onClose }: Prop
         </div>
       )}
 
-      {method === 'ketcher' && (
+      {method === 'ketcher' && !draw.target && (
         <div className="modal-section">
           <p>在下方畫結構；畫好後會自動驗證，通過後可在下面加入。</p>
-          <KetcherPane onStructure={setKetcher} onDirtyChange={setKetcherDirty} />
+          <KetcherPane initialInput={ketcher?.valid ? ketcher.molblock : undefined} onStructure={setKetcher} onDirtyChange={setKetcherDirty} />
+        </div>
+      )}
+      {draw.target && (
+        <div className="modal-section">
+          <UnitDrawPanel draw={draw} edit={form.polymerEdit} onEditChange={(polymerEdit) => setForm((f) => ({ ...f, polymerEdit }))} />
         </div>
       )}
 
@@ -280,7 +289,7 @@ export function AddComponentDialog({ area, existingCount, onAdd, onClose }: Prop
             <div className="polymer-row">
               <span className="field-label">聚合物（Mw、Mn、DP 擇一；可加單元成為共聚物）</span>
               {currentAnalysis?.ok === false && <p className="form-error" role="alert">{currentAnalysis.problem.message}</p>}
-              <PolymerFields idPrefix="add-polymer" edit={form.polymerEdit} onChange={(polymerEdit) => setForm((f) => ({ ...f, polymerEdit }))} analysis={currentAnalysis} firstSmiles={polymerSmiles} />
+              <PolymerFields idPrefix="add-polymer" edit={form.polymerEdit} onChange={(polymerEdit) => setForm((f) => ({ ...f, polymerEdit }))} analysis={currentAnalysis} firstSmiles={polymerSmiles} onDrawUnit={draw.request} />
             </div>
           )}
 

@@ -1,4 +1,4 @@
-import { lazy, Suspense, useCallback, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useState } from 'react';
 import './theme.css';
 import './base.css';
 import { Header } from './Header';
@@ -12,6 +12,7 @@ import type { PolymerSpec } from '../core/polymer/types';
 import { editFromSpec } from './polymer/model';
 import { PolymerSettings } from './polymer/PolymerSettings';
 import { usePolymerInput } from './polymer/usePolymerInput';
+import { useUnitDrawing } from './polymer/useUnitDrawing';
 
 // 只有開發模式才載入；正式建置會整段移除，示範資料不會進入 dist。
 const DevPreview = import.meta.env.DEV ? lazy(() => import('./components/DevPreview')) : null;
@@ -28,6 +29,13 @@ export function App() {
   const [structure, setStructure] = useState<StructureValidation | null>(null);
   const [loadRequest, setLoadRequest] = useState<LoadRequest | null>(null);
   const { context: polymer, setEdit: setPolymerEdit } = usePolymerInput(structure);
+  // 共聚物單元用 Ketcher 畫時借用「分子工具」的 Ketcher（同一時間只有一個，D28）
+  const unitDrawing = useUnitDrawing();
+  // 離開「分子工具」就收掉單元繪圖（釋放 Ketcher，避免和配方工作台的彈窗同時有兩個）
+  const closeUnitDrawing = unitDrawing.close;
+  useEffect(() => {
+    if (tab !== 'tools') closeUnitDrawing();
+  }, [tab, closeUnitDrawing]);
   const loadIntoStructure = useCallback(
     (input: string, polymerSpec?: PolymerSpec) => {
       setLoadRequest((prev) => ({ id: (prev?.id ?? 0) + 1, input }));
@@ -53,8 +61,8 @@ export function App() {
         <Workbench />
       </div>
       <div id="panel-tools" hidden={tab !== 'tools'}>
-        <StructureInput onStructureChange={setStructure} loadRequest={loadRequest} active={tab === 'tools'} />
-        <PolymerSettings context={polymer} onChange={setPolymerEdit} />
+        <StructureInput onStructureChange={setStructure} loadRequest={loadRequest} active={tab === 'tools' && !unitDrawing.target} />
+        <PolymerSettings context={polymer} onChange={setPolymerEdit} draw={unitDrawing} />
         <Conformer3DCard structure={structure} />
       </div>
       <div id="panel-library" hidden={tab !== 'library'}>

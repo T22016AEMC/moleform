@@ -76,6 +76,24 @@ function failedState(unit: string, comps: Component[]): AreaState {
   return { ok: false, empty: comps.length === 0, unit, comps, rel: [], totalRel: 0, mass: null, result: null };
 }
 
+/** Liquid 用量為 0（目標剛好等於最大可達值）：各成分質量 0，mol% 不適用 */
+function zeroLiquidState(comps: Component[], unit: string): AreaState {
+  const na = '用量為 0，無法換算';
+  const result: AreaResult = {
+    unit: 'g',
+    polymerMolNote: null,
+    components: comps.map((c) => ({
+      id: c.id,
+      name: c.name,
+      massG: calc(0, unit),
+      wtPct: calc(null, '%', na),
+      molPct: calc(null, '%', na),
+      phr: null,
+    })),
+  };
+  return { ok: true, empty: false, unit: 'g', comps, rel: comps.map(() => 0), totalRel: 0, mass: 0, result };
+}
+
 function processArea(
   area: AreaName,
   unit: string,
@@ -251,11 +269,31 @@ export function computeFormulation(formulation: Formulation, molecularWeights: M
     } else {
       // 基準：Solid 質量已知（g 或有填 Solid 總重）→ 以 g 計；否則每 100 份固體
       const base = solid.mass !== null ? solid.mass : 100;
-      const needed = (base * (100 - targetValue)) / targetValue;
+      // 目標對應的 Solid Content：全部（預設），或扣除標記為揮發／分解的成分（D49）
+      const flaggedFraction = solid.comps.reduce((s, c, i) => s + (c.volatileFlag && solid.totalRel > 0 ? solid.rel[i] / solid.totalRel : 0), 0);
+      const excluding = formulation.targetSolidContentBasis === 'excludingVolatile' && flaggedFraction > 0;
+      const maxReachable = (1 - flaggedFraction) * 100;
+      let needed = (base * (100 - targetValue)) / targetValue;
+      let unreachable = false;
+      if (excluding) {
+        if (targetValue > maxReachable + 1e-9) {
+          unreachable = true;
+          sink.errors.push({
+            area: 'formulation',
+            code: 'TARGET_UNREACHABLE',
+            message: `扣除標記成分後，Solid Content 最高只能到 ${num(maxReachable)}%（目標 ${num(targetValue)}%）`,
+          });
+        } else {
+          needed = Math.max(((base - base * flaggedFraction) * 100) / targetValue - base, 0);
+          if (needed < 1e-9 * base) needed = 0;
+        }
+      }
       const ratios = comps.length === 1 ? [1] : comps.map((c) => c.amount);
       const bad = ratios.findIndex((r) => !isValidNumber(r) || r < 0);
       const sum = ratios.reduce((s, r) => s + (isValidNumber(r) ? r : 0), 0);
-      if (bad >= 0) {
+      if (unreachable) {
+        liquid = failedState('g', comps);
+      } else if (bad >= 0) {
         sink.errors.push({ area: 'liquid', code: 'INVALID_AMOUNT', message: `Liquid 區的「${labelOf(comps[bad], bad)}」溶劑比例必須是大於或等於 0 的數字`, componentId: comps[bad].id });
         liquid = failedState('g', comps);
       } else if (!(sum > 0)) {
@@ -267,8 +305,11 @@ export function computeFormulation(formulation: Formulation, molecularWeights: M
           amounts[c.id] = (needed * ratios[i]) / sum;
           return { ...c, amount: amounts[c.id] };
         });
-        liquid = processArea('liquid', 'g', derivedComps, undefined, molecularWeights, basis, unitWeights, sink);
-        if (solid.mass === null && liquid.result) {
+        liquid =
+          needed === 0
+            ? zeroLiquidState(comps, solid.mass === null ? '重量份' : 'g') // 目標等於最大可達值：Liquid 為 0，不算錯誤
+            : processArea('liquid', 'g', derivedComps, undefined, molecularWeights, basis, unitWeights, sink);
+        if (solid.mass === null && needed !== 0 && liquid.result) {
           // 相對基準：質量欄位標示為重量份（每 100 份固體）
           liquid.result = { ...liquid.result, components: liquid.result.components.map((c) => ({ ...c, massG: c.massG ? { ...c.massG, unit: '重量份' } : null })) };
         }

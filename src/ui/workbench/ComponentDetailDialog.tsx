@@ -7,6 +7,8 @@ import { analyzeRepeatUnitInWorker, validateInput } from '../../worker/client';
 import type { Row } from '../formulation/model';
 import { analysisKey, emptyPolymerEdit, endFromEdit, specFromEdit } from '../polymer/model';
 import { PolymerFields } from '../polymer/PolymerFields';
+import { UnitDrawPanel } from '../polymer/UnitDrawPanel';
+import { useUnitDrawing } from '../polymer/useUnitDrawing';
 import { Conformer3DCard } from '../structure/Conformer3DCard';
 import { saveCompoundToLibrary } from './libraryBridge';
 import { KetcherPane } from './KetcherPane';
@@ -80,9 +82,11 @@ export function ComponentDetailDialog({ row, area, onChange, onClose }: Props) {
   const [dirty, setDirty] = useState(false);
   const [pendingConfirm, setPendingConfirm] = useState<null | 'close' | 'discard'>(null);
   const candidate = candidateFromValidation(ketcher);
+  // 共聚物單元用 Ketcher 畫：借用本彈窗唯一的 Ketcher（畫單元時暫時卸下結構編輯的 Ketcher，之後以最近一次的結構還原）
+  const draw = useUnitDrawing();
 
   function requestClose() {
-    if (editing && dirty && pendingConfirm !== 'close') {
+    if (((editing && dirty) || draw.dirty) && pendingConfirm !== 'close') {
       setPendingConfirm('close');
       return;
     }
@@ -172,9 +176,11 @@ export function ComponentDetailDialog({ row, area, onChange, onClose }: Props) {
               onChange={(polymerEdit) => onChange((r) => ({ ...r, polymerEdit }))}
               analysis={currentAnalysis}
               firstSmiles={row.canonicalSmiles}
+              onDrawUnit={draw.request}
               onReplaceFirst={(smiles, polymerEdit) => onChange(({ molfile: _m, compoundId: _c, ...r }) => ({ ...r, canonicalSmiles: smiles, polymerEdit }))}
             />
           )}
+          {draw.target && <UnitDrawPanel draw={draw} edit={row.polymerEdit ?? emptyPolymerEdit()} onEditChange={(polymerEdit) => onChange((r) => ({ ...r, polymerEdit }))} />}
           <small>聚合物不提供 3D（D05）。</small>
         </div>
       ) : (
@@ -186,7 +192,8 @@ export function ComponentDetailDialog({ row, area, onChange, onClose }: Props) {
         {editing ? (
           <>
             <p>在 Ketcher 修改後，按「套用到這個成分」。成分的名稱、分類與用量不變。</p>
-            <KetcherPane initialInput={molblock || row.canonicalSmiles} onStructure={setKetcher} onDirtyChange={setDirty} />
+            {!draw.target && <KetcherPane initialInput={ketcher?.valid ? ketcher.molblock : molblock || row.canonicalSmiles} onStructure={setKetcher} onDirtyChange={setDirty} />}
+            {draw.target && <p role="status">正在畫共聚物的單元，結構編輯暫時收合；畫完後會還原。</p>}
             {ketcher && !ketcher.valid && !ketcher.empty && (
               <p className="error" role="alert">{ketcher.problems.find((p) => p.level === 'error')?.message ?? '這不是可用的結構'}</p>
             )}

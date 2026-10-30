@@ -44,6 +44,10 @@ export function endFromEdit(edit: EndEdit | undefined): EndGroup | null {
   return row ? { smiles: row.smiles, presetId: row.id } : null;
 }
 
+/** 端基選了 EG10（羥基）時的提示（任務 021，K11）；其他選擇或不填沒有提示。只是提示，不阻擋、不更換 */
+export const EG10_HINT = '接在芳香環上的酚羥基請改選 EG11（對位酚）或 EG12（鄰位酚）；EG10 只會被當成一般羥基。';
+export const endGroupHint = (edit: EndEdit | undefined): string | null => (edit?.choice === 'EG10' ? EG10_HINT : null);
+
 function endToEdit(end: EndGroup | undefined): EndEdit | undefined {
   if (!end) return undefined;
   const row = end.presetId ? END_GROUP_PRESETS.find((p) => p.id === end.presetId && p.smiles === end.smiles) : undefined;
@@ -95,6 +99,25 @@ export function specFromEdit(edit: PolymerEdit, firstSmiles?: string): PolymerSp
   const end2 = endFromEdit(edit.end2);
   if (end1 || end2) spec.endGroups = { ...(end1 ? { end1 } : {}), ...(end2 ? { end2 } : {}) };
   return spec;
+}
+
+/** 用 Ketcher 畫共聚物的單元（任務 021）：畫第二種單元以後的某一列（index 為 extraUnits 的索引），或新增一列 */
+export type DrawTarget = { kind: 'edit'; index: number } | { kind: 'new' };
+
+export const sameDrawTarget = (a: DrawTarget | null, b: DrawTarget | null) =>
+  a !== null && b !== null && a.kind === b.kind && (a.kind === 'new' || (b.kind === 'edit' && a.index === b.index));
+
+/** 單元序號（從 1 起算；第一種單元是成分本身的結構，所以可畫的單元從 2 起） */
+export const drawTargetNumber = (target: DrawTarget, edit: PolymerEdit): number => (target.kind === 'new' ? (edit.extraUnits ?? []).length + 2 : target.index + 2);
+
+/** 該列目前的 SMILES（新增時為空） */
+export const drawTargetSmiles = (target: DrawTarget, edit: PolymerEdit): string => (target.kind === 'new' ? '' : (edit.extraUnits ?? [])[target.index]?.smiles ?? '');
+
+/** 把畫好的單元寫回編輯狀態：改指定列的 SMILES（比例不動），或新增一列（比例空白） */
+export function applyDrawnUnit(edit: PolymerEdit, target: DrawTarget, smiles: string): PolymerEdit {
+  const extras = edit.extraUnits ?? [];
+  if (target.kind === 'new') return { ...edit, extraUnits: [...extras, { smiles, fractionText: '' }] };
+  return { ...edit, extraUnits: extras.map((u, i) => (i === target.index ? { ...u, smiles } : u)) };
 }
 
 /** 分析結果的快取鍵：共聚物的單元或比例改變時要重新分析（均聚物只看 SMILES） */

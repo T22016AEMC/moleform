@@ -92,6 +92,7 @@ export function parseFormulationData(data: unknown): ParseResult {
   // 聚合物 mol% 基準（D46）；舊檔沒有這個欄位，視為整條鏈
   if (data.polymerMolBasis === 'chain' || data.polymerMolBasis === 'unit') formulation.polymerMolBasis = data.polymerMolBasis;
   // 是否使用目標固含量自動計算 Liquid 用量；舊檔沒有這個欄位，照原本規則讀取
+  if (data.targetSolidContentBasis === 'all' || data.targetSolidContentBasis === 'excludingVolatile') formulation.targetSolidContentBasis = data.targetSolidContentBasis;
   if (typeof data.liquidFromTarget === 'boolean') formulation.liquidFromTarget = data.liquidFromTarget;
   return { ok: true, formulation };
 }

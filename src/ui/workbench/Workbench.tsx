@@ -18,6 +18,7 @@ import {
   LIQUID_UNIT_OPTIONS,
   pendingAmountIds,
   targetActive,
+  hasVolatileRow,
   visibleIssues,
   SOLID_UNIT_OPTIONS,
   toFormulation,
@@ -513,6 +514,11 @@ export function Workbench({ storage }: Props) {
       ),
     [outcome, pending],
   );
+  // 取消所有揮發標記後，基準自動回到「全部」
+  const volatileExists = hasVolatileRow(state);
+  useEffect(() => {
+    if (!volatileExists && state.targetBasis !== 'all') setState((s) => ({ ...s, targetBasis: 'all' }));
+  }, [volatileExists, state.targetBasis, setState]);
   const targetIssues = issues.filter((i) => i.area === 'formulation' && i.code.startsWith('TARGET'));
   const otherFormulationIssues = issues.filter((i) => i.area === 'formulation' && !i.code.startsWith('TARGET'));
 
@@ -567,6 +573,17 @@ export function Workbench({ storage }: Props) {
                 <input id="target-input" type="text" inputMode="decimal" value={state.targetText} onChange={(e) => setState((s) => ({ ...s, targetText: e.target.value }))} />
                 <span className="amount-unit">%</span>
               </div>
+              {hasVolatileRow(state) && (
+                <div className="target-basis" role="radiogroup" aria-label="目標固含量的基準">
+                  <span>目標對應</span>
+                  {(['all', 'excludingVolatile'] as const).map((b) => (
+                    <label key={b} className="check">
+                      <input type="radio" name="target-basis" checked={state.targetBasis === b} onChange={() => setState((s) => ({ ...s, targetBasis: b }))} />
+                      {b === 'all' ? '全部' : '扣除標記成分'}
+                    </label>
+                  ))}
+                </div>
+              )}
               <small>填了之後，Liquid 區的用量改由程式依目標計算（Solid 質量已知用 g，否則以每 100 份固體為基準的重量份）；多種溶劑只需在 Liquid 區填溶劑間的相對比例。清空則回到手動輸入。</small>
             </div>
             <IssueList issues={targetIssues} />

@@ -11,6 +11,22 @@ export const FRACTION_TOLERANCE = 0.01;
 
 const bad = (message: string): RepeatUnitAnalysis => ({ ok: false, problem: { code: 'BAD_FRACTION', message } });
 
+/**
+ * 用 Ketcher 畫出的共聚物單元（任務 021）：先看結構是否通過驗證並含連接點，再用同一套連接點規則（D48）檢查。
+ * 錯誤訊息指出是第幾個單元。smiles 是 RDKit 驗證後的 canonical SMILES（與貼 SMILES 時走同一條分析路徑）。
+ */
+export function checkDrawnUnit(
+  structure: { valid: boolean; canonicalSmiles: string } | null,
+  analysis: RepeatUnitAnalysis | null,
+  unitNumber: number,
+): { ok: true; smiles: string } | { ok: false; message: string } {
+  if (!structure || !structure.valid || structure.canonicalSmiles.trim() === '') return { ok: false, message: `單元 ${unitNumber}：畫布上還沒有可用的結構。` };
+  if (!structure.canonicalSmiles.includes('*')) return { ok: false, message: `單元 ${unitNumber}：重複單元需要恰好兩個連接點（*），目前沒有連接點。` };
+  if (!analysis) return { ok: false, message: `單元 ${unitNumber}：正在檢查連接點，請稍後再試。` };
+  if (!analysis.ok) return { ok: false, message: `單元 ${unitNumber}：${analysis.problem.message}` };
+  return { ok: true, smiles: structure.canonicalSmiles };
+}
+
 /** 取出聚合物的所有單元：沒有 units 時為成分自己的 SMILES，100 */
 export function unitsOf(canonicalSmiles: string, spec: Pick<PolymerSpec, 'units'> | undefined): PolymerUnit[] {
   return spec?.units && spec.units.length > 0 ? spec.units : [{ smiles: canonicalSmiles, fraction: 100 }];

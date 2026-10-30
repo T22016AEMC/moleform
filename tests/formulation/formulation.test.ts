@@ -609,3 +609,77 @@ describe('目標 Solid Content 自動計算 Liquid 用量', () => {
     expect(old.ok && old.formulation.liquidFromTarget).toBeUndefined();
   });
 });
+
+describe('目標 Solid Content 的基準選擇（D49）', () => {
+  const pgmea = () => ({ ...liquidC('PGMEA', 0), name: 'PGMEA' });
+  const build = (solid: Parameters<typeof formulation>[0], extra: Partial<Formulation> = {}) =>
+    formulation(solid, { unit: 'g', components: [pgmea()] }, { targetSolidContentPct: 4, liquidFromTarget: true, ...extra });
+  const AB = { unit: 'g' as const, components: [solidC('A', 8), solidC('B', 2, { volatileFlag: true })] };
+
+  it('「全部」：Liquid 240 g，Solid Content（全部）4%、（扣除標記）3.2%', () => {
+    const out = computeFormulation(build(AB, { targetSolidContentBasis: 'all' }), MW);
+    expect(out.errors).toEqual([]);
+    near(out.liquidFromTarget!.amounts.PGMEA, 240);
+    near(value(out.results.overall.solidContent), 4);
+    near(value(out.results.overall.solidContentExcludingVolatile), 3.2);
+  });
+
+  it('「扣除標記成分」：Liquid 190 g，Solid Content（扣除標記）4%、（全部）5%', () => {
+    const out = computeFormulation(build(AB, { targetSolidContentBasis: 'excludingVolatile' }), MW);
+    expect(out.errors).toEqual([]);
+    near(out.liquidFromTarget!.amounts.PGMEA, 190);
+    near(value(out.results.overall.solidContentExcludingVolatile), 4);
+    near(value(out.results.overall.solidContent), 5);
+    near(value(out.results.overall.totalMass), 200);
+  });
+
+  it('目標達不到：目標 85% → 錯誤並寫出最大可達值 80%；目標 80% → Liquid 0 g、沒有錯誤', () => {
+    const over = computeFormulation(build(AB, { targetSolidContentBasis: 'excludingVolatile', targetSolidContentPct: 85 }), MW);
+    const err = over.errors.find((e) => e.code === 'TARGET_UNREACHABLE')!;
+    expect(err.message).toBe('扣除標記成分後，Solid Content 最高只能到 80%（目標 85%）');
+    expect(over.liquidFromTarget).toBeNull();
+    const edge = computeFormulation(build(AB, { targetSolidContentBasis: 'excludingVolatile', targetSolidContentPct: 80 }), MW);
+    expect(edge.errors).toEqual([]);
+    expect(edge.liquidFromTarget!.amounts.PGMEA).toBe(0);
+    near(value(edge.results.liquid!.components[0].massG), 0);
+    near(value(edge.results.overall.solidContentExcludingVolatile), 80);
+    near(value(edge.results.overall.solidContent), 100);
+  });
+
+  it('Solid wt%（每 100 份固體）、B 佔 20% 勾揮發、「扣除標記成分」目標 4% → Liquid 1900 份', () => {
+    const out = computeFormulation(
+      build({ unit: 'wt', components: [solidC('A', 80), solidC('B', 20, { volatileFlag: true })] }, { targetSolidContentBasis: 'excludingVolatile' }),
+      MW,
+    );
+    expect(out.errors).toEqual([]);
+    expect(out.liquidFromTarget?.unit).toBe('重量份');
+    near(out.liquidFromTarget!.amounts.PGMEA, 1900);
+    near(value(out.results.overall.solidContentExcludingVolatile), 4);
+  });
+
+  it('沒有揮發標記：選「扣除標記成分」與「全部」結果相同；既有三個案例不變（240 g、2400 份、120／120 g）', () => {
+    const plain = { unit: 'g' as const, components: [solidC('S', 8), solidC('E', 2)] };
+    for (const basis of [undefined, 'all', 'excludingVolatile'] as const) {
+      const extra = basis ? { targetSolidContentBasis: basis } : {};
+      const a = computeFormulation(build(plain, extra), MW);
+      expect(a.liquidFromTarget!.amounts.PGMEA).toBe(240);
+      const b = computeFormulation(build({ unit: 'wt', components: [solidC('P', 80), solidC('E', 20)] }, extra), MW);
+      near(b.liquidFromTarget!.amounts.PGMEA, 2400);
+      const c = computeFormulation(
+        formulation({ unit: 'g', components: [solidC('S', 10)] }, { unit: 'g', components: [liquidC('S1', 1), liquidC('S2', 1)] }, { targetSolidContentPct: 4, liquidFromTarget: true, ...extra }),
+        MW,
+      );
+      expect(c.liquidFromTarget!.amounts).toEqual({ S1: 120, S2: 120 });
+    }
+  });
+
+  it('targetSolidContentBasis 存檔、讀檔保留；舊檔讀成 all（沒有此欄位）', () => {
+    const f = build(AB, { targetSolidContentBasis: 'excludingVolatile' });
+    const back = parseFormulation(serializeFormulation(f));
+    expect(back.ok && back.formulation.targetSolidContentBasis).toBe('excludingVolatile');
+    const old = parseFormulation(serializeFormulation(build(AB)));
+    expect(old.ok && old.formulation.targetSolidContentBasis).toBeUndefined(); // 未設定＝all
+    const oldResult = computeFormulation(old.ok ? old.formulation : build(AB), MW);
+    near(oldResult.liquidFromTarget!.amounts.PGMEA, 240);
+  });
+});

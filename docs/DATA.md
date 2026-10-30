@@ -117,13 +117,13 @@ MoleForm 的化學資料放在 `src/data/` 的四個 CSV。**目前只有任務 
 
 ## 均聚物重複單元的分子量 M_unit（任務 015，D42）
 
-- 重複單元以 SMILES 或 Molfile 輸入，恰好兩個連接點：`[*:1]`、`[*:2]`，或兩個未編號的 `*`（依出現順序視為 1、2）。
+- 重複單元以 SMILES 或 Molfile 輸入（連接點規則見 D48），恰好兩個連接點：`[*:1]`、`[*:2]`，或兩個未編號的 `*`（依出現順序視為 1、2）。
 - **M_unit 的計算方式**：RDKit 的平均分子量（`amw`）。RDKit 把虛原子 `*` 的質量視為 0，且各原子的氫數照重複單元的原樣計算，所以結果等於「把 `*` 移除、不補氫」的重複單元平均分子量（例如 `*CC*` 為 C₂H₄）。分子式同樣是不含 `*`、不補氫的組成。
 - `DP_n = (Mn − M_ends) / M̄_unit`、輸入 DP 時 `Mn = DP × M̄_unit + M_ends`（M̄_unit 為平均重複單元質量，均聚物即 M_unit；M_ends 為已填端基質量合計，沒填為 0，任務 022，D50）；換算結果附註：兩端都沒填 → 「未計入端基」，只填一端 → 「端基 N 未填，未計入」。
 - M_unit 與 Mn 依 D09 不在結果區顯示；Mn 與 DP 是使用者的輸入，可顯示在輸入欄旁當輸入輔助。
 - **Mw＋PDI**（任務 019，D47）：`mwInput`、`mnInput`、`dpInput` 擇一，`pdiInput` 選填（預設 2）；舊檔只有 `mnInput` 或 `dpInput`，仍可讀入。
 - **Random 共聚物**（任務 020，D04）：聚合物設定（`PolymerSpec`，存在化合物庫與配方檔的 `polymer` 欄）可再有 `units: [{ smiles, fraction }]`（所有重複單元，含第一種；第一種的 smiles 等於成分的 `canonicalSmiles`）與 `fractionBasis: 'mol' | 'wt'`。沒有 `units` 就是均聚物（一種單元、100 mol%）；`schemaVersion` 不變，舊檔可直接讀。SDF 另附 `MoleForm_Units`（單行 JSON）。
-- 重複單元的兩個連接點**可以連在同一個原子上**（例如次甲基 -CH(Ar)-；使用者 2026-10-30 決定放寬，取消任務 015 的「連在同一原子」錯誤）。
+- 重複單元的兩個連接點**可以連在同一個原子上**（例如次甲基 -CH(Ar)-；見 D48，使用者 2026-10-30 決定放寬，取消任務 015 的「連在同一原子」錯誤）。
 - 程式位置：`src/core/polymer/`（`copolymer.ts` 為平均重複單元）；測試：`tests/polymer/`。
 
 ## 端基資料表 end_groups.csv（任務 022，D50）

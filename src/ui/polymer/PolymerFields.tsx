@@ -6,7 +6,7 @@ import { DEFAULT_PDI, type RepeatUnitAnalysis } from '../../core/polymer/types';
 import { MESSAGE_PDI_DEFAULT, MESSAGE_PDI_RANGE, resolvePolymer, type PolymerBasis } from '../../core/polymer/convert';
 import { FRACTION_TOLERANCE } from '../../core/polymer/copolymer';
 import { StructureImage } from '../workbench/StructureImage';
-import { endFromEdit, specFromEdit, type EndEdit, type PolymerEdit, type UnitEdit } from './model';
+import { endFromEdit, endGroupHint, specFromEdit, type EndEdit, type DrawTarget, type PolymerEdit, type UnitEdit } from './model';
 
 interface Props {
   /** 用來產生欄位編號，同一頁面內不可重複 */
@@ -19,6 +19,8 @@ interface Props {
   firstSmiles?: string;
   /** 刪除第一種單元時，把成分的結構換成下一種單元（成分詳細彈窗提供；其他地方的第一種單元是目前輸入的結構，不能刪） */
   onReplaceFirst?: (smiles: string, edit: PolymerEdit) => void;
+  /** 用 Ketcher 畫單元（任務 021）：提供時，第二種單元以後的每一列與「新增單元」旁有「用 Ketcher 畫」按鈕 */
+  onDrawUnit?: (target: DrawTarget) => void;
 }
 
 const BASIS_LABEL: Record<PolymerBasis, string> = { mw: 'Mw（g/mol）', mn: 'Mn（g/mol）', dp: 'DP（數量平均，重複單元數）' };
@@ -74,12 +76,17 @@ function EndGroupField({ idPrefix, which, value, onChange }: { idPrefix: string;
         />
       )}
       {end && <StructureImage label={`端基 ${which} 的結構`} source={end.smiles} width={96} height={64} polymer />}
+      {endGroupHint(current) && (
+        <small className="polymer-helper" role="note">
+          {endGroupHint(current)}
+        </small>
+      )}
     </div>
   );
 }
 
 /** 共聚物的單元清單（任務 020）：第一種單元是成分本身的結構；其他單元貼 SMILES（含兩個 *）。比例合計須為 100 */
-function UnitList({ idPrefix, edit, onChange, firstSmiles, onReplaceFirst }: { idPrefix: string; edit: PolymerEdit; onChange: (edit: PolymerEdit) => void; firstSmiles: string; onReplaceFirst?: (smiles: string, edit: PolymerEdit) => void }) {
+function UnitList({ idPrefix, edit, onChange, firstSmiles, onReplaceFirst, onDrawUnit }: { idPrefix: string; edit: PolymerEdit; onChange: (edit: PolymerEdit) => void; firstSmiles: string; onReplaceFirst?: (smiles: string, edit: PolymerEdit) => void; onDrawUnit?: (target: DrawTarget) => void }) {
   const extras = edit.extraUnits ?? [];
   const basis = edit.fractionBasis ?? 'mol';
   const label = basis === 'mol' ? 'mol%' : 'wt%';
@@ -143,6 +150,11 @@ function UnitList({ idPrefix, edit, onChange, firstSmiles, onReplaceFirst }: { i
             value={u.smiles}
             onChange={(e) => setExtra(i, { smiles: e.target.value })}
           />
+          {onDrawUnit && (
+            <button type="button" className="secondary" onClick={() => onDrawUnit({ kind: 'edit', index: i })}>
+              用 Ketcher 畫
+            </button>
+          )}
           <div className="amount-input">
             <input type="text" inputMode="decimal" aria-label={`單元 ${i + 2} 的比例（${label}）`} value={u.fractionText} onChange={(e) => setExtra(i, { fractionText: e.target.value })} />
             <span className="amount-unit">{label}</span>
@@ -168,16 +180,21 @@ function UnitList({ idPrefix, edit, onChange, firstSmiles, onReplaceFirst }: { i
   );
 }
 
-export function PolymerFields({ idPrefix, edit, onChange, analysis, firstSmiles, onReplaceFirst }: Props) {
+export function PolymerFields({ idPrefix, edit, onChange, analysis, firstSmiles, onReplaceFirst, onDrawUnit }: Props) {
   const name = `${idPrefix}-basis`;
   const pdiMessage = pdiHelper(edit);
   const extras = edit.extraUnits ?? [];
   return (
     <div className="polymer-fields">
-      {firstSmiles !== undefined && extras.length > 0 && <UnitList idPrefix={idPrefix} edit={edit} onChange={onChange} firstSmiles={firstSmiles} onReplaceFirst={onReplaceFirst} />}
+      {firstSmiles !== undefined && extras.length > 0 && <UnitList idPrefix={idPrefix} edit={edit} onChange={onChange} firstSmiles={firstSmiles} onReplaceFirst={onReplaceFirst} onDrawUnit={onDrawUnit} />}
       {firstSmiles !== undefined && (
         <button type="button" className="secondary polymer-add-unit" onClick={() => onChange({ ...edit, extraUnits: [...extras, { smiles: '', fractionText: '' }] })}>
           ＋新增單元（共聚物）
+        </button>
+      )}
+      {firstSmiles !== undefined && onDrawUnit && (
+        <button type="button" className="secondary polymer-add-unit" onClick={() => onDrawUnit({ kind: 'new' })}>
+          ＋新增單元（用 Ketcher 畫）
         </button>
       )}
       <div className="polymer-ends" role="group" aria-label="端基">

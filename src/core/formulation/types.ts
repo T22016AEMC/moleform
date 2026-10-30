@@ -71,7 +71,11 @@ export interface Formulation {
    * （只有一種溶劑時忽略），實際用量由 Solid 質量與目標計算。省略（舊檔）＝照原本規則，Liquid 用量由使用者填寫。
    */
   liquidFromTarget?: boolean;
+  /** 目標固含量對應的 Solid Content（D49）：all＝全部（預設）、excludingVolatile＝扣除標記為揮發／分解的成分；舊檔省略視為 all */
+  targetSolidContentBasis?: TargetBasis;
 }
+
+export type TargetBasis = 'all' | 'excludingVolatile';
 
 /** 聚合物 mol% 的基準：chain＝莫耳數 = 質量 ÷ Mn；unit＝莫耳數 = 質量 ÷ 重複單元分子量（D46） */
 export type PolymerMolBasis = 'chain' | 'unit';
@@ -109,6 +113,7 @@ export type IssueCode =
   | 'VOL_NOT_SUPPORTED'
   | 'MISSING_MW'
   | 'TARGET_OUT_OF_RANGE'
+  | 'TARGET_UNREACHABLE'
   | 'TARGET_NEEDS_SOLID_MASS'
   | 'SOLID_CONTENT_NEEDS_TOTAL'
   | 'TOTAL_IGNORED'
