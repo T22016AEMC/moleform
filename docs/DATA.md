@@ -190,6 +190,24 @@ MoleForm 的化學資料放在 `src/data/` 的四個 CSV。**目前只有任務 
 
 正例與反例放在 `tests/properties/jobackCases.ts`（每個基團至少各一）。格式與 RDKit 檢查在 `src/core/data/jobackGroups.ts`，測試 `tests/properties/jobackGroups.test.ts`；切分與計算在 `src/core/properties/jobackTbTf.ts`（規則寫在檔頭），輸出文件見 `docs/verification/phase6-TbTf-輸出.md`。
 
+## VW 基團表 vw_groups.csv（任務 028，D08、D22）
+
+`src/data/vw_groups.csv`（UTF-8 BOM，26 列）。van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009), Table 4.2（書頁 74–75，PDF 第 101–102 頁）的 VW 與 Mi，逐列看圖讀取；只收錄本專案結構（聚合物單元、環氧單元、小分子、骨架範本 BT01–BT06）需要的基團，以及書中 Table 4.7 對照要用的基團。SMARTS 自行撰寫。欄位：
+
+| 欄位 | 說明 |
+|---|---|
+| `id` | V01–V26，依 Table 4.2 的順序（二價在前，非二價在後） |
+| `基團名稱`、`SMARTS` | 名稱依書；SMARTS 描述整個基團（含基團內的 CH3、=O 等原子）；連接點 `*` 不屬於任何基團 |
+| `原子數` | 基團含幾個重原子（1–10）；切分時大的基團先配對 |
+| `VW` | cm³/mol。書中數值有疑義時留空（目前只有 V10 –O–），備註須說明並寫「留空」 |
+| `Mi` | g/mol。與命中原子（含各自的氫）的質量核對 |
+| `二價／非二價` | 書中分表（二價基團表、非二價基團表） |
+| `出處` | 書名、節、Table 4.2、書頁碼（缺表號或頁碼報錯） |
+| `稽核狀態` | 目前全部「待使用者審」 |
+| `備註` | 與 Bondi 1964 的對照（相符或差異，以書為準）；組合基團拆成原子基團的相加值；括號值、留空原因等 |
+
+正例與反例放在 `tests/properties/vwCases.ts`（每個基團至少各一）。格式與 RDKit 檢查在 `src/core/data/vwGroups.ts`，Mi 核對與切分、計算在 `src/core/properties/vanDerWaalsVolume.ts`（規則寫在檔頭），測試 `tests/properties/vwGroups.test.ts`、`vanDerWaalsVolume.test.ts`；TPSA 與 Crippen LogP 直接用 RDKit 描述子（`src/core/properties/tpsaLogp.ts`，測試 `tests/properties/tpsaLogp.test.ts`）。輸出文件見 `docs/verification/phase6-VW-TPSA-LogP-輸出.md`。
+
 ## 程式位置
 
 - 讀取程式與檢查：`src/core/data/`（`csv.ts`、`readers.ts`、`validate.ts`、`chemcheck.ts`、`load.ts`）
