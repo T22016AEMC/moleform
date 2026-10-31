@@ -41,6 +41,8 @@ Phase 2 的腳本是 `scripts/verification/phase2.mjs`。它用 Node 載入與�
 
 `docs/verification/031-補收驗證-輸出.md`：補收書中現成整體基團前後的差異表（使用者材料與 D53 半導體材料）、書中聚合物對照、PMDA–ODA 與 BPDA–PDA。用 `npm run verify:031` 產生（腳本 `scripts/verification/031-補收驗證.ts`；「補收前」讀 git 3536540 的資料表）。
 
+`docs/verification/031-第二批-補收驗證-輸出.md`：補收 Table 6.3 其餘 15 個組合基團的逐一對書、PET 前後、Table 6.4 對照、其他受影響結構的前後差異。用 `npm run verify:031b` 產生（腳本 `scripts/verification/031-第二批-補收驗證.ts`；「補收前」讀 git 56eb49d 的資料表）。`031-診斷-C-醚O的VW-輸出.md`：只診斷、不收錄，醚 O 取 5.0／5.5／3.7 對 Table 4.7、4.8 的重現（`node scripts/diagnosis/031-c-ether-O-vw.ts`）。
+
 ## 新增下一個 Phase 的清單
 
 仿照 `scripts/verification/phase2.mjs` 新增腳本與 npm script，輸出放在本資料夾，並維持「只放程式輸出」的規則。

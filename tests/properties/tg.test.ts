@@ -79,7 +79,7 @@ describe('共軛狀態 n／c／cc（Table 6.1 B 表尾註與 p.140 文字）', (
     ok(computeTg(RDKit, smiles)).groups.filter((g) => g.familyId === family).map((g) => g.state);
 
   it('對伸苯基：兩側都是 CH2 → n；一側接 C=O → c；兩側接 C=O → cc', () => {
-    expect(stateOf('*CCc1ccc(cc1)CC*', 'B.pC6H4')).toEqual(['n']);
+    expect(stateOf('*CC(C)c1ccc(cc1)C(C)C*', 'B.pC6H4')).toEqual(['n']);
     expect(stateOf('*CCc1ccc(cc1)C(=O)CC*', 'B.pC6H4')).toEqual(['c']);
     expect(stateOf('*C(=O)c1ccc(cc1)C(=O)*', 'B.pC6H4')).toEqual(['cc']);
   });
@@ -290,5 +290,59 @@ describe('任務 031：補收書中現成的整體基團', () => {
       expect(new Set(grouped).size).toBe(grouped.length);
       expect(grouped.length, s).toBe(heavy);
     }
+  });
+});
+
+describe('Table 6.3 其餘組合基團（任務 031 第二批，書頁 141–142）', () => {
+  const combos: [string, string, number, number][] = [
+    ['T.C6H4CMePhC6H4', '[*:1]c1ccc(cc1)C(C)(c1ccccc1)c1ccc([*:2])cc1', 121, 256.3],
+    ['T.C6H4CPh2C6H4', '[*:1]c1ccc(cc1)C(c1ccccc1)(c1ccccc1)c1ccc([*:2])cc1', 168, 318.4],
+    ['T.C6H4C6H10C6H4', '[*:1]c1ccc(cc1)C1CCC(CC1)c1ccc([*:2])cc1', 102, 234.3],
+    ['T.C6H4CMe2C6H4CMe2C6H4', '[*:1]c1ccc(cc1)C(C)(C)c1ccc(cc1)C(C)(C)c1ccc([*:2])cc1', 137, 312.5],
+    ['T.CH2C6H4CH2', '[*:1]Cc1ccc(cc1)C[*:2]', 35, 104.1],
+    ['T.OOCpC6H4COO', '[*:1]OC(=O)c1ccc(cc1)C(=O)O[*:2]', 62, 164.1],
+    ['T.OOCmC6H4COO', '[*:1]OC(=O)c1cccc(c1)C(=O)O[*:2]', 56.5, 164.1],
+    ['T.NHCOpC6H4CONH', '[*:1]NC(=O)c1ccc(cc1)C(=O)N[*:2]', 83, 162.1],
+    ['T.NHCOmC6H4CONH', '[*:1]NC(=O)c1cccc(c1)C(=O)N[*:2]', 70, 162.1],
+    ['T.OpC6H4CO', '[*:1]Oc1ccc(cc1)C(=O)[*:2]', 58, 120.1],
+    ['T.OmC6H4CO', '[*:1]Oc1cccc(c1)C(=O)[*:2]', 52, 120.1],
+    ['T.NHpC6H4CO', '[*:1]Nc1ccc(cc1)C(=O)[*:2]', 70, 119.1],
+    ['T.NHC6H4NHCOC6H4COp', '[*:1]Nc1ccc(cc1)NC(=O)c1ccc(cc1)C(=O)[*:2]', 148, 238.3],
+    ['T.NHC6H4NHCOC6H4COm', '[*:1]Nc1cccc(c1)NC(=O)c1cccc(c1)C(=O)[*:2]', 112, 238.3],
+    ['T.C6H4OC6H4OC6H4', '[*:1]c1ccc(cc1)Oc1ccc(cc1)Oc1ccc([*:2])cc1', 104, 260.3],
+  ];
+  for (const [id, smiles, ygi, mi] of combos) {
+    it(`${id}：單獨成一個基團，Ygi ${ygi}（書中 Table 6.3）`, () => {
+      const r = ok(computeTg(RDKit, smiles));
+      expect(r.groups.map((g) => g.rowId)).toEqual([id]);
+      expect(r.sumYg).toBeCloseTo(ygi, 9);
+      expect(r.sumM).toBeCloseTo(mi, 9);
+      expect(Math.abs(r.massDelta as number), `${id} 單元質量 ${r.formulaMass}`).toBeLessThanOrEqual(0.1); // 書中 Mi 只印到小數一位（同資料表的 0.1 容許）
+    });
+  }
+
+  it('PET：–OOC–C6H4–COO– 62 + 2 × –CH2– 2.7 = 67.4，M = 192.1，Tg ≈ 351 K（書中手算 351）', () => {
+    const r = ok(computeTg(RDKit, '[*:1]CCOC(=O)c1ccc(cc1)C(=O)O[*:2]'));
+    expect(r.sumYg).toBeCloseTo(67.4, 9);
+    expect(Math.abs(r.tgK - 351)).toBeLessThanOrEqual(1);
+  });
+
+  it('聚對苯二甲酸七亞甲基醯胺重現 Table 6.4 的 435 K（含氫鍵鏈 –CH2– 4.3）', () => {
+    const r = ok(computeTg(RDKit, '[*:1]CCCCCCCNC(=O)c1ccc(cc1)C(=O)N[*:2]'));
+    expect(r.groups.filter((g) => g.rowId === 'A.CH2.hb').length).toBe(7);
+    expect(Math.abs(r.tgK - 435)).toBeLessThanOrEqual(1);
+  });
+
+  it('只配對書中畫的取代位置：混合對／間位的芳醯胺、1,3-伸環己基、單酯都不配對', () => {
+    const miss = (s: string) => expect(computeTg(RDKit, s).status, s).toBe('missing');
+    miss('[*:1]Nc1ccc(cc1)NC(=O)c1cccc(c1)C(=O)[*:2]');
+    miss('[*:1]c1ccc(cc1)C1CCCC(C1)c1ccc([*:2])cc1');
+    // 只有一個酯基接在環上：不是 –OOC–C6H4–COO–
+    expect(ok(computeTg(RDKit, '[*:1]CCOC(=O)c1ccc(cc1)C[*:2]')).groups.map((g) => g.rowId)).not.toContain('T.OOCpC6H4COO');
+  });
+
+  it('PEEK（Example 6.3 的寫法）仍是 37.4 + 84；同一單元由環起寫時 3 環組合基團 104 先配（表示法相依，見 031 報告）', () => {
+    expect(ok(computeTg(RDKit, '*Oc1ccc(Oc2ccc(C(=O)c3ccc(*)cc3)cc2)cc1')).sumYg).toBeCloseTo(121.4, 9);
+    expect(ok(computeTg(RDKit, '*c1ccc(Oc2ccc(Oc3ccc(C(=O)*)cc3)cc2)cc1')).groups.map((g) => g.rowId)).toContain('T.C6H4OC6H4OC6H4');
   });
 });

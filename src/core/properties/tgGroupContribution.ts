@@ -18,7 +18,17 @@ import { atomicWeight } from './atomicWeights';
 import { readGraph, type MolGraph } from './molGraph';
 
 /** 氫鍵鏈判定：單元內有這些基團時，–CH2– 取氫鍵鏈的值（書頁 139 Fig. 6.3 說明與 6.2.2.4 文字：聚醯胺、聚胺基甲酸酯、聚脲；4.3 值見 Table 6.1，書頁 133） */
-export const HYDROGEN_BOND_FAMILIES: readonly string[] = ['A.urethane', 'A.urea', 'B.CONH'];
+export const HYDROGEN_BOND_FAMILIES: readonly string[] = [
+  'A.urethane',
+  'A.urea',
+  'B.CONH',
+  // Table 6.3 含 –CONH– 的組合基團（任務 031 第二批）：它們配走了醯胺原子，單元仍含氫鍵基團，–CH2– 照樣取氫鍵鏈值
+  'T.NHCOpC6H4CONH',
+  'T.NHCOmC6H4CONH',
+  'T.NHpC6H4CO',
+  'T.NHC6H4NHCOC6H4COp',
+  'T.NHC6H4NHCOC6H4COm',
+];
 /** 與相鄰伸苯基的共軛狀態書中沒有定義的基團家族（Table 6.1 C 的 N-鄰苯二甲醯亞胺，任務 031）；相鄰的伸苯基回報缺基團 */
 export const CONJ_UNDEFINED_FAMILIES: readonly string[] = ['C.phthalimide'];
 /** ΣMi 與分子（重複單元）質量允許的差（g/mol）；超過時在結果中標示 */

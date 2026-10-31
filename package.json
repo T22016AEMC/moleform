@@ -18,7 +18,8 @@
     "verify:phase6-tbtf": "node scripts/verification/phase6-TbTf.ts",
     "verify:phase6-vw-tpsa-logp": "node scripts/verification/phase6-VW-TPSA-LogP.ts",
     "verify:phase6-vm": "node scripts/verification/phase6-Vm-密度.ts",
-    "verify:031": "node scripts/verification/031-補收驗證.ts"
+    "verify:031": "node scripts/verification/031-補收驗證.ts",
+    "verify:031b": "node scripts/verification/031-第二批-補收驗證.ts"
   },
   "dependencies": {
     "@rdkit/rdkit": "^2026.9.1",
