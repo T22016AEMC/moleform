@@ -208,6 +208,23 @@ MoleForm 的化學資料放在 `src/data/` 的四個 CSV。**目前只有任務 
 
 正例與反例放在 `tests/properties/vwCases.ts`（每個基團至少各一）。格式與 RDKit 檢查在 `src/core/data/vwGroups.ts`，Mi 核對與切分、計算在 `src/core/properties/vanDerWaalsVolume.ts`（規則寫在檔頭），測試 `tests/properties/vwGroups.test.ts`、`vanDerWaalsVolume.test.ts`；TPSA 與 Crippen LogP 直接用 RDKit 描述子（`src/core/properties/tpsaLogp.ts`，測試 `tests/properties/tpsaLogp.test.ts`）。輸出文件見 `docs/verification/phase6-VW-TPSA-LogP-輸出.md`。
 
+## 聚合物莫耳體積基團表 molar_volume_polymer_groups.csv（任務 029，D08、D22）
+
+`src/data/molar_volume_polymer_groups.csv`（UTF-8 BOM，15 列）。van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009), Table 4.10（書頁 88，PDF 第 115 頁）的 Va,i(298) 與 Vc,i(298)，逐列看圖讀取；只收錄本專案結構與驗證用聚合物需要的基團。SMARTS 自行撰寫。Table 4.10 沒有基團質量欄，所以沒有 Mi。
+
+| 欄位 | 說明 |
+|---|---|
+| `id` | M01–M15，依 Table 4.10 的順序 |
+| `基團名稱`、`SMARTS` | 名稱依書；SMARTS 描述整個基團；連接點 `*` 不屬於任何基團 |
+| `原子數` | 基團含幾個重原子（1–10）；切分時大的基團先配對 |
+| `Va` | Va,i(298)，cm³/mol：非晶態（玻璃態與橡膠態共用）的莫耳體積增量（Example 4.1 標「Vg(298)」的欄） |
+| `Vc` | Vc,i(298)，cm³/mol：結晶態的莫耳體積增量 |
+| `出處` | 書名、節、Table 4.10、書頁碼（缺表號或頁碼報錯） |
+| `稽核狀態` | 目前全部「待使用者審」 |
+| `備註` | 括號值（書中標為暫定）、al./ar.、general 的解讀；書中沒有的情況不配對 |
+
+程式：`src/core/data/molarVolumeGroups.ts`（格式與 RDKit 檢查）、`src/core/properties/molarVolumeDensity.ts`（切分、計算、298 K 狀態判斷）；正例與反例在 `tests/properties/molarVolumeCases.ts`。小分子液體（Table 4.5）未實作，見 KNOWN_ISSUES M21。
+
 ## 程式位置
 
 - 讀取程式與檢查：`src/core/data/`（`csv.ts`、`readers.ts`、`validate.ts`、`chemcheck.ts`、`load.ts`）

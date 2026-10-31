@@ -13,6 +13,7 @@
 | `phase6-Tg-輸出.md` | Phase 6（任務 026）：測試成分與骨架範本單元的 van Krevelen 基團切分、ΣYgi、ΣMi、Tg（缺基團者列出原子位置），以及 12 個聚合物與書中計算值的對照（分子量只列在此，D09）。重新產生：`npm run verify:phase6-tg` |
 | `phase6-TbTf-輸出.md` | Phase 6（任務 027）：論文的適用限制與誤差、小分子（單體、固化劑、溶劑、SBI、環氧氯丙烷等）的 Joback 基團切分、Tb、Tf（K 與 °C），缺基團者列出原子位置；聚合物重複單元列為不適用。重新產生：`npm run verify:phase6-tbtf` |
 | `phase6-VW-TPSA-LogP-輸出.md` | Phase 6（任務 028）：小分子、聚合物重複單元、環氧單元與骨架範本 BT01–BT06 單元的 van der Waals 體積 VW（Table 4.2 基團增量）、TPSA（Ertl 2000）、Crippen LogP（Wildman–Crippen 1999）；VW 缺基團者列出原子位置與原因，聚合物單元的 TPSA、LogP 以甲基封端計算並標示「以甲基封端的單元估算；LogP 僅供相對比較」。重新產生：`npm run verify:phase6-vw-tpsa-logp` |
+| `phase6-Vm-密度-輸出.md` | Phase 6（任務 029）：聚合物重複單元、環氧單元與骨架範本 BT01–BT06 單元的莫耳體積與密度（Table 4.10 的 Va 與 Vc；玻璃態／橡膠態／結晶，298 K 狀態依 Tg 判斷，Tg 算不出來標「狀態未定」），缺基團者列出原子位置與原因，括號值標示；小分子標「液體法未實作」（待 Fedors 1974）；另列 11 個書中聚合物。重新產生：`npm run verify:phase6-vm` |
 | `phase5-使用者檢查.md` | Phase 5.7：任務 020～024 後續累積的瀏覽器確認清單（表格，結果與備註欄由使用者填寫，不會被腳本覆蓋） |
 | `phase4-使用者檢查.md` | 使用者對 Phase 4 輸出的檢查結果（手寫記錄） |
 | `phase3-使用者檢查.md` | 使用者對 Phase 3 輸出的檢查結果（手寫記錄） |
