@@ -130,7 +130,7 @@ U02 已由 D46 決定（任務 019）。
 - [x] 6.1 Van Krevelen 基團切分的 SMARTS，依 D22 流程（任務 026：Yg 部分；31 列，稽核狀態「待使用者審」；Table 6.1 缺的基團見 `docs/reports/026-結果.md`）
 - [x] 6.2 基團貢獻參數表填入資料（每列有出處）（任務 026：`src/data/yg_groups.csv`，只含本專案需要的基團；其他物性的基團表仍待後續任務）
 - [x] 6.3 直接計算類：Bondi 分子體積、TPSA、Crippen LogP（RDKit）（VW、TPSA、Crippen LogP（任務 028）：`src/data/vw_groups.csv` 26 列「待使用者審」、`src/core/properties/vanDerWaalsVolume.ts`、`tpsaLogp.ts`、輸出 `docs/verification/phase6-VW-TPSA-LogP-輸出.md`；聚合物單元的 TPSA、LogP 以甲基封端計算並標示；Table 4.2 沒有的基團（含 –O–，書中兩個括號值沒有標示條件）回報缺基團，見 `docs/reports/028-結果.md`、KNOWN_ISSUES M18–M20）
-- [ ] 6.4 Van Krevelen 類：莫耳體積／密度、自由體積分率、極化率、Tg、Tm、Td、CTE、介電常數（Tg 部分完成（任務 026）：`src/core/properties/tgGroupContribution.ts`、輸出 `docs/verification/phase6-Tg-輸出.md`；聚合物莫耳體積與密度完成（任務 029）：`src/data/molar_volume_polymer_groups.csv` 15 列「待使用者審」、`src/core/properties/molarVolumeDensity.ts`、輸出 `docs/verification/phase6-Vm-密度-輸出.md`，小分子液體待 Fedors 1974（與 8.3 合併）；其餘未做）
+- [ ] 6.4 Van Krevelen 類：莫耳體積／密度、自由體積分率、極化率、Tg、Tm、Td、CTE、介電常數（Tg 部分完成（任務 026）：`src/core/properties/tgGroupContribution.ts`、輸出 `docs/verification/phase6-Tg-輸出.md`；聚合物莫耳體積與密度完成（任務 029）：`src/data/molar_volume_polymer_groups.csv` 15 列「待使用者審」、`src/core/properties/molarVolumeDensity.ts`、輸出 `docs/verification/phase6-Vm-密度-輸出.md`，小分子液體待 Fedors 1974（與 8.3 合併）；**缺基團診斷完成（任務 030），結果見 `docs/reports/030-結果.md`，待使用者決定**；其餘未做）
 - [ ] 6.5 參考趨勢類：彈性模數、吸濕性；Tm 對不可結晶聚合物標為「不適用」
 - [x] 6.6 小分子沸點、熔點（Joback，已定 D52）（Joback Tb、Tf（D52，任務 027）：`src/data/joback_groups.csv` 41 列「待使用者審」、`src/core/properties/jobackTbTf.ts`、輸出 `docs/verification/phase6-TbTf-輸出.md`；聚合物單元不適用）
 - [ ] 6.7 混合配方：混合密度、Fox／Gordon–Taylor Tg、混合介電常數、共聚比例影響

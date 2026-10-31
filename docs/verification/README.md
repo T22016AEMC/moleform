@@ -33,6 +33,10 @@ Phase 5 用 `npm run verify:phase5`（腳本 `scripts/verification/phase5.ts`）
 
 Phase 2 的腳本是 `scripts/verification/phase2.mjs`。它用 Node 載入與網站相同的程式碼（`src/core/`），3D 計算的種子固定為 42、要求 5 個構象，所以重複執行結果相同。程式、OpenChemLib 或 RDKit 版本改變後請重新產生並一併提交。
 
+## 任務 030 診斷輸出（不是 Phase 驗證）
+
+任務 030（缺基團近似拆解與幾何 VW 可行性）的診斷腳本放在 `scripts/diagnosis/`（拋棄式，不進 `src`、不進建置，沒有 npm script），用 `node scripts/diagnosis/<檔名>.ts` 執行：`030-a0-semi-check.ts`、`030-a-missing-groups.ts`、`030-c-decomposition-errors.ts`、`030-d-geometric-vw.ts`（約 2 分鐘）。輸出在本資料夾：`030-診斷-A0-半導體SMILES檢查.md`、`030-診斷-A-缺基團-輸出.md`、`030-診斷-C-拆解誤差-輸出.md`、`030-診斷-D-幾何VW-輸出.md`。報告見 `docs/reports/030-結果.md`。
+
 ## 新增下一個 Phase 的清單
 
 仿照 `scripts/verification/phase2.mjs` 新增腳本與 npm script，輸出放在本資料夾，並維持「只放程式輸出」的規則。
