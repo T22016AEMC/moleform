@@ -132,5 +132,8 @@ describe('單元片段能產生 3D（OpenChemLib）', () => {
       expect(batch.optimized).toBe(true);
     }
     console.log(rows.join('\n'));
-  });
+    // 逾時 90 秒：此測試對 9 個單元各做真實的 OpenChemLib 構象產生與力場最佳化。單獨執行約 15 秒；
+    // 全測試並行（39 個檔案、每檔一個 worker 搶 CPU）時每單元慢約 2 倍，曾超過全域 30 秒而逾時。
+    // 被測程式自任務 024 起未變動，故為負載造成，不是退步；留 3 倍以上餘裕。
+  }, 90000);
 });
