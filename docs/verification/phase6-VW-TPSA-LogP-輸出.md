@@ -5,7 +5,7 @@
 以下為程式輸出，未經化學判斷（D17）；ΣMi 與單元質量只列在本文件供核對，網站上不顯示（D09）。
 
 - 結構處理：RDKit 2026.09.1
-- **VW**：van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009), 4.2.3 節：VW = ΣVW,i（基團增量見 Table 4.2，書頁 74–75；基團增量法源自 Bondi 1964）。基團表 `src/data/vw_groups.csv`（26 列，稽核狀態皆為「待使用者審」）。可信度：理論估算（基團貢獻法）。單位 cm³/mol（每分子或每結構單元）。
+- **VW**：van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009), 4.2.3 節：VW = ΣVW,i（基團增量見 Table 4.2，書頁 74–75；基團增量法源自 Bondi 1964）。基團表 `src/data/vw_groups.csv`（41 列，稽核狀態皆為「待使用者審」）。可信度：理論估算（基團貢獻法）。單位 cm³/mol（每分子或每結構單元）。
 - **TPSA**：Ertl, Rohde & Selzer (2000) 拓撲極性表面積（RDKit tpsa，只計 N、O 片段），J. Med. Chem. 43, 3714–3717。單位 Å²。可信度：理論估算。
 - **Crippen LogP**：Wildman & Crippen (1999) 原子貢獻法（RDKit CrippenClogP），J. Chem. Inf. Comput. Sci. 39, 868–873。無單位。可信度：理論估算。
 - 本數值為依理論模型估算之參考值，非實測值。實際結果受原料純度、製程條件與反應動力學影響，請以實驗結果為準。

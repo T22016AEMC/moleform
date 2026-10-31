@@ -8,6 +8,8 @@ export interface MolGraph {
   hCount: number[];
   neighbors: number[][];
   aromatic: boolean[];
+  /** 有順反標示的雙鍵：鍵兩端原子（小的在前，以 'i-j' 為鍵）→ cis／trans（相對於各端的重原子鄰居）；沒有標示的雙鍵不在表中 */
+  doubleBondStereo: Map<string, 'cis' | 'trans'>;
 }
 
 interface JsonAtom {
@@ -16,7 +18,7 @@ interface JsonAtom {
 }
 interface JsonMol {
   atoms: JsonAtom[];
-  bonds: { atoms: [number, number] }[];
+  bonds: { atoms: [number, number]; stereo?: string }[];
   extensions?: { name: string; aromaticAtoms?: number[] }[];
 }
 
@@ -29,6 +31,10 @@ export function readGraph(mol: JSMol): MolGraph {
     neighbors[b.atoms[0]].push(b.atoms[1]);
     neighbors[b.atoms[1]].push(b.atoms[0]);
   }
+  const doubleBondStereo = new Map<string, 'cis' | 'trans'>();
+  for (const b of m.bonds) {
+    if (b.stereo === 'cis' || b.stereo === 'trans') doubleBondStereo.set(`${Math.min(...b.atoms)}-${Math.max(...b.atoms)}`, b.stereo);
+  }
   for (const list of neighbors) list.sort((a, b) => a - b);
   const aromatic = new Array<boolean>(n).fill(false);
   const rep = m.extensions?.find((e) => e.name === 'rdkitRepresentation');
@@ -38,5 +44,6 @@ export function readGraph(mol: JSMol): MolGraph {
     hCount: m.atoms.map((a) => a.impHs ?? 0),
     neighbors,
     aromatic,
+    doubleBondStereo,
   };
 }

@@ -1,7 +1,7 @@
 // van der Waals 體積基團表 src/data/vw_groups.csv（任務 028，D08、D22）。
 // 欄位：id、基團名稱、SMARTS、原子數、VW、Mi、二價／非二價、出處、稽核狀態、備註。
 // 數值（VW、Mi）取自 van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009) Table 4.2（書頁 74–75）；SMARTS 自行撰寫。
-// 格式檢查（不需 RDKit）：標題列、26 列、id 為 V01–V26、必填（含出處，缺出處報錯）、數值可讀、VW 留空時備註必須說明、二價／非二價只能二選一。
+// 格式檢查（不需 RDKit）：標題列、41 列（任務 031 補收後）、id 為 V01–V41、必填（含出處，缺出處報錯）、數值可讀、VW 留空時備註必須說明、二價／非二價只能二選一。
 // RDKit 檢查：SMARTS 可解析。Mi 與基團質量的核對在 src/core/properties/vanDerWaalsVolume.ts（需要分子）；正例與反例在 tests/properties/vwCases.ts。
 // 只確認格式與程式照規則運作，不判斷化學（D17）。
 import vwCsv from '../../data/vw_groups.csv?raw';
@@ -12,7 +12,7 @@ import type { DataIssue, TableResult } from './types';
 export const VW_GROUPS_FILE = 'vw_groups.csv';
 export const VW_GROUPS_COLUMNS = ['id', '基團名稱', 'SMARTS', '原子數', 'VW', 'Mi', '二價／非二價', '出處', '稽核狀態', '備註'] as const;
 /** 本專案需要的 Table 4.2 基團數 */
-export const VW_GROUP_COUNT = 26;
+export const VW_GROUP_COUNT = 41;
 export const VW_VALENCES = ['二價', '非二價'] as const;
 
 export interface VwGroupRow {
@@ -65,8 +65,8 @@ export function readVwGroups(text: string): TableResult<VwGroupRow> {
     }
     const [id, name, smarts, atomText, vwText, miText, valence, source, audit, notes] = rec.map((s) => s.trim());
     let ok = true;
-    if (!/^\d+$/.test(atomText) || Number(atomText) < 1 || Number(atomText) > 10) {
-      fail(no, '原子數', `只能是 1–10 的整數：「${atomText}」`);
+    if (!/^\d+$/.test(atomText) || Number(atomText) < 1 || Number(atomText) > 30) {
+      fail(no, '原子數', `只能是 1–30 的整數：「${atomText}」`);
       ok = false;
     }
     if (vwText !== '' && !NUMBER.test(vwText)) {

@@ -3,7 +3,7 @@
 // 數值取自 van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009) Table 4.10（書頁 88）；SMARTS 自行撰寫。
 // Va ＝ Va,i(298)：非晶態（玻璃態與橡膠態共用，式 4.8a、4.8b）的莫耳體積增量；Vc ＝ Vc,i(298)：結晶態的莫耳體積增量，單位 cm³/mol。
 // Table 4.10 沒有基團質量欄，所以沒有 Mi。
-// 格式檢查（不需 RDKit）：標題列、15 列、id 為 M01–M15、必填（含出處，缺出處報錯）、Va 與 Vc 都是數字、書中印於括號內者備註要寫明。
+// 格式檢查（不需 RDKit）：標題列、27 列（任務 031 補收後）、id 為 M01–M27、必填（含出處，缺出處報錯）、Va 與 Vc 都是數字、書中印於括號內者備註要寫明。
 // RDKit 檢查：SMARTS 可解析。正例與反例在 tests/properties/molarVolumeCases.ts。只確認格式與程式照規則運作，不判斷化學（D17）。
 import molarVolumeCsv from '../../data/molar_volume_polymer_groups.csv?raw';
 import type { RDKitModule } from '../rdkit/types';
@@ -13,7 +13,7 @@ import type { DataIssue, TableResult } from './types';
 export const MOLAR_VOLUME_GROUPS_FILE = 'molar_volume_polymer_groups.csv';
 export const MOLAR_VOLUME_GROUPS_COLUMNS = ['id', '基團名稱', 'SMARTS', '原子數', 'Va', 'Vc', '出處', '稽核狀態', '備註'] as const;
 /** 本專案需要的 Table 4.10 基團數 */
-export const MOLAR_VOLUME_GROUP_COUNT = 15;
+export const MOLAR_VOLUME_GROUP_COUNT = 27;
 
 export interface MolarVolumeGroupRow {
   id: string;
@@ -64,8 +64,8 @@ export function readMolarVolumeGroups(text: string): TableResult<MolarVolumeGrou
     }
     const [id, name, smarts, atomText, vaText, vcText, source, audit, notes] = rec.map((s) => s.trim());
     let ok = true;
-    if (!/^\d+$/.test(atomText) || Number(atomText) < 1 || Number(atomText) > 10) {
-      fail(no, '原子數', `只能是 1–10 的整數：「${atomText}」`);
+    if (!/^\d+$/.test(atomText) || Number(atomText) < 1 || Number(atomText) > 30) {
+      fail(no, '原子數', `只能是 1–30 的整數：「${atomText}」`);
       ok = false;
     }
     if (!NUMBER.test(vaText)) {

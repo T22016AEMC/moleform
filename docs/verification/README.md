@@ -37,6 +37,10 @@ Phase 2 的腳本是 `scripts/verification/phase2.mjs`。它用 Node 載入與�
 
 任務 030（缺基團近似拆解與幾何 VW 可行性）的診斷腳本放在 `scripts/diagnosis/`（拋棄式，不進 `src`、不進建置，沒有 npm script），用 `node scripts/diagnosis/<檔名>.ts` 執行：`030-a0-semi-check.ts`、`030-a-missing-groups.ts`、`030-c-decomposition-errors.ts`、`030-d-geometric-vw.ts`（約 2 分鐘）。輸出在本資料夾：`030-診斷-A0-半導體SMILES檢查.md`、`030-診斷-A-缺基團-輸出.md`、`030-診斷-C-拆解誤差-輸出.md`、`030-診斷-D-幾何VW-輸出.md`。報告見 `docs/reports/030-結果.md`。
 
+## 任務 031 補收驗證輸出
+
+`docs/verification/031-補收驗證-輸出.md`：補收書中現成整體基團前後的差異表（使用者材料與 D53 半導體材料）、書中聚合物對照、PMDA–ODA 與 BPDA–PDA。用 `npm run verify:031` 產生（腳本 `scripts/verification/031-補收驗證.ts`；「補收前」讀 git 3536540 的資料表）。
+
 ## 新增下一個 Phase 的清單
 
 仿照 `scripts/verification/phase2.mjs` 新增腳本與 npm script，輸出放在本資料夾，並維持「只放程式輸出」的規則。

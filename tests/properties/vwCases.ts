@@ -34,6 +34,21 @@ export const VW_GROUP_CASES: readonly VwGroupCase[] = [
   { id: 'V24', table: 'Car（exo）', positives: ['Cc1ccccc1C', 'Oc1ccccc1C'], negatives: ['c1ccccc1', 'c1ccc2ccccc2c1', 'c1ccc2CCCc2c1'] },
   { id: 'V25', table: '>CH–', positives: ['CC(C)C', '[*:1]C([*:2])c1ccc2ccccc2c1'], negatives: ['CCC', 'CC1CC1', 'CC(C)(C)C'] },
   { id: 'V26', table: '>C<', positives: ['[*:1]CC([*:2])(C)C(=O)OCC', 'CCC(CC)(CC)CC'], negatives: ['CC(C)C', 'CC1(C)CC1'] },
+  { id: 'V27', table: '均苯四甲醯亞胺', positives: ['CN1C(=O)c2cc3C(=O)N(C)C(=O)c3cc2C1=O', '[*:1]N1C(=O)c2cc3C(=O)N([*:2])C(=O)c3cc2C1=O'], negatives: ['CN1C(=O)c2ccccc2C1=O', 'O=C1OC(=O)c2cc3C(=O)OC(=O)c3cc12', 'c1ccccc1'] },
+  { id: 'V28', table: '萘二基（2,6-）', positives: ['Cc1ccc2cc(C)ccc2c1', '[*:1]c1ccc2cc([*:2])ccc2c1'], negatives: ['Cc1ccc2ccc(C)cc2c1', 'Cc1ccc(C)c2ccccc12', 'c1ccc2ccccc2c1'] },
+  { id: 'V29', table: 'N-咔唑基', positives: ['Cn1c2ccccc2c2ccccc12', '[*:1]n1c2ccccc2c2ccccc12'], negatives: ['c1ccc2c(c1)[nH]c1ccccc12', 'Cc1ccccc1', 'c1ccc2ccccc2c1'] },
+  { id: 'V30', table: '吡啶基（4-）', positives: ['Cc1ccncc1', '[*:1]C([*:2])c1ccncc1'], negatives: ['Cc1ccccn1', 'Cc1cccnc1', 'c1ccncc1'] },
+  { id: 'V31', table: '二甲基伸苯基（2,6-二甲基-1,4-伸苯基）', positives: ['Cc1cc(C)c(C)c(C)c1', '[*:1]c1cc(C)c([*:2])c(C)c1'], negatives: ['Cc1ccc(C)cc1', 'Cc1cc(C)cc(C)c1', 'Cc1ccccc1C'] },
+  { id: 'V32', table: '二苯基伸苯基（2,6-二苯基-1,4-伸苯基）', positives: ['Cc1cc(-c2ccccc2)c(C)c(-c2ccccc2)c1', '[*:1]c1cc(-c2ccccc2)c([*:2])c(-c2ccccc2)c1'], negatives: ['Cc1ccc(C)cc1', 'c1ccc(cc1)-c1ccccc1', 'Cc1cc(-c2ccccc2)cc(C)c1'] },
+  { id: 'V33', table: 'Car（endo，稠合芳香碳）', positives: ['c1ccc2ccccc2c1', 'Cc1cccc2c(C)cccc12'], negatives: ['c1ccccc1', 'c1ccc2CCCc2c1', 'Cc1ccccc1'] },
+  { id: 'V34', table: 'Nar（吡啶型氮）', positives: ['c1ccncc1', 'Cc1cccnc1'], negatives: ['c1cc[nH]c1', 'c1ncc[nH]1', 'c1ccncn1'] },
+  { id: 'V35', table: '–N<', positives: ['CN(C)C', 'c1ccccc1N(C)C'], negatives: ['CNC', 'CN', 'c1ccncc1'] },
+  { id: 'V36', table: '–C≡N', positives: ['CC#N', 'N#Cc1ccccc1'], negatives: ['CC#C', 'CN=C=O', 'N#N'] },
+  { id: 'V37', table: '–S–', positives: ['CSC', 'c1ccccc1Sc1ccccc1'], negatives: ['CS', 'CS(C)(=O)=O', 'CSSC', 'C1CCSC1'] },
+  { id: 'V38', table: '–SO2–', positives: ['CS(C)(=O)=O', 'Cc1ccc(cc1)S(=O)(=O)c1ccccc1'], negatives: ['CS(C)=O', 'CS(=O)(=O)O', 'CS(=O)(=O)N'] },
+  { id: 'V39', table: '–Si<', positives: ['C[Si](CC)(CC)CC', 'C[Si](C)(C)C'], negatives: ['C[SiH](C)C', 'CC', 'C1CC[SiH2]C1'] },
+  { id: 'V40', table: '–Si(CH3)2–', positives: ['C[Si](C)(CC)CC', '[*:1]O[Si](C)(C)O[*:2]'], negatives: ['C[Si](C)(C)C', 'C[Si](CC)(CC)CC', 'CC'] },
+  { id: 'V41', table: '–NH–', positives: ['CNC', 'c1ccccc1Nc1ccccc1'], negatives: ['CN', 'CN(C)C', 'C1CCNC1'] },
 ];
 
 /** Table 4.2 的獨立抄錄（VW，cm³/mol），與 vw_groups.csv 分開，手算用；來源：書頁 74–75 圖像逐列讀取 */

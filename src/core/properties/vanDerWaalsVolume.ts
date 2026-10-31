@@ -23,7 +23,8 @@ export const massTolerance = (groups: readonly { id: string; mi: number }[]): nu
 /** 單一基團 Mi 與實際基團質量允許的差（g/mol）：書中印兩位小數的 Mi 容許 0.02，只印一位小數的（127.2、77.10 這類末位為 0 者視同一位）容許 0.05 */
 export const miTolerance = (mi: number): number => (Number.isInteger(Math.round(mi * 100) / 10) ? 0.05 : 0.02);
 /** 明確的例外（使用者 2026-10-30 決定）：V07 –C(CH3)(COOCH3)– 的 Mi 書印 86.05，基團質量 86.09，疑為印刷誤差，容許 0.05（KNOWN_ISSUES M18） */
-export const VW_MI_EXCEPTIONS: Readonly<Record<string, number>> = { V07: 0.05 };
+/** 任務 031：V28 萘二基（書印 126.18，原子量表算 126.158）、V30 吡啶基（書印 78.07，算 78.094；書中 Nar 的 Mi 用 14.00，與一般 N 14.007 差 0.007）差 0.02–0.03，是書中捨入，容許 0.03 */
+export const VW_MI_EXCEPTIONS: Readonly<Record<string, number>> = { V07: 0.05, V28: 0.03, V30: 0.03 };
 export const VW_MODEL = 'van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009), 4.2.3 節：VW = ΣVW,i（基團增量見 Table 4.2，書頁 74–75；基團增量法源自 Bondi 1964）';
 export const VW_DISCLAIMER = 'van der Waals 體積為基團加成估算，非實測；以 cm³/mol（結構單元）表示。';
 

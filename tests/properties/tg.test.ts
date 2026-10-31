@@ -192,3 +192,103 @@ describe('BT05（雙酚 A 環氧單元）可計算', () => {
     expect(r.sumM).toBeCloseTo(16 + 194.3 + 16 + 14 + 30 + 14, 9);
   });
 });
+
+describe('任務 031：補收書中現成的整體基團', () => {
+  const B = String.fromCharCode(92);
+  const rows = (s: string) => ok(computeTg(RDKit, s)).groups.map((g) => g.rowId).sort();
+
+  it('Table 6.3 的五個組合基團：Ygi 與 Mi 等於書中值（書頁 141–142）', () => {
+    const cases: [string, number, number][] = [
+      ['*c1ccc(Cc2ccc(*)cc2)cc1', 65, 166.2],
+      ['*c1ccc(Oc2ccc(*)cc2)cc1', 67, 168.2],
+      ['*c1ccc(Sc2ccc(*)cc2)cc1', 72, 184.2],
+      ['*c1ccc(S(=O)(=O)c2ccc(*)cc2)cc1', 111, 216.3],
+      ['*c1ccc(cc1)-c1ccc(*)cc1', 70, 152.2],
+    ];
+    for (const [s, y, m] of cases) {
+      const r = ok(computeTg(RDKit, s));
+      expect(r.groups, s).toHaveLength(1);
+      expect([r.sumYg, r.sumM], s).toEqual([y, m]);
+    }
+  });
+
+  it('ULTEM（Example 6.4，書頁 145）：2 × N-鄰苯二甲醯亞胺 95 + 2 × –O– 4 + BPA 組合 87 = 285', () => {
+    const r = ok(computeTg(RDKit, '[*:1]N1C(=O)c2ccc(Oc3ccc(cc3)C(C)(C)c3ccc(Oc4ccc5C(=O)N([*:2])C(=O)c5c4)cc3)cc2C1=O'));
+    expect(r.sumYg).toBeCloseTo(285, 9);
+    expect(r.groups.filter((g) => g.familyId === 'C.phthalimide')).toHaveLength(2);
+  });
+
+  it('PMDA–ODA：均苯四甲醯亞胺 175 + –C6H4–O–C6H4– 67 = 242（較大的組合基團優先）', () => {
+    const r = ok(computeTg(RDKit, '[*:1]N1C(=O)c2cc3C(=O)N(C(=O)c3cc2C1=O)c1ccc(Oc2ccc([*:2])cc2)cc1'));
+    expect(r.groups.map((g) => g.rowId).sort()).toEqual(['C.PMDA', 'T.C6H4OC6H4']);
+    expect(r.sumYg).toBe(242);
+    expect(Math.abs(r.massDelta as number)).toBeLessThan(0.1); // Table 6.1 的 Mi 只印到小數一位
+  });
+
+  it('BPDA–PDA：N-鄰苯二甲醯亞胺旁的對伸苯基共軛狀態書中沒說清楚，維持缺基團，不自行決定', () => {
+    const r = computeTg(RDKit, '[*:1]N1C(=O)c2ccc(cc2C1=O)-c1ccc2C(=O)N(C(=O)c2c1)c1ccc([*:2])cc1');
+    expect(r.status).toBe('missing');
+    if (r.status !== 'missing') return;
+    expect(r.groups.filter((g) => g.familyId === 'C.phthalimide')).toHaveLength(2);
+    expect(r.missing.some((m) => m.description.includes('共軛狀態，書中沒有說清楚'))).toBe(true);
+  });
+
+  it('–COO–：n／c／cc 依相鄰芳香原子數取 12.5／13.5／15（Table 6.1 B，Mi 取基團質量 44.0）', () => {
+    const y = (s: string) => ok(computeTg(RDKit, s)).groups.find((g) => g.familyId === 'B.COO')?.ygi;
+    expect(y('*CCC(=O)OCC*')).toBe(12.5);
+    expect(y('*CCC(=O)Oc1ccc(*)cc1')).toBe(13.5);
+    expect(y('*c1ccc(cc1)C(=O)Oc1ccc(*)cc1')).toBe(15);
+  });
+
+  it('–SO2–：n／c／cc 取 32.5／36／40；–S–、–CH(CH3)–、–C(C6H5)2– 等 Table 6.1 A 的值', () => {
+    const y = (s: string, f: string) => ok(computeTg(RDKit, s)).groups.find((g) => g.familyId === f)?.ygi;
+    expect(y('*CCS(=O)(=O)CC*', 'B.SO2')).toBe(32.5);
+    expect(y('*CCS(=O)(=O)c1ccc(*)cc1', 'B.SO2')).toBe(36);
+    expect(y('*c1ccc(cc1)S(=O)(=O)c1ccc(*)cc1', 'T.C6H4SO2C6H4')).toBe(111);
+    expect(y('*CCSCC*', 'A.S')).toBe(8);
+    expect(y('*CC([*:2])C', 'A.CH(CH3)')).toBe(8);
+    expect(y('*CC(*)(c1ccccc1)c1ccccc1', 'A.C(C6H5)2')).toBe(65);
+    expect(y('*CC(*)(C)c1ccccc1', 'A.C(CH3)(C6H5)')).toBe(51);
+    expect(y('*CC(*)c1ccc(C)cc1', 'A.CH(C6H4CH3)')).toBe(41.2);
+  });
+
+  it('–CH=CH–：依 SMILES 的順反標示取 cis 3.8／trans 7.4；沒有標示就回報缺基團', () => {
+    const y = (s: string) => ok(computeTg(RDKit, s)).groups.find((g) => g.familyId === 'B.CH=CH')?.ygi;
+    expect(y('[*:1]CC/C=C/CC[*:2]')).toBe(7.4);
+    expect(y(`[*:1]CC/C=C${B}CC[*:2]`)).toBe(3.8);
+    const r = computeTg(RDKit, '[*:1]CCC=CCC[*:2]');
+    expect(r.status).toBe('missing');
+    if (r.status === 'missing') expect(r.missing.some((m) => m.description.includes('沒有順反標示'))).toBe(true);
+  });
+
+  it('–Si(CH3)2–：夾在兩個芳香環之間取受阻 16，否則取自由 7（比照 –C(CH3)2–，待使用者確認）', () => {
+    const y = (s: string) => ok(computeTg(RDKit, s)).groups.find((g) => g.familyId === 'A.Si(CH3)2')?.ygi;
+    expect(y('*c1ccc(cc1)[Si](C)(C)c1ccc(*)cc1')).toBe(16);
+    expect(y('*CC[Si](C)(C)CC*')).toBe(7);
+  });
+
+  it('萘二基：1,4- 取 50、2,6- 取 68，其他位置（2,7-）不配對', () => {
+    const y = (s: string, f: string) => ok(computeTg(RDKit, s)).groups.find((g) => g.familyId === f)?.ygi;
+    expect(y('*c1ccc(*)c2ccccc12', 'B.naph14')).toBe(50);
+    expect(y('*c1ccc2cc(*)ccc2c1', 'B.naph26')).toBe(68);
+    expect(computeTg(RDKit, '*c1ccc2ccc(*)cc2c1').status).toBe('missing');
+  });
+
+  it('環狀酸酐（MHHPA 型）仍回報缺基團；鏈上酸酐取 22', () => {
+    expect(computeTg(RDKit, 'O=C1OC(=O)C2CCCCC12').status).toBe('missing');
+    expect(rows('*CCC(=O)OC(=O)CC*')).toContain('B.COOCO');
+    expect(ok(computeTg(RDKit, '*CCC(=O)OC(=O)CC*')).sumYg).toBeCloseTo(2.7 * 4 + 22, 9);
+  });
+
+  it('切分完整性：新基團的結構，各基團原子數加總 = 重原子數', () => {
+    for (const s of ['[*:1]N1C(=O)c2cc3C(=O)N(C(=O)c3cc2C1=O)c1ccc(Oc2ccc([*:2])cc2)cc1', '*c1ccc(S(=O)(=O)c2ccc(*)cc2)cc1', '*CCC(=O)OC(=O)CC*']) {
+      const r = ok(computeTg(RDKit, s));
+      const mol = RDKit.get_mol(s)!;
+      const heavy = (JSON.parse(mol.get_json()) as { molecules: { atoms: { z?: number }[] }[] }).molecules[0].atoms.filter((a) => (a.z ?? 6) > 1).length;
+      mol.delete();
+      const grouped = r.groups.flatMap((g) => g.atoms);
+      expect(new Set(grouped).size).toBe(grouped.length);
+      expect(grouped.length, s).toBe(heavy);
+    }
+  });
+});

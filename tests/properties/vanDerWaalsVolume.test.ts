@@ -220,10 +220,10 @@ describe('缺基團：回報原子位置與原因，不計算、不拋例外、�
     for (const s of ['O=COC', 'COC(=O)OC', 'CC(=O)c1ccccc1']) expect(computeVdwVolume(RDKit, s).status, s).toBe('missing');
   });
 
-  it('二甲基亞碸等含 S、Si 的結構：沒有對應基團，只回報缺基團', () => {
-    const r = computeVdwVolume(RDKit, 'C[Si](C)(C)C');
+  it('含 P 的結構：沒有對應基團（Table 4.2 無 P），只回報缺基團（S、Si 已於任務 031 補收）', () => {
+    const r = computeVdwVolume(RDKit, 'CP(C)C');
     if (r.status !== 'missing') throw new Error(`預期 missing，實際 ${r.status}`);
-    expect(r.missing.map((m) => m.element)).toEqual(['Si']);
+    expect(r.missing.map((m) => m.element)).toEqual(['P']);
   });
 });
 
@@ -267,8 +267,8 @@ describe('ΣMi 與分子（重複單元）質量差', () => {
     const r = ok(computeVdwVolume(RDKit, 'CCO', { rows }));
     expect(r.massWithinTolerance).toBe(false);
   });
-  it('Mi 的明確例外只有 V07', () => {
-    expect(Object.keys(VW_MI_EXCEPTIONS)).toEqual(['V07']);
+  it('Mi 的明確例外只有 V07（M18）與 V28、V30（任務 031，書中捨入差 0.02–0.03）', () => {
+    expect(Object.keys(VW_MI_EXCEPTIONS)).toEqual(['V07', 'V28', 'V30']);
   });
 });
 
@@ -280,5 +280,32 @@ describe('無效輸入', () => {
   });
   it('含多個分子（以 . 分隔）：不計算', () => {
     expect(computeVdwVolume(RDKit, 'CCO.CC').status).toBe('invalid');
+  });
+});
+
+describe('任務 031：補收書中現成的整體基團（Table 4.2 書頁 74–75）', () => {
+  const vwOf = (s: string) => ok(computeVdwVolume(RDKit, s)).vw;
+  it('聚（1,4-伸苯硫醚）：–C6H4– 43.3 + –S– 10.8 = 54.1（Table 4.8 書頁 85 的 54.1）', () => {
+    expect(vwOf('[*:1]c1ccc(S[*:2])cc1')).toBeCloseTo(54.1, 9);
+  });
+  it('均苯四甲醯亞胺 94.5（整體）；PMDA–ODA 缺的只有 –O–（M19 留空），其餘基團都配到', () => {
+    expect(vwOf('CN1C(=O)c2cc3C(=O)N(C)C(=O)c3cc2C1=O') - 2 * 13.67).toBeCloseTo(94.5, 9);
+    const r = computeVdwVolume(RDKit, '[*:1]N1C(=O)c2cc3C(=O)N(C(=O)c3cc2C1=O)c1ccc(Oc2ccc([*:2])cc2)cc1');
+    expect(r.status).toBe('missing');
+    if (r.status !== 'missing') return;
+    expect(r.missing).toHaveLength(1);
+    expect(r.missing[0].element).toBe('O');
+    expect(r.groups.map((g) => g.id).sort()).toEqual(['V14', 'V14', 'V27']);
+  });
+  it('其餘新基團的值：–S– 10.8、–SO2– 20.3、–Si(CH3)2– 42.2、–Si< 16.6、–C≡N 14.7、–N< 4.3、Nar 5.2、Car(endo) 4.75、–NH– 4', () => {
+    expect(vwOf('[*:1]CSC[*:2]')).toBeCloseTo(10.23 * 2 + 10.8, 9);
+    expect(vwOf('[*:1]CS(=O)(=O)C[*:2]')).toBeCloseTo(10.23 * 2 + 20.3, 9);
+    expect(vwOf('[*:1]CC[Si](C)(C)CC[*:2]')).toBeCloseTo(10.23 * 4 + 42.2, 9);
+    expect(vwOf('C[Si](C)(C)C')).toBeCloseTo(16.6 + 4 * 13.67, 9);
+    expect(vwOf('CC#N')).toBeCloseTo(13.67 + 14.7, 9);
+    expect(vwOf('CN(C)C')).toBeCloseTo(3 * 13.67 + 4.3, 9);
+    expect(vwOf('Cc1cccnc1')).toBeCloseTo(13.67 + 4 * 8.05 + 5.55 + 5.2, 9);
+    expect(vwOf('c1ccc2ccccc2c1')).toBeCloseTo(8 * 8.05 + 2 * 4.75, 9);
+    expect(vwOf('CNC')).toBeCloseTo(2 * 13.67 + 4, 9);
   });
 });

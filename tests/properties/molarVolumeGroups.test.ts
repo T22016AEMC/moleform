@@ -45,7 +45,7 @@ describe('molar_volume_polymer_groups.csv（內建資料）', () => {
     expect(all.map(formatIssue)).toEqual([]);
   });
 
-  it('15 列，id 為 M01–M15，每列有出處（含 Table 4.10 與書頁 88）、稽核狀態「待使用者審」', () => {
+  it('27 列（原 15 列加任務 031 補收的 12 列），id 為 M01–M27，每列有出處（含 Table 4.10 與書頁 88）、稽核狀態「待使用者審」', () => {
     expect(table.rows).toHaveLength(MOLAR_VOLUME_GROUP_COUNT);
     table.rows.forEach((r, i) => {
       expect(r.id).toBe(`M${String(i + 1).padStart(2, '0')}`);
@@ -56,9 +56,9 @@ describe('molar_volume_polymer_groups.csv（內建資料）', () => {
     });
   });
 
-  it('括號內的值（–O– al./ar.、–CONH–）備註寫明「書中印於括號內」「書中標為暫定」；其他列沒有這個字樣', () => {
+  it('括號內的值（–O– al./ar.、–CONH–、任務 031 的萘環、二苯基取代苯環、環己基、–SO2–）備註寫明「書中印於括號內」「書中標為暫定」；其他列沒有這個字樣', () => {
     const tentative = table.rows.filter((r) => r.notes.includes('書中印於括號內')).map((r) => r.id);
-    expect(tentative).toEqual(['M09', 'M10', 'M13']);
+    expect(tentative).toEqual(['M09', 'M10', 'M13', 'M16', 'M19', 'M20', 'M26']);
     for (const id of tentative) expect(table.rows.find((r) => r.id === id)?.notes).toMatch(/書中標為暫定/);
   });
 
@@ -79,6 +79,19 @@ describe('molar_volume_polymer_groups.csv（內建資料）', () => {
       M13: TABLE410.CONH,
       M14: TABLE410.C6H4_meta,
       M15: TABLE410.C6H4_para,
+      // 任務 031 補收（Table 4.10 書頁 88 圖像逐列讀取）
+      M16: { va: 112, vc: 100 },
+      M17: { va: 151, vc: 135 },
+      M18: { va: 104, vc: 94 },
+      M19: { va: 208, vc: 190 },
+      M20: { va: 86, vc: 77 },
+      M21: { va: 100.5, vc: 90 },
+      M22: { va: 40.8, vc: 36.6 },
+      M23: { va: 52.4, vc: 47 },
+      M24: { va: 56.85, vc: 51 },
+      M25: { va: 17.3, vc: 15.5 },
+      M26: { va: 32.5, vc: 29 },
+      M27: { va: 67.5, vc: 60.6 },
     };
     for (const r of table.rows) expect({ va: r.va, vc: r.vc }, r.id).toEqual(byId[r.id]);
   });
@@ -115,7 +128,7 @@ describe('格式檢查會報錯的情況', () => {
     expect(issuesOf(withFirstRow(line({ ...GOOD, 備註: '' }))).join('\n')).toMatch(/備註/);
   });
   it('列數不對', () => {
-    expect(issuesOf([HEADER, line(GOOD)].join('\n')).join('\n')).toMatch(/應有 15 列/);
+    expect(issuesOf([HEADER, line(GOOD)].join('\n')).join('\n')).toMatch(/應有 27 列/);
   });
   it('標題列與定義不一致', () => {
     expect(issuesOf('id,名稱\nM01,x').join('\n')).toMatch(/標題列/);

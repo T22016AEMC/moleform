@@ -22,6 +22,18 @@ export const MOLAR_VOLUME_GROUP_CASES: readonly MolarVolumeGroupCase[] = [
   { id: 'M13', table: '–CONH–', positives: ['CC(=O)NC', '[*:1]C(=O)NCC[*:2]'], negatives: ['CC(N)=O', 'CC(=O)N(C)C', 'CNC(=O)NC'] },
   { id: 'M14', table: '–C6H4–（間位）', positives: ['Cc1cccc(C)c1'], negatives: ['Cc1ccc(C)cc1', 'Cc1ccccc1C'] },
   { id: 'M15', table: '–C6H4–（對位）', positives: ['Cc1ccc(C)cc1'], negatives: ['Cc1cccc(C)c1', 'Cc1ccccc1C'] },
+  { id: 'M16', table: '萘環（2,6-二取代）', positives: ['Cc1ccc2cc(C)ccc2c1', '[*:1]c1ccc2cc([*:2])ccc2c1'], negatives: ['Cc1ccc2ccc(C)cc2c1', 'Cc1ccc(C)c2ccccc12', 'c1ccc2ccccc2c1'] },
+  { id: 'M17', table: '均苯四甲醯亞胺', positives: ['CN1C(=O)c2cc3C(=O)N(C)C(=O)c3cc2C1=O', '[*:1]N1C(=O)c2cc3C(=O)N([*:2])C(=O)c3cc2C1=O'], negatives: ['CN1C(=O)c2ccccc2C1=O', 'O=C1OC(=O)c2cc3C(=O)OC(=O)c3cc12', 'c1ccccc1'] },
+  { id: 'M18', table: '二甲基苯環（2,6-二甲基-1,4-伸苯基）', positives: ['Cc1cc(C)c(C)c(C)c1', '[*:1]c1cc(C)c([*:2])c(C)c1'], negatives: ['Cc1ccc(C)cc1', 'Cc1cc(C)cc(C)c1', 'Cc1ccccc1C'] },
+  { id: 'M19', table: '二苯基取代苯環（2,6-二苯基-1,4-伸苯基）', positives: ['Cc1cc(-c2ccccc2)c(C)c(-c2ccccc2)c1', '[*:1]c1cc(-c2ccccc2)c([*:2])c(-c2ccccc2)c1'], negatives: ['Cc1ccc(C)cc1', 'c1ccc(cc1)-c1ccccc1', 'Cc1cc(-c2ccccc2)cc(C)c1'] },
+  { id: 'M20', table: '環己基（單取代）', positives: ['CC1CCCCC1', 'COC(=O)C1CCCCC1'], negatives: ['C1CCCCC1', 'CC1CCCCC1C', 'c1ccccc1'] },
+  { id: 'M21', table: '–C(CH3)(C6H5)–', positives: ['CCC(C)(CC)c1ccccc1', '[*:1]CC([*:2])(C)c1ccccc1'], negatives: ['CC(C)(C)c1ccccc1', 'CC(C)c1ccccc1', 'CCC(CC)(CC)c1ccccc1'] },
+  { id: 'M22', table: '–CH(OCH3)–', positives: ['[*:1]CC([*:2])OC', 'CCC(C)OC'], negatives: ['CC(C)O', 'CC(C)OCC', 'COC'] },
+  { id: 'M23', table: '–CH(OCOCH3)–', positives: ['[*:1]CC([*:2])OC(C)=O', 'CCC(C)OC(C)=O'], negatives: ['CCOC(C)=O', 'CC(C)OC(=O)CC'] },
+  { id: 'M24', table: '–CH(COOCH3)–', positives: ['[*:1]CC([*:2])C(=O)OC', 'CCC(C)C(=O)OC'], negatives: ['CCC(=O)OC', 'CC(C)C(=O)OCC'] },
+  { id: 'M25', table: '–S–', positives: ['CSC', 'c1ccccc1Sc1ccccc1'], negatives: ['CS', 'CS(C)(=O)=O', 'CSSC', 'C1CCSC1'] },
+  { id: 'M26', table: '–SO2–', positives: ['CS(C)(=O)=O', 'Cc1ccc(cc1)S(=O)(=O)c1ccccc1'], negatives: ['CS(C)=O', 'CS(=O)(=O)O', 'CS(=O)(=O)N'] },
+  { id: 'M27', table: '–Si(CH3)2–', positives: ['C[Si](C)(CC)CC', '[*:1]O[Si](C)(C)O[*:2]'], negatives: ['C[Si](C)(C)C', 'C[Si](CC)(CC)CC', 'CC'] },
 ];
 
 /** Table 4.10（書頁 88，PDF 第 115 頁）的獨立抄錄（Va／Vc，cm³/mol），與 CSV 分開，手算用；書中圖像逐列讀取 */

@@ -189,7 +189,7 @@ describe('298 K 狀態判斷（書頁 79–80：Tg 高於 25 °C 玻璃態、低
     expect(r.glassy).toEqual(r.amorphous);
   });
   it('狀態未定：Tg 算不出來（缺基團）時不判斷，兩種結果都輸出並標明依據', () => {
-    for (const s of [PET, '[*:1]CC([*:2])C']) {
+    for (const s of ['[*:1]CC([*:2])C1CCCCC1']) {
       expect(computeTg(RDKit, s).status, s).toBe('missing');
       const r = ok(computeMolarVolumeDensity(RDKit, s));
       expect(r.state.state).toBe('undetermined');
@@ -202,7 +202,25 @@ describe('298 K 狀態判斷（書頁 79–80：Tg 高於 25 °C 玻璃態、低
     }
   });
   it('judgeState 對 Tg 缺基團的結構回傳 undetermined；結構無效也不拋例外', () => {
-    expect(judgeState(RDKit, PET).state).toBe('undetermined');
+    expect(judgeState(RDKit, '[*:1]CC([*:2])C1CCCCC1').state).toBe('undetermined');
     expect(judgeState(RDKit, 'C(C').state).toBe('undetermined');
+  });
+});
+
+describe('任務 031：補收的整體基團（Table 4.10 書頁 88）', () => {
+  it('PMDA–ODA：均苯四甲醯亞胺 151／135 + 2 × 對伸苯基 65.5／59 + –O–（ar.）8.0／7.1 = 290.0／260.1', () => {
+    const r = ok(computeMolarVolumeDensity(RDKit, '[*:1]N1C(=O)c2cc3C(=O)N(C(=O)c3cc2C1=O)c1ccc(Oc2ccc([*:2])cc2)cc1'));
+    expect(r.amorphous?.vm).toBeCloseTo(151 + 2 * 65.5 + 8.0, 9);
+    expect(r.crystalline?.vm).toBeCloseTo(135 + 2 * 59 + 7.1, 9);
+  });
+  it('聚（1,4-伸苯硫醚）：–S– 17.3／15.5 + 對伸苯基 65.5／59；聚乙酸乙烯酯：–CH2– + –CH(OCOCH3)– 52.4／47', () => {
+    const pps = ok(computeMolarVolumeDensity(RDKit, '[*:1]c1ccc(S[*:2])cc1'));
+    expect([pps.amorphous?.vm, pps.crystalline?.vm]).toEqual([17.3 + 65.5, 15.5 + 59]);
+    const pvac = ok(computeMolarVolumeDensity(RDKit, '[*:1]CC([*:2])OC(C)=O'));
+    expect(pvac.amorphous?.vm).toBeCloseTo(16.37 + 52.4, 9);
+    expect(pvac.crystalline?.vm).toBeCloseTo(14.68 + 47, 9);
+  });
+  it('醚 O 接連接點 *（M22）仍回報缺基團，不自行歸 al. 或 ar.', () => {
+    expect(computeMolarVolumeDensity(RDKit, '[*:1]Oc1c(C)cc([*:2])cc1C').status).toBe('missing');
   });
 });

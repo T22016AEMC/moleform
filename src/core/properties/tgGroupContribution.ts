@@ -19,6 +19,8 @@ import { readGraph, type MolGraph } from './molGraph';
 
 /** 氫鍵鏈判定：單元內有這些基團時，–CH2– 取氫鍵鏈的值（書頁 139 Fig. 6.3 說明與 6.2.2.4 文字：聚醯胺、聚胺基甲酸酯、聚脲；4.3 值見 Table 6.1，書頁 133） */
 export const HYDROGEN_BOND_FAMILIES: readonly string[] = ['A.urethane', 'A.urea', 'B.CONH'];
+/** 與相鄰伸苯基的共軛狀態書中沒有定義的基團家族（Table 6.1 C 的 N-鄰苯二甲醯亞胺，任務 031）；相鄰的伸苯基回報缺基團 */
+export const CONJ_UNDEFINED_FAMILIES: readonly string[] = ['C.phthalimide'];
 /** ΣMi 與分子（重複單元）質量允許的差（g/mol）；超過時在結果中標示 */
 export const TG_MASS_TOLERANCE = 0.01;
 
@@ -253,6 +255,11 @@ export function computeTg(RDKit: RDKitModule, smiles: string, options: TgOptions
         const state = stateOf(sides);
         row = f.rows.find((r) => r.state === state);
         if (!row) note = `${f.name} 在資料表沒有共軛狀態 ${state} 的值`;
+        else if (f.section === 'B 芳香環系統' && exits.some((x) => x !== null && owner[x] >= 0 && CONJ_UNDEFINED_FAMILIES.includes(hits[owner[x]].family.id))) {
+          // 相鄰的 N-鄰苯二甲醯亞胺（書中標 c）與這個伸苯基的共軛狀態，書中沒有說清楚：不自行決定（任務 031，BPDA–PDA）
+          row = undefined;
+          note = `${f.name} 與相鄰的 N-鄰苯二甲醯亞胺的共軛狀態，書中沒有說清楚（待使用者決定）`;
+        }
       } else if (f.rows.some((r) => r.condition !== '')) {
         let cond: string | null = null;
         if (f.id === 'A.CH2') {
@@ -262,6 +269,16 @@ export function computeTg(RDKit: RDKitModule, smiles: string, options: TgOptions
           // 受阻＝夾在兩個芳香環之間取 15，否則取自由值 8.5（書頁 140 6.2.2.4 文字第一個例子；Table 6.1 書頁 133）
           const exits = exitsOf(h.atoms);
           cond = exits.length === 2 && exits.every((x) => x !== null && g.aromatic[x]) ? 'hindered' : 'free';
+        } else if (f.id === 'A.Si(CH3)2') {
+          // 書中分 free／st. hind. 兩列但沒有定義條件；比照 –C(CH3)2– 的例子（書頁 140）：夾在兩個芳香環之間算受阻（待使用者確認，任務 031）
+          const exits = exitsOf(h.atoms);
+          cond = exits.length === 2 && exits.every((x) => x !== null && g.aromatic[x]) ? 'hindered' : 'free';
+        } else if (f.id === 'B.CH=CH') {
+          // cis／trans 由 SMILES 的雙鍵立體標示判定；沒有標示就無法選值
+          const key = `${Math.min(h.atoms[0], h.atoms[1])}-${Math.max(h.atoms[0], h.atoms[1])}`;
+          const stereo = g.doubleBondStereo.get(key);
+          if (stereo === undefined) note = '–CH=CH– 沒有順反標示（書中 cis 3.8、trans 7.4），無法選值';
+          else cond = stereo;
         } else note = `${f.name} 沒有條件判定規則`;
         if (cond !== null) {
           row = f.rows.find((r) => r.condition === cond);
