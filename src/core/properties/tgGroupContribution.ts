@@ -93,8 +93,108 @@ export type TgResult =
     }
   | { status: 'invalid'; smiles: string; message: string };
 
+/**
+ * 重疊組合基團的切分規則（任務 031 後續，M26）：
+ *  - greedy：基團原子數大者先配（預設，任務 026 起的規則）；
+ *  - fewest：在所有「每個重原子恰好屬於一個基團」的切分中取基團總數最少者（同數取較大基團先配者）；
+ *  - fromEnd：從第一個連接點的鄰居起，依距離由近到遠，每遇到尚未配對的原子就配含它的最大基團。
+ * 找不到完整切分時 fewest 退回 greedy。
+ */
+export type TgPartitionStrategy = 'greedy' | 'fewest' | 'fromEnd';
+
 export interface TgOptions {
   rows?: readonly YgGroupRow[];
+  partition?: TgPartitionStrategy;
+}
+
+interface Candidate {
+  family: YgFamily;
+  atoms: number[];
+}
+
+/** 依規則從所有候選命中挑出互不重疊的切分；candidates 已依家族順序（大基團在前）排列 */
+function choosePartition(
+  strategy: TgPartitionStrategy,
+  candidates: Candidate[],
+  g: MolGraph,
+  dummies: number[],
+): Candidate[] {
+  const greedy = (): Candidate[] => {
+    const taken = new Set<number>();
+    const picked: Candidate[] = [];
+    for (const c of candidates) {
+      if (c.atoms.some((a) => taken.has(a) || g.z[a] === 0)) continue;
+      c.atoms.forEach((a) => taken.add(a));
+      picked.push(c);
+    }
+    return picked;
+  };
+  if (strategy === 'greedy') return greedy();
+  const usable = candidates.filter((c) => c.atoms.every((a) => g.z[a] !== 0));
+  if (strategy === 'fewest') {
+    const heavy = g.z.map((z, i) => (z > 1 ? i : -1)).filter((i) => i >= 0);
+    const byAtom = new Map<number, number[]>();
+    usable.forEach((c, k) => c.atoms.forEach((a) => byAtom.set(a, [...(byAtom.get(a) ?? []), k])));
+    let best: number[] | null = null;
+    let steps = 0;
+    const covered = new Set<number>();
+    const chosen: number[] = [];
+    const dfs = (): void => {
+      if (++steps > 200000) return;
+      if (best !== null && chosen.length >= best.length) return;
+      const open = heavy.filter((a) => !covered.has(a));
+      if (open.length === 0) {
+        best = [...chosen];
+        return;
+      }
+      let pick = -1;
+      let options: number[] = [];
+      for (const a of open) {
+        const opts = (byAtom.get(a) ?? []).filter((k) => usable[k].atoms.every((x) => !covered.has(x)));
+        if (opts.length === 0) return;
+        if (pick === -1 || opts.length < options.length) {
+          pick = a;
+          options = opts;
+        }
+      }
+      for (const k of options) {
+        usable[k].atoms.forEach((x) => covered.add(x));
+        chosen.push(k);
+        dfs();
+        chosen.pop();
+        usable[k].atoms.forEach((x) => covered.delete(x));
+      }
+    };
+    dfs();
+    if (best === null) return greedy();
+    return (best as number[]).sort((a, b) => a - b).map((k) => usable[k]);
+  }
+  // fromEnd
+  const start = dummies.length > 0 ? g.neighbors[dummies[0]].find((n) => g.z[n] !== 0) : undefined;
+  const dist = new Map<number, number>();
+  const queue: number[] = [];
+  if (start !== undefined) {
+    dist.set(start, 0);
+    queue.push(start);
+  }
+  for (let head = 0; head < queue.length; head++) {
+    for (const n of g.neighbors[queue[head]]) {
+      if (g.z[n] === 0 || dist.has(n)) continue;
+      dist.set(n, (dist.get(queue[head]) as number) + 1);
+      queue.push(n);
+    }
+  }
+  const order = g.z.map((z, i) => i).filter((i) => g.z[i] > 1).sort((a, b) => (dist.get(a) ?? 1e9) - (dist.get(b) ?? 1e9) || a - b);
+  const taken = new Set<number>();
+  const picked: Candidate[] = [];
+  for (const a of order) {
+    if (taken.has(a)) continue;
+    const c = usable.find((x) => x.atoms.includes(a) && x.atoms.every((y) => !taken.has(y)));
+    if (!c) continue;
+    c.atoms.forEach((y) => taken.add(y));
+    picked.push(c);
+  }
+  return picked;
 }
 
 const familyCache = new WeakMap<object, Map<readonly YgGroupRow[], YgFamily[]>>();
@@ -205,19 +305,17 @@ export function computeTg(RDKit: RDKitModule, smiles: string, options: TgOptions
 
     // ---- 切分 ----
     const owner = new Array<number>(n).fill(-1);
-    const hits: { family: YgFamily; atoms: number[] }[] = [];
+    const candidates: Candidate[] = [];
     for (const f of families) {
       const q = mustQuery(RDKit, f.smarts);
       try {
-        for (const atoms of allMatches(mol, q)) {
-          if (atoms.some((a) => owner[a] !== -1 || g.z[a] === 0)) continue;
-          for (const a of atoms) owner[a] = hits.length;
-          hits.push({ family: f, atoms });
-        }
+        for (const atoms of allMatches(mol, q)) candidates.push({ family: f, atoms });
       } finally {
         q.delete();
       }
     }
+    const hits = choosePartition(options.partition ?? 'greedy', candidates, g, dummies);
+    hits.forEach((h, k) => h.atoms.forEach((a) => (owner[a] = k)));
 
     // 連接點的週期性鄰接：正好兩個連接點時，各自的鄰居互為對面
     const partner = new Map<number, number>();

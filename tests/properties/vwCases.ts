@@ -17,7 +17,7 @@ export const VW_GROUP_CASES: readonly VwGroupCase[] = [
   { id: 'V07', table: '–C(CH3)(COOCH3)–', positives: ['[*:1]CC([*:2])(C)C(=O)OC', 'CCC(C)(CC)C(=O)OC'], negatives: ['CC(C)(C)C(=O)OC', 'CCC(CC)C(=O)OC'] },
   { id: 'V08', table: '–CH=CH–', positives: ['CC=CC', 'C/C=C/C'], negatives: ['C=CC', 'CC(C)=CC'] },
   { id: 'V09', table: '–C(=O)–（al.）', positives: ['CCC(C)=O', '[*:1]CC(=O)CC[*:2]'], negatives: ['CC(=O)OC', 'CC=O', 'CC(=O)c1ccccc1'] },
-  { id: 'V10', table: '–O–（VW 留空）', positives: ['COC', 'CCOCC'], negatives: ['CCO', 'C1CO1'] },
+  { id: 'V10', table: '–O–（鏈上醚）', positives: ['COC', 'CCOCC', 'COc1ccccc1'], negatives: ['CCO', 'C1CO1', 'CC(=O)OC', 'COC(=O)OC', 'CC(=O)OC(C)=O'] },
   { id: 'V11', table: '–COO–', positives: ['CC(=O)OC', 'CCOC(=O)C', '[*:1]CC(=O)OC[*:2]'], negatives: ['CC(=O)O', 'COC(=O)OC', 'O=COC', 'CC(=O)NC', 'O=C1CCCO1'] },
   { id: 'V12', table: '–CONH–', positives: ['CC(=O)NC', '[*:1]C(=O)NCC[*:2]'], negatives: ['CC(N)=O', 'CC(=O)N(C)C', 'CNC(=O)NC', 'CNC(=O)OC'] },
   { id: 'V13', table: '–C6H4–（間位）', positives: ['Cc1cccc(C)c1'], negatives: ['Cc1ccc(C)cc1', 'Cc1ccccc1C', 'Cc1ccccc1'] },

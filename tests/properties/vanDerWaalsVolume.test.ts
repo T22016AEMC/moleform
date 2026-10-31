@@ -125,7 +125,6 @@ describe('切分完整性：各基團原子數加總 = 重原子數，沒有重�
       'OC(=CC=C1C2(C)C)C=C1C(C2)(CC1(C)C)C(=CC(O)=C2)C1=C2',
       'c1ccc(P(c2ccccc2)c2ccccc2)cc1',
       '[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O',
-      '[*:1]Oc1ccc(cc1)C(C)(C)c1ccc(cc1)OCC(O)C[*:2]',
     ]),
   ];
   for (const smiles of molecules) {
@@ -168,28 +167,20 @@ describe('切分完整性：各基團原子數加總 = 重原子數，沒有重�
 });
 
 describe('缺基團：回報原子位置與原因，不計算、不拋例外、不以相近基團代用', () => {
-  it('BADGE：兩個醚 O（–O– 在資料表 VW 留空）與環氧環（Table 4.2 沒有環氧環基團）', () => {
+  it('BADGE：兩個鏈上醚 O 已配對（3.7），缺的只有環氧環（含環上的 O，Table 4.2 沒有環氧環基團）', () => {
     const r = computeVdwVolume(RDKit, 'CC(C)(c1ccc(OCC2CO2)cc1)c1ccc(OCC2CO2)cc1');
     if (r.status !== 'missing') throw new Error(`預期 missing，實際 ${r.status}`);
     expect(r).not.toHaveProperty('vw');
-    const blank = r.missing.filter((m) => m.reason !== null);
-    expect(blank).toHaveLength(2);
-    for (const m of blank) {
-      expect(m.element).toBe('O');
-      expect(m.reason).toMatch(/–O–/);
-      expect(m.reason).toMatch(/留空/);
-    }
+    expect(r.groups.filter((g) => g.id === 'V10')).toHaveLength(2);
+    expect(r.missing.every((m) => m.reason === null)).toBe(true);
     // 環氧環的 CH、CH2、O（各 2 個）沒有任何基團
-    const ring = r.missing.filter((m) => m.reason === null);
-    expect(ring.map((m) => m.element).sort()).toEqual(['C', 'C', 'C', 'C', 'O', 'O']);
+    expect(r.missing.map((m) => m.element).sort()).toEqual(['C', 'C', 'C', 'C', 'O', 'O']);
     for (const m of r.missing) expect(m.description).toMatch(/鄰居/);
   });
 
-  it('PGMEA：只有甲醚的 O 缺基團（酯基的 O 屬於 –COO–）', () => {
-    const r = computeVdwVolume(RDKit, 'COCC(C)OC(C)=O');
-    if (r.status !== 'missing') throw new Error(`預期 missing，實際 ${r.status}`);
-    expect(r.missing.map((m) => [m.index, m.element])).toEqual([[1, 'O']]);
-    // 乙酸酯（–O–C(=O)–CH3 接在 >CH– 上）由 5 原子的 –CH(OCOCH3)– 整組先配走
+  it('PGMEA：甲醚的 O 取 3.7（反推值），酯基的 O 屬於 –COO–，乙酸酯由 –CH(OCOCH3)– 整組先配走', () => {
+    const r = ok(computeVdwVolume(RDKit, 'COCC(C)OC(C)=O'));
+    expect(r.groups.map((g) => g.id)).toContain('V10');
     expect(r.groups.map((g) => g.id)).toContain('V03');
   });
 
@@ -237,13 +228,13 @@ describe('聚合物重複單元（含 *）', () => {
   it('小分子的 polymer 標記為 false', () => {
     expect(ok(computeVdwVolume(RDKit, 'CCO')).polymer).toBe(false);
   });
-  it('骨架範本單元 BT01、BT02 可計算（逐原子相加）；BT03–BT06（醚 O、環氧環、茀）回報缺基團', () => {
+  it('骨架範本單元 BT01、BT02 可計算（逐原子相加）；BT05 的鏈上醚 O 可算；含環氧環、茀的 BT03、BT04、BT06 回報缺基團', () => {
     expect(computeVdwVolume(RDKit, '[*:1]Cc1cc([*:2])ccc1O').status).toBe('ok');
     expect(computeVdwVolume(RDKit, '[*:1]Cc1cc([*:2])cc(C)c1O').status).toBe('ok');
+    expect(computeVdwVolume(RDKit, '[*:1]Oc1ccc(cc1)C(C)(C)c1ccc(cc1)OCC(O)C[*:2]').status).toBe('ok');
     for (const s of [
       '[*:1]Cc1cc([*:2])ccc1OCC2CO2',
       '[*:1]Cc1cc([*:2])cc(C)c1OCC2CO2',
-      '[*:1]Oc1ccc(cc1)C(C)(C)c1ccc(cc1)OCC(O)C[*:2]',
       '[*:1]Oc1ccc(cc1)C1(c2ccccc2-c2ccccc21)c1ccc(cc1)OCC(O)C[*:2]',
       '[*:1]CC([*:2])(C)C(=O)OCC1CO1',
     ]) {
@@ -288,14 +279,16 @@ describe('任務 031：補收書中現成的整體基團（Table 4.2 書頁 74�
   it('聚（1,4-伸苯硫醚）：–C6H4– 43.3 + –S– 10.8 = 54.1（Table 4.8 書頁 85 的 54.1）', () => {
     expect(vwOf('[*:1]c1ccc(S[*:2])cc1')).toBeCloseTo(54.1, 9);
   });
-  it('均苯四甲醯亞胺 94.5（整體）；PMDA–ODA 缺的只有 –O–（M19 留空），其餘基團都配到', () => {
+  it('均苯四甲醯亞胺 94.5（整體）；PMDA–ODA 現在可算：94.5 + 2 × 43.3 + –O– 3.7 = 184.8（書中 Kapton 184.1，已知差異 +0.7）', () => {
     expect(vwOf('CN1C(=O)c2cc3C(=O)N(C)C(=O)c3cc2C1=O') - 2 * 13.67).toBeCloseTo(94.5, 9);
     const r = computeVdwVolume(RDKit, '[*:1]N1C(=O)c2cc3C(=O)N(C(=O)c3cc2C1=O)c1ccc(Oc2ccc([*:2])cc2)cc1');
-    expect(r.status).toBe('missing');
-    if (r.status !== 'missing') return;
-    expect(r.missing).toHaveLength(1);
-    expect(r.missing[0].element).toBe('O');
-    expect(r.groups.map((g) => g.id).sort()).toEqual(['V14', 'V14', 'V27']);
+    expect(r.status).toBe('ok');
+    if (r.status !== 'ok') return;
+    expect(r.vw).toBeCloseTo(184.8, 9);
+    expect(r.groups.map((g) => g.id).sort()).toEqual(['V10', 'V14', 'V14', 'V27']);
+  });
+  it('酯基、碳酸酯、酸酐的 O 不當作鏈上醚：碳酸二甲酯仍缺基團', () => {
+    expect(computeVdwVolume(RDKit, 'COC(=O)OC').status).toBe('missing');
   });
   it('其餘新基團的值：–S– 10.8、–SO2– 20.3、–Si(CH3)2– 42.2、–Si< 16.6、–C≡N 14.7、–N< 4.3、Nar 5.2、Car(endo) 4.75、–NH– 4', () => {
     expect(vwOf('[*:1]CSC[*:2]')).toBeCloseTo(10.23 * 2 + 10.8, 9);

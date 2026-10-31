@@ -52,14 +52,17 @@ describe('vw_groups.csv（內建資料）', () => {
       expect(r.source).toMatch(/Table 4\.2/);
       expect(r.source).toMatch(/書頁 7[45]/);
       expect(r.source).toMatch(/van Krevelen & te Nijenhuis/);
-      expect(r.audit).toBe('待使用者審');
+      expect(r.audit).toMatch(/待使用者審/);
       expect(r.notes).toMatch(/Bondi|留空|任務 031 補收/);
     });
   });
 
-  it('只有 –O– 的 VW 留空（書中兩個括號值沒有標示條件，使用者 2026-10-30 指示），其餘都有數值', () => {
-    expect(table.rows.filter((r) => r.vw === null).map((r) => r.id)).toEqual(['V10']);
-    expect(table.rows.find((r) => r.id === 'V10')?.notes).toMatch(/留空/);
+  it('–O– 的 VW 3.7 是反推值（使用者 2026-10-31 決定）：稽核狀態與備註寫明，書印 (5.5)(5.0) 保留在備註；其餘列都有數值', () => {
+    expect(table.rows.filter((r) => r.vw === null)).toEqual([]);
+    const o = table.rows.find((r) => r.id === 'V10');
+    expect(o?.vw).toBe(3.7);
+    expect(o?.audit).toMatch(/反推值.*8／10 筆重現.*[(]5[.]5[)][(]5[.]0[)]/);
+    expect(o?.notes).toMatch(/Kapton/);
   });
 
   it('書中印於括號內的 –CONH– 備註有寫明；二價／非二價欄只有兩種值', () => {
