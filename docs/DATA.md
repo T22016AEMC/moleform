@@ -225,6 +225,14 @@ MoleForm 的化學資料放在 `src/data/` 的四個 CSV。**目前只有任務 
 
 程式：`src/core/data/molarVolumeGroups.ts`（格式與 RDKit 檢查）、`src/core/properties/molarVolumeDensity.ts`（切分、計算、298 K 狀態判斷）；正例與反例在 `tests/properties/molarVolumeCases.ts`。小分子液體（Table 4.5）未實作，見 KNOWN_ISSUES M21。
 
+## 莫耳介電極化基團表 polarization_groups.csv（任務 032，D08、D22）
+
+`src/data/polarization_groups.csv`（20 列）。van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009), Table 11.1（書頁 321，PDF 第 348 頁）的 P_LL 與 P_V，放大逐列看圖讀取。欄位：`id`（P01–P20）、`基團名稱`、`SMARTS`、`原子數`、`P_LL`（cm³/mol，式 11.7）、`P_V`（g/mol，式 11.8）、`出處`、`稽核狀態`（全部「待使用者審」）、`備註`。書中括號內與 `~` 的值照數值收錄，備註以 `[暫定:LL]`、`[暫定:V]`、`[暫定:LL,V]` 標明欄位並寫「書中標為暫定」。程式：`src/core/data/polarizationGroups.ts`、`src/core/properties/dielectricRefraction.ts`；正例與反例在 `tests/properties/dielectricCases.ts`。
+
+## 莫耳折射基團表 molar_refraction_groups.csv（任務 032，D08、D22；不做折射率 n，D07）
+
+`src/data/molar_refraction_groups.csv`（47 列）。Table 10.4（書頁 293–294，PDF 第 320–321 頁）的 R_LL 欄（λ = 589 nm，10⁻⁶ m³/mol ＝ cm³/mol，不換算）；R_GD、R_V 欄只用於折射率，不收。欄位：`id`（R01–R47）、`基團名稱`、`SMARTS`、`原子數`、`R`、`出處`、`稽核狀態`（全部「待使用者審」）、`備註`。書中 General／Attached to benzene ring 等變體的判斷條件書中沒有定義，取字面並寫在備註；Δ 構成增量、Br、I、–SH、–SS–、–NO2、–CHO 未收（結構不需要或書中沒說套用方式）。程式：`src/core/data/molarRefractionGroups.ts`、`src/core/properties/dielectricRefraction.ts`。
+
 ## 程式位置
 
 - 讀取程式與檢查：`src/core/data/`（`csv.ts`、`readers.ts`、`validate.ts`、`chemcheck.ts`、`load.ts`）
