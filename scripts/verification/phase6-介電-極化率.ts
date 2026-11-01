@@ -1,6 +1,6 @@
 // Phase 6 介電常數與莫耳折射／極化率輸出的產生腳本（任務 032）。
 // 對使用者材料的聚合物單元與骨架範本 BT01–BT06、任務 030 的半導體代表結構（A-3）、驗證用書中聚合物（Table 11.2）各輸出一列：
-// ε（式 11.7，V = Va）、ε（式 11.8）、ΣP_LL、ΣP_V、Va、ΣR、α′，或缺基團／缺莫耳體積。不含連接點的小分子標「不適用（小分子）」。
+// 主要 ε（式 11.8，P_V）、第二個估計 ε（式 11.7，V = Va）、ΣP_LL、ΣP_V、Va、ΣR、α′，或缺基團／缺莫耳體積。不含連接點的小分子標「不適用（小分子）」。
 // 不輸出折射率 n 與 n²（D07）。只列程式輸出，不判斷化學（D17）；單元質量與分子量不顯示（D09）。
 // 執行：npm run verify:phase6-dielectric（Node 直接執行 .ts，只用可抹除的型別語法）。
 import { mkdirSync, writeFileSync } from 'node:fs';
@@ -75,12 +75,14 @@ try {
   out();
   out(`- 結構處理：RDKit ${RDKit.version()}`);
   out(`- **ε 的方法**：${DIELECTRIC_MODEL}。基團表 \`src/data/polarization_groups.csv\`（${POLARIZATION_GROUPS.length} 列，稽核狀態皆為「待使用者審」）。可信度：理論估算（基團貢獻法）。`);
+  out('  - **主要 ε 與第二估計（使用者 2026-11-01 決定）**：主要 ε 用式 (11.8)（P_V，13 個 Table 11.2 聚合物都在書中計算值 0.04 內，且不需莫耳體積）；式 (11.7) 保留為第二個估計，兩者並列。');
   out('  - **式 (11.7)**：ε = (1 + 2x)/(1 − x)，x = ΣP_LL / V；V 使用任務 029 的非晶態莫耳體積 Va。書中式 (11.7) 與 Example 11.1 只寫「V(298)」，沒說 Va 或 Vc；依 PE 試算選擇 Va（使用者 2026-11-01 決定，驗證見第 4 節）。');
-  out('  - **式 (11.8)**：ε = (ΣP_V / M)²，不需要莫耳體積；M 為結構單元質量。沒有莫耳體積的結構仍輸出此版本，註明「缺莫耳體積，僅 P_V 估計」。');
+  out('  - **式 (11.8)**：ε = (ΣP_V / M)²，不需要莫耳體積；M 為結構單元質量。沒有莫耳體積的結構仍輸出此版本（只有主要估計）。');
   out('  - **頻率**：書中未註明 P 的適用頻率；Table 11.2 的觀測值屬 10²–10⁹ Hz 低頻範圍（書頁 320）。含極性基團的 ε 受頻率與溫度影響。');
   out('  - **暫定值**：Table 11.1 中印於括號內或「~」的 P_LL、P_V 照數值收錄，書中標為暫定；用到時在結構旁標「†」（P_LL 暫定）或「‡」（P_V 暫定）。');
   out(`- **ΣR 與 α 的方法**：${REFRACTION_MODEL}。基團表 \`src/data/molar_refraction_groups.csv\`（${MOLAR_REFRACTION_GROUPS.length} 列，稽核狀態皆為「待使用者審」）。ΣR 單位 10⁻⁶ m³/mol ＝ cm³/mol；α′ ＝ 3ΣR/(4π·N_A)（Å³／單元），由式 (11.10)、(11.11) 換算。**不輸出折射率 n 與 n²（D07）。**`);
   out('- **缺基團**：切分規則與 Tg、VW、莫耳體積相同（原子數由大到小配對；每個重原子恰好屬於一個基團；重疊優先順序為現行的最大組合優先，M26 未決，未更動）；配不到的原子回報「缺基團」，不用相近基團或記憶中的數值代用。鄰位與間位伸苯基 Table 11.1 沒有，不配對（使用者 2026-11-01 決定不放寬）。');
+  out('- **Table 10.4 變體重疊的優先順序**（使用者 2026-11-01 決定）：「接在苯環上」優先，其次甲基／乙基等烷基變體，最後一般值（Ar–O–CH3、苯甲酸甲酯、苯乙酮歸「接在苯環上」）；兩個烷基變體同時成立（如乙酸甲酯）仍不配對。');
   out('- **小分子**：Table 11.1、Table 10.4 是聚合物重複單元的基團增量，不含連接點（*）的小分子標「不適用（小分子）」。');
   out('- 本數值為依理論模型估算之參考值，非實測值。實際結果受原料純度、製程條件與反應動力學影響，請以實驗結果為準。');
   out('- 重新產生：`npm run verify:phase6-dielectric`。');
@@ -105,12 +107,13 @@ try {
     if (d.status === 'missing') return `${head} | 缺基團：${cell(shortMissing(d.missing))} | — | — | — | — | ${rCell} |`;
     const m = marks(d);
     const epsLL = d.epsLL === null ? (d.volume.status === 'missing' ? '缺莫耳體積' : '無解') : `${fx(d.epsLL)}${m}`;
-    return `${head} | ${epsLL} | ${fx(d.epsV)}${m} | ${fx(d.sumPLL)} | ${fx(d.sumPV, 1)} | ${d.volume.status === 'ok' ? fx(d.volume.va) : '缺莫耳體積'} | ${rCell} |`;
+    const phenolNote = d.groups.some((g: any) => g.id === 'P20') ? '（含書中暫定值（酚 –OH 的 P_V 約 100），可能偏高）' : '';
+    return `${head} | ${fx(d.epsV)}${m}${phenolNote} | ${epsLL} | ${fx(d.sumPLL)} | ${fx(d.sumPV, 1)} | ${d.volume.status === 'ok' ? fx(d.volume.va) : '缺莫耳體積'} | ${rCell} |`;
   };
 
   out('## 1. 全部結構');
   out();
-  out('ε（11.7）＝式 (11.7)，V = Va；ε（11.8）＝式 (11.8)。缺莫耳體積的結構，ε（11.7）欄註明「缺莫耳體積」，ε（11.8）欄為「缺莫耳體積，僅 P_V 估計」。† ＝ 用到 P_LL 暫定值；‡ ＝ 用到 P_V 暫定值。');
+  out('**ε（主要）＝式 (11.8)（P_V，不需莫耳體積）；ε（第二估計）＝式 (11.7)（P_LL，V = Va）。**缺莫耳體積的結構只有主要估計，第二估計欄標「缺莫耳體積」。† ＝ 用到 P_LL 暫定值；‡ ＝ 用到 P_V 暫定值。');
   out();
   const groupsSeen: string[] = [];
   for (const it of items) if (!groupsSeen.includes(it.group)) groupsSeen.push(it.group);
@@ -118,14 +121,13 @@ try {
   for (const group of groupsSeen) {
     out(`### ${group}`);
     out();
-    out('| 名稱 | SMILES | ε（11.7） | ε（11.8） | ΣP_LL（cm³/mol） | ΣP_V（g/mol） | Va（cm³/mol） | ΣR（cm³/mol） | α′（Å³） |');
+    out('| 名稱 | SMILES | ε（主要，式 11.8） | ε（第二估計，式 11.7） | ΣP_LL（cm³/mol） | ΣP_V（g/mol） | Va（cm³/mol） | ΣR（cm³/mol） | α′（Å³） |');
     out('|---|---|---|---|---|---|---|---|---|');
     for (const it of items.filter((x) => x.group === group)) {
-      let row = rowOf(it);
+      const row = rowOf(it);
       const d = computeDielectric(RDKit, it.smiles);
       if (d.status === 'ok' && d.volume.status === 'missing') {
         pvOnly.push(it.name);
-        row = row.replace(` | ${fx(d.epsV)}${marks(d)} | `, ` | ${fx(d.epsV)}${marks(d)}（缺莫耳體積，僅 P_V 估計） | `);
       }
       out(row);
     }
@@ -213,7 +215,7 @@ try {
   out();
 
   // ---------- 缺莫耳體積 ----------
-  out('## 6. 缺莫耳體積（僅 P_V 估計）的結構');
+  out('## 6. 缺莫耳體積（只有主要估計）的結構');
   out();
   out(pvOnly.length > 0 ? pvOnly.map((x) => `- ${x}`).join('\n') : '（無）');
   out();

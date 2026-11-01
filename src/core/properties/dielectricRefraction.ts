@@ -6,6 +6,8 @@
 //    依 PE 試算（Va 得 2.19，書中 2.20；Vc 得 2.86 不吻合）選擇 Va（使用者 2026-11-01 決定）。
 //  - P 的適用頻率：書中未註明。Table 11.2 的觀測值屬 10²–10⁹ Hz 低頻範圍（書頁 320）。
 //  - 極性基團：書中沒有對 P 做額外修正；式 (11.14) 與 Table 11.3 的偶極矩只用來估偶極矩（D15 已取消，不做）。
+//  - 主要 ε 用式 (11.8)（P_V，不需莫耳體積，13 個 Table 11.2 聚合物都在書中計算值 0.04 內）；式 (11.7)（P_LL ＋ Va）為第二個估計，兩者並列（使用者 2026-11-01 決定）。
+//  - Table 10.4 變體重疊的優先順序（使用者 2026-11-01 決定）：「接在苯環上」優先，其次甲基／乙基等烷基變體，最後一般值；兩個烷基變體同時成立（如乙酸甲酯）不配對。
 //  - 第 10 章 Table 10.4 的 R_LL（λ = 589 nm，書頁 293–294）；ΣR = ΣR_LL。分子極化率由式 (11.10) R_LL = N_A·α/(3ε₀) 與式 (11.11) α = 4πε₀α′ 得
 //    α′ = 3R/(4π·N_A)，α = 3ε₀R/N_A。不輸出折射率 n 與 n²（D07，任務卡修訂）。
 // 只對聚合物單元（含連接點 *）計算；不含連接點的小分子回傳「不適用（小分子）」。
@@ -27,7 +29,7 @@ import { computeMolarVolumeDensity } from './molarVolumeDensity';
 import { vwMatches } from './vanDerWaalsVolume';
 
 export const DIELECTRIC_MODEL =
-  'van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009), 11.2.3 節：式 (11.7) P_LL = (ε − 1)/(ε + 2)·V（V ＝ Va，任務 029）與式 (11.8) P_V = ε^½·M；基團增量見 Table 11.1（書頁 321）';
+  'van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009), 11.2.3 節：主要 ε 用式 (11.8) P_V = ε^½·M，第二個估計用式 (11.7) P_LL = (ε − 1)/(ε + 2)·V（V ＝ Va，任務 029）；基團增量見 Table 11.1（書頁 321）';
 export const REFRACTION_MODEL =
   'van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009), 10.2 節 Table 10.4（R_LL，λ = 589 nm，書頁 293–294）；α 由式 (11.10)、(11.11)（書頁 321–322）換算';
 export const DIELECTRIC_DISCLAIMER = '基團加成估算，非實測；含極性基團的 ε 受頻率與溫度影響（Table 11.2 觀測值屬 10²–10⁹ Hz 低頻範圍）。';
@@ -75,9 +77,7 @@ const P_MISSING_HINTS: readonly MissingHint[] = [
 
 /** Table 10.4 配不到的原子，若屬於書中變體沒有定義判斷條件或優先順序的情況，補充說明（優先順序由上而下） */
 const R_MISSING_HINTS: readonly MissingHint[] = [
-  { smarts: '[OX2H0;D2;!R;$(O-[CX4H3]);$(O-a)]', reason: '芳基甲基醚（Ar–O–CH3）：Table 10.4 的 Methyl ethers 與 Attached to benzene ring 兩列都像，書中沒說優先順序，不配對' },
-  { smarts: '[CX3;D3;!R;$(C-[#6,#0])](=[OX1])-[OX2H0;D2;!R]', reason: '酯基 –COO–：Table 10.4 分五列（甲酯、乙酯、高級酯、接在苯環上、乙酸酯）但沒有定義條件；本專案要求恰好一個旗標成立，兩個以上成立不配對（見 R25 備註）' },
-  { smarts: '[CX3;D3;!R;$(C(-[#6,#0])-[#6,#0])](=[OX1])', reason: '酮羰基：甲基酮與接在苯環上（如苯乙酮）同時成立時，書中沒說優先順序，不配對' },
+  { smarts: '[CX3;D3;!R;$(C-[#6,#0])](=[OX1])-[OX2H0;D2;!R]', reason: '酯基 –COO–：Table 10.4 分五列（甲酯、乙酯、高級酯、接在苯環上、乙酸酯）但沒有定義條件；兩個烷基旗標同時成立（如乙酸甲酯、乙酸乙酯）書中沒說，不配對（見 R25 備註）' },
   { smarts: '[CX3;D3;!R](=[OX1])-[NX3H1]', reason: '醯胺：Table 10.4 只有二級醯胺 –CONH–，不含醯亞胺或 N 上有第二個取代基者' },
   { smarts: '[R]', reason: '環上原子：Table 10.4 的環結構用 Δ ring structure 增量修正，書中沒說怎麼套用，不收' },
   { smarts: '[c;R1;D3]', reason: '多取代的苯環：書中用「伸苯基減 H_ar」，但沒說減在哪一個異構物，不配對' },
@@ -219,6 +219,10 @@ export type DielectricResult =
       sumPLL: number;
       sumPV: number;
       volume: VolumeForDielectric;
+      /** 主要 ε（式 11.8，P_V；不需莫耳體積）；與 epsV 相同 */
+      epsPrimary: number;
+      /** 第二個估計（式 11.7，P_LL ＋ Va）；與 epsLL 相同，缺莫耳體積或無解時為 null */
+      epsSecondary: number | null;
       /** 式 (11.7)：ε = (1 + 2x)/(1 − x)，x = ΣP_LL/Va；沒有莫耳體積（缺莫耳體積）或 x ≥ 1 時為 null */
       epsLL: number | null;
       /** epsLL 為 null 的原因；有值時為 null */
@@ -321,6 +325,8 @@ export function computeDielectric(RDKit: RDKitModule, smiles: string): Dielectri
       epsLL,
       epsLLNote,
       epsV,
+      epsPrimary: epsV,
+      epsSecondary: epsLL,
       relDiff: epsLL === null ? null : Math.abs(epsLL - epsV) / epsLL,
       usesTentativeLL: groups.some((h) => h.tentativeLL),
       usesTentativeV: groups.some((h) => h.tentativeV),

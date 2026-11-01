@@ -15,6 +15,8 @@ import {
   type RefractionResult,
 } from '../../src/core/properties/dielectricRefraction';
 import { readGraph } from '../../src/core/properties/molGraph';
+import { MOLAR_REFRACTION_GROUPS } from '../../src/core/data/molarRefractionGroups';
+import { vwMatches } from '../../src/core/properties/vanDerWaalsVolume';
 import { getRDKit } from '../../src/core/rdkit/loader';
 import type { RDKitModule } from '../../src/core/rdkit/types';
 import { BOOK_DIELECTRIC_CASES, BOOK_DIELECTRIC_PV_ONLY, BOOK_REFRACTION_CASES, TABLE104, TABLE111, VA, VC } from './dielectricCases';
@@ -235,23 +237,66 @@ describe('缺基團：回報原子位置與原因，不計算、不猜值', () =
     expect(computeDielectric(RDKit, smiles).status).toBe('missing');
     expect(computeRefraction(RDKit, smiles).status).toBe('missing');
   });
-  it('Table 10.4：芳基甲基醚（Ar–O–CH3）書中沒說優先順序，不配對並說明原因', () => {
-    const r = computeRefraction(RDKit, '[*:1]CC([*:2])c1ccc(OC)cc1');
-    expect(r.status).toBe('missing');
-    if (r.status === 'missing') expect(r.missing.map((m) => m.reason).join('')).toMatch(/芳基甲基醚/);
-  });
-  it('Table 10.4：苯甲酸甲酯型酯基（兩個旗標成立）不配對並說明原因；Table 11.1 的 –COO– 仍可配對', () => {
-    const smiles = '[*:1]CC([*:2])c1ccc(cc1)C(=O)OC';
-    const r = computeRefraction(RDKit, smiles);
-    expect(r.status).toBe('missing');
-    if (r.status === 'missing') expect(r.missing.map((m) => m.reason).join('')).toMatch(/酯基/);
-    expect(computeDielectric(RDKit, smiles).status).toBe('ok');
-  });
   it('缺基團的結果不含 ε、ΣR', () => {
     const d = computeDielectric(RDKit, '[*:1]Cc1ccccc1[*:2]') as unknown as Record<string, unknown>;
     expect('epsLL' in d || 'epsV' in d || 'sumPLL' in d).toBe(false);
     const r = computeRefraction(RDKit, '[*:1]CC([*:2])C1CO1') as unknown as Record<string, unknown>;
     expect('sumR' in r).toBe(false);
+  });
+});
+
+describe('Table 10.4 變體重疊：「接在苯環上」優先（使用者 2026-11-01 決定）', () => {
+  // [單元, 取「接在苯環上」的列, 另一種取法的列, 兩者 R 差]
+  const overlaps: [string, string, string, number][] = [
+    ['[*:1]CC([*:2])c1ccc(OC)cc1', 'R16', 'R14', 1.77 - 1.587],
+    ['[*:1]CC([*:2])c1ccc(cc1)C(=O)OC', 'R28', 'R25', 6.71 - 6.237],
+    ['[*:1]CC([*:2])c1ccc(cc1)C(=O)OCC', 'R28', 'R26', 6.71 - 6.375],
+    ['[*:1]CC([*:2])c1ccc(OC(C)=O)cc1', 'R28', 'R29', 6.71 - 6.306],
+    ['[*:1]CC([*:2])c1ccc(cc1)C(C)=O', 'R23', 'R21', 5.09 - 4.787],
+  ];
+  for (const [smiles, attached, other, diff] of overlaps) {
+    it(`${smiles}：配 ${attached}，不配 ${other}（差 ${diff.toFixed(3)}）`, () => {
+      const r = okR(computeRefraction(RDKit, smiles));
+      const ids = r.groups.map((g) => g.id);
+      expect(ids).toContain(attached);
+      expect(ids).not.toContain(other);
+      const rowOf = (id: string) => MOLAR_REFRACTION_GROUPS.find((x) => x.id === id)?.r as number;
+      expect(rowOf(attached) - rowOf(other)).toBeCloseTo(diff, 9);
+    });
+  }
+  it('兩個烷基旗標同時成立（乙酸甲酯、乙酸乙酯）R25／R26／R29 都不命中，仍不配對', () => {
+    for (const smiles of ['CC(=O)OC', 'CC(=O)OCC']) {
+      for (const id of ['R25', 'R26', 'R27', 'R29']) {
+        const row = MOLAR_REFRACTION_GROUPS.find((x) => x.id === id) as { smarts: string };
+        const q = RDKit.get_qmol(row.smarts);
+        if (!q) throw new Error(row.smarts);
+        try {
+          const mol = RDKit.get_mol(smiles);
+          if (!mol) throw new Error(smiles);
+          try {
+            expect(vwMatches(mol, q), `${smiles} ${id}`).toEqual([]);
+          } finally {
+            mol.delete();
+          }
+        } finally {
+          q?.delete();
+        }
+      }
+    }
+  });
+  it('酯基 Table 11.1 的 –COO– 不受影響', () => {
+    expect(computeDielectric(RDKit, '[*:1]CC([*:2])c1ccc(cc1)C(=O)OC').status).toBe('ok');
+  });
+});
+
+describe('主要 ε 與第二個估計', () => {
+  it('epsPrimary = 式 (11.8)（不需莫耳體積）；epsSecondary = 式 (11.7)（Va），缺莫耳體積時為 null', () => {
+    const pe = okD(computeDielectric(RDKit, '[*:1]CC[*:2]'));
+    expect(pe.epsPrimary).toBe(pe.epsV);
+    expect(pe.epsSecondary).toBe(pe.epsLL);
+    const ptfe = okD(computeDielectric(RDKit, '[*:1]C(F)(F)C(F)(F)[*:2]'));
+    expect(ptfe.epsPrimary).toBeCloseTo(1.96, 2);
+    expect(ptfe.epsSecondary).toBeNull();
   });
 });
 
