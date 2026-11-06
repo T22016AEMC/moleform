@@ -148,7 +148,7 @@ try {
     }
     if (diffs.length > 0) xlsxDiffRows.push({ row: s.row, name, text: diffs.join('；') });
     out(
-      `| ${s.row} | ${cell(name)} | ${s.basis} | ${cell(`${u.coefficient.name}（${u.coefficient.coefficient}）`)} | ${fx(r.vomega)} | ${fx(xw)} | ${fx(r.vf)} | ${fx(x.x)} | ${r.vfOverVa === null ? '缺 Va' : fx(r.vfOverVa, 3)} | ${diffs.length === 0 ? '基團數一致' : cell(diffs.join('；'))} |`,
+      `| ${s.row} | ${cell(name)} | ${s.basis} | ${cell(`${u.coefficient.name}（${u.coefficient.coefficient}）`)} | ${fx(r.vomega)} | ${fx(xw)} | ${fx(r.vf)} | ${fx(x.x)} | ${r.vfOverVa === null ? '缺 Va' : fx(r.vfOverVa, 3)} | ${(diffs.length === 0 ? '基團數一致' : cell(diffs.join('；'))) + (x.counts.ester > 0 ? `；**已知差異，非程式錯誤（任務 036c）**：程式酯基用書的 –COO– 15.2，xlsx 用 23（羰基碳另計），Vω 程式 − xlsx = ${fx(r.vomega - xw)}` : '')} |`,
     );
     if (r.status === 'ok') okVa.push({ name: `xlsx 第 ${s.row} 列 ${name}`, smiles: s.smiles, vf: r.vf, vomega: r.vomega, va: r.va, ratio: r.vfOverVa, coef: u.coefficient.id });
   }
