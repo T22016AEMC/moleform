@@ -76,9 +76,9 @@ try {
   out('以下為程式輸出，未經化學判斷；分子量、Mn、K 只列在本文件供核對，網站上不顯示（D09）。');
   out();
   out('- 本數值為依理論模型估算之參考值，非實測值。實際結果受原料純度、製程條件與反應動力學影響，請以實驗結果為準。可信度：參考趨勢。');
-  out(`- 成分 Tg 的模型：聚合物 ${tgm.FOX_FLORY_MODEL}；${tgm.SMALL_MOLECULE_TG_MODEL}。`);
+  out(`- 成分 Tg 的模型：聚合物與寡聚物 ${tgm.FOX_FLORY_MODEL}；${tgm.SMALL_MOLECULE_TG_MODEL}。`);
   out(`- **混合模型**：${tgm.FOX_MIX_MODEL}。這是唯一的混合式；Gordon–Taylor 的 k 只能靠膨脹係數（實驗量）決定，書中的 Simha–Boyer 規則（書頁 90、100）不得代入推新式，所以不做（使用者 2026-11-06 決定）。`);
-  out('- 只混 Solid 區成分，用質量分率；Catalyst/Initiator（D26）、標記「揮發或分解」的成分、Liquid 區成分不混。任一參與混合的成分算不出 Tg → 回報「缺成分 Tg：名稱」，並另列去除該成分後的**部分混合值（非完整配方）**。');
+  out('- 只混 Solid 區的聚合物與寡聚物成分，用質量分率；**小分子（含 SBI 二酚）不參與混合**，輸出列為「未計入：成分名稱」並註明「' + tgm.SMALL_MOLECULE_WARNING + '」（D56）；Catalyst/Initiator（D26）、標記「揮發或分解」的成分、Liquid 區成分不混。任一參與混合的聚合物成分算不出 Tg → 回報「缺成分 Tg：名稱」，並另列去除該成分後的**部分混合值（非完整配方）**。');
   out('- **K 的規則**：按樹脂類別由文獻資料擬合，一部分資料當獨立檢驗，檢驗誤差 ≤ 20 K 才收錄（D54 精神）；沒有收錄的類別只輸出 Tg∞，標「缺 K，未做分子量修正」。不跨類別套用。聚苯乙烯的 K（Fox–Flory 1954：Tg = 373 − 1.0×10⁵/M，頁 316）不得套用到酚醛或 DGEBA。');
   out('- 重新產生：`npm run verify:phase6-tg-mix`。');
   out();
@@ -112,16 +112,16 @@ try {
     out(`| ${p.name} | 聚合物 | ${fx(tg?.tgK ?? null, 2)}${tg?.containsCalibrated ? '（含校準基團）' : ''} | ${fx(lit, 2)} | ${cell(clsText)} | ${p.mn ?? '—'} | ${fx(r.tgK, 1)} | ${fx(r.tgK === null ? null : r.tgK - C, 1)} | ${r.flags.join('、') || '—'} | ${cell([p.note, reason].filter((x) => x).join('；'))} |`);
   }
   out();
-  out('小分子：Tg = Tm 的 2/3，範圍 Tg/Tm = 0.56–0.76；Tm 用 Joback（D52）。文獻熔點（SBI 二酚：TCI 213–217 °C、Stueben 215.5–217 °C）只當比對，不當輸入。');
+  out('小分子不計算 Tg，只給 Tm（Joback，D52；有文獻熔點時另標文獻值）（D56）。Tg 欄回傳「' + tgm.SMALL_MOLECULE_TG_NA + '」。文獻熔點（SBI 二酚：TCI 213–217 °C、Stueben 215.5–217 °C）只當比對，不當輸入。');
   out();
-  out('| 成分 | SMILES | Joback Tm（K） | Tg = 2/3 Tm（K） | Tg 範圍 0.56–0.76（K） | Tg（°C） | 備註 |');
-  out('|---|---|---|---|---|---|---|');
+  out('| 成分 | SMILES | Joback Tm（K） | Tg | 備註 |');
+  out('|---|---|---|---|---|');
   const smalls: [string, string, string][] = [
-    ['S SBI 二酚', SBI, '文獻熔點 215.5–217 °C（Stueben）= 488.7–490.3 K，只當比對；Joback 值高 245 K 以上'],
+    ['S SBI 二酚', SBI, '文獻熔點 215.5–217 °C（Stueben）= 488.7–490.3 K，只當比對；Joback 值高 245 K 以上（見 KNOWN_ISSUES）'],
     ['BADGE', BADGE, ''],
     ['雙酚 A', BPA, ''],
     ['三苯基膦', TPP, '實際是 Catalyst/Initiator（D26），在配方中不混'],
-    ['PGMEA', PGMEA, '溶劑，實際在 Liquid 區，不混；此列只示範小分子算法'],
+    ['PGMEA', PGMEA, '溶劑，實際在 Liquid 區，不混'],
     ['MEK', MEK, '溶劑，同上'],
     ['PACM', PACM, ''],
     ['3DCM', DCM3, ''],
@@ -131,11 +131,10 @@ try {
   const sbiTm = computeJoback(RDKit, SBI);
   for (const [name, smiles, note] of smalls) {
     const r = tgm.smallMoleculeComponentTg(RDKit, comp('x', name, smiles, 100), 1);
-    if (r.status === 'ok') out(`| ${name} | \`${smiles}\` | ${fx(r.tmK)} | ${fx(r.tgK)} | ${fx(r.tgLowK)}–${fx(r.tgHighK)} | ${fx(r.tgK - C)} | ${cell(note)} |`);
-    else out(`| ${name} | \`${smiles}\` | — | — | — | — | **缺成分 Tg**：${cell(r.missingReason)} |`);
+    out(`| ${name} | \`${smiles}\` | ${fx(r.tmK)} | ${r.missingReason} | ${cell(note)} |`);
   }
   out();
-  out(`SBI 二酚的 Joback Tm = ${fx(sbiTm.tfK)} K，與文獻熔點相差很大：Joback 法對多環、剛性結構的熔點估算誤差本來就大（只當比對，不調整）。`);
+  out(`SBI 二酚的 Joback Tm = ${fx(sbiTm.tfK)} K，與文獻熔點（約 489 K）相差很大：Joback 法對大型剛性分子的熔點估算可能偏差很大（只當比對，不調整；記錄於 KNOWN_ISSUES）。`);
   out();
 
   // ---------- 2. K 與資料點 ----------
@@ -222,45 +221,23 @@ try {
   out();
   out('### 4.1 Pascault & Williams 1990，Table I 的未固化混合物 Tg0（期刊頁 92，PDF 第 8 頁）');
   out();
-  out('Table I 的 Tg0 為文獻值（237、241、246、235 K）。**組成論文沒有寫質量分率**，本表假設為化學計量（環氧當量 = 胺氫當量；論文頁 92 討論的是化學計量混合物），質量分率由 EEW = M/2、AHEW = M/4 算出。環氧成分 DGEBA（n = 0.03、0.15）因 n 很小，視為小分子 BADGE 走「Tm 的 2/3」路線（若依 DGEBA 類寡聚物處理則缺 K，無法驗證）；這個處理是本表的選擇，不是論文的設定。DGEBA 的 n 只影響 EEW，不影響小分子 Tg。');
+  out('Table I 的 Tg0 為文獻值（237、241、246、235 K）。這 4 個系統的成分是 DGEBA（n = 0.03、0.15）與脂環族二胺（PACM、3DCM、MNDA），**全部是小分子**。小分子不計算 Tg，只給 Tm（D56），不參與 Fox 混合，所以這 4 列**無法驗證（小分子不計 Tg）**。');
   out();
-  out('| 系統 | 文獻 Tg0（K） | EEW（g/eq） | AHEW（g/eq） | 環氧質量分率 | 計算混合 Tg（K） | 範圍 0.56–0.76（K） | 誤差（K） | 備註 |');
-  out('|---|---|---|---|---|---|---|---|---|');
-  const unitM = (computeTg(RDKit, DGEBA_UNIT) as any).sumM as number;
-  const badgeM = averageMolecularWeight(RDKit, BADGE) as number;
-  const pas: [string, number, number, string, string][] = [
-    ['DGEBA（n = 0.03）–PACM', 237, 0.03, PACM, 'PACM'],
-    ['DGEBA（n = 0.03）–3DCM', 241, 0.03, DCM3, '3DCM'],
-    ['DGEBA（n = 0.15）–3DCM', 246, 0.15, DCM3, '3DCM'],
-    ['DGEBA（n = 0.15）–MNDA', 235, 0.15, MNDA, 'MNDA'],
-  ];
-  const validationErrors: number[] = [];
-  for (const [name, lit, n, amine] of pas) {
-    const eew = (badgeM + n * unitM) / 2;
-    const ahew = (averageMolecularWeight(RDKit, amine) as number) / 4;
-    const f = {
-      schemaVersion: 1,
-      name,
-      solid: { unit: 'g', components: [comp('e', 'DGEBA（以 BADGE 計）', BADGE, eew), comp('a', '二胺', amine, ahew)] },
-      liquid: { unit: 'g', components: [] },
-    };
-    const r = tgm.computeFormulationTg(RDKit, f);
-    if (r.status === 'complete') {
-      validationErrors.push(r.tgK - lit);
-      out(`| ${name} | ${lit} | ${fx(eew, 1)} | ${fx(ahew, 1)} | ${fx(eew / (eew + ahew), 3)} | ${fx(r.tgK)} | ${fx(r.rangeK.low)}–${fx(r.rangeK.high)} | ${fx(r.tgK - lit)} | 文獻頁 92 |`);
-    } else out(`| ${name} | ${lit} | ${fx(eew, 1)} | ${fx(ahew, 1)} | — | — | — | — | 無法驗證：${cell(r.messages.join('；'))} |`);
+  out('| 系統 | 文獻 Tg0（K） | 計算混合 Tg | 誤差 | 備註 |');
+  out('|---|---|---|---|---|');
+  for (const [name, lit] of [['DGEBA（n = 0.03）–PACM', 237], ['DGEBA（n = 0.03）–3DCM', 241], ['DGEBA（n = 0.15）–3DCM', 246], ['DGEBA（n = 0.15）–MNDA', 235]] as [string, number][]) {
+    out(`| ${name} | ${lit} | — | — | 無法驗證（小分子不計 Tg） |`);
   }
   out();
-  if (validationErrors.length > 0) out(`誤差 = 計算 − 文獻。四個系統的誤差為 ${validationErrors.map((e) => fx(e, 0)).join('、')} K；Joback Tm 的 2/3 對這些液態環氧與胺（Tm 本身不是它們的性質）給出的小分子 Tg 差很多，這是方法的限制，不調整任何數值。`);
+  out('**原因與歷史說明**：任務 034 原先以「小分子 Tg ≈ Tm 的 2/3」把 BADGE（以 BADGE 代表 n = 0.03、0.15 的 DGEBA）與二胺算成 Tg，與文獻的差約 +92 至 +103 K。該算法已於 2026-11-06 作廢（D56）：Joback 的 Tm 對這些常溫為液態的環氧與胺不代表它們的性質，2/3 規則對小分子液體本來就不適用。本節不再列出誤差，也不把它視為方法的驗證結果。若要驗證，需要寡聚物成分（n 較大且有 K 的樹脂類別）的資料，目前 DGEBA 類缺 K。');
   out();
   out('### 4.2 Han 等 1997（Bull. Korean Chem. Soc. 18(11) 1199–1203）圖 4 的 Tg0');
   out();
   out('圖 4（期刊頁 1201）的 Tg 對轉化率，淬冷至 −40 °C 後 5 °C/min 量測；低轉化端的虛線（模型曲線）外推到 α = 0 約 22 °C（圖上讀值，TPP 與 1B2MI 兩條線都收在約 22 °C，只能讀到約數）。直接量測點從 α ≈ 0.3 起，沒有 α = 0 的實測點。');
   out();
-  const yx = tgm.smallMoleculeComponentTg(RDKit, comp('y', 'YX-4000H', YX4000H, 1), 1);
   out('| 成分 | 本卡方法的 Tg | 備註 |');
   out('|---|---|---|');
-  out(`| YX-4000H（聯苯環氧，小分子） | ${yx.status === 'ok' ? `${fx(yx.tgK)} K（Joback Tm ${fx(yx.tmK)} K 的 2/3）` : '缺成分 Tg'} | 可算 |`);
+  out('| YX-4000H（聯苯環氧，小分子） | 未計入 | 小分子不計 Tg（D56），不參與混合 |');
   out('| Xylok（酚芳烷基酚醛寡聚物） | **缺成分 Tg** | 論文只畫結構（Table 1，期刊頁 1200，n 未給），沒有 Mn；不屬於已有 K 的樹脂類別（缺 K） |');
   out('| TPP／1B2MI（催化劑，1.5 phr） | 不混 | Catalyst/Initiator（D26） |');
   out();
@@ -276,10 +253,10 @@ try {
     const r = tgm.computeFormulationTg(RDKit, { schemaVersion: 1, name: label, solid: { unit, components: comps }, liquid: { unit: 'g', components: [] } });
     out(`| ${label} | 狀態 ${r.status}；${r.tgK === null ? '無完整混合值' : `混合 ${fx(r.tgK)} K`}${r.partial ? `；部分混合值 ${fx(r.partial.tgK)} K（非完整配方，已去除：${r.partial.removed.join('、')}）` : ''}；${cell(r.messages.join('；'))} |`);
   };
-  demo('SBI 70 g＋MEK 30 g（兩個小分子，完整）', [comp('a', 'SBI', SBI, 70), comp('b', 'MEK', MEK, 30)]);
-  demo('酚醛（Mn 1000）60 g＋SBI 40 g（完整）', [comp('n', '酚醛', NOVOLAC, 60, { category: 'Resin', polymer: { mnInput: 1000 } }), comp('a', 'SBI', SBI, 40)]);
-  demo('DGEBA 類（缺 K）60 g＋SBI 40 g', [comp('d', 'DGEBA 類', DGEBA_UNIT, 60, { category: 'Resin', polymer: { mnInput: 3000 } }), comp('a', 'SBI', SBI, 40)]);
-  demo('SBI 80 g＋TPP 10 g（Catalyst/Initiator）＋BADGE 10 g（揮發）', [comp('a', 'SBI', SBI, 80), comp('c', 'TPP', TPP, 10, { category: 'Catalyst/Initiator' }), comp('v', 'BADGE', BADGE, 10, { volatileFlag: true })]);
+  demo('SBI 70 g＋MEK 30 g（兩個小分子）', [comp('a', 'SBI', SBI, 70), comp('b', 'MEK', MEK, 30)]);
+  demo('酚醛（Mn 1000）60 g＋SBI 40 g（SBI 未計入）', [comp('n', '酚醛', NOVOLAC, 60, { category: 'Resin', polymer: { mnInput: 1000 } }), comp('a', 'SBI', SBI, 40)]);
+  demo('DGEBA 類（缺 K）60 g＋SBI 40 g（SBI 未計入）', [comp('d', 'DGEBA 類', DGEBA_UNIT, 60, { category: 'Resin', polymer: { mnInput: 3000 } }), comp('a', 'SBI', SBI, 40)]);
+  demo('酚醛（Mn 1000）80 g＋TPP 10 g（Catalyst/Initiator）＋BADGE 10 g（揮發）', [comp('n', '酚醛', NOVOLAC, 80, { category: 'Resin', polymer: { mnInput: 1000 } }), comp('c', 'TPP', TPP, 10, { category: 'Catalyst/Initiator' }), comp('v', 'BADGE', BADGE, 10, { volatileFlag: true })]);
   out();
 
   // ---------- 6. 使用者配方 ----------
@@ -314,7 +291,7 @@ try {
     const partial = r.partial ? `${fx(r.partial.tgK)} K（${fx(r.partial.tgC)} °C），只混 ${r.partial.included.join('、')}，佔 Solid ${fx(r.partial.fraction * 100, 1)} %` : '無（沒有任何成分算得出 Tg）';
     out(`| ${label} | ${r.tgK === null ? '**無（配方不完整）**' : `${fx(r.tgK)} K`} | ${r.missing.join('、') || '—'} | ${partial} | 約 ${measured} °C | 無法比較（不是完整配方，部分混合值不可與實測比較） | 見下 |`);
     detail.push(`- **${label}**：${r.messages.map((m: string) => cell(m)).join('；')}`);
-    for (const c of r.components) detail.push(`  - ${c.name}：${c.status === 'ok' ? `Tg ${fx(c.tgK)} K` : `缺成分 Tg（${c.missingReason}）`}${c.tgInfGroupK === null ? '' : `；Tg∞（a）${fx(c.tgInfGroupK, 1)} K`}`);
+    for (const c of r.components) detail.push(`  - ${c.name}：${c.status === 'ok' ? `Tg ${fx(c.tgK)} K` : c.status === 'not-applicable' ? `Tg ${c.missingReason}；Joback Tm ${fx(c.tmK)} K（未計入）` : `缺成分 Tg（${c.missingReason}）`}${c.tgInfGroupK === null ? '' : `；Tg∞（a）${fx(c.tgInfGroupK, 1)} K`}`);
   }
   out();
   for (const d of detail) out(d);
@@ -322,7 +299,8 @@ try {
   out('**可能原因（為何算不出完整值，推測，未驗證）**：');
   out('1. P 是兩種單元的共聚物：單元 B（萘基次甲基）書中沒有基團（缺基團），且本卡不處理共聚比例影響，也沒有共聚物的 K；酚醛的 K 只對「一般苯酚酚醛」（BT01 單元）收錄，不得套到 P（跨類別）。');
   out('2. E 是 PGMA 型：縮水甘油酯側鏈缺基團（任務 033 已記錄），且沒有 PGMA 類的 K。');
-  out('3. 要讓 4A、4B 算出完整值，至少需要：單元 B 的基團（或校準）、PGMA 的基團、P 與 E 兩個類別的 Tg–Mn 資料與 K。不為了得到數字而放寬任何規則（使用者 2026-11-06 決定）。');
+  out('3. 4B 的 SBI 是小分子，不計 Tg、不參與混合，輸出「未計入：S」，並註明「' + tgm.SMALL_MOLECULE_WARNING + '」（D56）；因此 4B 沒有任何部分混合值（先前的 489.7 K 已取消）。');
+  out('4. 要讓 4A、4B 算出完整值，至少需要：單元 B 的基團（或校準）、PGMA 的基團、P 與 E 兩個類別的 Tg–Mn 資料與 K。不為了得到數字而放寬任何規則（使用者 2026-11-06 決定）。');
   out();
 
   mkdirSync(dirname(OUTPUT), { recursive: true });

@@ -1,5 +1,5 @@
-// 成分 Tg（Fox–Flory、小分子 Tg ≈ Tm 的 2/3）與混合配方的未固化 Tg（Fox 式）（任務 034，Phase 6.7 的 Tg 部分）。
-// 只混 Solid 區成分，用質量分率；Catalyst/Initiator（D26）與標記「揮發或分解」的成分不混；Liquid 區不混。
+// 成分 Tg（Fox–Flory；小分子不計 Tg，只給 Tm，D56）與混合配方的未固化 Tg（Fox 式）（任務 034，Phase 6.7 的 Tg 部分）。
+// 只混聚合物與寡聚物的 Solid 成分，用質量分率；小分子（含 SBI 二酚）不參與混合、輸出列為「未計入」；Catalyst/Initiator（D26）與標記「揮發或分解」的成分不混；Liquid 區不混。
 // 任一參與混合的成分算不出 Tg（缺基團、缺 K、無 Tm、無 Mn）就回報「缺成分 Tg：名稱」，不猜值、不略過，
 // 並另外輸出去除這些成分後的「部分混合值」，明確標示非完整配方。
 // 分子量只用於計算（D09）；聚合物的 Mn 依 D46、D47、D50 的現行算法（analyzePolymerUnits＋resolvePolymer）取得，不改動。
@@ -18,10 +18,9 @@ import { computeTg } from './tgGroupContribution';
 export const FOX_FLORY_MODEL = 'Fox–Flory：Tg = Tg∞ − K/Mn（van Krevelen 式 6.10，書頁 146；原出處 Fox and Flory 1950）。K 按樹脂類別由文獻資料擬合（tg_flory_k.csv），不跨類別';
 export const FOX_MIX_MODEL =
   'Fox 混合式：1/Tg = Σ wᵢ/Tgᵢ（wᵢ 為質量分率）。書中沒有此式、Fox 1956 原文未核對；由 Gordon–Taylor 1952 式 (1)（原文頁 493）取 k = Tg₁/Tg₂ 導出；屬近似（假設成分互溶、混合體積加成）';
-export const SMALL_MOLECULE_TG_MODEL = '小分子：Tg ≈ Tm 的 2/3（van Krevelen 式 16.30，書頁 613；Tg/Tm 範圍 0.56–0.76，書頁 170，§6.4）；Tm 用 Joback 法（D52）';
-export const TG_TM_RATIO_MIN = 0.56;
-export const TG_TM_RATIO_MAX = 0.76;
-export const TG_TM_RATIO_DEFAULT = 2 / 3;
+export const SMALL_MOLECULE_TG_MODEL = '小分子不計算 Tg，只給 Tm（Joback，D52；有文獻熔點時另標文獻值）（D56）';
+export const SMALL_MOLECULE_TG_NA = '不適用（小分子只有 Tm，D56）';
+export const SMALL_MOLECULE_WARNING = '未計入小分子的增塑效應，混合 Tg 可能偏高';
 export const CATALYST_CATEGORY = 'Catalyst/Initiator';
 export const FLAG_LOW = '低可信度';
 export const FLAG_EXTRAPOLATED = '外推，未驗證';
@@ -47,13 +46,6 @@ export function foxMix(items: readonly { w: number; tgK: number }[]): number {
   return 1 / inv;
 }
 
-/** 小分子 Tg = ratio × Tm（K）；ratio 預設 2/3，範圍 0.56–0.76 */
-export function smallMoleculeTg(tmK: number, ratio: number = TG_TM_RATIO_DEFAULT): number {
-  if (!(tmK > 0)) throw new Error('Tm 必須大於 0');
-  if (ratio < TG_TM_RATIO_MIN || ratio > TG_TM_RATIO_MAX) throw new Error(`Tg/Tm 超出書中範圍 ${TG_TM_RATIO_MIN}–${TG_TM_RATIO_MAX}`);
-  return ratio * tmK;
-}
-
 // ---------- 成分 Tg ----------
 
 export interface ComponentTg {
@@ -63,18 +55,16 @@ export interface ComponentTg {
   kind: 'polymer' | 'small';
   /** 在 Solid 區的質量分率（0–1）；算不出時為 null */
   solidFraction: number | null;
-  status: 'ok' | 'missing';
-  /** 成分 Tg（K）；small 為 2/3 Tm */
+  /** not-applicable：小分子只有 Tm、不計 Tg（D56），不參與混合 */
+  status: 'ok' | 'missing' | 'not-applicable';
+  /** 成分 Tg（K）；小分子為 null */
   tgK: number | null;
-  /** 小分子 Tg 範圍（Tg/Tm = 0.56、0.76）；聚合物與 tgK 相同 */
-  tgLowK: number | null;
-  tgHighK: number | null;
   /** 聚合物：基團貢獻的 Tg∞（來源 a） */
   tgInfGroupK: number | null;
   /** 聚合物：用到的 K 與 Mn（只供驗證文件，D09） */
   kUsed: number | null;
   mn: number | null;
-  /** 小分子：Joback Tm（K） */
+  /** 小分子：Joback Tm（K；只供顯示） */
   tmK: number | null;
   /** 低可信度、外推，未驗證、含校準基團等標記（D55） */
   flags: string[];
@@ -103,8 +93,6 @@ const blank = (c: Component, kind: 'polymer' | 'small', fraction: number | null)
   solidFraction: fraction,
   status: 'missing',
   tgK: null,
-  tgLowK: null,
-  tgHighK: null,
   tgInfGroupK: null,
   kUsed: null,
   mn: null,
@@ -178,30 +166,18 @@ export function polymerComponentTg(RDKit: RDKitModule, c: Component, mn: number 
   const tgK = foxFlory(tg.tgK, cls.k, mn);
   out.status = 'ok';
   out.tgK = tgK;
-  out.tgLowK = tgK;
-  out.tgHighK = tgK;
   out.flags.push(cls.confidence);
   if ((cls.mnMin !== null && mn < cls.mnMin) || (cls.mnMax !== null && mn > cls.mnMax)) out.flags.push(FLAG_EXTRAPOLATED);
   return out;
 }
 
-/** 小分子成分的 Tg：Joback Tm 的 2/3（範圍 0.56–0.76） */
+/** 小分子成分：不計算 Tg（D56），只給 Joback Tm（算不出時 Tm 為 null）；不參與混合 */
 export function smallMoleculeComponentTg(RDKit: RDKitModule, c: Component, fraction: number | null): ComponentTg {
   const out = blank(c, 'small', fraction);
+  out.status = 'not-applicable';
+  out.missingReason = SMALL_MOLECULE_TG_NA;
   const j = computeJoback(RDKit, c.canonicalSmiles);
-  if (j.status !== 'ok') {
-    out.missingReason = j.status === 'missing' ? 'Joback 缺基團，算不出 Tm' : j.status === 'not-applicable' ? j.reason : j.message;
-    return out;
-  }
-  if (j.tfK === null) {
-    out.missingReason = `無 Tm：含表 III 沒有 Tfi 的基團（${j.tfUnavailable.join('、')}）`;
-    return out;
-  }
-  out.tmK = j.tfK;
-  out.status = 'ok';
-  out.tgK = smallMoleculeTg(j.tfK);
-  out.tgLowK = smallMoleculeTg(j.tfK, TG_TM_RATIO_MIN);
-  out.tgHighK = smallMoleculeTg(j.tfK, TG_TM_RATIO_MAX);
+  if (j.status === 'ok' && j.tfK !== null) out.tmK = j.tfK;
   return out;
 }
 
@@ -214,9 +190,9 @@ export interface FormulationTgResult {
   /** 完整配方的混合 Tg（K、°C）；不完整或不可用時為 null */
   tgK: number | null;
   tgC: number | null;
-  /** 完整配方時，小分子 Tg/Tm 取 0.56 與 0.76 的範圍 */
-  rangeK: { low: number; high: number } | null;
   components: ComponentTg[];
+  /** 小分子成分名稱：不參與混合（D56），輸出備註「未計入：名稱」 */
+  notCounted: string[];
   /** 缺成分 Tg 的成分名稱 */
   missing: string[];
   /** 去除缺成分後的部分混合值（非完整配方）；沒有任何可算成分時為 null */
@@ -240,7 +216,7 @@ export function computeFormulationTg(RDKit: RDKitModule, formulation: Formulatio
     confidence: 'trend' as const,
     tgK: null,
     tgC: null,
-    rangeK: null,
+    notCounted: [] as string[],
     components: [] as ComponentTg[],
     missing: [] as string[],
     partial: null,
@@ -289,32 +265,37 @@ export function computeFormulationTg(RDKit: RDKitModule, formulation: Formulatio
     components.push(isPolymer(c) ? polymerComponentTg(RDKit, c, mnById[c.id] ?? null, w, kRows) : smallMoleculeComponentTg(RDKit, c, w));
   }
 
+  const notCounted = components.filter((c) => c.status === 'not-applicable').map((c) => c.name);
   const messages: string[] = [];
   for (const e of excluded) messages.push(`${e.kind === 'catalyst' ? '催化劑／起始劑' : '揮發或分解'}成分未混入：${e.name}（${e.reason}）`);
+  if (notCounted.length > 0) messages.push(`未計入：${notCounted.join('、')}（${SMALL_MOLECULE_TG_NA}）；${SMALL_MOLECULE_WARNING}`);
   if (components.length === 0) {
     return { ...base, status: 'unavailable', components, excluded, messages: [...messages, '沒有可混合的 Solid 成分'] };
   }
   const missing = components.filter((c) => c.status === 'missing');
   for (const m of missing) messages.push(`缺成分 Tg：${m.name}（${m.missingReason}）`);
   const usable = components.filter((c) => c.status === 'ok' && c.solidFraction !== null && c.solidFraction > 0);
-  const mixOf = (pick: (c: ComponentTg) => number) => foxMix(usable.map((c) => ({ w: c.solidFraction as number, tgK: pick(c) })));
+  const mixOf = () => foxMix(usable.map((c) => ({ w: c.solidFraction as number, tgK: c.tgK as number })));
 
+  if (usable.length === 0 && missing.length === 0) {
+    return { ...base, status: 'unavailable', components, notCounted, excluded, messages: [...messages, '沒有聚合物或寡聚物成分可混合（小分子不計 Tg，D56）'] };
+  }
   if (missing.length === 0) {
-    const tgK = mixOf((c) => c.tgK as number);
+    const tgK = mixOf();
     return {
       ...base,
       status: 'complete',
       tgK,
       tgC: tgK - 273.15,
-      rangeK: { low: mixOf((c) => c.tgLowK as number), high: mixOf((c) => c.tgHighK as number) },
       components,
+      notCounted,
       excluded,
       messages,
     };
   }
   let partial: FormulationTgResult['partial'] = null;
   if (usable.length > 0) {
-    const tgK = mixOf((c) => c.tgK as number);
+    const tgK = mixOf();
     partial = {
       tgK,
       tgC: tgK - 273.15,
@@ -326,5 +307,5 @@ export function computeFormulationTg(RDKit: RDKitModule, formulation: Formulatio
   } else {
     messages.push('所有參與混合的成分都缺 Tg，沒有部分混合值');
   }
-  return { ...base, status: 'incomplete', components, missing: missing.map((m) => m.name), partial, excluded, messages };
+  return { ...base, status: 'incomplete', components, notCounted, missing: missing.map((m) => m.name), partial, excluded, messages };
 }

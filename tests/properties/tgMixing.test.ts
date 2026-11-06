@@ -1,5 +1,5 @@
 // 成分 Tg 與混合配方未固化 Tg（任務 034）的測試：公式對手算值、邊界、資料表格式與缺欄位報錯、
-// 缺成分 Tg 回報、Catalyst／揮發成分排除、小分子 Tm 範圍、K 與檢驗誤差由資料點重新算出。
+// 缺成分 Tg 回報、Catalyst／揮發成分排除、小分子不計 Tg（D56）、K 與檢驗誤差由資料點重新算出。
 // 文獻資料點與頁碼見 docs/reports/034-結果.md。測試不使用任何使用者實測值（D02）。
 import { beforeAll, describe, expect, it } from 'vitest';
 import {
@@ -22,13 +22,13 @@ import {
   FLAG_CALIBRATED,
   FLAG_EXTRAPOLATED,
   FLAG_LOW,
-  TG_TM_RATIO_MAX,
-  TG_TM_RATIO_MIN,
+  SMALL_MOLECULE_TG_NA,
+  SMALL_MOLECULE_WARNING,
   computeFormulationTg,
   findKClass,
   foxFlory,
   foxMix,
-  smallMoleculeTg,
+  smallMoleculeComponentTg,
 } from '../../src/core/properties/tgMixing';
 
 let RDKit: RDKitModule;
@@ -91,14 +91,6 @@ describe('公式（對手算值）', () => {
     expect(() => foxMix([])).toThrow();
     expect(() => foxMix([{ w: 0, tgK: 300 }])).toThrow();
     expect(() => foxMix([{ w: 1, tgK: 0 }])).toThrow();
-  });
-  it('小分子 Tg = Tm 的 2/3，範圍 0.56–0.76（書頁 170、613）', () => {
-    expect(smallMoleculeTg(450)).toBeCloseTo(300, 10);
-    expect(smallMoleculeTg(450, TG_TM_RATIO_MIN)).toBeCloseTo(252, 10);
-    expect(smallMoleculeTg(450, TG_TM_RATIO_MAX)).toBeCloseTo(342, 10);
-    expect(() => smallMoleculeTg(450, 0.55)).toThrow();
-    expect(() => smallMoleculeTg(450, 0.77)).toThrow();
-    expect(() => smallMoleculeTg(0)).toThrow();
   });
 });
 
@@ -241,25 +233,32 @@ describe('類別比對', () => {
 });
 
 describe('配方未固化 Tg（Fox 式）', () => {
-  it('小分子成分：Tg = Joback Tm 的 2/3，範圍為 0.56 與 0.76 倍；單一成分配方的混合值等於成分 Tg', () => {
+  it('小分子成分：Tg 回報「不適用」（D56），只給 Joback Tm，不參與混合', () => {
     const tm = computeJoback(RDKit, SBI);
     if (tm.status !== 'ok' || tm.tfK === null) throw new Error('SBI 應有 Tf');
-    const r = computeFormulationTg(RDKit, formulation([solid('s', 100, SBI)]));
-    expect(r.status).toBe('complete');
-    expect(r.tgK).toBeCloseTo((2 / 3) * tm.tfK, 8);
-    expect(r.rangeK?.low).toBeCloseTo(0.56 * tm.tfK, 8);
-    expect(r.rangeK?.high).toBeCloseTo(0.76 * tm.tfK, 8);
+    const c = smallMoleculeComponentTg(RDKit, solid('s', 100, SBI) as Component, 1);
+    expect(c.status).toBe('not-applicable');
+    expect(c.tgK).toBeNull();
+    expect(c.missingReason).toBe(SMALL_MOLECULE_TG_NA);
+    expect(c.tmK).toBeCloseTo(tm.tfK, 8);
+  });
+  it('只有小分子的配方：沒有混合值，全部列為未計入', () => {
+    const r = computeFormulationTg(RDKit, formulation([solid('a', 30, SBI), solid('b', 70, MEK)]));
+    expect(r.status).toBe('unavailable');
+    expect(r.tgK).toBeNull();
+    expect(r.notCounted).toEqual(['成分a', '成分b']);
     expect(r.notes.join('')).toContain('非實測值');
   });
-  it('兩個小分子：混合值對手算（Fox）', () => {
-    const a = computeJoback(RDKit, SBI);
-    const b = computeJoback(RDKit, MEK);
-    if (a.status !== 'ok' || b.status !== 'ok' || a.tfK === null || b.tfK === null) throw new Error('應有 Tf');
-    const ta = (2 / 3) * a.tfK;
-    const tb = (2 / 3) * b.tfK;
-    const r = computeFormulationTg(RDKit, formulation([solid('a', 30, SBI), solid('b', 70, MEK)]));
-    // 手算：1/(0.3/ta + 0.7/tb)
-    expect(r.tgK).toBeCloseTo(1 / (0.3 / ta + 0.7 / tb), 8);
+  it('小分子（含 SBI）不參與 Fox 混合：結果等於只混聚合物；備註列出「未計入」與增塑效應警告', () => {
+    const only = computeFormulationTg(RDKit, formulation([polymerC('n', 100, NOVOLAC, 1000)]));
+    const r = computeFormulationTg(RDKit, formulation([polymerC('n', 60, NOVOLAC, 1000), solid('s', 40, SBI)]));
+    expect(r.status).toBe('complete');
+    expect(r.tgK).toBeCloseTo(only.tgK as number, 8);
+    expect(r.notCounted).toEqual(['成分s']);
+    const text = r.messages.join('\n');
+    expect(text).toContain('未計入：成分s');
+    expect(text).toContain(SMALL_MOLECULE_WARNING);
+    expect(r.components.find((c) => c.id === 's')?.tgK).toBeNull();
   });
   it('酚醛一般型：Fox–Flory 用表中的 K；範圍內標低可信度、含校準基團；超出範圍標「外推，未驗證」', () => {
     const tg = computeTg(RDKit, NOVOLAC);
@@ -294,15 +293,15 @@ describe('配方未固化 Tg（Fox 式）', () => {
     expect(r.messages.join('\n')).toContain('缺成分 Tg：成分d');
     expect(r.tgK).toBeNull();
   });
-  it('缺成分 Tg 時另外輸出部分混合值（只混有 Tg 的成分），並標示非完整配方', () => {
-    const tm = computeJoback(RDKit, SBI);
-    if (tm.status !== 'ok' || tm.tfK === null) throw new Error('SBI 應有 Tf');
-    const r = computeFormulationTg(RDKit, formulation([polymerC('d', 60, DGEBA, 3000), solid('s', 40, SBI)]));
+  it('缺成分 Tg 時另外輸出部分混合值（只混有 Tg 的聚合物成分），並標示非完整配方；小分子列為未計入', () => {
+    const tgN = computeTg(RDKit, NOVOLAC);
+    if (tgN.status !== 'ok') throw new Error('BT01 應可計算');
+    const r = computeFormulationTg(RDKit, formulation([polymerC('d', 50, DGEBA, 3000), polymerC('n', 40, NOVOLAC, 1000), solid('s', 10, SBI)]));
     expect(r.partial).not.toBeNull();
-    expect(r.partial?.included).toEqual(['成分s']);
+    expect(r.partial?.included).toEqual(['成分n']);
     expect(r.partial?.removed).toEqual(['成分d']);
-    expect(r.partial?.tgK).toBeCloseTo((2 / 3) * tm.tfK, 8);
-    expect(r.partial?.fraction).toBeCloseTo(0.4, 8);
+    expect(r.partial?.tgK).toBeCloseTo(tgN.tgK - (novolacK.k as number) / 1000, 8);
+    expect(r.notCounted).toEqual(['成分s']);
     expect(r.messages.join('\n')).toContain('非完整配方');
   });
   it('缺基團的聚合物成分（PGMA 型）與共聚物成分回報缺成分 Tg；全部缺時沒有部分混合值', () => {
@@ -319,11 +318,11 @@ describe('配方未固化 Tg（Fox 式）', () => {
     expect(r.messages.join('\n')).toContain('所有參與混合的成分都缺 Tg');
   });
   it('Catalyst/Initiator 與揮發成分不混，列在備註；排除後的結果等於只混其餘成分', () => {
-    const base = computeFormulationTg(RDKit, formulation([solid('a', 50, SBI)], 'g'));
+    const base = computeFormulationTg(RDKit, formulation([polymerC('a', 50, NOVOLAC, 1000)], 'g'));
     const r = computeFormulationTg(
       RDKit,
       formulation([
-        solid('a', 50, SBI),
+        polymerC('a', 50, NOVOLAC, 1000),
         solid('c', 10, MEK, { category: 'Catalyst/Initiator' }),
         solid('v', 40, BADGE, { volatileFlag: true }),
       ], 'g'),
