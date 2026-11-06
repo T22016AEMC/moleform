@@ -153,10 +153,10 @@ describe('資料表（tg_mn_points.csv、tg_flory_k.csv）', () => {
 const HP = TG_POINTS_COLUMNS.join(',');
 const HK = TG_K_COLUMNS.join(',');
 const csvLine = (cells: string[]) => cells.map((v) => (/[",\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v)).join(',');
-const goodPoint = ['X1', 'cls', '材料', '1000', 'Mn', '350', '', '擬合', 'DSC', '一手', '', '某論文，頁 3', ''];
-const goodPoint2 = ['X2', 'cls', '材料', '2000', 'Mn', '370', '', '擬合', 'DSC', '一手', '', '某論文，頁 3', ''];
-const goodCheck = ['X3', 'cls', '材料', '1500', 'Mn', '362', '', '檢驗', 'DSC', '一手', '', '某論文，頁 4', ''];
-const goodK = ['cls', '類別', '[*:1]CC[*:2]', '收錄', '400', '', '50000', '1000', '1000', '2000', '低可信度', 'X1|X2', 'X3', '5', '擬合', '某論文，表 1', '待使用者審', '備註'];
+const goodPoint = ['X1', 'cls', '材料', '1000', 'Mn', '350', '', '擬合', 'DSC', '一手', '', '某論文，頁 3', '', 'GPC-PS', '未載'];
+const goodPoint2 = ['X2', 'cls', '材料', '2000', 'Mn', '370', '', '擬合', 'DSC', '一手', '', '某論文，頁 3', '', 'GPC-PS', '未載'];
+const goodCheck = ['X3', 'cls', '材料', '1500', 'Mn', '362', '', '檢驗', 'DSC', '一手', '', '某論文，頁 4', '', 'GPC-PS', '未載'];
+const goodK = ['cls', '類別', '[*:1]CC[*:2]', '收錄', '400', '', '50000', '1000', '1000', '2000', '低可信度', 'X1|X2', 'X3', '5', '擬合', '某論文，表 1', '待使用者審', '備註', '基團貢獻固定', '', '同類獨立點'];
 const issuesOf = (pointLines: string[][], kLines: string[][]) => {
   const p = readTgPoints([HP, ...pointLines.map(csvLine)].join('\n'));
   const k = readTgK([HK, ...kLines.map(csvLine)].join('\n'));

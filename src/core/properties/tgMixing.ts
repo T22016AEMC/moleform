@@ -13,6 +13,7 @@ import { resolvePolymer } from '../polymer/convert';
 import type { RDKitModule } from '../rdkit/types';
 import { UNIFIED_NOTE } from '../result';
 import { computeJoback } from './jobackTbTf';
+import { identifyCresolNovolac } from './novolacUnits';
 import { computeTg } from './tgGroupContribution';
 
 export const FOX_FLORY_MODEL = 'Fox–Flory：Tg = Tg∞ − K/Mn（van Krevelen 式 6.10，書頁 146；原出處 Fox and Flory 1950）。K 按樹脂類別由文獻資料擬合（tg_flory_k.csv），不跨類別';
@@ -121,6 +122,9 @@ function canonicalNoMaps(RDKit: RDKitModule, smiles: string): string | null {
 
 /** 重複單元與哪個樹脂類別的代表單元相同（逐字比對，不近似）；找不到回傳 null */
 export function findKClass(RDKit: RDKitModule, unitSmiles: string, rows: readonly TgKRow[] = TG_K_ROWS): TgKRow | null {
+  // 甲酚酚醛（鄰、對）：用 SMARTS 辨識（任務 035，D22）；辨識不出的不得使用此類 K
+  const cresol = identifyCresolNovolac(RDKit, unitSmiles);
+  if (cresol !== null) return rows.find((r) => r.resinClass === cresol) ?? null;
   const mine = canonicalNoMaps(RDKit, unitSmiles);
   if (mine === null) return null;
   for (const r of rows) if (canonicalNoMaps(RDKit, r.unitSmiles) === mine) return r;
@@ -141,13 +145,16 @@ export function polymerComponentTg(RDKit: RDKitModule, c: Component, mn: number 
     return out;
   }
   const tg = computeTg(RDKit, c.canonicalSmiles);
-  if (tg.status !== 'ok') {
+  const cls = findKClass(RDKit, c.canonicalSmiles, rows);
+  // Tg∞ 與 K 同時擬合的類別（任務 035）：Tg∞ 用該類別表中的擬合值，不需要基團貢獻（K 與 Tg∞ 成對使用）
+  const fittedInf = cls !== null && cls.state === '收錄' && cls.tgInfSource === '擬合' && cls.tgInfFixedK !== null ? cls.tgInfFixedK : null;
+  if (tg.status === 'ok') {
+    out.tgInfGroupK = tg.tgK;
+    if (tg.containsCalibrated) out.flags.push(FLAG_CALIBRATED);
+  } else if (fittedInf === null) {
     out.missingReason = tg.status === 'missing' ? '缺基團，算不出 Tg∞' : '結構無法計算 Tg∞';
     return out;
   }
-  out.tgInfGroupK = tg.tgK;
-  if (tg.containsCalibrated) out.flags.push(FLAG_CALIBRATED);
-  const cls = findKClass(RDKit, c.canonicalSmiles, rows);
   if (!cls) {
     out.missingReason = '缺 K：此重複單元不屬於任何已有 K 的樹脂類別，未做分子量修正（只輸出 Tg∞）';
     return out;
@@ -163,7 +170,12 @@ export function polymerComponentTg(RDKit: RDKitModule, c: Component, mn: number 
   }
   out.mn = mn;
   out.kUsed = cls.k;
-  const tgK = foxFlory(tg.tgK, cls.k, mn);
+  const tgInf = fittedInf ?? (tg.status === 'ok' ? tg.tgK : null);
+  if (tgInf === null) {
+    out.missingReason = '缺基團，算不出 Tg∞';
+    return out;
+  }
+  const tgK = foxFlory(tgInf, cls.k, mn);
   out.status = 'ok';
   out.tgK = tgK;
   out.flags.push(cls.confidence);

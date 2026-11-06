@@ -1,4 +1,4 @@
-// Phase 6.7 成分 Tg 與混合配方未固化 Tg 的輸出產生腳本（任務 034）。
+// Phase 6.7 成分 Tg 與混合配方未固化 Tg 的輸出產生腳本（任務 034，任務 035 增補甲酚酚醛、BPA 環氧鏈、ECN、PGMA）。
 // 成分 Tg 表、K 與資料點、文獻驗證（Pascault 1990、Han 1997）、使用者配方 4A／4B。只列程式輸出，不判斷化學（D17）。
 // 分子量只列在這個驗證文件中，網站上不顯示（D09）。
 // D02：使用者的兩個實測值只出現在第 6 節的「比對欄」，只用來和程式輸出並列，不是任何計算的輸入。
@@ -22,6 +22,8 @@ const BADGE = 'CC(C)(c1ccc(OCC2CO2)cc1)c1ccc(OCC2CO2)cc1';
 const BPA = 'CC(C)(c1ccc(O)cc1)c1ccc(O)cc1';
 const TPP = 'c1ccc(P(c2ccccc2)c2ccccc2)cc1';
 const MEK = 'CCC(C)=O';
+const ORTHO_CRESOL = '[*:1]Cc1cc([*:2])cc(C)c1O';
+const PARA_CRESOL = '[*:1]Cc1cc(C)cc([*:2])c1O';
 // Pascault & Williams 1990 Fig. 6 的單體（結構看圖）
 const PACM = 'NC1CCC(CC2CCC(N)CC2)CC1';
 const DCM3 = 'CC1CC(CCC1N)CC1CCC(N)C(C)C1';
@@ -45,6 +47,8 @@ try {
   const { getRDKit } = await server.ssrLoadModule('/src/core/rdkit/loader.ts');
   const tgm = await server.ssrLoadModule('/src/core/properties/tgMixing.ts');
   const { computeTg } = await server.ssrLoadModule('/src/core/properties/tgGroupContribution.ts');
+  const { fitFlory, predictFlory } = await server.ssrLoadModule('/src/core/properties/tgFit.ts');
+  const { identifyCresolNovolac, CRESOL_NOVOLAC_SMARTS } = await server.ssrLoadModule('/src/core/properties/novolacUnits.ts');
   const { computeJoback } = await server.ssrLoadModule('/src/core/properties/jobackTbTf.ts');
   const data = await server.ssrLoadModule('/src/core/data/tgMnData.ts');
   const { analyzePolymerUnits } = await server.ssrLoadModule('/src/core/polymer/copolymer.ts');
@@ -140,10 +144,10 @@ try {
   // ---------- 2. K 與資料點 ----------
   out('## 2. Fox–Flory 的 K（按樹脂類別）');
   out();
-  out('| 類別 | 狀態 | 搭配的 Tg∞（K） | K（K·g/mol） | K 不確定度 | 適用 Mn | 可信度 | 擬合點 | 檢驗點 | 檢驗最大誤差（K） | 稽核狀態 |');
-  out('|---|---|---|---|---|---|---|---|---|---|---|');
+  out('| 類別 | 狀態 | 搭配的 Tg∞（K） | K（K·g/mol） | K 不確定度 | 適用 Mn | 可信度 | 擬合點 | 檢驗點 | 檢驗最大誤差（K） | Tg∞ 來源 | 檢驗方式 | 稽核狀態 |');
+  out('|---|---|---|---|---|---|---|---|---|---|---|---|---|');
   for (const k of kTable.rows) {
-    out(`| ${k.resinClass}（${k.className}） | ${k.state === '收錄' ? '收錄' : '**缺 K，未做分子量修正**'} | ${fx(k.tgInfFixedK, 2)} | ${fx(k.k, 0)} | ${fx(k.kUncertainty, 0)} | ${k.mnMin === null ? '—' : `${k.mnMin}–${k.mnMax}`} | ${k.confidence || '—'} | ${k.fitPoints.join('、') || '—'} | ${k.checkPoints.join('、') || '—'} | ${fx(k.checkMaxErrorK, 1)} | ${k.audit} |`);
+    out(`| ${k.resinClass}（${k.className}） | ${k.state === '收錄' ? '收錄' : '**缺 K，未做分子量修正**'} | ${fx(k.tgInfFixedK, 2)} | ${fx(k.k, 0)} | ${fx(k.kUncertainty, 0)} | ${k.mnMin === null ? '—' : `${k.mnMin}–${k.mnMax}`} | ${k.confidence || '—'} | ${k.fitPoints.join('、') || '—'} | ${k.checkPoints.join('、') || '—'} | ${fx(k.checkMaxErrorK, 1)} | ${k.tgInfSource || '—'}${k.tgInfUncertaintyK === null ? '' : `（±${fx(k.tgInfUncertaintyK, 2)} K）`} | ${k.checkMode || '—'} | ${k.audit} |`);
   }
   out();
   for (const k of kTable.rows) {
@@ -156,12 +160,14 @@ try {
   out();
   out('預測 = 搭配的 Tg∞ − K/Mn（只有有 K 的類別）。誤差 = 預測 − 資料點。「排除」與「參考」的點不進擬合與檢驗，誤差只供參考。');
   out();
-  out('| id | 材料 | Mn | Mn 類型 | Tg（K） | 不確定度（K） | 角色 | 量測方法 | 來源等級 | 換算標記 | 預測（K） | 誤差（K） | 出處 |');
-  out('|---|---|---|---|---|---|---|---|---|---|---|---|---|');
+  out('| id | 材料 | Mn | Mn 類型 | Mn 方法 | 端基 | Tg（K） | 不確定度（K） | 角色 | 量測方法 | 來源等級 | 換算標記 | 預測（K） | 誤差（K） | 出處 |');
+  out('|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|');
+  const cresolRow = (cls: string) => kTable.rows.find((r: any) => r.resinClass === cls);
   for (const p of points.rows) {
-    const usesNovolac = p.resinClass.startsWith('novolac');
-    const pred = usesNovolac ? tgm.foxFlory(novolacK.tgInfFixedK, novolacK.k, p.mn) : null;
-    out(`| ${p.id} | ${cell(p.material)} | ${p.mn} | ${cell(p.mnType)} | ${fx(p.tgK, 2)} | ${fx(p.uncertaintyK, 1)} | ${p.role} | ${cell(p.method)} | ${p.grade} | ${p.conversion || '—'} | ${fx(pred, 1)} | ${pred === null ? '缺 K' : fx(pred - p.tgK, 1)} | ${cell(p.source)} |`);
+    // 任務 034 的苯酚酚醛與 PAPS 點用苯酚酚醛 K；甲酚酚醛點用自己類別的 K；其他類別沒有 K
+    const kRow = p.resinClass.startsWith('novolac_cresol') ? cresolRow(p.resinClass) : p.resinClass.startsWith('novolac') ? novolacK : null;
+    const pred = kRow ? tgm.foxFlory(kRow.tgInfFixedK, kRow.k, p.mn) : null;
+    out(`| ${p.id} | ${cell(p.material)} | ${p.mn} | ${cell(p.mnType)} | ${p.mnMethod} | ${cell(p.endGroup)} | ${fx(p.tgK, 2)} | ${fx(p.uncertaintyK, 1)} | ${p.role} | ${cell(p.method)} | ${p.grade} | ${p.conversion || '—'} | ${fx(pred, 1)} | ${pred === null ? (p.resinClass === 'ecn' || p.resinClass === 'pgma_gma_polymer' ? '不擬合（只登錄）' : '缺 K') : fx(pred - p.tgK, 1)} | ${cell(p.source)} |`);
   }
   out();
   const kIndiv = novolacK.fitPoints.map((id: string) => {
@@ -211,7 +217,7 @@ try {
     out(`| ${name} | ${n} | ${res?.ok ? fx(res.mn, 1) : '—'} | **缺 K，算不出** |`);
   }
   out();
-  out('**結論：這個順序檢查做不了。** DGEBA 類沒有 K，Tg 只有 Tg∞ 一個值，無法比較 1001F、1004F、1007F 的高低，也沒有可比的 Tg 順序。');
+  out('**結論：這個順序檢查做不了。** DGEBA 類沒有 K，Tg 只有 Tg∞ 一個值，無法比較 1001F、1004F、1007F 的高低，也沒有可比的 Tg 順序。（任務 035 另以「參考擬合」做了一次順序檢查，結果標「參考，未收錄」，見第 8 節；它不改變上面的結論。）');
   out();
 
   // ---------- 4. 文獻驗證 ----------
@@ -301,6 +307,204 @@ try {
   out('2. E 是 PGMA 型：縮水甘油酯側鏈缺基團（任務 033 已記錄），且沒有 PGMA 類的 K。');
   out('3. 4B 的 SBI 是小分子，不計 Tg、不參與混合，輸出「未計入：S」，並註明「' + tgm.SMALL_MOLECULE_WARNING + '」（D56）；因此 4B 沒有任何部分混合值（先前的 489.7 K 已取消）。');
   out('4. 要讓 4A、4B 算出完整值，至少需要：單元 B 的基團（或校準）、PGMA 的基團、P 與 E 兩個類別的 Tg–Mn 資料與 K。不為了得到數字而放寬任何規則（使用者 2026-11-06 決定）。');
+  out();
+
+
+  // ---------- 7. 甲酚酚醛（任務 035） ----------
+  const pts = (cls: string) => points.rows.filter((p: any) => p.resinClass === cls);
+  const toFit = (rows: any[]) => rows.map((p) => ({ mn: p.mn, tgK: p.tgK }));
+  const sg = (v: number, d = 2) => (v >= 0 ? '+' : '') + fx(v, d);
+  const oRows = pts('novolac_cresol_ortho');
+  const pRows = pts('novolac_cresol_para');
+  const fo = fitFlory(toFit(oRows));
+  const fp = fitFlory(toFit(pRows));
+  const fpool = fitFlory(toFit([...oRows, ...pRows]));
+  const oK = cresolRow('novolac_cresol_ortho');
+  const pK = cresolRow('novolac_cresol_para');
+  out('## 7. 甲酚酚醛（任務 035，Lin-Gibson 2001，鄰位、對位各自擬合）');
+  out();
+  out('資料：Lin-Gibson 2001（Virginia Tech 博士論文）Chapter 3 Table 3.6，論文內頁碼 103；**二手整理，使用者 2026-11-06 核對原文後提供**（docs/references 內沒有此論文 PDF，未能看圖核對，數字照任務卡入庫）。未固化樹脂（非環氧化），以 2,6-二甲基酚封端，Mn 由 ¹³C NMR 計算，Tg 為 DSC 中點（20 → 180 °C；Chapter 3 的升溫速率未確認）。Tg 原表為 °C，加 273.15 轉 K。**四點的 Mn 方法都是 NMR，沒有與其他 Mn 方法的資料混合。**');
+  out();
+  out('### 7.1 各自的線性回歸（Tg 對 1/Mn，Tg∞ 與 K 同時求，4 點 2 參數）');
+  out();
+  out('| 類別 | n | Tg∞（K） | Tg∞（°C） | Tg∞ 標準誤差（K） | K（K·g/mol） | K 標準誤差 | R² | 殘差標準差（K） | 殘差（K，資料 − 擬合，依 Mn 由小到大） |');
+  out('|---|---|---|---|---|---|---|---|---|---|');
+  for (const [name, f, rows] of [['鄰甲酚酚醛 novolac_cresol_ortho', fo, oRows], ['對甲酚酚醛 novolac_cresol_para', fp, pRows]] as [string, any, any[]][]) {
+    out(`| ${name} | ${f.n} | ${fx(f.tgInfK, 2)} | ${fx(f.tgInfK - C, 2)} | ${fx(f.seTgInf, 2)} | ${fx(f.k, 0)} | ${fx(f.seK, 0)} | ${fx(f.r2, 4)} | ${fx(f.residualSd, 2)} | ${rows.map((p, i) => `Mn ${p.mn}：${sg(f.residuals[i])}`).join('；')} |`);
+  }
+  out();
+  out('**線性檢查**：');
+  const linSlope = (f: any, a: number, b: number) => f.k * (1 / a - 1 / b);
+  out(`- 鄰位 Mn 1380 → 2250：資料升 ${fx(oRows[3].tgK - oRows[2].tgK, 1)} K，回歸線預測升 ${fx(linSlope(fo, 1380, 2250), 1)} K，差 ${sg(oRows[3].tgK - oRows[2].tgK - linSlope(fo, 1380, 2250), 1)} K（這兩點的殘差只有 ${sg(fo.residuals[2])}、${sg(fo.residuals[3])} K）：沒有看到曲率。`);
+  out(`- 對位 Mn 1460 → 2150：資料升 ${fx(pRows[3].tgK - pRows[2].tgK, 1)} K，回歸線預測升 ${fx(linSlope(fp, 1460, 2150), 1)} K。對位最大殘差 ${sg(fp.residuals[1])} K（Mn 1010），其餘 ≤ ${fx(Math.max(...[0, 2, 3].map((i) => Math.abs(fp.residuals[i]))), 2)} K；殘差符號依 Mn 排列為「+、−、+、+」，不是單調的曲率型態。`);
+  out('- 限制：每類只有 4 點，無法可靠檢定曲率（二次項會用掉一半自由度）；上述只是殘差檢視，**不是統計檢定**。任務卡規定「回歸明顯非線性」才需停下來問；本資料殘差都在 8 K 內，未見明顯非線性。');
+  out();
+  out('### 7.2 獨立檢驗（異構物互檢：用一個異構物的擬合預測另一個異構物的 4 點，以另一個自己的 Mn）');
+  out();
+  out('| 預測所用的擬合 | 被預測的點 | Mn | 預測（K） | 資料（K） | 誤差 = 預測 − 資料（K） |');
+  out('|---|---|---|---|---|---|');
+  const crossErr: Record<string, number> = {};
+  for (const [label, f, target, key] of [['鄰位擬合 → 對位', fo, pRows, 'ortho→para'], ['對位擬合 → 鄰位', fp, oRows, 'para→ortho']] as [string, any, any[], string][]) {
+    let mx = 0;
+    for (const p of target) {
+      const pr = predictFlory(f, p.mn);
+      mx = Math.max(mx, Math.abs(pr - p.tgK));
+      out(`| ${label} | ${p.id} | ${p.mn} | ${fx(pr, 2)} | ${fx(p.tgK, 2)} | ${sg(pr - p.tgK)} |`);
+    }
+    crossErr[key] = mx;
+  }
+  out();
+  out(`最大誤差：鄰位擬合預測對位 ${fx(crossErr['ortho→para'], 2)} K；對位擬合預測鄰位 ${fx(crossErr['para→ortho'], 2)} K；**都 ≤ 20 K（D54）**，兩類別都收錄（稽核狀態「待使用者審」，可信度「低可信度」）。資料表記錄的檢驗最大誤差：鄰位 ${fx(oK.checkMaxErrorK, 1)}、對位 ${fx(pK.checkMaxErrorK, 1)}。`);
+  out();
+  out('注意：這是異構物之間的互檢，不是同一類別內的獨立資料；兩者同來源、同方法（NMR）、同封端，共同的系統誤差（例如升溫速率）檢驗不到。互檢只用於判斷擬合是否合理，**K 不跨類別使用**：鄰位的 K 只用在鄰位單元，對位的 K 只用在對位單元（程式用 SMARTS 辨識，辨識不出的單元缺 K）。');
+  out();
+  out('### 7.3 合併擬合是否可行（只報告，是否合併由使用者決定，表中仍分開）');
+  out();
+  const dInf = fo.tgInfK - fp.tgInfK;
+  const seInf = Math.hypot(fo.seTgInf, fp.seTgInf);
+  const dK = fo.k - fp.k;
+  const seK = Math.hypot(fo.seK, fp.seK);
+  out('| 項目 | 鄰位 | 對位 | 差（鄰 − 對） | 差的標準誤差 | 差 ÷ 標準誤差 | 合併擬合（8 點） | 合併標準誤差 |');
+  out('|---|---|---|---|---|---|---|---|');
+  out(`| Tg∞（K） | ${fx(fo.tgInfK, 2)} | ${fx(fp.tgInfK, 2)} | ${sg(dInf)} | ${fx(seInf, 2)} | ${sg(dInf / seInf)} | ${fx(fpool.tgInfK, 2)} | ${fx(fpool.seTgInf, 2)} |`);
+  out(`| K（K·g/mol） | ${fx(fo.k, 0)} | ${fx(fp.k, 0)} | ${sg(dK, 0)} | ${fx(seK, 0)} | ${sg(dK / seK)} | ${fx(fpool.k, 0)} | ${fx(fpool.seK, 0)} |`);
+  out();
+  out(`合併擬合：R² = ${fx(fpool.r2, 4)}，殘差標準差 ${fx(fpool.residualSd, 2)} K，殘差（依鄰位 490…2250、對位 510…2150 順序）：${fpool.residuals.map((r: number) => sg(r, 1)).join('、')} K。Tg∞ 與 K 的差約 ${fx(Math.abs(dInf / seInf), 1)}σ、${fx(Math.abs(dK / seK), 1)}σ（不顯著），所以**統計上合併可行**；但每類只有 4 點，標準誤差本來就大（對位 Tg∞ ±${fx(fp.seTgInf, 1)} K），這不足以證明兩個異構物相同；合併後的最大殘差 ${fx(Math.max(...fpool.residuals.map(Math.abs)), 1)} K，也比鄰位自己的擬合（最大 ${fx(Math.max(...fo.residuals.map(Math.abs)), 1)} K）大。**不替使用者決定合併**，表中維持分開。`);
+  out();
+  out('### 7.4 與 034 苯酚酚醛並列（只寫差異，不調整任何現有值）');
+  out();
+  out('| 項目 | 苯酚酚醛一般型（034） | 鄰甲酚酚醛（035） | 對甲酚酚醛（035） |');
+  out('|---|---|---|---|');
+  out(`| Tg∞（K） | ${fx(novolacK.tgInfFixedK, 2)}（基團貢獻固定，外推值） | ${fx(fo.tgInfK, 2)}（擬合） | ${fx(fp.tgInfK, 2)}（擬合） |`);
+  out(`| K（K·g/mol） | ${fx(novolacK.k, 0)} | ${fx(fo.k, 0)} | ${fx(fp.k, 0)} |`);
+  out(`| Mn 範圍 | ${novolacK.mnMin}–${novolacK.mnMax} | ${oK.mnMin}–${oK.mnMax} | ${pK.mnMin}–${pK.mnMax} |`);
+  out('| Mn 方法 | 未標明（Bian）；檢驗點為 PS 換算相對值 | NMR | NMR |');
+  out('| 端基 | 未查 | 2,6-二甲基酚封端 | 2,6-二甲基酚封端 |');
+  out('| 資料等級 | 一手（擬合）＋二手換算（檢驗）；低可信度 | 二手（使用者核對原文）；低可信度 | 同左 |');
+  for (const m of [780, 1000, 1535]) {
+    out(`| Tg 預測 Mn ${m}（K） | ${fx(tgm.foxFlory(novolacK.tgInfFixedK, novolacK.k, m), 1)} | ${fx(predictFlory(fo, m), 1)} | ${fx(predictFlory(fp, m), 1)} |`);
+  }
+  out();
+  out(`差異：甲酚酚醛的 K 約為苯酚酚醛的 ${fx(fo.k / novolacK.k, 2)}–${fx(fp.k / novolacK.k, 2)} 倍；Tg∞ 比苯酚酚醛的基團貢獻值低約 ${fx(novolacK.tgInfFixedK - fp.tgInfK, 0)}–${fx(novolacK.tgInfFixedK - fo.tgInfK, 0)} K；在 Mn 780–1535 內，甲酚酚醛的預測 Tg 比苯酚酚醛高（表中三個 Mn）。三者的 Tg∞ 取得方式不同（034 固定為基團貢獻值，035 為擬合值），Mn 方法與端基也不同，**不能互相套用，也不能拿這個差異推論甲基的效應**（資料只有這幾點）。`);
+  out();
+  out('### 7.5 成分 Tg 計算：用 Lin-Gibson 的 Mn 當輸入（**這是擬合殘差，不是獨立驗證**）');
+  out();
+  out('這 8 個資料點就是擬合用的點；程式算出的成分 Tg 與文獻 Tg 的差等於回歸殘差（表中 K、Tg∞ 為四捨五入值，差異在 0.1 K 內），只說明程式照表中的 Tg∞、K 算對了，**不是對模型的獨立驗證**（獨立檢驗見 7.2）。');
+  out();
+  out('| 單元 | Mn | 程式成分 Tg（K） | 文獻 Tg（K） | 差 = 程式 − 文獻（K） | 標記 |');
+  out('|---|---|---|---|---|---|');
+  for (const [unit, rows] of [[ORTHO_CRESOL, oRows], [PARA_CRESOL, pRows]] as [string, any[]][]) {
+    for (const p of rows) {
+      const c = comp('x', 'LG', unit, 100, { category: 'Resin', polymer: { mnInput: p.mn } });
+      const r = tgm.polymerComponentTg(RDKit, c, p.mn, 1);
+      out(`| ${p.resinClass} | ${p.mn} | ${fx(r.tgK, 2)} | ${fx(p.tgK, 2)} | ${r.tgK === null ? '—' : sg(r.tgK - p.tgK)} | ${r.flags.join('、') || '—'} |`);
+    }
+  }
+  out();
+  out('Mn 範圍外的輸出（示範標記）：');
+  out();
+  out('| 單元 | Mn | 成分 Tg（K） | 標記 |');
+  out('|---|---|---|---|');
+  for (const [name, unit] of [['鄰', ORTHO_CRESOL], ['對', PARA_CRESOL]] as [string, string][]) {
+    for (const m of [400, 3000]) {
+      const r = tgm.polymerComponentTg(RDKit, comp('x', name, unit, 100, { category: 'Resin', polymer: { mnInput: m } }), m, 1);
+      out(`| ${name}甲酚酚醛 | ${m} | ${fx(r.tgK, 1)} | ${r.flags.join('、') || '—'} |`);
+    }
+  }
+  out();
+  out('### 7.6 類別辨識（SMARTS，自行撰寫，D22；請使用者審化學正確性）');
+  out();
+  out('| 標籤 | SMARTS |');
+  out('|---|---|');
+  for (const r of CRESOL_NOVOLAC_SMARTS) out(`| ${r.label}（${r.resinClass}） | \`${r.smarts}\` |`);
+  out();
+  out('整個單元必須被 SMARTS 完整涵蓋（匹配原子數等於單元原子數）；命中結果列表：');
+  out();
+  out('| 單元 SMILES | 說明 | 辨識結果 | 預期 |');
+  out('|---|---|---|---|');
+  const cases7: [string, string, string | null][] = [
+    [ORTHO_CRESOL, '鄰甲酚酚醛單元', 'novolac_cresol_ortho'],
+    ['[*:1]c1cc(C[*:2])cc(C)c1O', '鄰甲酚酚醛（另一種切法）', 'novolac_cresol_ortho'],
+    [PARA_CRESOL, '對甲酚酚醛單元', 'novolac_cresol_para'],
+    [NOVOLAC, '反例：苯酚酚醛', null],
+    ['[*:1]Cc1cc([*:2])c(C)cc1O', '反例：間甲酚型', null],
+    ['[*:1]Cc1cc(C)c(O)c(C)c1', '反例：2,6-二甲酚', null],
+    [UNIT_A, '反例：雙酚茀單元', null],
+    ['[*:1]Cc1cc2ccccc2c([*:2])c1O', '反例：萘酚酚醛', null],
+    [DGEBA_UNIT, '反例：DGEBA 單元', null],
+    [PGMA, '反例：PGMA 單元', null],
+  ];
+  for (const [smi, desc, expected] of cases7) {
+    const got = identifyCresolNovolac(RDKit, smi);
+    out(`| \`${smi}\` | ${desc} | ${got ?? '未辨識'} | ${expected ?? '未辨識'}${got === expected ? '' : '（**不符**）'} |`);
+    if (got !== expected) throw new Error(`SMARTS 辨識與預期不符：${smi}`);
+  }
+  out();
+
+  // ---------- 8. BPA 環氧鏈 ----------
+  const bpaRows = ['EP.BPA720', 'DG.PX15K', 'DG.PX23K'].map((id) => points.rows.find((p: any) => p.id === id));
+  const fb = fitFlory(toFit(bpaRows));
+  out('## 8. BPA 環氧鏈（dgeba）：參考擬合與 EPON 順序檢查（**參考，未收錄**）');
+  out();
+  out('資料點：EP3874001A1（Allnex 2021，二手整理，使用者核對原文後提供；頁碼任務卡未提供）雙酚 A 環氧 Mn 720、Tg 38 °C；苯氧樹脂兩點（Corres 2011：Mn 1.5×10⁴、96 °C；Kuo 2003 圖 5：Mn 2.3×10⁴、約 98.5 °C）。docs/references 內沒有 EP3874001A1 的 PDF，未核對。');
+  out();
+  out('| 點 | Mn | Mn 方法 | Tg（K） | 擬合殘差（K） |');
+  out('|---|---|---|---|---|');
+  bpaRows.forEach((p: any, i: number) => out(`| ${p.id} | ${p.mn} | ${p.mnMethod} | ${fx(p.tgK, 2)} | ${sg(fb.residuals[i])} |`));
+  out();
+  out(`參考擬合（3 點 2 參數，只剩 1 個自由度）：Tg∞ = ${fx(fb.tgInfK, 2)} K（${fx(fb.tgInfK - C, 1)} °C）、K = ${fx(fb.k, 0)} K·g/mol、R² = ${fx(fb.r2, 4)}；標準誤差 Tg∞ ±${fx(fb.seTgInf, 1)} K、K ±${fx(fb.seK, 0)}（只有 1 個自由度，標準誤差幾乎沒有統計意義）。**沒有獨立檢驗點，依任務卡規則不收錄 K，tg_flory_k.csv 的 dgeba 維持「缺 K」。**`);
+  out();
+  out('**Mn 方法差異（「Mn 方法不同不得混擬合」的規則在此被刻意違反，僅限這張參考表）**：EP3874001A1 是 GPC-PS（聚苯乙烯標準）；Corres 苯氧樹脂是 GPC，THF 溶劑（標註 GPC-THF，校正標準未載）；Kuo 苯氧樹脂的 Mn 方法未標明。任務卡 C 節要求以這三點擬合並列出差異，所以做了；**因方法不同，這個擬合只能當參考，不能當作 K。**另外 720 是唯一的低 Mn 點，Tg∞ 與 K 幾乎全由它與高 Mn 點的差決定。');
+  out();
+  out('EPON 順序檢查（Mn 由 McAninch 2014 Table 4.1 的平均 n 計算，方法同第 3 節；Tg 由上面的參考擬合算出）：');
+  out();
+  out('| 樹脂 | 平均 n | Mn（g/mol） | 參考擬合 Tg（K） | 參考擬合 Tg（°C） | AI 整理截圖的軟化點（只比順序，不是 Tg） |');
+  out('|---|---|---|---|---|---|');
+  const eponCheck: [string, number, string][] = [['EPON 1001F', 2.52, '75–80 °C（ASTM D3461）'], ['EPON 1004F', 4.81, '約 96 °C（TDS 未註明方法）'], ['EPON 1007F', 11.55, '120–130 °C（ASTM D3461）']];
+  const eponTg: number[] = [];
+  for (const [name, n, soft] of eponCheck) {
+    const spec = { dpInput: n, endGroups: endSpec };
+    const an = analyzePolymerUnits(RDKit, DGEBA_UNIT, spec);
+    const res = an.ok ? resolvePolymer(spec, an.mUnit, { mEnds: an.mEnds ?? 0, filled: an.endsFilled ?? [false, false] }) : null;
+    const tg = res?.ok ? predictFlory(fb, res.mn) : null;
+    if (tg !== null) eponTg.push(tg);
+    out(`| ${name} | ${n} | ${res?.ok ? fx(res.mn, 1) : '—'} | ${fx(tg, 1)} | ${fx(tg === null ? null : tg - C, 1)} | ${soft} |`);
+  }
+  out();
+  const ordered = eponTg.length === 3 && eponTg[0] < eponTg[1] && eponTg[1] < eponTg[2];
+  out(`**順序檢查結果：1001F < 1004F < 1007F ${ordered ? '成立' : '不成立'}**（${eponTg.map((t) => fx(t - C, 1) + ' °C').join(' < ')}），與 AI 整理截圖的軟化點順序（75–80 < 約 96 < 120–130 °C）${ordered ? '一致' : '不一致'}。標「參考，未收錄」。`);
+  out('提醒：只要 K > 0，Fox–Flory 對 Mn 單調遞增，順序成立是公式形式的必然結果，**不構成對 K 的檢驗**；這個檢查只能排除 K 為負或程式算錯 Mn。這三個 Mn 都在 720 與 15,000 之間，沒有任何實測 Tg 可比（軟化點不是 Tg，不換算）。');
+  out();
+  const bt05 = tgOf(DGEBA_UNIT);
+  out(`**與 BT05 基團貢獻值比較（不調整任何現有值）**：BT05 單元的 Tg∞（a）= ${fx(bt05?.tgK ?? null, 2)} K（${fx((bt05?.tgK ?? 0) - C, 1)} °C）；參考擬合 Tg∞ = ${fx(fb.tgInfK, 2)} K（${fx(fb.tgInfK - C, 1)} °C）；差（BT05 − 參考擬合）= ${fx((bt05?.tgK ?? 0) - fb.tgInfK, 1)} K。與 033、034 記錄的「基團貢獻偏高約 27 K（相對 Mn 23,000 的實測點）」同方向、同量級；本卡未更動任何 Yg 值。`);
+  out();
+
+  // ---------- 9. ECN 與 PGMA ----------
+  const ecn = points.rows.find((p: any) => p.id === 'EP.ECN853');
+  const lgO930 = points.rows.find((p: any) => p.id === 'LG.O930');
+  const g1 = points.rows.find((p: any) => p.id === 'GM.E1');
+  const g2 = points.rows.find((p: any) => p.id === 'GM.E2');
+  out('## 9. ECN 與 PGMA：只登錄與觀察，不擬合');
+  out();
+  out('### 9.1 ECN（甲酚酚醛環氧）');
+  out();
+  out(`EP3874001A1：ECN Tg ${fx(ecn.tgK, 2)} K（45.5 °C）、Mn 853（GPC-PS）、EEW 205、平均官能度 4.2；一個點，**不擬合**。與同 Mn 範圍的鄰甲酚酚醛（Lin-Gibson，Mn 930，NMR，Tg ${fx(lgO930.tgK, 2)} K = 76 °C）比較：ECN 低 ${fx(lgO930.tgK - ecn.tgK, 1)} K，且 ECN 的 Mn 還略小（853 對 930）。觀察：**環氧化（酚羥基變為縮水甘油醚）的樹脂 Tg 較低**；Mn 差只有約 8 %，用本卡鄰位 K 估計約 ${fx(predictFlory(fo, 930) - predictFlory(fo, 853), 1)} K，遠小於 ${fx(lgO930.tgK - ecn.tgK, 1)} K，所以 Mn 差不是主因（此為本表數字的比較，非機理證明）。限制：兩者 Mn 方法不同（GPC-PS 對 NMR）、Tg 條件不同（10 °C/min 對 Chapter 3 未確認）、不同來源、ECN 的甲酚異構物組成未載；差值只能當定性觀察，**不推導 K，也不得把甲酚酚醛的 K 套到 ECN**。專利另列 ECN／EPN 適用範圍（Tg 38–53 °C、Mn 700–2000、EEW 190–230、官能度 3–6）是範圍，沒有擬合。`);
+  out();
+  out('### 9.2 PGMA（GMA 聚合物，EP1196508A1）');
+  out();
+  out('| 點 | Mn（GPC-PS） | Mw | Tg（K） | Tg（°C） | 環氧值（eq/kg） |');
+  out('|---|---|---|---|---|---|');
+  out(`| Example 1（${g1.id}） | ${g1.mn} | 7147 | ${fx(g1.tgK, 2)} | 31 | 6.44 |`);
+  out(`| Example 2（${g2.id}） | ${g2.mn} | 6099 | ${fx(g2.tgK, 2)} | 42 | 6.39 |`);
+  out();
+  out('**為何不符合 Fox–Flory，所以不擬合**：(1) Mn 較高的 Example 1（2986）Tg 反而較低（31 對 42 °C），與 Fox–Flory（Mn 增加 Tg 上升）方向相反，兩點硬擬合會得到負的 K；(2) 合成配方含烯丙基縮水甘油醚當鏈終止劑，端基與鏈結構不是純 PGMA，且 Mw/Mn 約 2.4 與 4.7，分子量分布差很多，Tg 受端基與分布的影響不能用單一 Mn 解釋（此為依任務卡資料的說明，未見原文）；(3) 只有兩點，沒有獨立檢驗點；(4) PGMA 單元缺基團貢獻（任務 033），沒有 PGMA 的 Tg∞。**只登錄，沒有擬合 PGMA 的 K，tg_flory_k.csv 沒有 PGMA 的列**；程式遇到 PGMA 單元回報「缺基團」。');
+  out();
+  out('### 9.3 只登錄的驗證候選（待成分 Tg 可算；**目前無法驗證**，本卡不使用）');
+  out();
+  out('| 文獻 | 系統 | Tg0 | 完全固化 Tg | 無法驗證的原因 |');
+  out('|---|---|---|---|---|');
+  out('| Szeluga 等 2008（DOI 10.1007/s00289-008-0889-7，Table 1） | DGEBA（Epikote 827，EEW 181.8）＋酚醛硬化劑（Mn 570）＋2-乙基-4-甲基咪唑 0.3 wt% | 0.6 °C | 131.9 °C | DGEBA 類缺 K；酚醛 Mn 570 在已驗證範圍（苯酚酚醛 780–1535）外，且不是已收錄的類別 |');
+  out('| Sadeghinia 等 2012（DOI 10.1016/j.ijadhadh.2011.10.007） | EPN 1180（EEW 175–182）＋雙酚 A 硬化劑（當量 114）＋TPP，無填料 | 21.4 °C | 117.7 °C（λ 0.567） | 硬化劑是小分子（D56 不計 Tg）；EPN 沒有 Mn |');
   out();
 
   mkdirSync(dirname(OUTPUT), { recursive: true });
