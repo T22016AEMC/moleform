@@ -39,6 +39,7 @@ try {
   const { computeTg } = await server.ssrLoadModule('/src/core/properties/tgGroupContribution.ts');
   const { BACKBONE_TEMPLATES } = await server.ssrLoadModule('/src/core/data/backboneTemplates.ts');
   const { YG_GROUPS } = await server.ssrLoadModule('/src/core/data/ygGroups.ts');
+  const { YG_CALIBRATED_GROUPS } = await server.ssrLoadModule('/src/core/data/ygCalibratedGroups.ts');
   const { BOOK_CASES } = await server.ssrLoadModule('/tests/properties/bookCases.ts');
   const RDKit = await getRDKit();
 
@@ -69,7 +70,8 @@ try {
   out();
   out('以下為程式輸出，未經化學判斷；分子量、ΣMi 只列在本文件供核對，網站上不顯示（D09）。');
   out();
-  out(`- 結構處理：RDKit ${RDKit.version()}；基團表 \`src/data/yg_groups.csv\`（${YG_GROUPS.length} 列，稽核狀態皆為「待使用者審」）`);
+  out(`- 結構處理：RDKit ${RDKit.version()}；基團表 \`src/data/yg_groups.csv\`（${YG_GROUPS.length} 列，稽核狀態皆為「待使用者審」）；校準基團表 \`src/data/yg_calibrated_groups.csv\`（${YG_CALIBRATED_GROUPS.length} 列，校準值（非書中值），D54，任務 033）`);
+  out('- **含校準基團**：書中基團配不到的原子才試校準基團（D54）；標「含校準基團」的列用到校準值（非書中值），可信度低於書中值。');
   out('- 模型：van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009), 式 6.4–6.5：Tg = 1000·ΣYgi ÷ M（Ygi：K·kg/mol；M：g/mol）。可信度：理論估算（基團貢獻法）。');
   out('- 本數值為依理論模型估算之參考值，非實測值。實際結果受原料純度、製程條件與反應動力學影響，請以實驗結果為準。');
   out('- 切分規則：Table 6.3 組合基團與 Table 6.1 基團依「基團原子數由大到小」配對，同大小依資料表順序；每個重原子恰好屬於一個基團；配不到的原子回報「缺基團」，不用相近基團代用。');
@@ -79,20 +81,24 @@ try {
 
   out('## 1. 測試成分與骨架範本單元');
   out();
-  out('| 名稱 | 類型 | SMILES | 切出的基團（Ygi） | ΣYgi（K·kg/mol） | M = ΣMi（g/mol） | ΔM | Tg（K） | Tg（°C） | 缺基團 |');
-  out('|---|---|---|---|---|---|---|---|---|---|');
+  out('| 名稱 | 類型 | SMILES | 切出的基團（Ygi） | ΣYgi（K·kg/mol） | M = ΣMi（g/mol） | ΔM | Tg（K） | Tg（°C） | 含校準基團 | 缺基團 |');
+  out('|---|---|---|---|---|---|---|---|---|---|---|');
   const missingSummary: string[] = [];
+  const diffRows: { name: string; kind: string; before: any; after: any }[] = [];
   for (const s of all) {
     const r = computeTg(RDKit, s.smiles);
+    const bookOnly = computeTg(RDKit, s.smiles, { calibrated: false });
+    if (bookOnly.status === 'ok' && (r.status !== 'ok' || r.tgK !== bookOnly.tgK)) throw new Error(`原本可算的列數值改變：${s.name}`);
+    diffRows.push({ name: s.name, kind: s.kind, before: bookOnly, after: r });
     if (r.status === 'ok') {
       const flag = r.massWithinTolerance === false ? '（超出）' : '';
-      out(`| ${cell(s.name)} | ${s.kind} | \`${cell(s.smiles)}\` | ${cell(describeGroups(r.groups))} | ${fx(r.sumYg, 2)} | ${fx(r.sumM, 1)} | ${fx(r.massDelta, 3)}${flag} | ${fx(r.tgK, 1)} | ${fx(r.tgC, 1)} | — |`);
+      out(`| ${cell(s.name)} | ${s.kind} | \`${cell(s.smiles)}\` | ${cell(describeGroups(r.groups))} | ${fx(r.sumYg, 2)} | ${fx(r.sumM, 1)} | ${fx(r.massDelta, 3)}${flag} | ${fx(r.tgK, 1)} | ${fx(r.tgC, 1)} | ${r.containsCalibrated ? '**含校準基團**' : '否'} | — |`);
     } else if (r.status === 'missing') {
       const miss = r.missing.map((m: any) => `原子 ${m.index}：${m.description}`).join('；');
-      out(`| ${cell(s.name)} | ${s.kind} | \`${cell(s.smiles)}\` | ${cell(describeGroups(r.groups) || '（無）')} | — | — | — | — | — | **缺基團**：${cell(miss)} |`);
+      out(`| ${cell(s.name)} | ${s.kind} | \`${cell(s.smiles)}\` | ${cell(describeGroups(r.groups) || '（無）')} | — | — | — | — | — | — | **缺基團**：${cell(miss)} |`);
       missingSummary.push(s.name);
     } else {
-      out(`| ${cell(s.name)} | ${s.kind} | \`${cell(s.smiles)}\` | — | — | — | — | — | — | 無法解析：${r.message} |`);
+      out(`| ${cell(s.name)} | ${s.kind} | \`${cell(s.smiles)}\` | — | — | — | — | — | — | — | 無法解析：${r.message} |`);
     }
   }
   out();
@@ -113,6 +119,21 @@ try {
     }
     const d = r.tgK - c.book;
     out(`| ${c.name} | \`${cell(c.smiles)}\` | ${c.where} | ${c.book} | ${fx(r.tgK, 2)} | ${fx(d, 2)} | ${Math.abs(d) <= 1 ? '是' : '**否**'} |`);
+  }
+  out();
+
+  out('## 3. 校準前後差異（任務 033，D54）');
+  out();
+  out('「前」＝只用書中基團；「後」＝書中基團配不到時加校準基團。原本可算的列數值不變（程式內檢查，改變會中止）。');
+  out();
+  out('| 名稱 | 前 | 後 Tg（K） | 後 Tg（°C） | 用到的校準基團 |');
+  out('|---|---|---|---|---|');
+  for (const d of diffRows) {
+    const b = d.before.status === 'ok' ? `${fx(d.before.tgK, 1)} K` : '缺基團';
+    if (d.after.status === 'ok') {
+      const cal = d.after.groups.filter((g: any) => g.calibrated).map((g: any) => g.name).join('；');
+      out(`| ${cell(d.name)} | ${b} | ${fx(d.after.tgK, 1)} | ${fx(d.after.tgC, 1)} | ${d.after.containsCalibrated ? '**含校準基團**：' + cell(cal) : '—'} |`);
+    } else out(`| ${cell(d.name)} | ${b} | 缺基團 | — | — |`);
   }
   out();
 

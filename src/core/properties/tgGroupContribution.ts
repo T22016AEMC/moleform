@@ -13,6 +13,8 @@
 //  - Table 6.3 組合基團與 6.1 A 基團沒有共軛狀態，直接用書中值。
 import type { YgGroupRow } from '../data/ygGroups';
 import { YG_GROUPS, firstMatch, ygFamilyId } from '../data/ygGroups';
+import type { YgCalibratedRow } from '../data/ygCalibratedGroups';
+import { CALIBRATED_SECTION, YG_CALIBRATED_GROUPS, calibratedAsYgRow } from '../data/ygCalibratedGroups';
 import type { JSMol, RDKitModule } from '../rdkit/types';
 import { atomicWeight } from './atomicWeights';
 import { readGraph, type MolGraph } from './molGraph';
@@ -61,6 +63,8 @@ export interface TgGroupHit {
   tentative: boolean;
   atoms: number[];
   source: string;
+  /** 校準值（非書中值，D54、任務 033）；書中基團為 false */
+  calibrated: boolean;
 }
 
 export interface MissingAtom {
@@ -78,6 +82,8 @@ export type TgResult =
       tgC: number;
       sumYg: number;
       sumM: number;
+      /** 用了校準基團（D54）：書中基團配不到的原子才用，輸出須標「含校準基團」 */
+      containsCalibrated: boolean;
       formulaMass: number | null;
       massDelta: number | null;
       massWithinTolerance: boolean | null;
@@ -88,6 +94,7 @@ export type TgResult =
       status: 'missing';
       smiles: string;
       polymer: boolean;
+      containsCalibrated: false;
       groups: TgGroupHit[];
       missing: MissingAtom[];
     }
@@ -105,6 +112,10 @@ export type TgPartitionStrategy = 'greedy' | 'fewest' | 'fromEnd';
 export interface TgOptions {
   rows?: readonly YgGroupRow[];
   partition?: TgPartitionStrategy;
+  /** 書中基團配不到時是否改試校準基團（D54）；預設 true。關閉時行為與任務 026–032 完全相同 */
+  calibrated?: boolean;
+  /** 校準基團表；預設為 src/data/yg_calibrated_groups.csv */
+  calibratedRows?: readonly YgCalibratedRow[];
 }
 
 interface Candidate {
@@ -285,7 +296,8 @@ function describeAtom(g: MolGraph, i: number): string {
   return `${label}，鄰居：${near === '' ? '無' : near}`;
 }
 
-export function computeTg(RDKit: RDKitModule, smiles: string, options: TgOptions = {}): TgResult {
+/** 只用書中基團（或 options.rows）的切分與計算（任務 026 起的規則，D54 之後不變） */
+function computeTgBook(RDKit: RDKitModule, smiles: string, options: TgOptions = {}): TgResult {
   let mol: JSMol | null = null;
   try {
     mol = RDKit.get_mol(smiles);
@@ -412,6 +424,7 @@ export function computeTg(RDKit: RDKitModule, smiles: string, options: TgOptions
         tentative: row.tentative,
         atoms: h.atoms,
         source: row.source,
+        calibrated: row.section === CALIBRATED_SECTION,
       });
     });
 
@@ -423,7 +436,7 @@ export function computeTg(RDKit: RDKitModule, smiles: string, options: TgOptions
           element: symbolOf(g.z[i]),
           description: missingNotes.get(i) ? `${describeAtom(g, i)}；${missingNotes.get(i)}` : describeAtom(g, i),
         }));
-      return { status: 'missing', smiles, polymer, groups: resolved, missing };
+      return { status: 'missing', smiles, polymer, containsCalibrated: false, groups: resolved, missing };
     }
 
     // ---- 計算 ----
@@ -451,11 +464,137 @@ export function computeTg(RDKit: RDKitModule, smiles: string, options: TgOptions
       tgC: tgK - 273.15,
       sumYg,
       sumM,
+      containsCalibrated: resolved.some((h) => h.calibrated),
       formulaMass,
       massDelta,
       massWithinTolerance: massDelta === null ? null : Math.abs(massDelta) <= TG_MASS_TOLERANCE,
       groups: resolved,
       sources,
+    };
+  } finally {
+    mol.delete();
+  }
+}
+
+/** 芳香環上酚羥基這類「H 換成 X」增量：找出該基團的原子（SMARTS 只描述取代基原子本身） */
+function incrementSites(RDKit: RDKitModule, mol: JSMol, row: YgCalibratedRow): number[] {
+  const q = mustQuery(RDKit, row.smarts);
+  try {
+    return allMatches(mol, q).map((a) => a[0]);
+  } finally {
+    q.delete();
+  }
+}
+
+/** 移除指定原子（取代基）並把與它相連的原子補回一個氫，回傳新的 SMILES；失敗回傳 null */
+function stripSubstituents(RDKit: RDKitModule, mol: JSMol, drop: ReadonlySet<number>): string | null {
+  const j = JSON.parse(mol.get_json()) as { molecules: { atoms: { impHs?: number }[]; bonds: { atoms: [number, number] }[]; extensions?: unknown }[] };
+  const m = j.molecules[0];
+  const remap = new Map<number, number>();
+  let k = 0;
+  m.atoms.forEach((_, i) => {
+    if (!drop.has(i)) remap.set(i, k++);
+  });
+  const hostHs = new Map<number, number>();
+  for (const b of m.bonds) {
+    const [x, y] = b.atoms;
+    if (drop.has(y) && !drop.has(x)) hostHs.set(x, (hostHs.get(x) ?? 0) + 1);
+    if (drop.has(x) && !drop.has(y)) hostHs.set(y, (hostHs.get(y) ?? 0) + 1);
+  }
+  const atoms = m.atoms.filter((_, i) => !drop.has(i));
+  m.atoms.forEach((a, i) => {
+    if (!drop.has(i) && hostHs.has(i)) (atoms[remap.get(i) as number] as { impHs?: number }).impHs = (a.impHs ?? 0) + (hostHs.get(i) as number);
+  });
+  m.bonds = m.bonds.filter((b) => !b.atoms.some((x) => drop.has(x))).map((b) => ({ ...b, atoms: [remap.get(b.atoms[0]) as number, remap.get(b.atoms[1]) as number] }));
+  m.atoms = atoms;
+  delete m.extensions; // 芳香性由 RDKit 重新判定
+  let out: JSMol | null = null;
+  try {
+    out = RDKit.get_mol(JSON.stringify(j));
+    return out && out.is_valid() ? out.get_smiles() : null;
+  } catch {
+    return null;
+  } finally {
+    out?.delete();
+  }
+}
+
+const OXYGEN_MASS = 15.999;
+
+/**
+ * Tg 的基團加成計算（任務 026；含校準基團，任務 033、D54）。
+ *
+ * 書中基團先配對：只用書中基團就能完整切分時，結果與 computeTgBook 完全相同（containsCalibrated = false）。
+ * 書中基團配不到（缺基團）時才試校準基團，兩種：
+ *  - 整體基團（例如 9,9-雙(4-伸苯基)茀骨架）：與書中基團一起參加切分（原子數大者先配），可取走書中基團本來也配得到的原子；
+ *  - H 換成 X 增量（例如芳香環上的 –OH）：先把取代基換回氫（Table 6.20 的做法），用書中基團切分，再加上 n × ΔYg、n × ΔM。
+ * 加上校準基團仍然配不完時，回傳只用書中基團的缺基團結果（原子序號與任務 026 相同）。
+ */
+export function computeTg(RDKit: RDKitModule, smiles: string, options: TgOptions = {}): TgResult {
+  const book = computeTgBook(RDKit, smiles, options);
+  if (book.status !== 'missing' || options.calibrated === false) return book;
+  const calRows = options.calibratedRows ?? YG_CALIBRATED_GROUPS;
+  if (calRows.length === 0) return book;
+  const wholeRows = calRows.filter((r) => r.kind === '整體基團').map(calibratedAsYgRow);
+  const incRows = calRows.filter((r) => r.kind === 'H 換成 X 增量');
+  let mol: JSMol | null = null;
+  try {
+    mol = RDKit.get_mol(smiles);
+  } catch {
+    mol = null;
+  }
+  if (!mol || !mol.is_valid()) {
+    mol?.delete();
+    return book;
+  }
+  try {
+    const sites: { row: YgCalibratedRow; atom: number }[] = [];
+    for (const r of incRows) for (const atom of incrementSites(RDKit, mol, r)) sites.push({ row: r, atom });
+    let work = smiles;
+    if (sites.length > 0) {
+      const stripped = stripSubstituents(RDKit, mol, new Set(sites.map((s) => s.atom)));
+      if (stripped === null) return book;
+      work = stripped;
+    }
+    const second = computeTgBook(RDKit, work, { ...options, rows: [...(options.rows ?? YG_GROUPS), ...wholeRows] });
+    if (second.status !== 'ok') return book;
+    const addYg = sites.reduce((s, x) => s + x.row.ygi, 0);
+    const addM = sites.reduce((s, x) => s + x.row.mi, 0);
+    const sumYg = second.sumYg + addYg;
+    const sumM = second.sumM + addM;
+    const formulaMass = second.formulaMass === null ? null : second.formulaMass + sites.length * OXYGEN_MASS;
+    const massDelta = formulaMass === null ? null : sumM - formulaMass;
+    const groups: TgGroupHit[] = [
+      ...second.groups,
+      ...sites.map((x) => ({
+        familyId: x.row.id,
+        rowId: x.row.id,
+        name: x.row.name,
+        kind: x.row.kind,
+        ygi: x.row.ygi,
+        mi: x.row.mi,
+        state: '',
+        condition: '',
+        tentative: false,
+        atoms: [x.atom],
+        source: `校準值（非書中值）：${x.row.anchor}`,
+        calibrated: true,
+      })),
+    ];
+    const tgK = (1000 * sumYg) / sumM;
+    return {
+      ...second,
+      smiles,
+      tgK,
+      tgC: tgK - 273.15,
+      sumYg,
+      sumM,
+      containsCalibrated: groups.some((g) => g.calibrated),
+      formulaMass,
+      massDelta,
+      massWithinTolerance: massDelta === null ? null : Math.abs(massDelta) <= TG_MASS_TOLERANCE,
+      groups,
+      sources: [...new Set(groups.map((g) => g.source))],
     };
   } finally {
     mol.delete();

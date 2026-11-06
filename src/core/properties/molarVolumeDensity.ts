@@ -172,7 +172,7 @@ function unitMassOf(g: MolGraph): number | null {
 
 /** 298 K 的狀態判斷（4.3.2、4.3.3 節）：需要任務 026 的 Tg；Tg 算不出來或剛好 25 °C 就是「狀態未定」 */
 export function judgeState(RDKit: RDKitModule, smiles: string): StateJudgement {
-  const tg = computeTg(RDKit, smiles);
+  const tg = computeTg(RDKit, smiles, { calibrated: false }); // 維持任務 029 的行為；是否改用含校準基團的 Tg 待使用者決定（任務 033）
   if (tg.status !== 'ok') {
     return {
       state: 'undetermined',

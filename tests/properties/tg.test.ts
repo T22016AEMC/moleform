@@ -161,15 +161,17 @@ describe('缺基團：回傳缺基團與原子位置，不回傳數字', () => {
 
   it('雙酚茀環氧（Cardo，BT06）：茀環缺基團，BPA 組合不會誤配', () => {
     const bt06 = BACKBONE_TEMPLATES.find((t) => t.id === 'BT06');
-    const r = computeTg(RDKit, bt06?.unitSmiles as string);
+    const r = computeTg(RDKit, bt06?.unitSmiles as string, { calibrated: false }); // 任務 033 之後預設可用校準的茀骨架
     expect(r.status).toBe('missing');
     if (r.status !== 'missing') return;
     expect(r.missing.length).toBeGreaterThanOrEqual(13); // 茀的 13 個碳（含兩個 sp3 以外的環碳），具體位置見 description
   });
 
   it('縮水甘油酯側鏈（PGMA）與含 OH 的苯環（酚醛）都回報缺基團', () => {
+    // 只用書中基團（任務 033 之後預設會試校準基團，酚羥基因此可算；PGMA 側鏈仍缺）
     expect(computeTg(RDKit, '*CC(C)(C(=O)OCC1CO1)*').status).toBe('missing');
-    expect(computeTg(RDKit, '*Cc1cc(*)ccc1O').status).toBe('missing');
+    expect(computeTg(RDKit, '*CC(C)(C(=O)OCC1CO1)*', { calibrated: false }).status).toBe('missing');
+    expect(computeTg(RDKit, '*Cc1cc(*)ccc1O', { calibrated: false }).status).toBe('missing');
   });
 
   it('聚合物側鏈 –CH2– 回報缺基團（式 6.6–6.8 未實作），不以主鏈值代替', () => {
