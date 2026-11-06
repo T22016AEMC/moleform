@@ -1,6 +1,6 @@
 # PLAN — 階段計畫與進度
 
-最後更新：2026-10-29
+最後更新：2026-11-06
 
 勾選規則：完成一項就改成 `[x]`，並在 `docs/reports/` 留報告。標 **（待決）** 的項目在使用者回答前不要開工。每個 Phase 開頭的「開工前需要使用者決定」全部有答案後，該 Phase 才能開工。
 
@@ -134,6 +134,7 @@ U02 已由 D46 決定（任務 019）。
 - [ ] 6.5 參考趨勢類：彈性模數、吸濕性；Tm 對不可結晶聚合物標為「不適用」
 - [x] 6.6 小分子沸點、熔點（Joback，已定 D52）（Joback Tb、Tf（D52，任務 027）：`src/data/joback_groups.csv` 41 列「待使用者審」、`src/core/properties/jobackTbTf.ts`、輸出 `docs/verification/phase6-TbTf-輸出.md`；聚合物單元不適用）
 - [ ] 6.7 混合配方：混合密度、Fox／Gordon–Taylor Tg、混合介電常數、共聚比例影響
+  - 補註：成分 Tg 與混合未固化 Tg（任務 034）已做：Fox–Flory（K 只收酚醛一般型，低可信度，待使用者審；DGEBA 類缺 K）、小分子 Tg ≈ 2/3 Tm、Fox 混合式（Gordon–Taylor 因 k 需實驗值不做）；`src/core/properties/tgMixing.ts`、輸出 `docs/verification/phase6-Tg-混合-輸出.md`。混合密度、混合介電常數、共聚比例影響未做，6.7 不勾選
 - [ ] 6.8 每個公式的自動測試（檢查程式是否照公式算對）
 - [ ] 6.9 使用者驗證清單
   - 補註（僅供驗證，不作為程式輸入，D02）：使用者有配方**固化前** Tg 實測值，用於比對 6.7 混合配方 Tg（Fox／Gordon–Taylor）
