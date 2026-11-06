@@ -234,6 +234,23 @@ MoleForm 的化學資料放在 `src/data/` 的四個 CSV。**目前只有任務 
 `src/data/molar_refraction_groups.csv`（47 列）。Table 10.4（書頁 293–294，PDF 第 320–321 頁）的 R_LL 欄（λ = 589 nm，10⁻⁶ m³/mol ＝ cm³/mol，不換算）；R_GD、R_V 欄只用於折射率，不收。欄位：`id`（R01–R47）、`基團名稱`、`SMARTS`、`原子數`、`R`、`出處`、`稽核狀態`（全部「待使用者審」）、`備註`。書中 General／Attached to benzene ring 等變體的判斷條件書中沒有定義，取字面並寫在備註；Δ 構成增量、Br、I、–SH、–SS–、–NO2、–CHO 未收（結構不需要或書中沒說套用方式）。程式：`src/core/data/molarRefractionGroups.ts`、`src/core/properties/dielectricRefraction.ts`。
 
 ## 程式位置
+## 自由體積（使用者定義經驗法）基團表與係數表（任務 036a，D22、D55、D57）
+
+`src/data/free_volume_groups.csv`（19 列）與 `src/data/free_volume_coefficients.csv`（5 列）。來源是使用者 2026-11-06 依論文整理的 Excel（`docs/references/自由體積算法_使用者表.xlsx`；論文清單待補），來源等級依 D55 為「使用者定義」，未經獨立驗證，稽核狀態全部「待使用者審」。這是使用者定義的經驗法，不是書中的自由體積分率，不用於 CTE。芳香族 H 欄（3.17）已由使用者刪除，不收錄。
+
+| 欄位 | 說明 |
+|---|---|
+| `id` | 基團 FV01–FV19（依 xlsx 第 4 列的欄序，扣掉芳香族 H）；係數 FC01–FC05 |
+| `基團名稱`、`SMARTS` | 基團表；SMARTS 自行撰寫（D22），正反例在 `tests/properties/freeVolumeCases.ts` |
+| `原子數`、`情境原子` | 基團佔用的重原子數；情境原子是 SMARTS 中只作條件、不佔用的原子（從 0 起算，例如酯基的羰基碳），沒有時留空 |
+| `Vω` | cm³/mol，xlsx 第 4 列的值，不得修改 |
+| `類別`、`係數`、`辨識方式`、`優先順序` | 係數表；辨識方式為 SMARTS、橋環偵測（程式判斷）或其餘；優先順序 SBI(1) ＞ 橋環脂環(2) ＞ 芳香環(3) ＞ 其餘(4) |
+| `出處` | 「使用者定義（依論文整理，論文清單待補）」、xlsx 檔名與儲存格位置；缺任一項報錯（D22） |
+| `稽核狀態` | 目前只能是「待使用者審」 |
+| `備註` | 與 Bondi／書的對照、歸類規則與推論、待使用者確認事項 |
+
+程式：`src/core/data/freeVolumeTables.ts`（格式與 RDKit 檢查）、`src/core/properties/freeVolume.ts`（切分、係數選擇、共聚物加權、Vf／Va）；測試 `tests/properties/freeVolume.test.ts`；輸出 `docs/verification/phase6-自由體積-經驗係數-輸出.md`（`npm run verify:phase6-fv`）。
+
 
 - 讀取程式與檢查：`src/core/data/`（`csv.ts`、`readers.ts`、`validate.ts`、`chemcheck.ts`、`load.ts`）
 - 測試：`tests/data/`
