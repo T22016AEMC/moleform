@@ -135,6 +135,7 @@ U02 已由 D46 決定（任務 019）。
 - [x] 6.6 小分子沸點、熔點（Joback，已定 D52）（Joback Tb、Tf（D52，任務 027）：`src/data/joback_groups.csv` 41 列「待使用者審」、`src/core/properties/jobackTbTf.ts`、輸出 `docs/verification/phase6-TbTf-輸出.md`；聚合物單元不適用）
 - [ ] 6.7 混合配方：混合密度、Fox／Gordon–Taylor Tg、混合介電常數、共聚比例影響
   - 補註：成分 Tg 與混合未固化 Tg（任務 034）已做：Fox–Flory（K 只收酚醛一般型，低可信度，待使用者審；DGEBA 類缺 K）、小分子不計 Tg 只給 Tm、不參與混合（D56）、Fox 混合式（Gordon–Taylor 因 k 需實驗值不做）；`src/core/properties/tgMixing.ts`、輸出 `docs/verification/phase6-Tg-混合-輸出.md`。混合密度、混合介電常數、共聚比例影響未做，6.7 不勾選
+  - 補註（任務 036）：6.4 的 CTE 完成：`src/core/properties/cte.ts`（van Krevelen 4.4 節 MTE 模型，E_l = 1.00×10⁻³·VW、E_g = 0.45×10⁻³·VW，α、β；只依 VW 與 Tg）、輸出 `docs/verification/phase6-自由體積-CTE-輸出.md`；自由體積分率：書中沒有由結構計算的方法，不做（使用者 2026-11-06 決定，見 `docs/reports/036-結果.md`）。6.4 不勾選
   - 補註：Tg–Mn 文獻資料與 K 擬合（任務 035）已做：Lin-Gibson 2001 的鄰、對甲酚酚醛各自擬合 Tg∞ 與 K（異構物互檢誤差 ≤ 8 K，兩類收錄，低可信度，待使用者審）；BPA 環氧鏈只做參考擬合與 EPON 順序檢查，未收錄 K；ECN、PGMA 只登錄與觀察，不擬合；Szeluga 2008、Sadeghinia 2012 只記為驗證候選；`src/core/properties/tgFit.ts`、`novolacUnits.ts`，輸出 `docs/verification/phase6-Tg-混合-輸出.md` 第 7–9 節。6.7 仍不勾選
 - [ ] 6.8 每個公式的自動測試（檢查程式是否照公式算對）
 - [ ] 6.9 使用者驗證清單
