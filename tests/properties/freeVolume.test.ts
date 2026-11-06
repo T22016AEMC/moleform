@@ -248,10 +248,11 @@ describe('Vω、Vf 手算（每個係數類別至少一個單元）', () => {
     expect(r.vf).toBeCloseTo(50.7, 10);
     expect(okUnit('CC1CO1').coefficient.id).toBe('FC05');
   });
-  it('酯基與環氧：聚丙烯酸縮水甘油酯單元 = 羰基 C 3.33 + CH 6.78 + 2×CH2 + 環 CH 5.6 + 環 CH2 8.45 + 環氧 O 1.9 + 酯基 23 = 69.52（xlsx 第 15 列 EHP03 的 W）', () => {
+  it('酯基與環氧（任務 036b）：聚丙烯酸縮水甘油酯單元 = CH 6.78 + 2×CH2 + 環 CH 5.6 + 環 CH2 8.45 + 環氧 O 1.9 + 酯基 23 = 66.19；羰基碳不另計，與 xlsx 第 15 列 EHP03 的 W 69.52 差一個羰基碳 3.33', () => {
     const r = okUnit('[*:1]CC([*:2])C(=O)OCC1CO1');
-    expect(r.vomega).toBeCloseTo(3.33 + 6.78 + 2 * 10.23 + 5.6 + 8.45 + 1.9 + 23, 10);
-    expect(r.vomega).toBeCloseTo(69.52, 6);
+    expect(r.vomega).toBeCloseTo(6.78 + 2 * 10.23 + 5.6 + 8.45 + 1.9 + 23, 10);
+    expect(r.vomega).toBeCloseTo(66.19, 6);
+    expect(69.52 - r.vomega).toBeCloseTo(3.33, 6);
     expect(r.coefficient.id).toBe('FC05');
   });
   it('小分子算整個分子（D56 只限制 Tg）：苯 6×8.11 = 48.66，係數 0.37；與書的 VW（任務 028，6×CHar 8.05 = 48.3）差 < 10%', () => {
@@ -270,8 +271,8 @@ describe('Vω、Vf 手算（每個係數類別至少一個單元）', () => {
   });
   it('每種官能基各一個小例子', () => {
     const v = XLSX_VALUES;
-    expect(okUnit('CC(C)=O').vomega).toBeCloseTo(v.chCH3 * 2 + v.chC + v.ketone, 10); // 酮：羰基 C 計為鏈 C，只加 =O
-    expect(okUnit('CC=O').vomega).toBeCloseTo(v.chCH3 + v.chCH + v.aldehyde, 10); // 醛：羰基 C 計為鏈 CH
+    expect(okUnit('CC(C)=O').vomega).toBeCloseTo(v.chCH3 * 2 + v.ketone, 10); // 酮：整個羰基 10.8，羰基 C 不另計
+    expect(okUnit('CC=O').vomega).toBeCloseTo(v.chCH3 + v.aldehyde, 10); // 醛：整個羰基 11.5，醛基 C 不另計
     expect(okUnit('CCO').vomega).toBeCloseTo(v.chCH3 + v.chCH2 + v.oh1, 10);
     expect(okUnit('CC(C)O').vomega).toBeCloseTo(2 * v.chCH3 + v.chCH + v.oh2, 10);
     expect(okUnit('CC(C)(C)O').vomega).toBeCloseTo(3 * v.chCH3 + v.chC + v.oh3, 10);
@@ -279,7 +280,27 @@ describe('Vω、Vf 手算（每個係數類別至少一個單元）', () => {
     expect(okUnit('CC(F)(F)F').vomega).toBeCloseTo(v.chCH3 + v.chC + 3 * v.fAl, 10);
     expect(okUnit('Fc1ccccc1').vomega).toBeCloseTo(6 * v.arC + v.fAr, 10);
     expect(okUnit('COC').vomega).toBeCloseTo(2 * v.chCH3 + v.ether, 10);
-    expect(okUnit('CC(=O)OC').vomega).toBeCloseTo(2 * v.chCH3 + v.chC + v.ester, 10);
+    expect(okUnit('CC(=O)OC').vomega).toBeCloseTo(2 * v.chCH3 + v.ester, 10); // 酯：整組 23，羰基 C 與單鍵 O 不另計
+  });
+  it('任務 036b：羰基碳不再另計（酮、醛、酯、環酮、內酯、芳香酮），酯基單鍵 O 不計為醚 O', () => {
+    const v = XLSX_VALUES;
+    const ids = (smiles: string) => okUnit(smiles).contributions.map((c) => `${c.id}×${c.count}`).sort();
+    expect(ids('CC(C)=O')).toEqual(['FV05×2', 'FV11×1']); // 沒有 FV02
+    expect(ids('CC=O')).toEqual(['FV05×1', 'FV12×1']); // 沒有 FV03
+    expect(ids('CC(=O)OC')).toEqual(['FV05×2', 'FV13×1']); // 沒有 FV02、FV09
+    expect(okUnit('O=C1CCCCC1').vomega).toBeCloseTo(5 * v.rCH2 + v.ketone, 10); // 環酮：羰基碳不計環 C
+    expect(ids('O=C1CCCCC1')).toEqual(['FV08×5', 'FV11×1']);
+    expect(okUnit('O=C1CCCO1').vomega).toBeCloseTo(3 * v.rCH2 + v.ester, 10); // 內酯
+    expect(okUnit('CC(=O)c1ccccc1').vomega).toBeCloseTo(v.chCH3 + 6 * v.arC + v.ketone, 10);
+    expect(okUnit('CCOC(=O)c1ccccc1').vomega).toBeCloseTo(v.chCH3 + v.chCH2 + 6 * v.arC + v.ester, 10);
+    expect(okUnit('COC(=O)CC(=O)OC').vomega).toBeCloseTo(2 * v.chCH3 + v.chCH2 + 2 * v.ester, 10);
+    // 醚與酯同分子：醚 O 仍算 3.7，酯的單鍵 O 不算
+    expect(ids('COCC(=O)OC')).toEqual(['FV04×1', 'FV05×2', 'FV09×1', 'FV13×1']);
+  });
+  it('任務 036b：酮、醛、酯基以外的羰基仍回報缺基團（羧酸、碳酸酯、醯胺、脲、胺基甲酸酯、醯氯、甲醛、酸酐）', () => {
+    for (const s of ['CC(=O)O', 'COC(=O)OC', 'CC(=O)N', 'NC(=O)N', 'NC(=O)OC', 'CC(=O)Cl', 'C=O', 'CC(=O)OC(C)=O']) {
+      expect(computeFreeVolumeUnit(RDKit, s).status, s).toBe('missing');
+    }
   });
 });
 
@@ -437,6 +458,7 @@ describe('與 xlsx 各列的回歸（結構為 Claude 看圖撰寫，待使用�
     9: { chC: -1, chCH: -3, chCH2: -6, rC: 1, rCH: 3, rCH2: 6 },
     10: { chC: -4, chCH2: -2, rC: 3, rCH2: 2 },
     // xlsx 的數量與結構（圖）不符
+    15: { chC: -1 }, // 任務 036b：xlsx 的鏈 C 1 在 036a 對應羰基碳；使用者說明酯基含羰基碳後，聚丙烯酸縮水甘油酯單元沒有其他鏈 C（Vω 比 xlsx 少 3.33）
     19: { chCH: 1 }, // 圖有一個 CH(OH)，xlsx 的鏈 CH 是 0
     20: { arC: 4 }, // 雙酚 A 二縮水甘油醚有 12 個芳香 C，xlsx 填 8
     28: { ether: 4 }, // 聚乙二醇 n = 13 有 14 個醚 O，xlsx 填 10
