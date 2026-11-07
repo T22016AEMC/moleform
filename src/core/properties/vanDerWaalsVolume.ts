@@ -7,8 +7,13 @@
 //  3. 配不到的重原子 → 回傳「缺基團」與原子位置，不計算、不拋例外、不以相近基團或記憶中的數值代用。
 //  4. 配到的基團若資料表 VW 留空（書中數值有疑義，例如 –O–），該基團的原子同樣列為缺基團，並註明原因。
 //  5. ΣMi 與分子（重複單元）的質量差只標示，不阻擋計算（作法同任務 026）。
+//  6. Bondi (1964) 補充（任務 037，D59）：書的基團先配對（上列規則完全不變）；只有書配不到的重原子，才用 vw_groups_bondi.csv 的補充基團再配一輪
+//     （補充基團之間同樣原子數由大到小）。補充基團只補書沒有的，不搶書能配的原子；補充基團參與的結果標「含 Bondi 補充基團（非書值）」。
+//     Table XVII 的修正量（BC 列）只計次、不佔原子，且只在命中的原子有至少一個屬於補充基團時套用，所以書已有的結構 VW 不變。
+//     補充後仍配不到的原子照舊回報缺基團。
 import type { VwGroupRow } from '../data/vwGroups';
 import { VW_GROUPS } from '../data/vwGroups';
+import { VW_BONDI_INTERPRETATION_LABEL, VW_BONDI_LABEL, VW_GROUPS_BONDI, type VwBondiRow } from '../data/vwGroupsBondi';
 import type { DataIssue, TableResult } from '../data/types';
 import type { JSMol, RDKitModule } from '../rdkit/types';
 import { atomicWeight } from './atomicWeights';
@@ -43,6 +48,18 @@ export interface VwGroupHit {
   mi: number;
   atoms: number[];
   source: string;
+  /** 只有 Bondi 補充基團才有（true）；書的基團沒有這個欄位 */
+  supplement?: true;
+}
+
+/** Table XVII 修正的命中（合併同一列：次數 × 修正量） */
+export interface VwCorrectionHit {
+  id: string;
+  name: string;
+  /** 每次的修正量（cm³/mol，負值） */
+  delta: number;
+  count: number;
+  source: string;
 }
 
 export interface VwMissingAtom {
@@ -67,12 +84,54 @@ export type VwResult =
       groups: VwGroupHit[];
       sources: string[];
       model: string;
+      /** 有任何 Bondi 補充基團參與（非書值）。只有 true 時 bondiNotes 才有內容 */
+      bondiSupplement: boolean;
+      /** 標示文字：「含 Bondi 補充基團（非書值）」，有詮釋的另加「含詮釋，待使用者審」；沒有補充時為空陣列 */
+      bondiNotes: string[];
+      /** Table XVII 修正（已計入 vw）；沒有修正時為空陣列 */
+      corrections: VwCorrectionHit[];
     }
-  | { status: 'missing'; smiles: string; polymer: boolean; groups: VwGroupHit[]; missing: VwMissingAtom[] }
+  | { status: 'missing'; smiles: string; polymer: boolean; groups: VwGroupHit[]; missing: VwMissingAtom[]; bondiSupplement: boolean }
   | { status: 'invalid'; smiles: string; message: string };
 
 export interface VwOptions {
   rows?: readonly VwGroupRow[];
+  /**
+   * Bondi 補充表（BG 基團列與 BC 修正列）。省略時：沒有指定 rows 就用內建的 VW_GROUPS_BONDI；指定了 rows（測試用的自訂基團表）就不補充。
+   * 傳空陣列＝不補充（只用書的基團）。
+   */
+  supplement?: readonly VwBondiRow[];
+}
+
+/**
+ * 補充基團裡「接在連接點 * 上的 O」的判斷（BG12、BG13）：重複單元的連接點實際接到下一個單元，接的是什麼由單元另一端的連接點決定（頭尾相接）。
+ * 單元恰有兩個連接點才能判斷；另一端接芳香原子 → 'aromatic'，接非芳香碳 → 'alkyl'，其餘（含連接點數不是兩個）無法判斷，該列不配對。
+ * 這個頭尾相接的判斷是任務 037 的詮釋（待使用者審）。
+ */
+export const DUMMY_END_RULES: Readonly<Record<string, 'aromatic' | 'alkyl'>> = { BG12: 'aromatic', BG13: 'alkyl' };
+
+function dummyEndClass(g: MolGraph, dummy: number): 'aromatic' | 'alkyl' | 'unknown' {
+  const dummies: number[] = [];
+  for (let i = 0; i < g.z.length; i++) if (g.z[i] === 0) dummies.push(i);
+  if (dummies.length !== 2) return 'unknown';
+  const other = dummies[0] === dummy ? dummies[1] : dummies[0];
+  const nb = g.neighbors[other];
+  if (nb.length !== 1) return 'unknown';
+  const p = nb[0];
+  if (g.aromatic[p]) return 'aromatic';
+  return g.z[p] === 6 ? 'alkyl' : 'unknown';
+}
+
+/** 命中的原子裡接在連接點上的，另一端的類別必須符合該列的規則（沒有規則的列一律通過） */
+function dummyRuleOk(g: MolGraph, rowId: string, atoms: readonly number[]): boolean {
+  const rule = DUMMY_END_RULES[rowId];
+  if (rule === undefined) return true;
+  for (const a of atoms) {
+    for (const nb of g.neighbors[a]) {
+      if (g.z[nb] === 0) return dummyEndClass(g, nb) === rule;
+    }
+  }
+  return false;
 }
 
 const orderedCache = new WeakMap<readonly VwGroupRow[], VwFamily[]>();
@@ -164,17 +223,53 @@ export function computeVdwVolume(RDKit: RDKitModule, smiles: string, options: Vw
 
     // ---- 切分 ----
     const owner = new Array<number>(n).fill(-1);
-    const hits: { row: VwFamily; atoms: number[] }[] = [];
+    const hits: { row: VwFamily; atoms: number[]; supplement: boolean }[] = [];
     for (const row of orderVwGroups(options.rows ?? VW_GROUPS)) {
       const q = mustQuery(RDKit, row.smarts);
       try {
         for (const atoms of vwMatches(mol, q)) {
           if (atoms.some((a) => owner[a] !== -1 || g.z[a] === 0)) continue;
           for (const a of atoms) owner[a] = hits.length;
-          hits.push({ row, atoms });
+          hits.push({ row, atoms, supplement: false });
         }
       } finally {
         q.delete();
+      }
+    }
+
+    // ---- Bondi 補充（任務 037）：只處理書配不到的重原子；書的結構（所有重原子都已配對）不進入這一段 ----
+    const supplementRows = options.supplement ?? (options.rows ? [] : VW_GROUPS_BONDI);
+    const corrections: VwCorrectionHit[] = [];
+    if (supplementRows.length > 0 && owner.some((o, i) => o === -1 && g.z[i] > 1)) {
+      const supGroups = supplementRows.filter((r) => r.kind === 'group');
+      const supOrdered = supGroups
+        .map((r, i) => ({ ...r, order: 1000 + i }) as VwFamily)
+        .sort((a, b) => b.atomCount - a.atomCount || a.order - b.order);
+      for (const row of supOrdered) {
+        const q = mustQuery(RDKit, row.smarts);
+        try {
+          for (const atoms of vwMatches(mol, q)) {
+            if (atoms.some((a) => owner[a] !== -1 || g.z[a] === 0)) continue;
+            if (!dummyRuleOk(g, row.id, atoms)) continue;
+            for (const a of atoms) owner[a] = hits.length;
+            hits.push({ row, atoms, supplement: true });
+          }
+        } finally {
+          q.delete();
+        }
+      }
+      // Table XVII 修正：命中的原子至少一個屬於補充基團才計次（書的基團不套用修正）
+      for (const row of supplementRows.filter((r) => r.kind === 'correction')) {
+        const q = mustQuery(RDKit, row.smarts);
+        try {
+          let count = 0;
+          for (const atoms of vwMatches(mol, q)) {
+            if (atoms.some((a) => owner[a] !== -1 && hits[owner[a]].supplement)) count++;
+          }
+          if (count > 0 && row.correction !== null) corrections.push({ id: row.id, name: row.name, delta: row.correction, count, source: row.source });
+        } finally {
+          q.delete();
+        }
       }
     }
     hits.sort((a, b) => a.atoms[0] - b.atoms[0] || a.row.order - b.row.order);
@@ -184,14 +279,22 @@ export function computeVdwVolume(RDKit: RDKitModule, smiles: string, options: Vw
     for (const h of hits) {
       if (h.row.vw === null) {
         for (const a of h.atoms) missing.push({ index: a, element: symbolOf(g.z[a]), description: describeAtom(g, a), reason: `基團「${h.row.name}」在資料表的 VW 留空（書中數值有疑義，見備註）` });
-      } else groups.push({ id: h.row.id, name: h.row.name, vw: h.row.vw, mi: h.row.mi, atoms: h.atoms, source: h.row.source });
+      } else {
+        const hit: VwGroupHit = { id: h.row.id, name: h.row.name, vw: h.row.vw, mi: h.row.mi, atoms: h.atoms, source: h.row.source };
+        if (h.supplement) hit.supplement = true;
+        groups.push(hit);
+      }
     }
     for (let i = 0; i < n; i++) if (g.z[i] > 1 && owner[i] === -1) missing.push({ index: i, element: symbolOf(g.z[i]), description: describeAtom(g, i), reason: null });
     missing.sort((a, b) => a.index - b.index);
-    if (missing.length > 0) return { status: 'missing', smiles, polymer, groups, missing };
+    const usedSupplement = hits.some((h) => h.supplement);
+    if (missing.length > 0) return { status: 'missing', smiles, polymer, groups, missing, bondiSupplement: usedSupplement };
 
     // ---- 計算 ----
-    const vw = groups.reduce((s, h) => s + h.vw, 0);
+    const correctionTotal = corrections.reduce((s, c) => s + c.delta * c.count, 0);
+    const vw = groups.reduce((s, h) => s + h.vw, 0) + correctionTotal;
+    const interpretive = hits.some((h) => h.supplement && /詮釋/.test(h.row.audit));
+    const bondiNotes = usedSupplement ? [VW_BONDI_LABEL, ...(interpretive ? [VW_BONDI_INTERPRETATION_LABEL] : [])] : [];
     const sumMi = groups.reduce((s, h) => s + h.mi, 0);
     const real: number[] = [];
     for (let i = 0; i < n; i++) if (g.z[i] !== 0) real.push(i);
@@ -207,8 +310,11 @@ export function computeVdwVolume(RDKit: RDKitModule, smiles: string, options: Vw
       massDelta,
       massWithinTolerance: massDelta === null ? null : Math.abs(massDelta) <= massTolerance(groups),
       groups,
-      sources: [...new Set(groups.map((h) => h.source))],
+      sources: [...new Set([...groups.map((h) => h.source), ...corrections.map((c) => c.source)])],
       model: VW_MODEL,
+      bondiSupplement: usedSupplement,
+      bondiNotes,
+      corrections,
     };
   } finally {
     mol.delete();
@@ -230,13 +336,13 @@ export function countVwGroups(groups: readonly VwGroupHit[]): { id: string; name
  * 核對資料表的 Mi 與實際基團質量：每個基團用正例分子配對，命中原子（含各自的氫）的質量要等於 Mi（容許 miTolerance）。
  * 不符就回報（先對照書中印刷錯誤清單 KNOWN_ISSUES，不同的再回報給使用者）。
  */
-export function checkVwGroupMasses(RDKit: RDKitModule, table: TableResult<VwGroupRow>, positives: Readonly<Record<string, readonly string[]>>): DataIssue[] {
+export function checkVwGroupMasses(RDKit: RDKitModule, table: TableResult<VwGroupRow>, positives: Readonly<Record<string, readonly string[]>>, file = 'vw_groups.csv'): DataIssue[] {
   const issues: DataIssue[] = [];
   table.rows.forEach((r, i) => {
     const no = table.rowNumbers[i];
     const samples = positives[r.id] ?? [];
     if (samples.length === 0) {
-      issues.push({ file: 'vw_groups.csv', row: no, column: 'Mi', message: '沒有正例分子，無法核對 Mi' });
+      issues.push({ file, row: no, column: 'Mi', message: '沒有正例分子，無法核對 Mi' });
       return;
     }
     for (const smiles of samples) {
@@ -244,19 +350,19 @@ export function checkVwGroupMasses(RDKit: RDKitModule, table: TableResult<VwGrou
       const q = RDKit.get_qmol(r.smarts);
       try {
         if (!mol || !mol.is_valid() || !q || !q.is_valid()) {
-          issues.push({ file: 'vw_groups.csv', row: no, column: 'Mi', message: `無法核對 Mi：正例 ${smiles} 或 SMARTS 無法解析` });
+          issues.push({ file, row: no, column: 'Mi', message: `無法核對 Mi：正例 ${smiles} 或 SMARTS 無法解析` });
           continue;
         }
         const g = readGraph(mol);
         const ms = vwMatches(mol, q);
         if (ms.length === 0) {
-          issues.push({ file: 'vw_groups.csv', row: no, column: 'Mi', message: `正例 ${smiles} 沒有命中，無法核對 Mi` });
+          issues.push({ file, row: no, column: 'Mi', message: `正例 ${smiles} 沒有命中，無法核對 Mi` });
           continue;
         }
         for (const m of ms) {
           const mass = atomsMass(g, m);
           if (mass === null || Math.abs(mass - r.mi) > (VW_MI_EXCEPTIONS[r.id] ?? miTolerance(r.mi))) {
-            issues.push({ file: 'vw_groups.csv', row: no, column: 'Mi', message: `Mi 與基團質量不符：資料表 ${r.mi}、命中原子質量 ${mass === null ? '無法計算' : mass.toFixed(3)}（正例 ${smiles}）` });
+            issues.push({ file, row: no, column: 'Mi', message: `Mi 與基團質量不符：資料表 ${r.mi}、命中原子質量 ${mass === null ? '無法計算' : mass.toFixed(3)}（正例 ${smiles}）` });
           }
         }
       } finally {

@@ -20,6 +20,8 @@ beforeAll(async () => {
   RDKit = await getRDKit();
 });
 
+/** 只用書的 Table 4.2（不含 Bondi 補充，任務 037）：這幾個測試驗證書的表本身配不到時回報缺基團；補充後的行為在 vwBondi.test.ts */
+const BOOK_ONLY = { supplement: [] } as const;
 const ok = (r: VwResult) => {
   if (r.status !== 'ok') throw new Error(`預期可計算，實際 ${r.status}：${JSON.stringify(r)}`);
   return r;
@@ -185,19 +187,19 @@ describe('缺基團：回報原子位置與原因，不計算、不拋例外、�
   });
 
   it('三苯基膦：P 沒有基團', () => {
-    const r = computeVdwVolume(RDKit, 'c1ccc(P(c2ccccc2)c2ccccc2)cc1');
+    const r = computeVdwVolume(RDKit, 'c1ccc(P(c2ccccc2)c2ccccc2)cc1', BOOK_ONLY);
     if (r.status !== 'missing') throw new Error(`預期 missing，實際 ${r.status}`);
     expect(r.missing.map((m) => m.element)).toEqual(['P']);
   });
 
   it('L-丙胺酸（–NH2、–COOH 沒有對應基團）、環氧丙烷、環氧氯丙烷、BF3 都回報缺基團', () => {
-    for (const s of ['C[C@@H](C(=O)O)N', 'CC1CO1', 'ClCC1CO1', 'FB(F)F']) expect(computeVdwVolume(RDKit, s).status, s).toBe('missing');
+    for (const s of ['C[C@@H](C(=O)O)N', 'CC1CO1', 'ClCC1CO1', 'FB(F)F']) expect(computeVdwVolume(RDKit, s, BOOK_ONLY).status, s).toBe('missing');
   });
 
   it('SBI、雙酚茀單元：稠環的環上原子與環外取代的稠合芳香碳都回報缺基團，不拿相近基團代用', () => {
-    const sbi = computeVdwVolume(RDKit, 'OC(=CC=C1C2(C)C)C=C1C(C2)(CC1(C)C)C(=CC(O)=C2)C1=C2');
+    const sbi = computeVdwVolume(RDKit, 'OC(=CC=C1C2(C)C)C=C1C(C2)(CC1(C)C)C(=CC(O)=C2)C1=C2', BOOK_ONLY);
     expect(sbi.status).toBe('missing');
-    const fl = computeVdwVolume(RDKit, '[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O');
+    const fl = computeVdwVolume(RDKit, '[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O', BOOK_ONLY);
     expect(fl.status).toBe('missing');
   });
 
@@ -208,11 +210,11 @@ describe('缺基團：回報原子位置與原因，不計算、不拋例外、�
   });
 
   it('甲酸酯、碳酸酯、羧酸、芳香酮：Table 4.2 沒有（或條件不符）的基團回報缺基團', () => {
-    for (const s of ['O=COC', 'COC(=O)OC', 'CC(=O)c1ccccc1']) expect(computeVdwVolume(RDKit, s).status, s).toBe('missing');
+    for (const s of ['O=COC', 'COC(=O)OC', 'CC(=O)c1ccccc1']) expect(computeVdwVolume(RDKit, s, BOOK_ONLY).status, s).toBe('missing');
   });
 
   it('含 P 的結構：沒有對應基團（Table 4.2 無 P），只回報缺基團（S、Si 已於任務 031 補收）', () => {
-    const r = computeVdwVolume(RDKit, 'CP(C)C');
+    const r = computeVdwVolume(RDKit, 'CP(C)C', BOOK_ONLY);
     if (r.status !== 'missing') throw new Error(`預期 missing，實際 ${r.status}`);
     expect(r.missing.map((m) => m.element)).toEqual(['P']);
   });
@@ -238,7 +240,7 @@ describe('聚合物重複單元（含 *）', () => {
       '[*:1]Oc1ccc(cc1)C1(c2ccccc2-c2ccccc21)c1ccc(cc1)OCC(O)C[*:2]',
       '[*:1]CC([*:2])(C)C(=O)OCC1CO1',
     ]) {
-      expect(computeVdwVolume(RDKit, s).status, s).toBe('missing');
+      expect(computeVdwVolume(RDKit, s, BOOK_ONLY).status, s).toBe('missing');
     }
   });
 });
@@ -288,7 +290,7 @@ describe('任務 031：補收書中現成的整體基團（Table 4.2 書頁 74�
     expect(r.groups.map((g) => g.id).sort()).toEqual(['V10', 'V14', 'V14', 'V27']);
   });
   it('酯基、碳酸酯、酸酐的 O 不當作鏈上醚：碳酸二甲酯仍缺基團', () => {
-    expect(computeVdwVolume(RDKit, 'COC(=O)OC').status).toBe('missing');
+    expect(computeVdwVolume(RDKit, 'COC(=O)OC', BOOK_ONLY).status).toBe('missing');
   });
   it('其餘新基團的值：–S– 10.8、–SO2– 20.3、–Si(CH3)2– 42.2、–Si< 16.6、–C≡N 14.7、–N< 4.3、Nar 5.2、Car(endo) 4.75、–NH– 4', () => {
     expect(vwOf('[*:1]CSC[*:2]')).toBeCloseTo(10.23 * 2 + 10.8, 9);

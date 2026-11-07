@@ -73,6 +73,9 @@ export type CteResult =
       glassy: CteValues;
       /** 玻璃態 α_g 的第二種算法：V_g(298) = [1.43 + 0.55e-3·Tg]·VW（式 4.27） */
       glassyFromTg: CteGlassTg;
+      /** VW 含 Bondi 補充基團（非書值，任務 037）：標示文字見 vwBondiNotes */
+      vwBondiSupplement: boolean;
+      vwBondiNotes: string[];
       sources: string[];
       model: string;
     }
@@ -124,5 +127,5 @@ export function computeCte(RDKit: RDKitModule, smiles: string): CteResult {
   } else {
     glassyFromTg = { status: 'missing', message: tg.status === 'missing' ? '缺 Tg：Table 6.1 缺基團（含校準基團仍配不完），式 4.27 不計算' : `缺 Tg：${tg.message}` };
   }
-  return { status: 'ok', smiles, polymer: true, vw: vwr.vw, rubbery, glassy, glassyFromTg, sources: vwr.sources, model: CTE_MODEL };
+  return { status: 'ok', smiles, polymer: true, vw: vwr.vw, rubbery, glassy, glassyFromTg, vwBondiSupplement: vwr.bondiSupplement, vwBondiNotes: vwr.bondiNotes, sources: vwr.sources, model: CTE_MODEL };
 }

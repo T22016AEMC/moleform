@@ -54,6 +54,7 @@ try {
   const { computeVdwVolume, countVwGroups, VW_MODEL, VW_DISCLAIMER } = vwMod;
   const { computeTpsaLogp, TPSA_MODEL, LOGP_MODEL, TPSA_LOGP_DISCLAIMER, CAPPED_NOTE } = tlMod;
   const { VW_GROUPS } = await server.ssrLoadModule('/src/core/data/vwGroups.ts');
+  const { VW_GROUPS_BONDI, VW_BONDI_LABEL } = await server.ssrLoadModule('/src/core/data/vwGroupsBondi.ts');
   const { BACKBONE_TEMPLATES } = await server.ssrLoadModule('/src/core/data/backboneTemplates.ts');
   const RDKit = await getRDKit();
 
@@ -61,10 +62,11 @@ try {
   const out = (text = '') => lines.push(text);
   const fx = (v: number | null | undefined, d = 2) => (v === null || v === undefined || !Number.isFinite(v) ? '—' : v.toFixed(d));
   const cell = (text: string) => text.replace(/\|/g, '\\|');
-  const describe = (groups: any[]): string =>
-    countVwGroups(groups)
-      .map((e: any) => `${e.name} ×${e.count}（${e.vw}）`)
-      .join('；');
+  const describe = (groups: any[], corrections: any[] = []): string =>
+    [
+      ...countVwGroups(groups).map((e: any) => `${e.name} ×${e.count}（${e.vw}）${groups.find((g: any) => g.id === e.id)?.supplement ? '〔Bondi〕' : ''}`),
+      ...corrections.map((c: any) => `${c.name} ×${c.count}（${c.delta}）〔Bondi〕`),
+    ].join('；');
   const missingText = (r: any): string =>
     r.missing
       .map((m: any) => `原子 ${m.index}：${m.description}${m.reason ? `（${m.reason}）` : ''}`)
@@ -82,6 +84,7 @@ try {
   out(`- **Crippen LogP**：${LOGP_MODEL}。無單位。可信度：理論估算。`);
   out('- 本數值為依理論模型估算之參考值，非實測值。實際結果受原料純度、製程條件與反應動力學影響，請以實驗結果為準。');
   out('- VW 切分規則：基團依「基團原子數由大到小」配對，同大小依資料表順序；每個重原子恰好屬於一個基團；配不到的原子回報「缺基團」，不用相近基團或記憶中的數值代用。Table 4.2 的 –O– 書中印兩個括號值（5.5）、（5.0）而沒有標示條件，依使用者指示 VW 留空，含醚結構列為缺基團。');
+  out(`- **Bondi 補充（任務 037，D59）**：書的基團先配對；書配不到的原子才用 \`src/data/vw_groups_bondi.csv\`（${VW_GROUPS_BONDI.length} 列：基團 BG 與 Table XVII 修正 BC，Bondi 1964 原始論文，稽核狀態「待使用者審」）補充，結果標「${VW_BONDI_LABEL}」（‡），描述中以〔Bondi〕標出補充基團與修正。Bondi 沒有明確基團與修正量的結構（環氧、五員雜環、籠狀環等）維持缺基團。`);
   out('- TPSA 與 Crippen LogP 原為小分子方法。含連接點（`*`）的聚合物重複單元：把連接點換成甲基後計算（與 D05 的單元片段相同，使用者 2026-10-31 決定），數值後標 †，意思是「以甲基封端的單元估算；LogP 僅供相對比較」。RDKit 的 TPSA 只計 N、O 片段（不含 S、P）。');
   out('- 「ΔM」= ΣMi − 分子（重複單元）的精確質量；容許值為各基團 Mi 捨入容許的加總，超過者標「超出」。');
   out('- 重新產生：`npm run verify:phase6-vw-tpsa-logp`。');
@@ -101,7 +104,7 @@ try {
   for (const s of rows) {
     const vw = computeVdwVolume(RDKit, s.smiles);
     const tl = computeTpsaLogp(RDKit, s.smiles);
-    const vwText = vw.status === 'ok' ? fx(vw.vw, 2) : vw.status === 'missing' ? '缺基團（見第 2 節）' : `無法計算：${vw.message}`;
+    const vwText = vw.status === 'ok' ? fx(vw.vw, 2) + (vw.bondiSupplement ? ' ‡' : '') : vw.status === 'missing' ? '缺基團（見第 2 節）' : `無法計算：${vw.message}`;
     if (vw.status === 'missing') missingNames.push(s.name);
     const mark = tl.status === 'ok' && tl.capped ? ' †' : '';
     const tpsaText = tl.status === 'ok' ? fx(tl.tpsa, 2) + mark : `無法計算：${tl.message}`;
@@ -110,6 +113,8 @@ try {
   }
   out();
   out(`† ＝ ${CAPPED_NOTE}。`);
+  out();
+  out(`‡ ＝ ${VW_BONDI_LABEL}；含詮釋者（茀、茚滿型環、碳酸酯、羧酸、連接點上的 O）另需使用者審詮釋。`);
   out();
   out(`VW 缺基團的結構（${missingNames.length} 個）不計算 VW：${missingNames.join('、') || '（無）'}。`);
   out();
@@ -122,9 +127,9 @@ try {
     const r = computeVdwVolume(RDKit, s.smiles);
     if (r.status === 'ok') {
       const flag = r.massWithinTolerance === false ? '（超出）' : '';
-      out(`| ${cell(s.name)} | ${cell(describe(r.groups))} | ${fx(r.vw, 2)} | ${fx(r.sumMi, 2)} | ${fx(r.formulaMass, 3)} | ${fx(r.massDelta, 3)}${flag} | — |`);
+      out(`| ${cell(s.name)} | ${cell(describe(r.groups, r.corrections))} | ${fx(r.vw, 2)}${r.bondiSupplement ? ' ‡' : ''} | ${fx(r.sumMi, 2)} | ${fx(r.formulaMass, 3)} | ${fx(r.massDelta, 3)}${flag} | — |`);
     } else if (r.status === 'missing') {
-      out(`| ${cell(s.name)} | ${cell(describe(r.groups) || '（無）')} | — | — | — | — | **缺基團**：${cell(missingText(r))} |`);
+      out(`| ${cell(s.name)} | ${cell(describe(r.groups, []) || '（無）')} | — | — | — | — | **缺基團**：${cell(missingText(r))} |`);
     } else {
       out(`| ${cell(s.name)} | — | — | — | — | — | 無法計算：${r.message} |`);
     }

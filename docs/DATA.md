@@ -208,6 +208,11 @@ MoleForm 的化學資料放在 `src/data/` 的四個 CSV。**目前只有任務 
 
 正例與反例放在 `tests/properties/vwCases.ts`（每個基團至少各一）。格式與 RDKit 檢查在 `src/core/data/vwGroups.ts`，Mi 核對與切分、計算在 `src/core/properties/vanDerWaalsVolume.ts`（規則寫在檔頭），測試 `tests/properties/vwGroups.test.ts`、`vanDerWaalsVolume.test.ts`；TPSA 與 Crippen LogP 直接用 RDKit 描述子（`src/core/properties/tpsaLogp.ts`，測試 `tests/properties/tpsaLogp.test.ts`）。輸出文件見 `docs/verification/phase6-VW-TPSA-LogP-輸出.md`。
 
+## VW 補充基團表 vw_groups_bondi.csv（任務 037，D59）
+
+`src/data/vw_groups_bondi.csv`（UTF-8 BOM，18 列）。Bondi, J. Phys. Chem. 68, 441 (1964) 的 Table XV（p.449）、Table XVI、Table XVII（p.450），看圖讀取。欄位沿用 `vw_groups.csv`，另加 `來源等級`、`修正量`。`BG01–BG13` 是基團增量（書沒有、Bondi 有明確值）；`BC01–BC05` 是 Table XVII 的修正（VW 與 Mi 填 0，`修正量` 為負值，只計次、不佔原子）。書的基團先配對，書配不到的原子才用本表；補充結果標「含 Bondi 補充基團（非書值）」，稽核狀態「待使用者審」，含詮釋者標「待使用者審（詮釋）」。格式檢查在 `src/core/data/vwGroupsBondi.ts`，正反例在 `tests/properties/vwBondiCases.ts`。
+
+
 ## 聚合物莫耳體積基團表 molar_volume_polymer_groups.csv（任務 029，D08、D22）
 
 `src/data/molar_volume_polymer_groups.csv`（UTF-8 BOM，15 列）。van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009), Table 4.10（書頁 88，PDF 第 115 頁）的 Va,i(298) 與 Vc,i(298)，逐列看圖讀取；只收錄本專案結構與驗證用聚合物需要的基團。SMARTS 自行撰寫。Table 4.10 沒有基團質量欄，所以沒有 Mi。

@@ -78,6 +78,7 @@ try {
   out('- **缺基團**：VW 用任務 028／031 的切分（Table 4.2），Tg 用任務 026／033（Table 6.1，必要時含校準基團，標「含校準基團」）；重疊優先順序為現行規則（M26 未決，未更動）。配不到的原子回報缺基團，不用相近基團或記憶中的數值代用。缺 VW → 不算任何 CTE；缺 Tg → 只缺式 4.27 的 α_g(b)，其餘照算。');
   out('- **小分子**：不含連接點（*）的結構標「不適用（小分子，D56）」。');
   out('- Va、Vc 欄來自任務 029（Table 4.10 基團），只供參考，不參與 CTE 計算。');
+  out('- ‡ ＝ 含 Bondi 補充基團（非書值）：VW 缺基團以 Bondi (1964) 補充（任務 037，D59；詳見 phase6-VW-TPSA-LogP-輸出.md），含詮釋者另需使用者審。');
   out('- 本數值為依理論模型估算之參考值，非實測值。實際結果受原料純度、製程條件與反應動力學影響，請以實驗結果為準。');
   out('- 重新產生：`npm run verify:phase6-cte`。');
   out();
@@ -128,7 +129,7 @@ try {
       const tgCell = g.status === 'ok' ? `${fx(g.tgK, 1)}${g.containsCalibrated ? '（含校準基團）' : ''}` : '缺 Tg';
       if (g.status === 'missing') noTg.push(it.name);
       out(
-        `${head} | ${fx(r.vw)} | ${fx(r.glassy.molar, 4)} | ${fx(r.rubbery.molar, 4)} | ${sci(r.glassy.specific)} | ${sci(r.rubbery.specific)} | ${sci(r.glassy.alpha, 3)} | ${g.status === 'ok' ? sci(g.alpha, 3) : '缺 Tg'} | ${sci(r.rubbery.alpha, 3)} | ${sci(r.glassy.beta, 3)} | ${sci(r.rubbery.beta, 3)} | ${tgCell} | ${vv.va} | ${vv.vc} |`,
+        `${head} | ${fx(r.vw)}${r.vwBondiSupplement ? ' ‡' : ''} | ${fx(r.glassy.molar, 4)} | ${fx(r.rubbery.molar, 4)} | ${sci(r.glassy.specific)} | ${sci(r.rubbery.specific)} | ${sci(r.glassy.alpha, 3)} | ${g.status === 'ok' ? sci(g.alpha, 3) : '缺 Tg'} | ${sci(r.rubbery.alpha, 3)} | ${sci(r.glassy.beta, 3)} | ${sci(r.rubbery.beta, 3)} | ${tgCell} | ${vv.va} | ${vv.vc} |`,
       );
     }
     out();
@@ -168,7 +169,9 @@ try {
     }
     const dv = r.vw - b.vwBook;
     let note = '';
-    if (Math.abs(dv) > 0.05) {
+    if (r.vwBondiSupplement) {
+      note = `${r.vwBondiNotes.join('；')}；VW 差 ${dv >= 0 ? '+' : ''}${dv.toFixed(2)}（${((dv / b.vwBook) * 100).toFixed(2)}%，只作驗證）`;
+    } else if (Math.abs(dv) > 0.05) {
       note = `VW 差 ${dv >= 0 ? '+' : ''}${dv.toFixed(2)}（書中 Table 4.12 與 Table 4.2 基團值不一致，見報告）`;
       big.push(b.name);
     }
