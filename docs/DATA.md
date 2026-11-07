@@ -192,7 +192,7 @@ MoleForm 的化學資料放在 `src/data/` 的四個 CSV。**目前只有任務 
 
 ## VW 基團表 vw_groups.csv（任務 028，D08、D22）
 
-`src/data/vw_groups.csv`（UTF-8 BOM，26 列）。van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009), Table 4.2（書頁 74–75，PDF 第 101–102 頁）的 VW 與 Mi，逐列看圖讀取；只收錄本專案結構（聚合物單元、環氧單元、小分子、骨架範本 BT01–BT06）需要的基團，以及書中 Table 4.7 對照要用的基團。SMARTS 自行撰寫。欄位：
+`src/data/vw_groups.csv`（UTF-8 BOM，43 列；V42 Cl（ar.）、V43 >C=O（ar.）為任務 037a 補收）。van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009), Table 4.2（書頁 74–75，PDF 第 101–102 頁）的 VW 與 Mi，逐列看圖讀取；只收錄本專案結構（聚合物單元、環氧單元、小分子、骨架範本 BT01–BT06）需要的基團，以及書中 Table 4.7 對照要用的基團。SMARTS 自行撰寫。欄位：
 
 | 欄位 | 說明 |
 |---|---|

@@ -49,6 +49,8 @@ export const VW_GROUP_CASES: readonly VwGroupCase[] = [
   { id: 'V39', table: '–Si<', positives: ['C[Si](CC)(CC)CC', 'C[Si](C)(C)C'], negatives: ['C[SiH](C)C', 'CC', 'C1CC[SiH2]C1'] },
   { id: 'V40', table: '–Si(CH3)2–', positives: ['C[Si](C)(CC)CC', '[*:1]O[Si](C)(C)O[*:2]'], negatives: ['C[Si](C)(C)C', 'C[Si](CC)(CC)CC', 'CC'] },
   { id: 'V41', table: '–NH–', positives: ['CNC', 'c1ccccc1Nc1ccccc1'], negatives: ['CN', 'CN(C)C', 'C1CCNC1'] },
+  { id: 'V42', table: '–Cl（ar.）', positives: ['Clc1ccccc1', 'Clc1ccc(C)cc1', '[*:1]CC([*:2])c1ccc(Cl)cc1'], negatives: ['CCCl', 'ClC(Cl)Cl', 'C=CCl', 'ClC1CCCCC1'] },
+  { id: 'V43', table: '–C(=O)–（ar.，至少一側芳香）', positives: ['O=C(c1ccccc1)c1ccccc1', 'CC(=O)c1ccccc1', '[*:1]c1ccc(C(=O)c2ccc([*:2])cc2)cc1'], negatives: ['[*:1]C(=O)c1ccc(cc1)C(=O)[*:2]', 'CC(C)=O', 'CCC(C)=O', 'COC(=O)c1ccccc1', 'O=C1c2ccccc2-c2ccccc12', 'O=C(O)c1ccccc1'] },
 ];
 
 /** Table 4.2 的獨立抄錄（VW，cm³/mol），與 vw_groups.csv 分開，手算用；來源：書頁 74–75 圖像逐列讀取 */

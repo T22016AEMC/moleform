@@ -124,9 +124,9 @@ describe('vw_groups_bondi.csv（內建資料）', () => {
     for (const id of ['BC04', 'BC05']) expect(c(id)).toBe(-B.adjacentBond);
   });
 
-  it('不改書的表：vw_groups.csv 仍是 41 列，V25 的 VW 仍是 6.8', () => {
+  it('不改書的表：vw_groups.csv 是 43 列（任務 037a 補收 V42、V43），V25 的 VW 仍是 6.8', () => {
     const book = readVwGroups(bundledVwGroupsText);
-    expect(book.rows).toHaveLength(41);
+    expect(book.rows).toHaveLength(43);
     expect(book.rows.find((r) => r.id === 'V25')?.vw).toBe(6.8);
     expect(book.rows.find((r) => r.id === 'V25')?.notes).toMatch(/Bondi 1964 相符.*p\.449.*6\.78/);
   });

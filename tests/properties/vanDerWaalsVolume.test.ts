@@ -209,8 +209,8 @@ describe('缺基團：回報原子位置與原因，不計算、不拋例外、�
     expect(r.missing).toHaveLength(6);
   });
 
-  it('甲酸酯、碳酸酯、羧酸、芳香酮：Table 4.2 沒有（或條件不符）的基團回報缺基團', () => {
-    for (const s of ['O=COC', 'COC(=O)OC', 'CC(=O)c1ccccc1']) expect(computeVdwVolume(RDKit, s, BOOK_ONLY).status, s).toBe('missing');
+  it('甲酸酯、碳酸酯、羧酸、環內芳香酮、連接點上的芳醯基：Table 4.2 沒有（或條件不符）的基團回報缺基團', () => {
+    for (const s of ['O=COC', 'COC(=O)OC', 'O=C1c2ccccc2-c2ccccc12', '[*:1]Nc1ccc(cc1)C(=O)[*:2]']) expect(computeVdwVolume(RDKit, s, BOOK_ONLY).status, s).toBe('missing');
   });
 
   it('含 P 的結構：沒有對應基團（Table 4.2 無 P），只回報缺基團（S、Si 已於任務 031 補收）', () => {
@@ -302,5 +302,28 @@ describe('任務 031：補收書中現成的整體基團（Table 4.2 書頁 74�
     expect(vwOf('Cc1cccnc1')).toBeCloseTo(13.67 + 4 * 8.05 + 5.55 + 5.2, 9);
     expect(vwOf('c1ccc2ccccc2c1')).toBeCloseTo(8 * 8.05 + 2 * 4.75, 9);
     expect(vwOf('CNC')).toBeCloseTo(2 * 13.67 + 4, 9);
+  });
+});
+
+describe('任務 037a：Cl（ar.）12.0、>C=O（ar.）11.7（Table 4.2，書頁 74–75）', () => {
+  const vw = (s: string): number => {
+    const r = computeVdwVolume(RDKit, s, BOOK_ONLY);
+    if (r.status !== 'ok') throw new Error(`預期 ok，實際 ${r.status}：${s}`);
+    expect(r.bondiSupplement, s).toBe(false);
+    return r.vw;
+  };
+  it('氯苯、對二氯苯、二苯甲酮、苯乙酮、4-氯苯乙酮：書的基團加總（手算）', () => {
+    expect(vw('Clc1ccccc1')).toBeCloseTo(12.0 + TABLE42.C6H5, 6);
+    expect(vw('Clc1ccc(Cl)cc1')).toBeCloseTo(2 * 12.0 + TABLE42.C6H4, 6);
+    expect(vw('O=C(c1ccccc1)c1ccccc1')).toBeCloseTo(11.7 + 2 * TABLE42.C6H5, 6);
+    expect(vw('CC(=O)c1ccccc1')).toBeCloseTo(TABLE42.CH3 + 11.7 + TABLE42.C6H5, 6);
+    expect(vw('Clc1ccc(C(C)=O)cc1')).toBeCloseTo(12.0 + TABLE42.C6H4 + 11.7 + TABLE42.CH3, 6);
+  });
+  it('脂肪族 Cl 與脂肪族 >C=O 仍用 al. 的值（11.6、8.5）', () => {
+    expect(vw('CCCl')).toBeCloseTo(TABLE42.CH3 + TABLE42.CH2 + TABLE42.Cl_al, 6);
+    expect(vw('CCC(C)=O')).toBeCloseTo(2 * TABLE42.CH3 + TABLE42.CH2 + TABLE42.CO_al, 6);
+  });
+  it('接連接點 * 的羰基不猜（* 可能是 O 或 N），維持缺基團', () => {
+    expect(computeVdwVolume(RDKit, '[*:1]C(=O)c1ccc(cc1)C(=O)[*:2]', BOOK_ONLY).status).toBe('missing');
   });
 });

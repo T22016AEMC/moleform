@@ -45,7 +45,7 @@ describe('vw_groups.csv（內建資料）', () => {
     expect(all.map(formatIssue)).toEqual([]);
   });
 
-  it('41 列（原 26 列加任務 031 補收的 15 列），id 為 V01–V41，每列有出處（含 Table 4.2 與書頁碼）、稽核狀態「待使用者審」、備註提到 Bondi、說明留空或任務 031 補收', () => {
+  it('43 列（原 26 列加任務 031 補收的 15 列、任務 037a 補收的 2 列），id 為 V01–V43，每列有出處（含 Table 4.2 與書頁碼）、稽核狀態「待使用者審」、備註提到 Bondi、說明留空或任務 031 補收', () => {
     expect(table.rows).toHaveLength(VW_GROUP_COUNT);
     table.rows.forEach((r, i) => {
       expect(r.id).toBe(`V${String(i + 1).padStart(2, '0')}`);
@@ -53,7 +53,7 @@ describe('vw_groups.csv（內建資料）', () => {
       expect(r.source).toMatch(/書頁 7[45]/);
       expect(r.source).toMatch(/van Krevelen & te Nijenhuis/);
       expect(r.audit).toMatch(/待使用者審/);
-      expect(r.notes).toMatch(/Bondi|留空|任務 031 補收/);
+      expect(r.notes).toMatch(/Bondi|留空|任務 031 補收|任務 037a 補收/);
     });
   });
 
@@ -110,7 +110,7 @@ describe('格式檢查會報錯的情況', () => {
     expect(issuesOf(withFirstRow(line({ ...GOOD, 備註: '' }))).join('\n')).toMatch(/備註/);
   });
   it('列數不對', () => {
-    expect(issuesOf([HEADER, line(GOOD)].join('\n')).join('\n')).toMatch(/應有 41 列/);
+    expect(issuesOf([HEADER, line(GOOD)].join('\n')).join('\n')).toMatch(/應有 43 列/);
   });
   it('標題列與定義不一致', () => {
     expect(issuesOf('id,名稱\nV01,x').join('\n')).toMatch(/標題列/);
