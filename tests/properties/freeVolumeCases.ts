@@ -10,7 +10,7 @@ export interface FvGroupCase {
 }
 
 export const FV_GROUP_CASES: readonly FvGroupCase[] = [
-  { id: 'FV01', name: '芳香族 C', positives: ['c1ccccc1', 'Cc1ccccc1', 'c1ccc2ccccc2c1'], negatives: ['C1CCCCC1', 'CC', 'C=C'] },
+  { id: 'FV01', name: '芳香 C–H（有氫；任務 036d）', positives: ['c1ccccc1', 'Cc1ccccc1', 'c1ccc2ccccc2c1', 'Oc1ccccc1'], negatives: ['C1CCCCC1', 'CC', 'C=C', 'Cc1c(C)c(C)c(C)c(C)c1C'] },
   { id: 'FV02', name: '鏈脂肪族 C（四級碳；羰基碳不收，任務 036b）', positives: ['CC(C)(C)C', 'CC(C)(C)O'], negatives: ['CC1(C)CCC1', 'CCC', 'O=C1CCCC1', 'CC=O', 'CC(=O)C', 'CC(=O)OC', 'CC(=O)O', 'CC(=O)N'] },
   { id: 'FV03', name: '鏈脂肪族 CH（醛基碳不收，任務 036b）', positives: ['CC(C)C', 'CC(C)O'], negatives: ['CCC', 'CC1CCCCC1', 'CC(C)(C)C', 'CC=O', 'O=Cc1ccccc1'] },
   { id: 'FV04', name: '鏈脂肪族 CH2', positives: ['CCC', '[*:1]CC[*:2]'], negatives: ['C1CCCCC1', 'CC', 'CC(C)C'] },
@@ -29,6 +29,49 @@ export const FV_GROUP_CASES: readonly FvGroupCase[] = [
   { id: 'FV17', name: '酚 OH', positives: ['Oc1ccccc1', 'Cc1ccc(O)cc1'], negatives: ['CCO', 'CC(=O)O', 'COc1ccccc1'] },
   { id: 'FV18', name: '脂肪族 F', positives: ['CF', 'CC(F)(F)F'], negatives: ['Fc1ccccc1', 'FC=C'] },
   { id: 'FV19', name: '芳香族 F', positives: ['Fc1ccccc1', 'Cc1ccc(F)cc1'], negatives: ['CF', 'FC=C'] },
+  { id: 'FV20', name: '取代芳香 C（無氫、非縮合；任務 036d）', positives: ['Cc1ccccc1', 'Oc1ccccc1', 'c1ccc(cc1)-c1ccccc1', 'C1Cc2ccccc2C1', 'C1c2ccccc2-c2ccccc12', 'c1ccc(cc1)Oc1ccccc1'], negatives: ['c1ccccc1', 'c1ccc2ccccc2c1', 'C1CCCCC1', 'CC'] },
+  { id: 'FV21', name: '縮合芳香 C（兩個芳香環共用；任務 036d）', positives: ['c1ccc2ccccc2c1', 'c1ccc2cc3ccccc3cc2c1', 'c1cc2ccc3cccc4ccc(c1)c2c34'], negatives: ['c1ccccc1', 'Cc1ccccc1', 'c1ccc(cc1)-c1ccccc1', 'C1Cc2ccccc2C1', 'C1c2ccccc2-c2ccccc12', 'C1CCC2CCCCC2C1'] },
+];
+
+/**
+ * 任務 036d：芳香 C 三類的個數 [C–H, 取代, 縮合]（SMILES → 個數），每類至少一個正例與反例（苯、甲苯、苯酚、萘、聯苯、茚滿、茀、二苯醚）。
+ * 配對規則：兩個芳香環共用 → 縮合；否則有氫 → C–H；否則 → 取代。茚滿與茀的稠合碳歸取代（詮釋，待使用者審）。
+ */
+export const FV_AROMATIC_CASES: readonly (readonly [string, string, number, number, number])[] = [
+  ['苯', 'c1ccccc1', 6, 0, 0],
+  ['甲苯', 'Cc1ccccc1', 5, 1, 0],
+  ['苯酚', 'Oc1ccccc1', 5, 1, 0],
+  ['萘', 'c1ccc2ccccc2c1', 8, 0, 2],
+  ['聯苯', 'c1ccc(cc1)-c1ccccc1', 10, 2, 0],
+  ['茚滿', 'C1Cc2ccccc2C1', 4, 2, 0],
+  ['茀', 'C1c2ccccc2-c2ccccc12', 8, 4, 0],
+  ['二苯醚', 'c1ccc(cc1)Oc1ccccc1', 10, 2, 0],
+  ['蒽', 'c1ccc2cc3ccccc3cc2c1', 10, 0, 4],
+  ['芘', 'c1cc2ccc3cccc4ccc(c1)c2c34', 10, 0, 6],
+];
+
+/** 任務 036d：Table XVII 修正的次數案例 [名稱, SMILES, 修正項 id → 次數]；反例（不得套用）次數為空物件 */
+export const FV_CORRECTION_CASES: readonly (readonly [string, string, Record<string, number>])[] = [
+  ['茚滿（五員環 1 次）', 'C1Cc2ccccc2C1', { FX01: 1 }],
+  ['四氫萘（六員環 1 次）', 'C1CCc2ccccc2C1', { FX02: 1 }],
+  ['茀（五員環算 1 個環、減 1 次）', 'C1c2ccccc2-c2ccccc12', { FX03: 1 }],
+  ['9,9-二甲基茀', 'CC1(C)c2ccccc2-c2ccccc12', { FX03: 1 }],
+  ['SBI 骨架（兩個茚滿環各 1 次）', 'CC1(C)CC2(CC(C)(C)c3cc([*:2])ccc23)c2ccc([*:1])cc12', { FX01: 2 }],
+  ['1,4-二氧六環', 'C1COCCO1', { FX04: 1 }],
+  ['乙酸甲酯（酯基旁 2 個單鍵）', 'CC(=O)OC', { FX05: 1, FX06: 1 }],
+  ['丙二酸二甲酯（兩個酯基）', 'COC(=O)CC(=O)OC', { FX05: 2, FX06: 2 }],
+  ['γ-丁內酯（環上酯基）', 'O=C1CCCO1', { FX05: 1, FX06: 1 }],
+  ['聚甲基丙烯酸甲酯單元（連接點算外側）', '[*:1]CC([*:2])(C)C(=O)OC', { FX05: 1, FX06: 1 }],
+  ['苯甲酸乙酯', 'CCOC(=O)c1ccccc1', { FX05: 1, FX06: 1 }],
+  // 反例：不得套用任何修正
+  ['苯（芳香環本身不是亞甲基環）', 'c1ccccc1', {}],
+  ['環己烷（環己基的 1.14 不套用）', 'C1CCCCC1', {}],
+  ['萘烷（cis-稠合的 2.50 不實作）', 'C1CCC2CCCCC2C1', {}],
+  ['萘（芳香稠環不是亞甲基環）', 'c1ccc2ccccc2c1', {}],
+  ['1,3-二氧五環／1,3-二氧六環（只實作 1,4-二氧六環）', 'C1COCOC1', {}],
+  ['環己酮（環上羰基不是亞甲基環）', 'O=C1CCCCC1', {}],
+  ['丙酮（酮不算羧基）', 'CC(C)=O', {}],
+  ['乙醚', 'CCOCC', {}],
 ];
 
 export interface FvCoefficientCase {

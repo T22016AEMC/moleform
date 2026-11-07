@@ -1,0 +1,541 @@
+[
+ {
+  "name": "BADGE",
+  "smiles": "CC(C)(c1ccc(OCC2CO2)cc1)c1ccc(OCC2CO2)cc1",
+  "status": "ok",
+  "vomega": 187.75,
+  "vf": 69.4675
+ },
+ {
+  "name": "雙酚 A",
+  "smiles": "CC(C)(c1ccc(O)cc1)c1ccc(O)cc1",
+  "status": "ok",
+  "vomega": 150.99,
+  "vf": 55.8663
+ },
+ {
+  "name": "三苯基膦",
+  "smiles": "c1ccc(P(c2ccccc2)c2ccccc2)cc1",
+  "status": "missing",
+  "vomega": null,
+  "vf": null
+ },
+ {
+  "name": "甲基乙基酮（MEK）",
+  "smiles": "CCC(C)=O",
+  "status": "ok",
+  "vomega": 48.370000000000005,
+  "vf": 48.370000000000005
+ },
+ {
+  "name": "丙二醇甲醚醋酸酯（PGMEA）",
+  "smiles": "COCC(C)OC(C)=O",
+  "status": "ok",
+  "vomega": 76.92,
+  "vf": 76.92
+ },
+ {
+  "name": "SBI 雙酚（螺雙茚滿二醇）",
+  "smiles": "OC(=CC=C1C2(C)C)C=C1C(C2)(CC1(C)C)C(=CC(O)=C2)C1=C2",
+  "status": "ok",
+  "vomega": 203.30000000000007,
+  "vf": 142.31000000000003
+ },
+ {
+  "name": "環氧氯丙烷",
+  "smiles": "ClCC1CO1",
+  "status": "missing",
+  "vomega": null,
+  "vf": null
+ },
+ {
+  "name": "乙醇",
+  "smiles": "CCO",
+  "status": "ok",
+  "vomega": 33.9,
+  "vf": 33.9
+ },
+ {
+  "name": "環氧丙烷",
+  "smiles": "CC1CO1",
+  "status": "ok",
+  "vomega": 29.619999999999997,
+  "vf": 29.619999999999997
+ },
+ {
+  "name": "苯酚",
+  "smiles": "Oc1ccccc1",
+  "status": "ok",
+  "vomega": 60.16,
+  "vf": 22.2592
+ },
+ {
+  "name": "L-丙胺酸",
+  "smiles": "C[C@@H](C(=O)O)N",
+  "status": "missing",
+  "vomega": null,
+  "vf": null
+ },
+ {
+  "name": "反式 2-丁烯",
+  "smiles": "C/C=C/C",
+  "status": "missing",
+  "vomega": null,
+  "vf": null
+ },
+ {
+  "name": "三氟化硼（BF₃）",
+  "smiles": "FB(F)F",
+  "status": "missing",
+  "vomega": null,
+  "vf": null
+ },
+ {
+  "name": "P 單元 A（雙酚茀）",
+  "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+  "status": "ok",
+  "vomega": 221.4400000000001,
+  "vf": 81.93280000000004
+ },
+ {
+  "name": "P 單元 B（萘基次甲基）",
+  "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1",
+  "status": "ok",
+  "vomega": 87.88,
+  "vf": 32.5156
+ },
+ {
+  "name": "E PGMA 型環氧單元",
+  "smiles": "[*:1]CC([*:2])(C)C(=O)OCC1CO1",
+  "status": "ok",
+  "vomega": 68.61,
+  "vf": 68.61
+ },
+ {
+  "name": "BT01 苯酚 Novolac（PN）",
+  "smiles": "[*:1]Cc1cc([*:2])ccc1O",
+  "status": "ok",
+  "vomega": 70.39,
+  "vf": 26.0443
+ },
+ {
+  "name": "BT02 鄰甲酚 Novolac",
+  "smiles": "[*:1]Cc1cc([*:2])cc(C)c1O",
+  "status": "ok",
+  "vomega": 84.06,
+  "vf": 31.1022
+ },
+ {
+  "name": "BT03 酚醛環氧（EPN）",
+  "smiles": "[*:1]Cc1cc([*:2])ccc1OCC2CO2",
+  "status": "ok",
+  "vomega": 88.77000000000001,
+  "vf": 32.8449
+ },
+ {
+  "name": "BT04 甲酚醛環氧（ECN）",
+  "smiles": "[*:1]Cc1cc([*:2])cc(C)c1OCC2CO2",
+  "status": "ok",
+  "vomega": 102.44000000000001,
+  "vf": 37.902800000000006
+ },
+ {
+  "name": "BT05 雙酚 A 環氧（BADGE 型）",
+  "smiles": "[*:1]Oc1ccc(cc1)C(C)(C)c1ccc(cc1)OCC(O)C[*:2]",
+  "status": "ok",
+  "vomega": 173.62999999999997,
+  "vf": 64.24309999999998
+ },
+ {
+  "name": "BT06 雙酚茀環氧（Cardo）",
+  "smiles": "[*:1]Oc1ccc(cc1)C1(c2ccccc2-c2ccccc21)c1ccc(cc1)OCC(O)C[*:2]",
+  "status": "ok",
+  "vomega": 244.08000000000007,
+  "vf": 90.30960000000003
+ },
+ {
+  "name": "雙酚 F 型環氧（BFDGE）",
+  "smiles": "C1OC1COc1ccc(Cc2ccc(OCC3CO3)cc2)cc1",
+  "status": "ok",
+  "vomega": 167.31000000000006,
+  "vf": 61.90470000000002
+ },
+ {
+  "name": "聯苯型環氧（四甲基聯苯二酚二縮水甘油醚）",
+  "smiles": "C1OC1COc1c(C)cc(cc1C)-c1cc(C)c(OCC2CO2)c(C)c1",
+  "status": "ok",
+  "vomega": 211.75999999999988,
+  "vf": 78.35119999999995
+ },
+ {
+  "name": "DCPD 型環氧（代表結構：三環癸烷雙芳基縮水甘油醚）",
+  "smiles": "C1(c2ccc(OCC3CO3)cc2)CC2C(C1)C1CC(c3ccc(OCC4CO4)cc3)C2C1",
+  "status": "ok",
+  "vomega": 224.48,
+  "vf": 179.584
+ },
+ {
+  "name": "萘型環氧（雙縮水甘油氧基萘）",
+  "smiles": "C1OC1COc1cccc2cc(OCC3CO3)ccc12",
+  "status": "ok",
+  "vomega": 140.86,
+  "vf": 52.1182
+ },
+ {
+  "name": "苯酚酚醛（雙酚 F 二聚體模型，鄰對位）",
+  "smiles": "Oc1ccc(Cc2ccccc2O)cc1",
+  "status": "ok",
+  "vomega": 130.55,
+  "vf": 48.30350000000001
+ },
+ {
+  "name": "酚芳烷基型（Xylok 類）單元",
+  "smiles": "[*:1]Cc1ccc(cc1)Cc1ccc(O)c([*:2])c1",
+  "status": "ok",
+  "vomega": 129.28,
+  "vf": 47.8336
+ },
+ {
+  "name": "聯苯芳烷基酚醛單元",
+  "smiles": "[*:1]Cc1ccc(cc1)-c1ccc(cc1)Cc1ccc(O)c([*:2])c1",
+  "status": "ok",
+  "vomega": 177.94000000000005,
+  "vf": 65.83780000000002
+ },
+ {
+  "name": "DCPD 酚（代表結構：三環癸烷雙酚）",
+  "smiles": "Oc1ccc(cc1)C1CC2C(C1)C1CC(c3ccc(O)cc3)C2C1",
+  "status": "ok",
+  "vomega": 187.72,
+  "vf": 150.17600000000002
+ },
+ {
+  "name": "甲基六氫鄰苯二甲酸酐（MHHPA）",
+  "smiles": "CC1CCC2C(C1)C(=O)OC2=O",
+  "status": "missing",
+  "vomega": null,
+  "vf": null
+ },
+ {
+  "name": "甲基四氫鄰苯二甲酸酐（MTHPA）",
+  "smiles": "CC1=CCC2C(C1)C(=O)OC2=O",
+  "status": "missing",
+  "vomega": null,
+  "vf": null
+ },
+ {
+  "name": "4,4'-二胺基二苯碸（DDS）",
+  "smiles": "Nc1ccc(cc1)S(=O)(=O)c1ccc(N)cc1",
+  "status": "missing",
+  "vomega": null,
+  "vf": null
+ },
+ {
+  "name": "雙氰胺（DICY）",
+  "smiles": "N#CNC(N)=N",
+  "status": "missing",
+  "vomega": null,
+  "vf": null
+ },
+ {
+  "name": "2-甲基咪唑",
+  "smiles": "Cc1ncc[nH]1",
+  "status": "missing",
+  "vomega": null,
+  "vf": null
+ },
+ {
+  "name": "2-乙基-4-甲基咪唑",
+  "smiles": "CCc1nc(C)c[nH]1",
+  "status": "missing",
+  "vomega": null,
+  "vf": null
+ },
+ {
+  "name": "2-苯基咪唑",
+  "smiles": "c1ccc(cc1)-c1ncc[nH]1",
+  "status": "missing",
+  "vomega": null,
+  "vf": null
+ },
+ {
+  "name": "聚醯亞胺 PMDA–ODA 單元",
+  "smiles": "[*:1]N1C(=O)c2cc3C(=O)N(C(=O)c3cc2C1=O)c1ccc(Oc2ccc([*:2])cc2)cc1",
+  "status": "missing",
+  "vomega": null,
+  "vf": null
+ },
+ {
+  "name": "聚醯亞胺 BPDA–PDA 單元",
+  "smiles": "[*:1]N1C(=O)c2ccc(cc2C1=O)-c1ccc2C(=O)N(C(=O)c2c1)c1ccc([*:2])cc1",
+  "status": "missing",
+  "vomega": null,
+  "vf": null
+ },
+ {
+  "name": "聚苯并噁唑（PBO）單元",
+  "smiles": "[*:1]c1ccc(cc1)-c1nc2cc3nc([*:2])oc3cc2o1",
+  "status": "missing",
+  "vomega": null,
+  "vf": null
+ },
+ {
+  "name": "苯并環丁烯（BCB）",
+  "smiles": "c1ccc2CCc2c1",
+  "status": "ok",
+  "vomega": 65.56,
+  "vf": 24.2572
+ },
+ {
+  "name": "DVS-BCB（二乙烯基四甲基二矽氧烷雙苯并環丁烯）",
+  "smiles": "C[Si](C)(C=Cc1ccc2CCc2c1)O[Si](C)(C)C=Cc1ccc2CCc2c1",
+  "status": "missing",
+  "vomega": null,
+  "vf": null
+ },
+ {
+  "name": "聚羥基苯乙烯（PHS）單元",
+  "smiles": "[*:1]CC([*:2])c1ccc(O)cc1",
+  "status": "ok",
+  "vomega": 77.17,
+  "vf": 28.5529
+ },
+ {
+  "name": "聚甲基丙烯酸甲酯（PMMA）單元",
+  "smiles": "[*:1]CC([*:2])(C)C(=O)OC",
+  "status": "ok",
+  "vomega": 56.1,
+  "vf": 56.1
+ },
+ {
+  "name": "甲基丙烯酸第三丁酯（tBMA）單元",
+  "smiles": "[*:1]CC([*:2])(C)C(=O)OC(C)(C)C",
+  "status": "ok",
+  "vomega": 86.77,
+  "vf": 86.77
+ },
+ {
+  "name": "甲基丙烯酸 2-甲基-2-金剛烷酯（MAdMA）單元",
+  "smiles": "[*:1]CC([*:2])(C)C(=O)OC1(C)C2CC3CC(C2)CC1C3",
+  "status": "ok",
+  "vomega": 124.55,
+  "vf": 99.64
+ },
+ {
+  "name": "甲基丙烯酸 γ-丁內酯酯（GBLMA）單元",
+  "smiles": "[*:1]CC([*:2])(C)C(=O)OC1CCOC1=O",
+  "status": "ok",
+  "vomega": 80.13000000000001,
+  "vf": 80.13000000000001
+ },
+ {
+  "name": "xlsx 第 5 列 雙苯芴",
+  "smiles": "[*:1]c1ccc(cc1)C1(c2ccc([*:2])cc2)c2ccccc2-c2ccccc12",
+  "status": "ok",
+  "vomega": 198.4400000000001,
+  "vf": 73.42280000000004
+ },
+ {
+  "name": "xlsx 第 6 列 單萘單苯芴",
+  "smiles": "[*:1]c1ccc(cc1)C1(c2ccc3cc([*:2])ccc3c2)c2ccccc2-c2ccccc12",
+  "status": "ok",
+  "vomega": 230.88000000000017,
+  "vf": 85.42560000000006
+ },
+ {
+  "name": "xlsx 第 7 列 萘基",
+  "smiles": "[*:1]c1cccc2ccccc12",
+  "status": "ok",
+  "vomega": 81.1,
+  "vf": 30.006999999999998
+ },
+ {
+  "name": "xlsx 第 8 列 聯降冰片烷基",
+  "smiles": "[*:1]C1CC2CC1CC2C1CC2CCC1C2",
+  "status": "ok",
+  "vomega": 98.35,
+  "vf": 78.68
+ },
+ {
+  "name": "xlsx 第 9 列 金剛烷",
+  "smiles": "[*:1]C12CC3CC(CC(C3)C1)C2",
+  "status": "ok",
+  "vomega": 71.3,
+  "vf": 57.04
+ },
+ {
+  "name": "xlsx 第 10 列 SBI",
+  "smiles": "CC1(C)CC2(CC(C)(C)c3cc([*:2])ccc23)c2ccc([*:1])cc12",
+  "status": "ok",
+  "vomega": 180.30000000000007,
+  "vf": 126.21000000000004
+ },
+ {
+  "name": "xlsx 第 11 列 二苯醚",
+  "smiles": "[*:1]c1ccc(Oc2ccccc2)cc1",
+  "status": "ok",
+  "vomega": 101.02,
+  "vf": 37.3774
+ },
+ {
+  "name": "xlsx 第 12 列 ANp",
+  "smiles": "[*:1]C1c2cccc3cccc(c23)C1[*:2]",
+  "status": "ok",
+  "vomega": 92.29999999999998,
+  "vf": 34.150999999999996
+ },
+ {
+  "name": "xlsx 第 13 列 indane",
+  "smiles": "[*:1]C1Cc2ccccc2C1[*:2]",
+  "status": "ok",
+  "vomega": 68.30999999999999,
+  "vf": 25.274699999999996
+ },
+ {
+  "name": "xlsx 第 14 列 PHS",
+  "smiles": "[*:1]CC([*:2])c1ccc(O)cc1",
+  "status": "ok",
+  "vomega": 77.17,
+  "vf": 28.5529
+ },
+ {
+  "name": "xlsx 第 15 列 EHP03",
+  "smiles": "[*:1]CC([*:2])C(=O)OCC1CO1",
+  "status": "ok",
+  "vomega": 58.38999999999999,
+  "vf": 58.38999999999999
+ },
+ {
+  "name": "xlsx 第 16 列 4770",
+  "smiles": "C1OC1COc1ccc2ccccc2c1Cc1c(OCC2CO2)ccc2ccccc12",
+  "status": "ok",
+  "vomega": 232.19000000000005,
+  "vf": 85.91030000000002
+ },
+ {
+  "name": "xlsx 第 17 列 EX192",
+  "smiles": "CCCCCCCCCCCCCOCC1CO1",
+  "status": "ok",
+  "vomega": 166.31,
+  "vf": 166.31
+ },
+ {
+  "name": "xlsx 第 18 列 PIRM",
+  "smiles": "Oc1ccc(cc1)C(C)(C)c1cc(C(C)(C)c2ccccc2)c(O)cc1O",
+  "status": "ok",
+  "vomega": 241.8200000000001,
+  "vf": 89.47340000000004
+ },
+ {
+  "name": "xlsx 第 19 列 HP820",
+  "smiles": "CC(C)(C)c1ccc(OCC2CO2)c(OCC(O)COc2ccc(C(C)(C)C)cc2OCC2CO2)c1",
+  "status": "ok",
+  "vomega": 291.40000000000003,
+  "vf": 107.81800000000001
+ },
+ {
+  "name": "xlsx 第 20 列 EXA-850-CRP",
+  "smiles": "CC(C)(c1ccc(OCC2CO2)cc1)c1ccc(OCC2CO2)cc1",
+  "status": "ok",
+  "vomega": 187.75,
+  "vf": 69.4675
+ },
+ {
+  "name": "xlsx 第 22 列 THB-6M",
+  "smiles": "CC(c1ccc(OCC2CO2)cc1)(c1ccc(OCC2CO2)cc1)c1ccc(cc1)C(C)(C)c1ccc(OCC2CO2)cc1",
+  "status": "ok",
+  "vomega": 331.9500000000001,
+  "vf": 122.82150000000004
+ },
+ {
+  "name": "xlsx 第 23 列 EX121",
+  "smiles": "CCCCC(CC)COCC1CO1",
+  "status": "ok",
+  "vomega": 115.15000000000002,
+  "vf": 115.15000000000002
+ },
+ {
+  "name": "xlsx 第 24 列 EX145",
+  "smiles": "c1ccccc1OCCOCCOCCOCCOCCOCC1CO1",
+  "status": "ok",
+  "vomega": 199.33999999999995,
+  "vf": 73.75579999999998
+ },
+ {
+  "name": "xlsx 第 25 列 EX252",
+  "smiles": "CC(C)(C1CCC(OCC2CO2)CC1)C1CCC(OCC2CO2)CC1",
+  "status": "ok",
+  "vomega": 180.42999999999995,
+  "vf": 180.42999999999995
+ },
+ {
+  "name": "xlsx 第 26 列 EX-920",
+  "smiles": "C1OC1COC(C)COC(C)COC(C)COCC1CO1",
+  "status": "ok",
+  "vomega": 159.2,
+  "vf": 159.2
+ },
+ {
+  "name": "xlsx 第 27 列 EX-931",
+  "smiles": "C1OC1COC(C)COC(C)COC(C)COC(C)COC(C)COC(C)COC(C)COC(C)COC(C)COC(C)COC(C)COCC1CO1",
+  "status": "ok",
+  "vomega": 434.2399999999999,
+  "vf": 434.2399999999999
+ },
+ {
+  "name": "xlsx 第 28 列 EX841",
+  "smiles": "C1OC1COCCOCCOCCOCCOCCOCCOCCOCCOCCOCCOCCOCCOCCOCC1CO1",
+  "status": "ok",
+  "vomega": 370.14,
+  "vf": 370.14
+ },
+ {
+  "name": "xlsx 第 29 列 EX861",
+  "smiles": "C1OC1COCCOCCOCCOCCOCCOCCOCCOCCOCCOCCOCCOCCOCCOCCOCCOCCOCCOCCOCCOCCOCCOCCOCC1CO1",
+  "status": "ok",
+  "vomega": 587.5800000000004,
+  "vf": 587.5800000000004
+ },
+ {
+  "name": "xlsx 第 30 列 （未命名）",
+  "smiles": "C(COCC1CO1)(COCC1CO1)(COCC1CO1)COCC1CO1",
+  "status": "ok",
+  "vomega": 163.76999999999998,
+  "vf": 163.76999999999998
+ },
+ {
+  "name": "xlsx 第 32 列 EX920",
+  "smiles": "C1OC1COC(C)COC(C)COC(C)COCC1CO1",
+  "status": "ok",
+  "vomega": 159.2,
+  "vf": 159.2
+ },
+ {
+  "name": "xlsx 第 33 列 EX830",
+  "smiles": "C1OC1COCCOCCOCCOCCOCCOCCOCCOCCOCCOCC1CO1",
+  "status": "ok",
+  "vomega": 273.4999999999999,
+  "vf": 273.4999999999999
+ },
+ {
+  "name": "xlsx 第 36 列 （未命名）",
+  "smiles": "Oc1cccc(c1)C(c1cccc(O)c1)(C(F)(F)F)C(F)(F)F",
+  "status": "ok",
+  "vomega": 238.31,
+  "vf": 88.1747
+ },
+ {
+  "name": "xlsx 第 37 列 （未命名）",
+  "smiles": "COCc1cc(cc(COC)c1O)C(C)(c1cc(COC)c(O)c(COC)c1)c1cc(COC)c(O)c(COC)c1",
+  "status": "ok",
+  "vomega": 363.08000000000015,
+  "vf": 134.33960000000005
+ },
+ {
+  "name": "苯",
+  "smiles": "c1ccccc1",
+  "status": "ok",
+  "vomega": 48.66,
+  "vf": 18.004199999999997
+ }
+]

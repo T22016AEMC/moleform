@@ -1,10 +1,13 @@
 // 使用者定義的經驗自由體積法的資料表（任務 036a，D57、D22、D55）：
-//  - src/data/free_volume_groups.csv：19 個基團的 Vω（cm³/mol），來自使用者的 xlsx「自由體積算法_使用者表.xlsx」第 4 列（芳香族 H 欄已由使用者刪除，不收）。
+//  - src/data/free_volume_groups.csv：21 個基團的 Vω（cm³/mol）：使用者的 xlsx「自由體積算法_使用者表.xlsx」第 4 列（芳香族 H 欄已由使用者刪除，不收）；
+//    任務 036d（D60）把芳香 C 拆成三類：C–H 8.11（使用者值）、取代 5.54、縮合 4.74（後兩者取自 Bondi 1964 Table XV p.449）。
+//  - src/data/free_volume_corrections.csv：任務 036d（D60）依 Bondi 1964 Table XVII（p.450）實作的 6 個修正項（從 Vω 減去）。
 //  - src/data/free_volume_coefficients.csv：5 個經驗係數類別（xlsx 儲存格 G2 與各列 X 欄公式）。
 // 每列都有 `出處`（使用者定義，依論文整理，論文清單待補；xlsx 檔名與儲存格）與 `稽核狀態`（待使用者審）；缺欄位報錯（D22）。
 // 格式檢查（不需 RDKit）：標題列、列數、id 序號、必填、數值、辨識方式與 SMARTS 的對應。RDKit 檢查：SMARTS 可解析。
 // 只確認格式與程式照規則運作，不判斷化學（D17）。
 import coefficientsCsv from '../../data/free_volume_coefficients.csv?raw';
+import correctionsCsv from '../../data/free_volume_corrections.csv?raw';
 import groupsCsv from '../../data/free_volume_groups.csv?raw';
 import type { RDKitModule } from '../rdkit/types';
 import { CsvError, parseCsv } from './csv';
@@ -14,8 +17,12 @@ export const FREE_VOLUME_GROUPS_FILE = 'free_volume_groups.csv';
 export const FREE_VOLUME_COEFFICIENTS_FILE = 'free_volume_coefficients.csv';
 export const FREE_VOLUME_GROUPS_COLUMNS = ['id', '基團名稱', 'SMARTS', '原子數', '情境原子', 'Vω', '出處', '稽核狀態', '備註'] as const;
 export const FREE_VOLUME_COEFFICIENTS_COLUMNS = ['id', '類別', '係數', '辨識方式', 'SMARTS', '優先順序', '出處', '稽核狀態', '備註'] as const;
-/** 使用者表保留的基團數（19 個；芳香族 H 已刪除） */
-export const FREE_VOLUME_GROUP_COUNT = 19;
+export const FREE_VOLUME_CORRECTIONS_FILE = 'free_volume_corrections.csv';
+export const FREE_VOLUME_CORRECTIONS_COLUMNS = ['id', '修正名稱', 'SMARTS', '修正量', '出處', '稽核狀態', '備註'] as const;
+/** 基團數：使用者表 19 個（芳香族 H 已刪除）＋任務 036d 把芳香 C 拆成三類（多 2 個）＝ 21 */
+export const FREE_VOLUME_GROUP_COUNT = 21;
+/** 任務 036d 實作的 Bondi Table XVII 修正項數 */
+export const FREE_VOLUME_CORRECTION_COUNT = 6;
 /** 係數類別數 */
 export const FREE_VOLUME_COEFFICIENT_COUNT = 5;
 export const FREE_VOLUME_IDENTIFY_MODES = ['SMARTS', '橋環偵測', '其餘'] as const;
@@ -32,6 +39,17 @@ export interface FreeVolumeGroupRow {
   context: number[];
   /** Vω（cm³/mol） */
   vw: number;
+  source: string;
+  audit: string;
+  notes: string;
+}
+
+export interface FreeVolumeCorrectionRow {
+  id: string;
+  name: string;
+  smarts: string;
+  /** 每次修正量（cm³/mol，從 Vω 減去的正數） */
+  decrement: number;
   source: string;
   audit: string;
   notes: string;
@@ -135,6 +153,9 @@ export function readFreeVolumeCoefficients(text: string): TableResult<FreeVolume
   return { rows, rowNumbers, issues };
 }
 
+/** 任務 036d：取自 Bondi 論文的列，出處寫明 Bondi、Table 與頁碼即可（不是使用者表的值） */
+const isBondiSource = (source: string): boolean => /Bondi/.test(source) && /Table X[IV]+/.test(source) && /p\.\d{3}/.test(source);
+
 function checkCommon(
   add: (row: number | null, column: string | null, message: string) => void,
   no: number,
@@ -151,7 +172,7 @@ function checkCommon(
   ];
   for (const [col, v] of required) if (v === '') add(no, col, '必填欄位是空的');
   if (r.source === '') add(no, '出處', '必填欄位是空的（缺出處，D22）');
-  else if (SOURCE_MARKS.some((m) => !r.source.includes(m))) add(no, '出處', `出處需寫明「使用者定義」、xlsx 檔名（自由體積算法_使用者表.xlsx）與儲存格位置（缺：${SOURCE_MARKS.filter((m) => !r.source.includes(m)).join('、')}）`);
+  else if (!isBondiSource(r.source) && SOURCE_MARKS.some((m) => !r.source.includes(m))) add(no, '出處', `出處需寫明「使用者定義」、xlsx 檔名（自由體積算法_使用者表.xlsx）與儲存格位置（缺：${SOURCE_MARKS.filter((m) => !r.source.includes(m)).join('、')}）`);
   const expected = `${prefix}${String(index + 1).padStart(2, '0')}`;
   if (r.id !== expected) add(no, 'id', `id 應依資料表順序為 ${expected}，實際為「${r.id}」`);
   if (r.id !== '') {
@@ -194,6 +215,48 @@ export function validateFreeVolumeCoefficients(table: TableResult<FreeVolumeCoef
   return issues;
 }
 
+/** 讀取修正表（任務 036d） */
+export function readFreeVolumeCorrections(text: string): TableResult<FreeVolumeCorrectionRow> {
+  const issues: DataIssue[] = [];
+  const fail = (row: number | null, column: string | null, message: string) => issues.push({ file: FREE_VOLUME_CORRECTIONS_FILE, row, column, message });
+  const rows: FreeVolumeCorrectionRow[] = [];
+  const rowNumbers: number[] = [];
+  for (const { rec, no } of readRecords(text, FREE_VOLUME_CORRECTIONS_FILE, FREE_VOLUME_CORRECTIONS_COLUMNS, issues) ?? []) {
+    const [id, name, smarts, decText, source, audit, notes] = rec;
+    if (!NUMBER.test(decText) || Number(decText) <= 0) {
+      fail(no, '修正量', `只能是正數（從 Vω 減去的量）：「${decText}」`);
+      continue;
+    }
+    rows.push({ id, name, smarts, decrement: Number(decText), source, audit, notes });
+    rowNumbers.push(no);
+  }
+  return { rows, rowNumbers, issues };
+}
+
+/** 不需 RDKit 的格式檢查：修正表（出處必須是 Bondi 的 Table XVII 與頁碼，缺欄位報錯，D22） */
+export function validateFreeVolumeCorrections(table: TableResult<FreeVolumeCorrectionRow>): DataIssue[] {
+  const issues: DataIssue[] = [];
+  const add = (row: number | null, column: string | null, message: string) => issues.push({ file: FREE_VOLUME_CORRECTIONS_FILE, row, column, message });
+  if (table.rows.length !== FREE_VOLUME_CORRECTION_COUNT) add(null, null, `應有 ${FREE_VOLUME_CORRECTION_COUNT} 列，實際為 ${table.rows.length} 列`);
+  const ids = new Map<string, number>();
+  table.rows.forEach((r, i) => {
+    const no = table.rowNumbers[i];
+    const required: [string, string][] = [['id', r.id], ['修正名稱', r.name], ['SMARTS', r.smarts], ['稽核狀態', r.audit]];
+    for (const [col, v] of required) if (v === '') add(no, col, '必填欄位是空的');
+    if (r.source === '') add(no, '出處', '必填欄位是空的（缺出處，D22）');
+    else if (!isBondiSource(r.source) || !/Table XVII/.test(r.source)) add(no, '出處', '出處需寫明 Bondi、Table XVII 與頁碼（p.450）');
+    const expected = `FX${String(i + 1).padStart(2, '0')}`;
+    if (r.id !== expected) add(no, 'id', `id 應依資料表順序為 ${expected}，實際為「${r.id}」`);
+    if (r.id !== '') {
+      if (ids.has(r.id)) add(no, 'id', `重複：「${r.id}」已出現在第 ${ids.get(r.id)} 列`);
+      else ids.set(r.id, no);
+    }
+    if (r.audit !== '' && r.audit !== '待使用者審') add(no, '稽核狀態', `目前只能是「待使用者審」：「${r.audit}」`);
+    if (r.notes === '') add(no, '備註', '備註不可為空');
+  });
+  return issues;
+}
+
 function checkSmartsOf(RDKit: RDKitModule, file: string, smartsList: { smarts: string; row: number }[]): DataIssue[] {
   const issues: DataIssue[] = [];
   for (const { smarts, row } of smartsList) {
@@ -218,7 +281,13 @@ export function checkFreeVolumeCoefficientSmarts(RDKit: RDKitModule, table: Tabl
   return checkSmartsOf(RDKit, FREE_VOLUME_COEFFICIENTS_FILE, table.rows.map((r, i) => ({ smarts: r.smarts, row: table.rowNumbers[i] })));
 }
 
+export function checkFreeVolumeCorrectionSmarts(RDKit: RDKitModule, table: TableResult<FreeVolumeCorrectionRow>): DataIssue[] {
+  return checkSmartsOf(RDKit, FREE_VOLUME_CORRECTIONS_FILE, table.rows.map((r, i) => ({ smarts: r.smarts, row: table.rowNumbers[i] })));
+}
+
 /** 隨網站打包的資料表 */
+export const bundledFreeVolumeCorrectionsText: string = correctionsCsv;
+export const FREE_VOLUME_CORRECTIONS: readonly FreeVolumeCorrectionRow[] = readFreeVolumeCorrections(correctionsCsv).rows;
 export const bundledFreeVolumeGroupsText: string = groupsCsv;
 export const bundledFreeVolumeCoefficientsText: string = coefficientsCsv;
 export const FREE_VOLUME_GROUPS: readonly FreeVolumeGroupRow[] = readFreeVolumeGroups(groupsCsv).rows;

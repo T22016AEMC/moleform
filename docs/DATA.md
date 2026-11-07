@@ -241,7 +241,7 @@ MoleForm 的化學資料放在 `src/data/` 的四個 CSV。**目前只有任務 
 ## 程式位置
 ## 自由體積（使用者定義經驗法）基團表與係數表（任務 036a，D22、D55、D57）
 
-`src/data/free_volume_groups.csv`（19 列）與 `src/data/free_volume_coefficients.csv`（5 列）。來源是使用者 2026-11-06 依論文整理的 Excel（`docs/references/自由體積算法_使用者表.xlsx`；論文清單待補），來源等級依 D55 為「使用者定義」，未經獨立驗證，稽核狀態全部「待使用者審」。這是使用者定義的經驗法，不是書中的自由體積分率，不用於 CTE。芳香族 H 欄（3.17）已由使用者刪除，不收錄。
+`src/data/free_volume_groups.csv`（21 列；任務 036d 起芳香 C 拆為 FV01 C–H、FV20 取代、FV21 縮合）、`src/data/free_volume_coefficients.csv`（5 列）與 `src/data/free_volume_corrections.csv`（6 列，任務 036d，Bondi Table XVII 修正）。來源是使用者 2026-11-06 依論文整理的 Excel（`docs/references/自由體積算法_使用者表.xlsx`；論文清單待補），來源等級依 D55 為「使用者定義」，未經獨立驗證，稽核狀態全部「待使用者審」。這是使用者定義的經驗法，不是書中的自由體積分率，不用於 CTE。芳香族 H 欄（3.17）已由使用者刪除，不收錄。
 
 | 欄位 | 說明 |
 |---|---|
@@ -255,6 +255,8 @@ MoleForm 的化學資料放在 `src/data/` 的四個 CSV。**目前只有任務 
 | `備註` | 與 Bondi／書的對照、歸類規則與推論、待使用者確認事項 |
 
 任務 036b：酮 C=O（FV11，10.8，佔 2 個原子）、醛 C=O（FV12，11.5，佔 2 個）、酯基 –C(=O)–O–（FV13，佔 3 個；任務 036c 起數值為書的 –COO– 15.2，取代使用者表的 23，D58）都把羰基碳一併吃掉，羰基碳不另計為脂肪族 C（FV02、FV03、FV06 不再收羰基碳），酯基單鍵 O 不另計為醚 O；酮、醛數值不變。依據：Bondi (1964) Table XVI（p.450）的 >C=O 11.70 含羰基碳，使用者 2026-11-06 授權改用論文敘述；酯基＝C=O＋單鍵 O 為使用者 2026-11-06 的說明，使用者表的 23 來源未註明，已由 036c 取代。
+
+任務 036d（D60）：芳香 C 依 Bondi (1964) Table XV（p.449）分三類：C–H 8.11（FV01，使用者值，Bondi 8.06）、取代 5.54（FV20）、縮合 4.74（FV21）；配對規則：兩個芳香環共用（三個芳香鄰居）→ 縮合，否則有氫 → C–H，否則 → 取代；茚滿與茀的稠合碳歸取代（詮釋，待使用者審）。FV20、FV21 的出處是 Bondi Table XV 與頁碼（非使用者表）。修正表 `free_volume_corrections.csv`（FX01–FX06，出處 Bondi Table XVII p.450，欄位：id、修正名稱、SMARTS、修正量（從 Vω 減）、出處、稽核狀態、備註）；環己基與環戊基 1.14 不套用、cis-稠合環 2.50 與共軛雙鍵間單鍵 0.25 不實作。
 
 程式：`src/core/data/freeVolumeTables.ts`（格式與 RDKit 檢查）、`src/core/properties/freeVolume.ts`（切分、係數選擇、共聚物加權、Vf／Va）；測試 `tests/properties/freeVolume.test.ts`；輸出 `docs/verification/phase6-自由體積-經驗係數-輸出.md`（`npm run verify:phase6-fv`）。
 

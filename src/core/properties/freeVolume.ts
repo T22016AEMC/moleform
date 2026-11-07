@@ -3,7 +3,14 @@
 // 方法來源：使用者 2026-11-06 依論文整理的 Excel 表（docs/references/自由體積算法_使用者表.xlsx；論文清單待補），未經獨立驗證，稽核狀態「待使用者審」。
 //
 // 規則（使用者 2026-11-06 決定；任務卡 036a）：
-//  1. Vω = Σ（基團數 × 基團 Vω）。19 個基團見 src/data/free_volume_groups.csv；芳香族 H 欄已刪除，芳香碳一律計 8.11（含氫，不分有無取代）。
+//  1. Vω = Σ（基團數 × 基團 Vω）− Σ（Bondi Table XVII 修正）。21 個基團見 src/data/free_volume_groups.csv；芳香族 H 欄已刪除。
+//     任務 036d（D60）：芳香 C 依 Bondi (1964) Table XV 分三類，配對順序固定（可重現）：
+//       (a) 芳香碳同時有三個芳香鄰居（以芳香鍵相連；兩個芳香環共用，萘型）→ 縮合 4.74（FV21）；
+//       (b) 否則有氫 → C–H 8.11（FV01，使用者值，Bondi 為 8.06）；
+//       (c) 否則（無氫）→ 取代 5.54（FV20）。茚滿與茀的稠合碳（一個芳香環與一個飽和環或五員環共用）歸取代（詮釋，待使用者審）。
+//     Table XVII 修正（src/data/free_volume_corrections.csv，p.450）：稠合在芳香環系統上的亞甲基環每環 1.66（茚滿、四氫萘各 1 環；茀的五員環算 1 環；SBI 兩環）、
+//     1,4-二氧六環 1.70、酯基旁的單鍵每個 0.22（每個酯基 2 個：羰基碳側 1、單鍵 O 側 1）。環己基與環戊基的 1.14 不套用（使用者的環脂肪族 C／CH／CH2 可能已含，避免重複）。
+//     論文敘述不清楚、不實作：cis-稠合環 2.50（SMILES 沒有立體資訊）、共軛雙鍵間的單鍵 0.25（論文未說明芳香環與羰基算不算雙鍵）。
 //  2. 一個單體（重複單元、小分子）只選一個係數，整個單元的 Vω 乘上去。優先順序（待使用者審）：
 //     SBI 螺環骨架 0.7 ＞ 橋環或籠狀脂環（含金剛烷）0.8 ＞ 含任何芳香環 0.37 ＞ 其餘 1（無環為「脂肪族」，有脂環為「環烷」，係數同為 1）。
 //  3. 共聚物按單體莫耳分率加權：Vf = Σ x_i·Vf_i；Vω = Σ x_i·Vω_i（莫耳分率沿用任務 020 的 analyzePolymerUnits，wt% 輸入先換成莫耳分率）。
@@ -16,8 +23,10 @@
 // D09：分子量不顯示；D02：不使用實驗值；D07：不使用折射率 n。
 import {
   FREE_VOLUME_COEFFICIENTS,
+  FREE_VOLUME_CORRECTIONS,
   FREE_VOLUME_GROUPS,
   type FreeVolumeCoefficientRow,
+  type FreeVolumeCorrectionRow,
   type FreeVolumeGroupRow,
 } from '../data/freeVolumeTables';
 import { analyzePolymerUnits } from '../polymer/copolymer';
@@ -28,7 +37,7 @@ import { readGraph, type MolGraph } from './molGraph';
 import { vwMatches } from './vanDerWaalsVolume';
 
 export const FREE_VOLUME_MODEL =
-  '使用者定義的經驗自由體積法（依論文整理，論文清單待補；未經獨立驗證）：Vf = Vω × 經驗係數，Vω = Σ 基團 Vω（自由體積算法_使用者表.xlsx；芳香族 C 8.11 含氫，不另計芳香 H）；不是 van Krevelen 書中的自由體積分率，不用於 CTE';
+  '使用者定義的經驗自由體積法（依論文整理，論文清單待補；未經獨立驗證）：Vf = Vω × 經驗係數，Vω = Σ 基團 Vω − Σ Bondi (1964) Table XVII 修正（自由體積算法_使用者表.xlsx；芳香 C 依 Bondi Table XV 分 C–H 8.11（使用者值）、取代 5.54、縮合 4.74，任務 036d、D60；不另計芳香 H）；不是 van Krevelen 書中的自由體積分率，不用於 CTE';
 export const FREE_VOLUME_DISCLAIMER = '使用者定義的經驗法，非書中的自由體積分率，未經獨立驗證；以 cm³/mol（結構單元或分子）表示。';
 export const FREE_VOLUME_VA_NOTE = 'Vf／Va 的 Va 用書的 Table 4.10（任務 029）計算，非使用者定義';
 
@@ -50,6 +59,17 @@ export interface FreeVolumeGroupHit {
   vw: number;
   atoms: number[];
   source: string;
+}
+
+/** Bondi Table XVII 修正的適用結果（任務 036d） */
+export interface FreeVolumeCorrectionHit {
+  id: string;
+  name: string;
+  /** 每次修正量（cm³/mol，從 Vω 減去） */
+  decrement: number;
+  count: number;
+  /** −count × decrement（cm³/mol，負數） */
+  contribution: number;
 }
 
 export interface FreeVolumeGroupContribution {
@@ -80,8 +100,12 @@ export type FreeVolumeUnitResult =
       status: 'ok';
       smiles: string;
       polymer: boolean;
-      /** Vω（cm³/mol） */
+      /** Vω（cm³/mol）＝ 基團加總 + 修正（修正為負數） */
       vomega: number;
+      /** 基團加總（未修正，cm³/mol） */
+      vomegaGroups: number;
+      /** Table XVII 修正（任務 036d）；沒有適用的項目時為空陣列 */
+      corrections: FreeVolumeCorrectionHit[];
       coefficient: FreeVolumeCoefficientPick;
       /** Vf = Vω × 係數（cm³/mol） */
       vf: number;
@@ -261,7 +285,28 @@ function groupMatches(mol: JSMol, query: JSMol, context: readonly number[]): num
 
 export interface FreeVolumeOptions {
   groups?: readonly FreeVolumeGroupRow[];
+  corrections?: readonly FreeVolumeCorrectionRow[];
   coefficients?: readonly FreeVolumeCoefficientRow[];
+}
+
+/**
+ * Bondi Table XVII 修正的次數（任務 036d）：每個修正項的 SMARTS 命中，依命中原子集合去重（同一個環、同一個酯基只算一次）。
+ * 修正不佔用原子，不影響基團切分。
+ */
+export function countFreeVolumeCorrections(RDKit: RDKitModule, mol: JSMol, rows: readonly FreeVolumeCorrectionRow[] = FREE_VOLUME_CORRECTIONS): FreeVolumeCorrectionHit[] {
+  const out: FreeVolumeCorrectionHit[] = [];
+  for (const row of rows) {
+    const q = mustQuery(RDKit, row.smarts);
+    try {
+      const parsed = JSON.parse(mol.get_substruct_matches(q)) as { atoms: number[] }[] | Record<string, never>;
+      const keys = new Set<string>();
+      if (Array.isArray(parsed)) for (const m of parsed) keys.add([...m.atoms].sort((a, b) => a - b).join(','));
+      if (keys.size > 0) out.push({ id: row.id, name: row.name, decrement: row.decrement, count: keys.size, contribution: -keys.size * row.decrement });
+    } finally {
+      q.delete();
+    }
+  }
+  return out;
 }
 
 const coefficientById = (rows: readonly FreeVolumeCoefficientRow[], id: string): FreeVolumeCoefficientRow => {
@@ -335,13 +380,17 @@ export function computeFreeVolumeUnit(RDKit: RDKitModule, smiles: string, option
     if (missing.length > 0) return { status: 'missing', smiles, polymer, groups, missing };
 
     // ---- 計算 ----
-    const vomega = groups.reduce((s, h) => s + h.vw, 0);
+    const vomegaGroups = groups.reduce((s, h) => s + h.vw, 0);
+    const corrections = countFreeVolumeCorrections(RDKit, mol, options.corrections ?? FREE_VOLUME_CORRECTIONS);
+    const vomega = vomegaGroups + corrections.reduce((s, c) => s + c.contribution, 0);
     const coefficient = pickCoefficient(RDKit, mol, g, options.coefficients ?? FREE_VOLUME_COEFFICIENTS);
     return {
       status: 'ok',
       smiles,
       polymer,
       vomega,
+      vomegaGroups,
+      corrections,
       coefficient,
       vf: vomega * coefficient.coefficient,
       groups,

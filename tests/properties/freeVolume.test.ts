@@ -6,16 +6,23 @@ import {
   FREE_VOLUME_COEFFICIENTS,
   FREE_VOLUME_COEFFICIENTS_COLUMNS,
   FREE_VOLUME_COEFFICIENT_COUNT,
+  FREE_VOLUME_CORRECTIONS,
+  FREE_VOLUME_CORRECTIONS_COLUMNS,
+  FREE_VOLUME_CORRECTION_COUNT,
   FREE_VOLUME_GROUPS,
   FREE_VOLUME_GROUPS_COLUMNS,
   FREE_VOLUME_GROUP_COUNT,
   bundledFreeVolumeCoefficientsText,
+  bundledFreeVolumeCorrectionsText,
   bundledFreeVolumeGroupsText,
   checkFreeVolumeCoefficientSmarts,
+  checkFreeVolumeCorrectionSmarts,
   checkFreeVolumeGroupSmarts,
   readFreeVolumeCoefficients,
+  readFreeVolumeCorrections,
   readFreeVolumeGroups,
   validateFreeVolumeCoefficients,
+  validateFreeVolumeCorrections,
   validateFreeVolumeGroups,
 } from '../../src/core/data/freeVolumeTables';
 import { parseCsv } from '../../src/core/data/csv';
@@ -27,7 +34,7 @@ import { readGraph } from '../../src/core/properties/molGraph';
 import { computeVdwVolume } from '../../src/core/properties/vanDerWaalsVolume';
 import { getRDKit } from '../../src/core/rdkit/loader';
 import type { JSMol, RDKitModule } from '../../src/core/rdkit/types';
-import { FV_BRIDGED_CASES, FV_COEFFICIENT_SMARTS_CASES, FV_GROUP_CASES, XLSX_STRUCTURES } from './freeVolumeCases';
+import { FV_AROMATIC_CASES, FV_BRIDGED_CASES, FV_COEFFICIENT_SMARTS_CASES, FV_CORRECTION_CASES, FV_GROUP_CASES, XLSX_STRUCTURES } from './freeVolumeCases';
 import { XLSX_ROWS, XLSX_VALUES } from './freeVolumeXlsxRows';
 
 // 使用者的 xlsx 匯出 CSV（docs/references；CI 或別台機器沒有這個檔時 glob 為空，對照測試略過）
@@ -40,6 +47,7 @@ beforeAll(async () => {
 
 const gTable = readFreeVolumeGroups(bundledFreeVolumeGroupsText);
 const cTable = readFreeVolumeCoefficients(bundledFreeVolumeCoefficientsText);
+const xTable = readFreeVolumeCorrections(bundledFreeVolumeCorrectionsText);
 
 const matchCount = (smarts: string, smiles: string): number => {
   const q = RDKit.get_qmol(smarts);
@@ -76,7 +84,14 @@ const okFv = (smiles: string, spec?: Parameters<typeof computeFreeVolume>[2]) =>
 /** 酯基整組採書的 –COO–（vw_groups.csv V11，Table 4.2，D58）；xlsx 的 23 不再使用 */
 const BOOK_COO = 15.2;
 /** 任務 036c 已知差異（非程式錯誤）：含酯基的 xlsx 列，程式（書的 15.2）減 xlsx（23 ＋ 羰基碳另計） */
-const KNOWN_VALUE_DIFFS = [{ row: 15, name: 'EHP03', xlsxW: 69.52, program: 58.39, diff: -11.13 }];
+const KNOWN_VALUE_DIFFS = [{ row: 15, name: 'EHP03', xlsxW: 69.52, program: 57.95, diff: -11.57 }];
+/** 任務 036d：酯基旁單鍵的修正（每個酯基 2 個 × 0.22） */
+const ESTER_FIX = 2 * 0.22;
+
+/** 任務 036d：Bondi 1964 Table XV（p.449，看圖確認）的取代芳香 C 與縮合芳香 C；C–H 維持使用者的 8.11 */
+const BONDI_SUB = 5.54;
+const BONDI_FUSED = 4.74;
+const ARC = 8.11;
 
 const PE = '[*:1]CC[*:2]';
 const PS = '[*:1]CC([*:2])c1ccccc1';
@@ -88,10 +103,14 @@ describe('資料表（內建）', () => {
   it('基團表：讀取、格式檢查與 RDKit 檢查沒有任何問題', () => {
     expect([...gTable.issues, ...validateFreeVolumeGroups(gTable), ...checkFreeVolumeGroupSmarts(RDKit, gTable)].map(formatIssue)).toEqual([]);
   });
+  it('修正表（任務 036d）：讀取、格式檢查與 RDKit 檢查沒有任何問題', () => {
+    expect([...xTable.issues, ...validateFreeVolumeCorrections(xTable), ...checkFreeVolumeCorrectionSmarts(RDKit, xTable)].map(formatIssue)).toEqual([]);
+  });
   it('係數表：讀取、格式檢查與 RDKit 檢查沒有任何問題', () => {
     expect([...cTable.issues, ...validateFreeVolumeCoefficients(cTable), ...checkFreeVolumeCoefficientSmarts(RDKit, cTable)].map(formatIssue)).toEqual([]);
   });
-  it('19 個基團，id 為 FV01–FV19；5 個係數類別，id 為 FC01–FC05；每列有出處與稽核狀態「待使用者審」', () => {
+  it('21 個基團，id 為 FV01–FV21；5 個係數類別，id 為 FC01–FC05；6 個修正，id 為 FX01–FX06；每列有出處與稽核狀態「待使用者審」', () => {
+    expect(xTable.rows).toHaveLength(FREE_VOLUME_CORRECTION_COUNT);
     expect(gTable.rows).toHaveLength(FREE_VOLUME_GROUP_COUNT);
     expect(cTable.rows).toHaveLength(FREE_VOLUME_COEFFICIENT_COUNT);
     gTable.rows.forEach((r, i) => {
@@ -100,12 +119,21 @@ describe('資料表（內建）', () => {
         // 任務 036c（D58）：酯基出處為書的 Table 4.2，並註明取代使用者表儲存格 P4
         expect(r.source).toMatch(/Table 4\.2/);
         expect(r.source).toMatch(/儲存格 P4/);
+      } else if (r.id === 'FV20' || r.id === 'FV21') {
+        // 任務 036d（D60）：取自 Bondi 1964 Table XV（p.449）
+        expect(r.source).toMatch(/Bondi, J\. Phys\. Chem\. 68, 441 \(1964\), Table XV（p\.449/);
       } else {
         expect(r.source).toMatch(/使用者定義（依論文整理，論文清單待補）/);
         expect(r.source).toMatch(/自由體積算法_使用者表\.xlsx/);
         expect(r.source).toMatch(/儲存格 [C-V]4/);
       }
       expect(r.audit).toBe('待使用者審');
+    });
+    xTable.rows.forEach((r, i) => {
+      expect(r.id).toBe(`FX${String(i + 1).padStart(2, '0')}`);
+      expect(r.source).toMatch(/Bondi, J\. Phys\. Chem\. 68, 441 \(1964\), Table XVII（p\.450/);
+      expect(r.audit).toBe('待使用者審');
+      expect(r.notes).not.toBe('');
     });
     cTable.rows.forEach((r, i) => {
       expect(r.id).toBe(`FC${String(i + 1).padStart(2, '0')}`);
@@ -116,14 +144,15 @@ describe('資料表（內建）', () => {
   });
   it('Vω 與獨立抄錄的 xlsx 第 4 列一致（芳香族 H 欄已刪除，表裡沒有 3.17）', () => {
     const v = XLSX_VALUES;
-    const expected = [v.arC, v.chC, v.chCH, v.chCH2, v.chCH3, v.rC, v.rCH, v.rCH2, v.ether, v.epoxy, v.ketone, v.aldehyde, BOOK_COO, v.oh1, v.oh2, v.oh3, v.phenol, v.fAl, v.fAr];
+    const expected = [v.arC, v.chC, v.chCH, v.chCH2, v.chCH3, v.rC, v.rCH, v.rCH2, v.ether, v.epoxy, v.ketone, v.aldehyde, BOOK_COO, v.oh1, v.oh2, v.oh3, v.phenol, v.fAl, v.fAr, BONDI_SUB, BONDI_FUSED];
     expect(gTable.rows.map((r) => r.vw)).toEqual(expected);
     expect(gTable.rows.some((r) => r.vw === v.arH || r.name.includes('芳香族 H'))).toBe(false);
   });
   it('係數與 xlsx 儲存格 G2 一致：SBI 0.7、金剛烷（橋環）0.8、芳香環 0.37、脂肪族 1、環烷 1', () => {
     expect(Object.fromEntries(cTable.rows.map((r) => [r.id, r.coefficient]))).toEqual({ FC01: 0.7, FC02: 0.8, FC03: 0.37, FC04: 1, FC05: 1 });
   });
-  it('FREE_VOLUME_GROUPS／COEFFICIENTS 與讀取結果一致', () => {
+  it('FREE_VOLUME_GROUPS／COEFFICIENTS／CORRECTIONS 與讀取結果一致', () => {
+    expect(FREE_VOLUME_CORRECTIONS).toEqual(xTable.rows);
     expect(FREE_VOLUME_GROUPS).toEqual(gTable.rows);
     expect(FREE_VOLUME_COEFFICIENTS).toEqual(cTable.rows);
   });
@@ -180,6 +209,23 @@ describe('格式檢查會報錯的情況', () => {
     const bad = readFreeVolumeGroups(mutate((c) => ((c[2] = '[CX4'), c)));
     expect(checkFreeVolumeGroupSmarts(RDKit, bad).map((i) => i.column)).toContain('SMARTS');
   });
+  it('修正表：缺出處、出處不是 Bondi Table XVII、修正量不是正數、列數不對、缺備註', () => {
+    const xl = bundledFreeVolumeCorrectionsText.split(/\r?\n/).filter((l) => l !== '');
+    const x1 = parseCsv(bundledFreeVolumeCorrectionsText)[1];
+    const bad = (cells: string[]) => {
+      const t = readFreeVolumeCorrections([xl[0], toLine(cells), ...xl.slice(2)].join('\n'));
+      return [...t.issues, ...validateFreeVolumeCorrections(t)].map((i) => i.column);
+    };
+    const set = (i: number, v: string): string[] => Object.assign([...x1], { [i]: v });
+    expect(bad(set(4, ''))).toContain('出處');
+    expect(bad(set(4, '使用者定義'))).toContain('出處');
+    expect(bad(set(3, '-1'))).toContain('修正量');
+    expect(bad(set(5, '已審'))).toContain('稽核狀態');
+    expect(bad(set(6, ''))).toContain('備註');
+    const short = readFreeVolumeCorrections([xl[0], ...xl.slice(1, 4)].join('\n'));
+    expect(validateFreeVolumeCorrections(short).map((i) => i.row)).toContain(null);
+    expect(FREE_VOLUME_CORRECTIONS_COLUMNS).toHaveLength(7);
+  });
   it('係數表：辨識方式與 SMARTS 的對應、係數範圍', () => {
     const cl = bundledFreeVolumeCoefficientsText.split(/\r?\n/).filter((l) => l !== '');
     const c1 = parseCsv(bundledFreeVolumeCoefficientsText)[1];
@@ -196,7 +242,7 @@ describe('格式檢查會報錯的情況', () => {
 });
 
 describe('基團的正例與反例（D22）', () => {
-  it('案例表涵蓋全部 19 個基團', () => {
+  it('案例表涵蓋全部 21 個基團', () => {
     expect(FV_GROUP_CASES.map((c) => c.id)).toEqual(gTable.rows.map((r) => r.id));
   });
   for (const c of FV_GROUP_CASES) {
@@ -232,14 +278,16 @@ describe('Vω、Vf 手算（每個係數類別至少一個單元）', () => {
     expect(r.vf).toBeCloseTo(20.46, 10);
     expect(r.contributions).toEqual([{ id: 'FV04', name: expect.any(String), vw: 10.23, count: 2, contribution: expect.closeTo(20.46, 10) }]);
   });
-  it('芳香環（FC03）：PHS 單元 = CH2 10.23 + CH 6.78 + 6×8.11 + 酚 OH 11.5 = 77.17，係數 0.37，Vf = 28.5529', () => {
+  it('芳香環（FC03）：PHS 單元 = CH2 10.23 + CH 6.78 + 4×C–H 8.11 + 2×取代 5.54 + 酚 OH 11.5 = 72.03（任務 036d；原 77.17），係數 0.37', () => {
     const r = okUnit(PHS);
     expect(r.coefficient.id).toBe('FC03');
-    expect(r.vomega).toBeCloseTo(10.23 + 6.78 + 6 * 8.11 + 11.5, 10);
-    expect(r.vf).toBeCloseTo(77.17 * 0.37, 10);
-    // 與 xlsx 第 14 列一致：xlsx 的 W = 89.85 含芳香族 H 4×3.17；去掉 H 項後就是 77.17
+    expect(r.vomega).toBeCloseTo(10.23 + 6.78 + 4 * ARC + 2 * BONDI_SUB + 11.5, 10);
+    expect(r.vomega).toBeCloseTo(72.03, 10);
+    expect(r.vf).toBeCloseTo(72.03 * 0.37, 10);
+    // xlsx 第 14 列：W = 89.85 含芳香族 H 4×3.17；去掉 H 項是 77.17（6 個芳香碳都 8.11）；差 = 兩個取代碳各 8.11 − 5.54（已知差異，芳香 C 分類）
     const x = XLSX_ROWS.find((row) => row.row === 14);
     expect((x?.w ?? 0) - 4 * 3.17).toBeCloseTo(77.17, 6);
+    expect(77.17 - r.vomega).toBeCloseTo(2 * (ARC - BONDI_SUB), 10);
   });
   it('金剛烷（FC02）：1-金剛烷基 = 環 C 3.8 + 3×環 CH 5.6 + 6×環 CH2 8.45 = 71.3，係數 0.8，Vf = 57.04', () => {
     const r = okUnit(ADAMANTYL);
@@ -247,11 +295,12 @@ describe('Vω、Vf 手算（每個係數類別至少一個單元）', () => {
     expect(r.vomega).toBeCloseTo(3.8 + 3 * 5.6 + 6 * 8.45, 10);
     expect(r.vf).toBeCloseTo(71.3 * 0.8, 10);
   });
-  it('螺雙茚滿（FC01）：SBI 骨架 = 12×8.11 + 3×環 C 3.8 + 2×環 CH2 8.45 + 4×CH3 13.67 = 180.3，係數 0.7，Vf = 126.21', () => {
+  it('螺雙茚滿（FC01）：SBI 骨架 = 6×C–H 8.11 + 6×取代 5.54 + 3×環 C 3.8 + 2×環 CH2 8.45 + 4×CH3 13.67 − 2×1.66（兩個茚滿環）= 161.56（任務 036d；原 180.3），係數 0.7', () => {
     const r = okUnit(SBI);
     expect(r.coefficient.id).toBe('FC01');
-    expect(r.vomega).toBeCloseTo(12 * 8.11 + 3 * 3.8 + 2 * 8.45 + 4 * 13.67, 10);
-    expect(r.vf).toBeCloseTo(180.3 * 0.7, 10);
+    expect(r.vomega).toBeCloseTo(6 * ARC + 6 * BONDI_SUB + 3 * 3.8 + 2 * 8.45 + 4 * 13.67 - 2 * 1.66, 10);
+    expect(r.vomega).toBeCloseTo(161.56, 10);
+    expect(r.vf).toBeCloseTo(161.56 * 0.7, 10);
   });
   it('環烷（FC05）：環己烷 6×環 CH2 = 50.7，係數 1；環氧環也算環烷', () => {
     const r = okUnit('C1CCCCC1');
@@ -260,14 +309,15 @@ describe('Vω、Vf 手算（每個係數類別至少一個單元）', () => {
     expect(r.vf).toBeCloseTo(50.7, 10);
     expect(okUnit('CC1CO1').coefficient.id).toBe('FC05');
   });
-  it('酯基與環氧（任務 036c）：聚丙烯酸縮水甘油酯單元 = CH 6.78 + 2×CH2 + 環 CH 5.6 + 環 CH2 8.45 + 環氧 O 1.9 + 酯基（書的 –COO– 15.2）= 58.39；與 xlsx 第 15 列 EHP03 的 W 69.52 為已知差異（xlsx 酯基 23 ＋ 羰基碳另計 3.33），不是回歸期望值', () => {
+  it('酯基與環氧（任務 036c）：聚丙烯酸縮水甘油酯單元 = CH 6.78 + 2×CH2 + 環 CH 5.6 + 環 CH2 8.45 + 環氧 O 1.9 + 酯基（書的 –COO– 15.2）= 58.39，再減酯基旁單鍵 2×0.22（任務 036d）= 57.95；與 xlsx 第 15 列 EHP03 的 W 69.52 為已知差異（xlsx 酯基 23 ＋ 羰基碳另計 3.33），不是回歸期望值', () => {
     const r = okUnit('[*:1]CC([*:2])C(=O)OCC1CO1');
-    expect(r.vomega).toBeCloseTo(6.78 + 2 * 10.23 + 5.6 + 8.45 + 1.9 + BOOK_COO, 10);
-    expect(r.vomega).toBeCloseTo(58.39, 6);
-    expect(r.vomega - 69.52).toBeCloseTo(-11.13, 6);
+    expect(r.vomegaGroups).toBeCloseTo(6.78 + 2 * 10.23 + 5.6 + 8.45 + 1.9 + BOOK_COO, 10);
+    expect(r.vomegaGroups).toBeCloseTo(58.39, 6);
+    expect(r.vomega).toBeCloseTo(58.39 - ESTER_FIX, 6);
+    expect(r.vomega - 69.52).toBeCloseTo(-11.57, 6);
     expect(r.coefficient.id).toBe('FC05');
   });
-  it('小分子算整個分子（D56 只限制 Tg）：苯 6×8.11 = 48.66，係數 0.37；與書的 VW（任務 028，6×CHar 8.05 = 48.3）差 < 10%', () => {
+  it('小分子算整個分子（D56 只限制 Tg）：苯 6×C–H 8.11 = 48.66（任務 036d 後仍不變），係數 0.37；與書的 VW（任務 028，6×CHar 8.05 = 48.3）差 < 10%', () => {
     const r = okUnit('c1ccccc1');
     expect(r.polymer).toBe(false);
     expect(r.vomega).toBeCloseTo(48.66, 10);
@@ -288,11 +338,11 @@ describe('Vω、Vf 手算（每個係數類別至少一個單元）', () => {
     expect(okUnit('CCO').vomega).toBeCloseTo(v.chCH3 + v.chCH2 + v.oh1, 10);
     expect(okUnit('CC(C)O').vomega).toBeCloseTo(2 * v.chCH3 + v.chCH + v.oh2, 10);
     expect(okUnit('CC(C)(C)O').vomega).toBeCloseTo(3 * v.chCH3 + v.chC + v.oh3, 10);
-    expect(okUnit('Oc1ccccc1').vomega).toBeCloseTo(6 * v.arC + v.phenol, 10);
+    expect(okUnit('Oc1ccccc1').vomega).toBeCloseTo(5 * v.arC + BONDI_SUB + v.phenol, 10);
     expect(okUnit('CC(F)(F)F').vomega).toBeCloseTo(v.chCH3 + v.chC + 3 * v.fAl, 10);
-    expect(okUnit('Fc1ccccc1').vomega).toBeCloseTo(6 * v.arC + v.fAr, 10);
+    expect(okUnit('Fc1ccccc1').vomega).toBeCloseTo(5 * v.arC + BONDI_SUB + v.fAr, 10);
     expect(okUnit('COC').vomega).toBeCloseTo(2 * v.chCH3 + v.ether, 10);
-    expect(okUnit('CC(=O)OC').vomega).toBeCloseTo(2 * v.chCH3 + BOOK_COO, 10); // 酯：整組（書的 –COO– 15.2，D58），羰基 C 與單鍵 O 不另計
+    expect(okUnit('CC(=O)OC').vomega).toBeCloseTo(2 * v.chCH3 + BOOK_COO - ESTER_FIX, 10); // 酯：整組（書的 –COO– 15.2，D58），羰基 C 與單鍵 O 不另計
   });
   it('任務 036b：羰基碳不再另計（酮、醛、酯、環酮、內酯、芳香酮），酯基單鍵 O 不計為醚 O', () => {
     const v = XLSX_VALUES;
@@ -302,10 +352,10 @@ describe('Vω、Vf 手算（每個係數類別至少一個單元）', () => {
     expect(ids('CC(=O)OC')).toEqual(['FV05×2', 'FV13×1']); // 沒有 FV02、FV09
     expect(okUnit('O=C1CCCCC1').vomega).toBeCloseTo(5 * v.rCH2 + v.ketone, 10); // 環酮：羰基碳不計環 C
     expect(ids('O=C1CCCCC1')).toEqual(['FV08×5', 'FV11×1']);
-    expect(okUnit('O=C1CCCO1').vomega).toBeCloseTo(3 * v.rCH2 + BOOK_COO, 10); // 內酯
-    expect(okUnit('CC(=O)c1ccccc1').vomega).toBeCloseTo(v.chCH3 + 6 * v.arC + v.ketone, 10);
-    expect(okUnit('CCOC(=O)c1ccccc1').vomega).toBeCloseTo(v.chCH3 + v.chCH2 + 6 * v.arC + BOOK_COO, 10);
-    expect(okUnit('COC(=O)CC(=O)OC').vomega).toBeCloseTo(2 * v.chCH3 + v.chCH2 + 2 * BOOK_COO, 10);
+    expect(okUnit('O=C1CCCO1').vomega).toBeCloseTo(3 * v.rCH2 + BOOK_COO - ESTER_FIX, 10); // 內酯
+    expect(okUnit('CC(=O)c1ccccc1').vomega).toBeCloseTo(v.chCH3 + 5 * v.arC + BONDI_SUB + v.ketone, 10);
+    expect(okUnit('CCOC(=O)c1ccccc1').vomega).toBeCloseTo(v.chCH3 + v.chCH2 + 5 * v.arC + BONDI_SUB + BOOK_COO - ESTER_FIX, 10);
+    expect(okUnit('COC(=O)CC(=O)OC').vomega).toBeCloseTo(2 * v.chCH3 + v.chCH2 + 2 * BOOK_COO - 2 * ESTER_FIX, 10);
     // 醚與酯同分子：醚 O 仍算 3.7，酯的單鍵 O 不算
     expect(ids('COCC(=O)OC')).toEqual(['FV04×1', 'FV05×2', 'FV09×1', 'FV13×1']);
   });
@@ -313,6 +363,78 @@ describe('Vω、Vf 手算（每個係數類別至少一個單元）', () => {
     for (const s of ['CC(=O)O', 'COC(=O)OC', 'CC(=O)N', 'NC(=O)N', 'NC(=O)OC', 'CC(=O)Cl', 'C=O', 'CC(=O)OC(C)=O']) {
       expect(computeFreeVolumeUnit(RDKit, s).status, s).toBe('missing');
     }
+  });
+});
+
+describe('任務 036d：芳香 C 三類（C–H 8.11、取代 5.54、縮合 4.74）', () => {
+  it('配對規則：每個結構的三類個數（苯、甲苯、苯酚、萘、聯苯、茚滿、茀、二苯醚、蒽、芘）', () => {
+    for (const [name, smiles, h, sub, fused] of FV_AROMATIC_CASES) {
+      const r = okUnit(smiles);
+      const n = (id: string) => r.contributions.find((c) => c.id === id)?.count ?? 0;
+      expect([n('FV01'), n('FV20'), n('FV21')], name).toEqual([h, sub, fused]);
+    }
+  });
+  it('三類相加 = 芳香碳總數（所有 xlsx 結構與案例；三類各一次、不重複不遺漏）', () => {
+    const smilesList = [...XLSX_STRUCTURES.map((s) => s.smiles).filter((s): s is string => s !== null), ...FV_AROMATIC_CASES.map((c) => c[1])];
+    for (const smiles of smilesList) {
+      const r = computeFreeVolumeUnit(RDKit, smiles);
+      if (r.status !== 'ok') continue;
+      const total = withMol(smiles, (m) => {
+        const g = readGraph(m);
+        return g.z.filter((z, i) => z === 6 && g.aromatic[i]).length;
+      });
+      const sum = r.contributions.filter((c) => ['FV01', 'FV20', 'FV21'].includes(c.id)).reduce((t, c) => t + c.count, 0);
+      expect(sum, smiles).toBe(total);
+    }
+  });
+  it('苯（6 個 C–H）仍為 48.66，不受修正影響', () => {
+    const r = okUnit('c1ccccc1');
+    expect(r.vomega).toBeCloseTo(48.66, 10);
+    expect(r.vomegaGroups).toBeCloseTo(48.66, 10);
+    expect(r.corrections).toEqual([]);
+  });
+  it('手算：萘 = 8×8.11 + 2×4.74 = 74.36；甲苯 = 5×8.11 + 5.54 + 13.67 = 59.76；聯苯 = 10×8.11 + 2×5.54 = 92.18；二苯醚 = 10×8.11 + 2×5.54 + 3.7 = 95.88', () => {
+    expect(okUnit('c1ccc2ccccc2c1').vomega).toBeCloseTo(8 * ARC + 2 * BONDI_FUSED, 10);
+    expect(okUnit('Cc1ccccc1').vomega).toBeCloseTo(5 * ARC + BONDI_SUB + 13.67, 10);
+    expect(okUnit('c1ccc(cc1)-c1ccccc1').vomega).toBeCloseTo(10 * ARC + 2 * BONDI_SUB, 10);
+    expect(okUnit('c1ccc(cc1)Oc1ccccc1').vomega).toBeCloseTo(10 * ARC + 2 * BONDI_SUB + 3.7, 10);
+  });
+});
+
+describe('任務 036d：Bondi Table XVII 修正（每項輸出適用次數與數值）', () => {
+  for (const [name, smiles, expected] of FV_CORRECTION_CASES) {
+    it(`${name}：適用次數 ${JSON.stringify(expected)}`, () => {
+      const r = okUnit(smiles);
+      expect(Object.fromEntries(r.corrections.map((c) => [c.id, c.count]))).toEqual(expected);
+      for (const c of r.corrections) {
+        const row = xTable.rows.find((x) => x.id === c.id);
+        expect(c.decrement).toBe(row?.decrement);
+        expect(c.contribution).toBeCloseTo(-c.count * c.decrement, 10);
+      }
+      expect(r.vomega).toBeCloseTo(r.vomegaGroups + r.corrections.reduce((t, c) => t + c.contribution, 0), 10);
+    });
+  }
+  it('修正量與看圖讀取的 Table XVII 一致：亞甲基環 1.66、二氧六環 1.70、酯基旁單鍵 0.22', () => {
+    expect(Object.fromEntries(xTable.rows.map((r) => [r.id, r.decrement]))).toEqual({ FX01: 1.66, FX02: 1.66, FX03: 1.66, FX04: 1.7, FX05: 0.22, FX06: 0.22 });
+  });
+  it('手算：茚滿 = 4×8.11 + 2×5.54 + 3×環 CH2 8.45 − 1.66 = 67.21；四氫萘 = 4×8.11 + 2×5.54 + 4×8.45 − 1.66 = 75.66；茀（C9 為環 CH2）= 8×8.11 + 4×5.54 + 8.45 − 1.66 = 93.83', () => {
+    expect(okUnit('C1Cc2ccccc2C1').vomega).toBeCloseTo(4 * ARC + 2 * BONDI_SUB + 3 * 8.45 - 1.66, 10);
+    expect(okUnit('C1CCc2ccccc2C1').vomega).toBeCloseTo(4 * ARC + 2 * BONDI_SUB + 4 * 8.45 - 1.66, 10);
+    expect(okUnit('C1c2ccccc2-c2ccccc12').vomega).toBeCloseTo(8 * ARC + 4 * BONDI_SUB + 8.45 - 1.66, 10);
+  });
+  it('茀的五員環若算 2 次，Vω 再少 1.66，佔 Vω 不到 2%（報告列出）', () => {
+    const r = okUnit('CC1(C)c2ccccc2-c2ccccc12');
+    expect(1.66 / r.vomega).toBeLessThan(0.02);
+  });
+  it('環己基與環戊基的 1.14 不套用（使用者的環值已含）：環己烷、甲基環戊烷沒有修正', () => {
+    expect(okUnit('C1CCCCC1').corrections).toEqual([]);
+    expect(okUnit('CC1CCCC1').corrections).toEqual([]);
+    expect(okUnit('C1CCCCC1').vomega).toBeCloseTo(6 * 8.45, 10);
+  });
+  it('不實作的項目不產生修正：共軛雙鍵間的單鍵 0.25（烯烴本來就缺基團）、cis-稠合環 2.50', () => {
+    expect(computeFreeVolumeUnit(RDKit, 'C=CC=C').status).toBe('missing');
+    expect(okUnit('C1CCC2CCCCC2C1').corrections).toEqual([]);
+    expect(xTable.rows.some((r) => /0.25|2.5|1.14/.test(String(r.decrement)))).toBe(false);
   });
 });
 
@@ -344,11 +466,11 @@ describe('共聚物：按單體莫耳分率加權', () => {
   const spec = (a: number, b: number, basis: 'mol' | 'wt' = 'mol') => ({ units: [{ smiles: PHS, fraction: a }, { smiles: PE, fraction: b }], fractionBasis: basis });
   it('a:b = 7:3：Vf = Vf(a)×0.7 + Vf(b)×0.3，Vω 同樣加權', () => {
     const r = okFv(PHS, spec(70, 30));
-    const vfA = 77.17 * 0.37;
+    const vfA = 72.03 * 0.37;
     const vfB = 20.46;
     expect(r.copolymer).toBe(true);
     expect(r.vf).toBeCloseTo(0.7 * vfA + 0.3 * vfB, 10);
-    expect(r.vomega).toBeCloseTo(0.7 * 77.17 + 0.3 * 20.46, 10);
+    expect(r.vomega).toBeCloseTo(0.7 * 72.03 + 0.3 * 20.46, 10);
     expect(r.effectiveCoefficient).toBeCloseTo(r.vf / r.vomega, 12);
     expect(r.components.map((c) => c.molFraction)).toEqual([expect.closeTo(0.7, 12), expect.closeTo(0.3, 12)]);
     expect(r.components.map((c) => c.unit.status)).toEqual(['ok', 'ok']);
@@ -363,7 +485,7 @@ describe('共聚物：按單體莫耳分率加權', () => {
     const mol = r.components.map((c) => c.molFraction);
     expect(mol[0] + mol[1]).toBeCloseTo(1, 12);
     expect(mol[0]).toBeLessThan(0.5); // PHS 單元質量（120）比 PE 單元（28）大，同質量時莫耳分率較小
-    expect(r.vf).toBeCloseTo(mol[0] * 77.17 * 0.37 + mol[1] * 20.46, 10);
+    expect(r.vf).toBeCloseTo(mol[0] * 72.03 * 0.37 + mol[1] * 20.46, 10);
   });
   it('比例合計不是 100 → 無效', () => {
     const r = computeFreeVolume(RDKit, PHS, spec(70, 20));
@@ -372,7 +494,7 @@ describe('共聚物：按單體莫耳分率加權', () => {
   it('只有一個單元的 units 視為均聚物', () => {
     const r = okFv(PHS, { units: [{ smiles: PHS, fraction: 100 }] });
     expect(r.copolymer).toBe(false);
-    expect(r.vf).toBeCloseTo(77.17 * 0.37, 10);
+    expect(r.vf).toBeCloseTo(72.03 * 0.37, 10);
   });
 });
 
@@ -457,10 +579,10 @@ describe('Vf／Va（Va 用書的任務 029，非使用者定義）', () => {
 
 describe('與 xlsx 各列的回歸（結構為 Claude 看圖撰寫，待使用者審；芳香族 H 欄不比對）', () => {
   const KEY_OF: Record<string, keyof (typeof XLSX_ROWS)[number]['counts']> = {
-    FV01: 'arC', FV02: 'chC', FV03: 'chCH', FV04: 'chCH2', FV05: 'chCH3', FV06: 'rC', FV07: 'rCH', FV08: 'rCH2', FV09: 'ether', FV10: 'epoxy',
+    FV01: 'arC', FV20: 'arC', FV21: 'arC', FV02: 'chC', FV03: 'chCH', FV04: 'chCH2', FV05: 'chCH3', FV06: 'rC', FV07: 'rCH', FV08: 'rCH2', FV09: 'ether', FV10: 'epoxy',
     FV11: 'ketone', FV12: 'aldehyde', FV13: 'ester', FV14: 'oh1', FV15: 'oh2', FV16: 'oh3', FV17: 'phenol', FV18: 'fAl', FV19: 'fAr',
   };
-  const keys = Object.values(KEY_OF);
+  const keys = [...new Set(Object.values(KEY_OF))];
   /** 程式與 xlsx 不一致的欄位（「程式 − xlsx」），每一列都已逐一檢視並歸類，見報告 036a 的 A-4／D-1 */
   const KNOWN_DIFFS: Record<number, Record<string, number>> = {
     // 歸類差異：xlsx 把環上的碳填在「鏈」欄；程式依是否在環上（SMARTS 的 R）分「環」與「鏈」
@@ -495,7 +617,7 @@ describe('與 xlsx 各列的回歸（結構為 Claude 看圖撰寫，待使用�
     it(`第 ${s.row} 列 ${x.name ?? '（未命名）'}（${s.basis}）：程式的基團數${KNOWN_DIFFS[s.row] ? '與 xlsx 的已知差異' : '與 xlsx 一致'}`, () => {
       const r = okUnit(s.smiles as string);
       const got: Record<string, number> = {};
-      for (const c of r.contributions) got[KEY_OF[c.id]] = c.count;
+      for (const c of r.contributions) got[KEY_OF[c.id]] = (got[KEY_OF[c.id]] ?? 0) + c.count; // 芳香 C 三類（FV01、FV20、FV21）相加與 xlsx 的芳香 C 數比對
       const diff: Record<string, number> = {};
       for (const k of keys) {
         const d = (got[k] ?? 0) - x.counts[k];
@@ -516,6 +638,7 @@ describe('與 xlsx 各列的回歸（結構為 Claude 看圖撰寫，待使用�
       expect(x.w, `第 ${d.row} 列 xlsx W`).toBeCloseTo(d.xlsxW, 6);
       expect(r.vomega, `第 ${d.row} 列程式 Vω`).toBeCloseTo(d.program, 6);
       expect(r.vomega - (x.w - x.counts.arH * 3.17), `第 ${d.row} 列差`).toBeCloseTo(d.diff, 6);
+      expect(r.vomega - r.vomegaGroups, `第 ${d.row} 列酯基旁單鍵修正`).toBeCloseTo(-ESTER_FIX, 10);
     }
   });
 
@@ -530,14 +653,17 @@ describe('與 xlsx 各列的回歸（結構為 Claude 看圖撰寫，待使用�
     expect(ester?.notes).toMatch(/使用者表原值 23/);
   });
 
-  it('一致的列：Vω 等於 xlsx 的 W 去掉芳香族 H 項（W − arH × 3.17），Vf = Vω × xlsx 的係數', () => {
+  it('一致的列：基團加總 = xlsx 的 W 去掉芳香族 H 項，再把芳香 C 由一律 8.11 改為三類（任務 036d）；Vω = 基團加總 − Table XVII 修正；係數與 xlsx 相同', () => {
     const SAME = XLSX_STRUCTURES.filter((s) => s.smiles !== null && !KNOWN_DIFFS[s.row]);
     expect(SAME.length).toBeGreaterThan(15);
     for (const s of SAME) {
       const x = XLSX_ROWS.find((r) => r.row === s.row);
       if (!x) continue;
       const r = okUnit(s.smiles as string);
-      expect(r.vomega, `第 ${s.row} 列 Vω`).toBeCloseTo(x.w - x.counts.arH * 3.17, 4);
+      const n = (id: string) => r.contributions.find((c) => c.id === id)?.count ?? 0;
+      const aromaticNow = n('FV01') * ARC + n('FV20') * BONDI_SUB + n('FV21') * BONDI_FUSED;
+      expect(r.vomegaGroups, `第 ${s.row} 列基團加總`).toBeCloseTo(x.w - x.counts.arH * 3.17 - x.counts.arC * ARC + aromaticNow, 4);
+      expect(r.vomega, `第 ${s.row} 列 Vω`).toBeCloseTo(r.vomegaGroups + r.corrections.reduce((t, c) => t + c.contribution, 0), 10);
       // xlsx 的 X 欄 / W 欄 = xlsx 的係數；程式選的係數應相同（第 17 列 EX192 等脂肪族、環氧 → 1）
       expect(r.coefficient.coefficient, `第 ${s.row} 列係數`).toBeCloseTo(x.x / x.w, 6);
     }

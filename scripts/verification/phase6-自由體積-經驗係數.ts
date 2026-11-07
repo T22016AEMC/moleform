@@ -3,13 +3,15 @@
 // 名稱、SMILES、係數類別、Vω、Vf、Vf／Va（或缺基團）。xlsx 各列另列與 xlsx 數字的對照（疑點標註）。
 // 這是使用者定義的經驗法、未經獨立驗證，不是書中的自由體積分率，不用於 CTE。只列程式輸出，不判斷化學（D17）；單元質量不顯示（D09）。
 // 執行：npm run verify:phase6-fv（Node 直接執行 .ts，只用可抹除的型別語法）。
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createServer } from 'vite';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const OUTPUT = resolve(root, 'docs', 'verification', 'phase6-自由體積-經驗係數-輸出.md');
+// 任務 036d 之前（任務 037a 的程式）的 Vω／Vf 快照，用來產生前後差異表（舊程式產生，不得重算）
+const BEFORE = resolve(root, 'docs', 'verification', '036d-前值.json');
 
 const server = await createServer({
   root,
@@ -26,7 +28,7 @@ try {
   const { computeVdwVolume } = await server.ssrLoadModule('/src/core/properties/vanDerWaalsVolume.ts');
   const { readGraph } = await server.ssrLoadModule('/src/core/properties/molGraph.ts');
   const { BACKBONE_TEMPLATES } = await server.ssrLoadModule('/src/core/data/backboneTemplates.ts');
-  const { FREE_VOLUME_GROUPS, FREE_VOLUME_COEFFICIENTS } = await server.ssrLoadModule('/src/core/data/freeVolumeTables.ts');
+  const { FREE_VOLUME_GROUPS, FREE_VOLUME_COEFFICIENTS, FREE_VOLUME_CORRECTIONS } = await server.ssrLoadModule('/src/core/data/freeVolumeTables.ts');
   const { USER_SMALL, USER_UNITS, SEMI } = await server.ssrLoadModule('/scripts/diagnosis/030-structures.ts');
   const { XLSX_STRUCTURES } = await server.ssrLoadModule('/tests/properties/freeVolumeCases.ts');
   const { XLSX_ROWS, XLSX_VALUES } = await server.ssrLoadModule('/tests/properties/freeVolumeXlsxRows.ts');
@@ -61,7 +63,8 @@ try {
   out();
   out('- **這是使用者定義的經驗法（使用者 2026-11-06 依論文整理，論文清單待補），未經獨立驗證，稽核狀態「待使用者審」。不是 van Krevelen 書中的自由體積分率**（書中沒有由結構計算的方法，見報告 036），**也不用於 CTE**（任務 036 的 CTE 只用 VW 與 Tg，本輸出不影響它）。');
   out(`- **方法**：${fv.FREE_VOLUME_MODEL}。`);
-  out('  - Vf = Vω × 經驗係數；Vω = Σ（基團數 × 基團 Vω），19 個基團見 `src/data/free_volume_groups.csv`，芳香族 H 欄已由使用者刪除，芳香碳一律 8.11（含氫）。');
+  out('  - Vf = Vω × 經驗係數；Vω = Σ（基團數 × 基團 Vω）− Σ（Bondi Table XVII 修正），21 個基團見 `src/data/free_volume_groups.csv`，修正見 `src/data/free_volume_corrections.csv`。芳香族 H 欄已由使用者刪除；**任務 036d（D60）：芳香 C 依 Bondi (1964) Table XV 分三類**：C–H 8.11（使用者值，Bondi 為 8.06）、取代 5.54、縮合 4.74；配對規則固定：兩個芳香環共用 → 縮合；否則有氫 → C–H；否則 → 取代（茚滿與茀的稠合碳歸取代，詮釋，待使用者審）。');
+  out('  - Table XVII 修正（p.450）：稠合在芳香環系統上的亞甲基環每環 1.66（茀的五員環算 1 環）、1,4-二氧六環 1.70、酯基旁的單鍵每個 0.22（每個酯基 2 個）。環己基與環戊基的 1.14 **不套用**（使用者環值已含）；cis-稠合環 2.50 與共軛雙鍵間單鍵 0.25 不實作（論文敘述不足以判定，見報告 036d）。');
   out('  - 係數（`src/data/free_volume_coefficients.csv`）：螺雙茚滿（SBI）0.7、金剛烷與橋環或籠狀脂環 0.8、芳香環 0.37、脂肪族 1、環烷 1。**一個單體只選一個係數**，優先順序（待使用者審）：SBI ＞ 橋環脂環 ＞ 芳香環 ＞ 其餘。共聚物按單體莫耳分率加權。聚合物只算重複單元，小分子算整個分子。');
   out('  - 缺基團：表中沒有的原子或結構回報缺基團，不計算、不猜值、不以相近基團代替。');
   out(`  - Vf／Va：Va 取任務 029 的 Table 4.10 結果（${fv.FREE_VOLUME_VA_NOTE}）；Va 缺（缺基團、小分子液體未實作）就只標缺。`);
@@ -69,7 +72,7 @@ try {
   out('### 與書的 VW 差異（報告 A-2）');
   out();
   out(`- 苯：使用者表 6 × 8.11 = **${fx(benzeneVw, 2)}** cm³/mol；書（任務 028，Table 4.2，6 × CHar 8.05）**${benzeneBook.status === 'ok' ? fx(benzeneBook.vw, 2) : '—'}**，差 **${fx(pctBook, 2)}%**；Bondi 1964（p.449 Table XV，看圖確認 48.36）差 **${fx(pctBondi, 2)}%**。差異遠小於 10%，不需停下來。`);
-  out('- 其餘基團與 Bondi／vw_groups.csv 的對照見報告 036a 的 A-1；芳香碳的簡化（取代位置的碳也用 8.11）造成的偏差見本檔第 3 節。');
+  out('- 其餘基團與 Bondi／vw_groups.csv 的對照見報告 036a 的 A-1；芳香碳分類與修正的前後差異見本檔第 3 節。');
   out('- 重新產生：`npm run verify:phase6-fv`。');
   out();
   out('本數值為依理論模型估算之參考值，非實測值。實際結果受原料純度、製程條件與反應動力學影響，請以實驗結果為準。');
@@ -124,6 +127,11 @@ try {
   const KEY_OF: Record<string, string> = { FV01: 'arC', FV02: 'chC', FV03: 'chCH', FV04: 'chCH2', FV05: 'chCH3', FV06: 'rC', FV07: 'rCH', FV08: 'rCH2', FV09: 'ether', FV10: 'epoxy', FV11: 'ketone', FV12: 'aldehyde', FV13: 'ester', FV14: 'oh1', FV15: 'oh2', FV16: 'oh3', FV17: 'phenol', FV18: 'fAl', FV19: 'fAr' };
   const LABEL: Record<string, string> = { arC: '芳香 C', chC: '鏈 C', chCH: '鏈 CH', chCH2: '鏈 CH2', chCH3: '鏈 CH3', rC: '環 C', rCH: '環 CH', rCH2: '環 CH2', ether: '醚 O', epoxy: '環氧 O', ketone: '酮', aldehyde: '醛', ester: '酯基', oh1: '一級 OH', oh2: '二級 OH', oh3: '三級 OH', phenol: '酚 OH', fAl: '脂肪 F', fAr: '芳香 F' };
   const xlsxDiffRows: { row: number; name: string; text: string }[] = [];
+  /** 芳香 C 分類造成的 Vω 變化（相對一律 8.11；cm³/mol） */
+  const aromNow = (u: any): number => {
+    const n = (id: string) => u.contributions.find((c: any) => c.id === id)?.count ?? 0;
+    return n('FV20') * (5.54 - 8.11) + n('FV21') * (4.74 - 8.11);
+  };
   for (const s of XLSX_STRUCTURES) {
     const x = XLSX_ROWS.find((r: any) => r.row === s.row);
     const name = x.name ?? '（未命名）';
@@ -148,7 +156,7 @@ try {
     }
     if (diffs.length > 0) xlsxDiffRows.push({ row: s.row, name, text: diffs.join('；') });
     out(
-      `| ${s.row} | ${cell(name)} | ${s.basis} | ${cell(`${u.coefficient.name}（${u.coefficient.coefficient}）`)} | ${fx(r.vomega)} | ${fx(xw)} | ${fx(r.vf)} | ${fx(x.x)} | ${r.vfOverVa === null ? '缺 Va' : fx(r.vfOverVa, 3)} | ${(diffs.length === 0 ? '基團數一致' : cell(diffs.join('；'))) + (x.counts.ester > 0 ? `；**已知差異，非程式錯誤（任務 036c）**：程式酯基用書的 –COO– 15.2，xlsx 用 23（羰基碳另計），Vω 程式 − xlsx = ${fx(r.vomega - xw)}` : '')} |`,
+      `| ${s.row} | ${cell(name)} | ${s.basis} | ${cell(`${u.coefficient.name}（${u.coefficient.coefficient}）`)} | ${fx(r.vomega)} | ${fx(xw)} | ${fx(r.vf)} | ${fx(x.x)} | ${r.vfOverVa === null ? '缺 Va' : fx(r.vfOverVa, 3)} | ${(diffs.length === 0 ? '基團數一致' : cell(diffs.join('；'))) + (x.counts.ester > 0 ? `；**已知差異，非程式錯誤（任務 036c）**：程式酯基用書的 –COO– 15.2，xlsx 用 23（羰基碳另計），Vω 程式 − xlsx = ${fx(r.vomega - xw)}` : '') + (aromNow(u) !== 0 || u.corrections.length > 0 ? `；**已知差異（芳香 C 分類與 Table XVII 修正，任務 036d）**：芳香 C ${fx(aromNow(u))}、修正 ${fx(u.corrections.reduce((t: number, c: any) => t + c.contribution, 0))}` : '')} |`,
     );
     if (r.status === 'ok') okVa.push({ name: `xlsx 第 ${s.row} 列 ${name}`, smiles: s.smiles, vf: r.vf, vomega: r.vomega, va: r.va, ratio: r.vfOverVa, coef: u.coefficient.id });
   }
@@ -161,45 +169,76 @@ try {
   }
   out();
 
-  // ---- 3. 芳香碳簡化的偏差 ----
-  out('## 3. 芳香碳簡化的已知偏差（只報告，不修改使用者的規則）');
+  // ---- 3. 任務 036d 前後差異 ----
+  out('## 3. 任務 036d 的前後差異（芳香 C 三類與 Table XVII 修正）');
   out();
-  out('使用者表只有一個芳香 C 值（8.11，含氫）。以下以 Bondi 1964 的分項重算芳香碳部分比較：有氫的芳香 C 8.06（C–H）、無氫且非稠合的取代芳香 C 5.54、三個鍵都接芳香原子的稠合芳香 C 4.74；其他基團照使用者表。偏差 ＝ 使用者表的 Vω − Bondi 分項的 Vω；數值 5.54、8.06、4.74 與苯 48.36 已看 Bondi 1964 p.449 Table XV 的圖確認。');
+  out('「前」是任務 037a 當時的程式輸出（芳香 C 一律 8.11、沒有 Table XVII 修正；快照 `docs/verification/036d-前值.json`）。只列因本任務規則而改變的列；沒列的結構 Vω 與 Vf 逐字相同。Bondi 數值 5.54、8.06、4.74 與修正量已看 p.449、p.450 的圖確認。**這些差異是「已知差異（芳香 C 分類與 Table XVII 修正）」，不是回歸期望值。** 「芳香 C」欄 = 取代個數 ×（5.54 − 8.11）＋ 縮合個數 ×（4.74 − 8.11）；「修正」欄 = Table XVII 修正量之和（負數）。');
   out();
-  out('| 名稱 | 芳香 C 數（有氫／取代／稠合） | Vω（使用者表） | Vω（Bondi 芳香分項） | 偏差 | 偏差佔 Vω |');
-  out('|---|---|---|---|---|---|');
-  const bias: { name: string; delta: number; pct: number }[] = [];
-  const biasItems = [
-    ...items.filter((x) => x.group.startsWith('使用者材料（骨架範本）') || x.group === '使用者材料'),
-    { name: '苯（參考）', smiles: 'c1ccccc1', group: '' },
-    ...XLSX_STRUCTURES.filter((s: any) => s.smiles).map((s: any) => ({ name: `xlsx 第 ${s.row} 列 ${XLSX_ROWS.find((r: any) => r.row === s.row).name ?? '（未命名）'}`, smiles: s.smiles, group: 'xlsx' })),
+  const before: { name: string; smiles: string; status: string; vomega: number | null; vf: number | null }[] = JSON.parse(readFileSync(BEFORE, 'utf8'));
+  const afterItems: { name: string; smiles: string; group: string }[] = [
+    ...items,
+    ...XLSX_STRUCTURES.filter((x: any) => x.smiles).map((x: any) => ({ name: `xlsx 第 ${x.row} 列 ${XLSX_ROWS.find((r: any) => r.row === x.row).name ?? '（未命名）'}`, smiles: x.smiles, group: 'xlsx' })),
+    { name: '苯', smiles: 'c1ccccc1', group: '參考' },
   ];
-  for (const it of biasItems) {
-    const r = fv.computeFreeVolumeUnit(RDKit, it.smiles);
-    if (r.status !== 'ok') continue;
-    const mol = RDKit.get_mol(it.smiles);
-    let h = 0;
-    let sub = 0;
-    let fused = 0;
-    try {
-      const g = readGraph(mol);
-      for (let i = 0; i < g.z.length; i++) {
-        if (!(g.z[i] === 6 && g.aromatic[i])) continue;
-        if (g.hCount[i] > 0) h++;
-        else if (g.neighbors[i].filter((n: number) => g.aromatic[n]).length === 3) fused++;
-        else sub++;
-      }
-    } finally {
-      mol.delete();
+  if (before.length !== afterItems.length) throw new Error(`前值快照 ${before.length} 筆，與現在的結構表 ${afterItems.length} 筆不一致`);
+  out('| 群組 | 名稱 | 芳香 C（取代／縮合） | 修正 | Vω 前 | Vω 後 | 差 | Vf 前 | Vf 後 |');
+  out('|---|---|---|---|---|---|---|---|---|');
+  const changedFluorene: { name: string; vomega: number }[] = [];
+  let changed = 0;
+  afterItems.forEach((it, i) => {
+    const b = before[i];
+    if (b.smiles !== it.smiles) throw new Error(`前值快照第 ${i} 筆的結構與現在不同：${b.smiles} / ${it.smiles}`);
+    const r = fv.computeFreeVolume(RDKit, it.smiles);
+    if (r.status !== 'ok' || b.status !== 'ok') {
+      if (r.status !== b.status) out(`| ${it.group} | ${cell(it.name)} | 狀態改變 ${b.status} → ${r.status} | | | | | | |`);
+      return;
     }
-    if (h + sub + fused === 0) continue;
-    const user = (h + sub + fused) * XLSX_VALUES.arC;
-    const bondi = h * 8.06 + sub * 5.54 + fused * 4.74;
-    const delta = user - bondi;
-    const total = r.vomega;
-    bias.push({ name: it.name, delta, pct: (delta / total) * 100 });
-    out(`| ${cell(it.name)} | ${h}／${sub}／${fused} | ${fx(total)} | ${fx(total - delta)} | ${delta >= 0 ? '+' : ''}${fx(delta)} | ${fx((delta / total) * 100, 1)}% |`);
+    if (Math.abs((r.vomega as number) - (b.vomega as number)) < 1e-9) return;
+    changed++;
+    const u = r.components[0].unit;
+    const n = (id: string) => u.contributions.find((c: any) => c.id === id)?.count ?? 0;
+    const corr = u.corrections.map((c: any) => `${c.id}×${c.count}（${fx(c.contribution)}）`).join('、') || '—';
+    if (u.corrections.some((c: any) => c.id === 'FX03')) changedFluorene.push({ name: it.name, vomega: r.vomega });
+    out(`| ${it.group} | ${cell(it.name)} | ${n('FV20')}／${n('FV21')}（${fx(aromNow(u))}） | ${corr} | ${fx(b.vomega)} | ${fx(r.vomega)} | ${fx((r.vomega as number) - (b.vomega as number))} | ${fx(b.vf)} | ${fx(r.vf)} |`);
+  });
+  out();
+  out(`共 ${changed} 列改變（含 BT01–BT06 與使用者材料）。苯（6 個 C–H）仍為 ${fx(benzeneVw, 2)}，不變。`);
+  out();
+  out('### 茀的五員環若算 2 次（只列差，不採用）');
+  out();
+  out('| 名稱 | Vω（算 1 次，現行） | Vω（若算 2 次） | 差 | 佔 Vω |');
+  out('|---|---|---|---|---|');
+  if (changedFluorene.length === 0) out('| （使用者材料與範本中沒有茀） | — | — | — | — |');
+  for (const x of changedFluorene) out(`| ${cell(x.name)} | ${fx(x.vomega)} | ${fx(x.vomega - 1.66)} | −1.66 | ${fx((1.66 / x.vomega) * 100, 2)}% |`);
+  out();
+  out('### 環己基與環戊基的 1.14（Table XVII 第一項，**不套用**）：環值與「鏈值減 1.14」的比較');
+  out();
+  out('使用者表的環脂肪族 C／CH／CH2（3.8、5.6、8.45）可能已含這項修正，為避免重複計算不再另減 1.14。下表是同一個環以環值加總，對「鏈值（Bondi 3.33、6.78、10.23、13.67）加總再減 1.14」的比較（只報告）：');
+  out();
+  out('| 結構 | 環值加總（程式） | 鏈值加總 − 1.14 | 環值 − 鏈值修正 | 差佔鏈值修正 |');
+  out('|---|---|---|---|---|');
+  const gv = (id: string): number => FREE_VOLUME_GROUPS.find((g: any) => g.id === id).vw;
+  const ringCases: [string, string, number][] = [
+    ['環己烷', 'C1CCCCC1', 6 * gv('FV04') - 1.14],
+    ['環戊烷', 'C1CCCC1', 5 * gv('FV04') - 1.14],
+    ['甲基環己烷', 'CC1CCCCC1', gv('FV05') + gv('FV03') + 5 * gv('FV04') - 1.14],
+  ];
+  for (const [n, sm, chain] of ringCases) {
+    const r = fv.computeFreeVolumeUnit(RDKit, sm);
+    if (r.status !== 'ok') continue;
+    out(`| ${n} | ${fx(r.vomega)} | ${fx(chain)} | ${fx(r.vomega - chain)} | ${fx(((r.vomega - chain) / chain) * 100, 1)}% |`);
   }
+  out();
+  out('### 實作與不實作的 Table XVII 項目');
+  out();
+  out('| Table XVII 項目（p.450） | 修正量 | 處理 |');
+  out('|---|---|---|');
+  out('| 環己基與環戊基（自由或反式稠合） | 1.14 | 不套用（使用者環值可能已含；見上表） |');
+  out('| cis-稠合環烷的每個環 | 2.50 | 不實作：SMILES 沒有立體資訊，判斷不了；同一個表的萘烷等不扣 |');
+  out('| 稠合在苯（或其他芳香環系統）上的亞甲基環 | 1.66 | 實作（FX01–FX03）；茀的五員環算 1 環 |');
+  out('| 二氧六環 | 1.70 | 實作（FX04），只限 1,4-二氧六環（論文沒指明異構物，詮釋） |');
+  out('| 共軛雙鍵間的單鍵 | 0.25 | 不實作：論文沒說明芳香環、羰基算不算雙鍵；烯烴本來就缺基團 |');
+  out('| 羧基或醯胺旁的單鍵（每個） | 0.22 | 實作於酯基（羧酸酯，Table XVI 腳註 d），每個酯基 2 個（羰基碳側與單鍵 O 側各 1，詮釋）；羧酸與醯胺在本方法缺基團，不適用 |');
   out();
 
   // ---- 4. 比較 ----
@@ -261,6 +300,12 @@ try {
   out('| id | 基團 | Vω | 佔用原子數 | 稽核狀態 |');
   out('|---|---|---|---|---|');
   for (const g of FREE_VOLUME_GROUPS) out(`| ${g.id} | ${cell(g.name)} | ${g.vw} | ${g.atomCount} | ${g.audit} |`);
+  out();
+  out('修正（`src/data/free_volume_corrections.csv`，任務 036d，Bondi 1964 Table XVII p.450）：');
+  out();
+  out('| id | 修正 | 每次減（cm³/mol） | 稽核狀態 |');
+  out('|---|---|---|---|');
+  for (const c of FREE_VOLUME_CORRECTIONS) out(`| ${c.id} | ${cell(c.name)} | ${c.decrement} | ${c.audit} |`);
   out();
   out('係數（`src/data/free_volume_coefficients.csv`）：');
   out();
