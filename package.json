@@ -32,7 +32,7 @@
     "engine:test": "python -m unittest discover -s engine/tests -v"
   },
   "dependencies": {
-    "@rdkit/rdkit": "^2026.9.1",
+    "@rdkit/rdkit": "2026.9.1",
     "3dmol": "2.5.5",
     "openchemlib": "9.25.2",
     "react": "^19.3.1",

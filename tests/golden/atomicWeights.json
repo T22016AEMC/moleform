@@ -1,0 +1,897 @@
+{
+ "cases": [
+  {
+   "id": "table",
+   "input": {},
+   "output": {
+    "1": 1.008,
+    "5": 10.81,
+    "6": 12.011,
+    "7": 14.007,
+    "8": 15.999,
+    "9": 18.998,
+    "14": 28.085,
+    "15": 30.974,
+    "16": 32.06,
+    "17": 35.45,
+    "35": 79.904
+   }
+  },
+  {
+   "id": "atomicWeight(-1)",
+   "input": {
+    "z": -1
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(0)",
+   "input": {
+    "z": 0
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(1)",
+   "input": {
+    "z": 1
+   },
+   "output": 1.008
+  },
+  {
+   "id": "atomicWeight(2)",
+   "input": {
+    "z": 2
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(3)",
+   "input": {
+    "z": 3
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(4)",
+   "input": {
+    "z": 4
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(5)",
+   "input": {
+    "z": 5
+   },
+   "output": 10.81
+  },
+  {
+   "id": "atomicWeight(6)",
+   "input": {
+    "z": 6
+   },
+   "output": 12.011
+  },
+  {
+   "id": "atomicWeight(7)",
+   "input": {
+    "z": 7
+   },
+   "output": 14.007
+  },
+  {
+   "id": "atomicWeight(8)",
+   "input": {
+    "z": 8
+   },
+   "output": 15.999
+  },
+  {
+   "id": "atomicWeight(9)",
+   "input": {
+    "z": 9
+   },
+   "output": 18.998
+  },
+  {
+   "id": "atomicWeight(10)",
+   "input": {
+    "z": 10
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(11)",
+   "input": {
+    "z": 11
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(12)",
+   "input": {
+    "z": 12
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(13)",
+   "input": {
+    "z": 13
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(14)",
+   "input": {
+    "z": 14
+   },
+   "output": 28.085
+  },
+  {
+   "id": "atomicWeight(15)",
+   "input": {
+    "z": 15
+   },
+   "output": 30.974
+  },
+  {
+   "id": "atomicWeight(16)",
+   "input": {
+    "z": 16
+   },
+   "output": 32.06
+  },
+  {
+   "id": "atomicWeight(17)",
+   "input": {
+    "z": 17
+   },
+   "output": 35.45
+  },
+  {
+   "id": "atomicWeight(18)",
+   "input": {
+    "z": 18
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(19)",
+   "input": {
+    "z": 19
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(20)",
+   "input": {
+    "z": 20
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(21)",
+   "input": {
+    "z": 21
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(22)",
+   "input": {
+    "z": 22
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(23)",
+   "input": {
+    "z": 23
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(24)",
+   "input": {
+    "z": 24
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(25)",
+   "input": {
+    "z": 25
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(26)",
+   "input": {
+    "z": 26
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(27)",
+   "input": {
+    "z": 27
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(28)",
+   "input": {
+    "z": 28
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(29)",
+   "input": {
+    "z": 29
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(30)",
+   "input": {
+    "z": 30
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(31)",
+   "input": {
+    "z": 31
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(32)",
+   "input": {
+    "z": 32
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(33)",
+   "input": {
+    "z": 33
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(34)",
+   "input": {
+    "z": 34
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(35)",
+   "input": {
+    "z": 35
+   },
+   "output": 79.904
+  },
+  {
+   "id": "atomicWeight(36)",
+   "input": {
+    "z": 36
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(37)",
+   "input": {
+    "z": 37
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(38)",
+   "input": {
+    "z": 38
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(39)",
+   "input": {
+    "z": 39
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(40)",
+   "input": {
+    "z": 40
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(41)",
+   "input": {
+    "z": 41
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(42)",
+   "input": {
+    "z": 42
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(43)",
+   "input": {
+    "z": 43
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(44)",
+   "input": {
+    "z": 44
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(45)",
+   "input": {
+    "z": 45
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(46)",
+   "input": {
+    "z": 46
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(47)",
+   "input": {
+    "z": 47
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(48)",
+   "input": {
+    "z": 48
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(49)",
+   "input": {
+    "z": 49
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(50)",
+   "input": {
+    "z": 50
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(51)",
+   "input": {
+    "z": 51
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(52)",
+   "input": {
+    "z": 52
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(53)",
+   "input": {
+    "z": 53
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(54)",
+   "input": {
+    "z": 54
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(55)",
+   "input": {
+    "z": 55
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(56)",
+   "input": {
+    "z": 56
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(57)",
+   "input": {
+    "z": 57
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(58)",
+   "input": {
+    "z": 58
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(59)",
+   "input": {
+    "z": 59
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(60)",
+   "input": {
+    "z": 60
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(61)",
+   "input": {
+    "z": 61
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(62)",
+   "input": {
+    "z": 62
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(63)",
+   "input": {
+    "z": 63
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(64)",
+   "input": {
+    "z": 64
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(65)",
+   "input": {
+    "z": 65
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(66)",
+   "input": {
+    "z": 66
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(67)",
+   "input": {
+    "z": 67
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(68)",
+   "input": {
+    "z": 68
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(69)",
+   "input": {
+    "z": 69
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(70)",
+   "input": {
+    "z": 70
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(71)",
+   "input": {
+    "z": 71
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(72)",
+   "input": {
+    "z": 72
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(73)",
+   "input": {
+    "z": 73
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(74)",
+   "input": {
+    "z": 74
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(75)",
+   "input": {
+    "z": 75
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(76)",
+   "input": {
+    "z": 76
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(77)",
+   "input": {
+    "z": 77
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(78)",
+   "input": {
+    "z": 78
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(79)",
+   "input": {
+    "z": 79
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(80)",
+   "input": {
+    "z": 80
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(81)",
+   "input": {
+    "z": 81
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(82)",
+   "input": {
+    "z": 82
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(83)",
+   "input": {
+    "z": 83
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(84)",
+   "input": {
+    "z": 84
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(85)",
+   "input": {
+    "z": 85
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(86)",
+   "input": {
+    "z": 86
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(87)",
+   "input": {
+    "z": 87
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(88)",
+   "input": {
+    "z": 88
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(89)",
+   "input": {
+    "z": 89
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(90)",
+   "input": {
+    "z": 90
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(91)",
+   "input": {
+    "z": 91
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(92)",
+   "input": {
+    "z": 92
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(93)",
+   "input": {
+    "z": 93
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(94)",
+   "input": {
+    "z": 94
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(95)",
+   "input": {
+    "z": 95
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(96)",
+   "input": {
+    "z": 96
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(97)",
+   "input": {
+    "z": 97
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(98)",
+   "input": {
+    "z": 98
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(99)",
+   "input": {
+    "z": 99
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(100)",
+   "input": {
+    "z": 100
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(101)",
+   "input": {
+    "z": 101
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(102)",
+   "input": {
+    "z": 102
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(103)",
+   "input": {
+    "z": 103
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(104)",
+   "input": {
+    "z": 104
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(105)",
+   "input": {
+    "z": 105
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(106)",
+   "input": {
+    "z": 106
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(107)",
+   "input": {
+    "z": 107
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(108)",
+   "input": {
+    "z": 108
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(109)",
+   "input": {
+    "z": 109
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(110)",
+   "input": {
+    "z": 110
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(111)",
+   "input": {
+    "z": 111
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(112)",
+   "input": {
+    "z": 112
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(113)",
+   "input": {
+    "z": 113
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(114)",
+   "input": {
+    "z": 114
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(115)",
+   "input": {
+    "z": 115
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(116)",
+   "input": {
+    "z": 116
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(117)",
+   "input": {
+    "z": 117
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(118)",
+   "input": {
+    "z": 118
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(119)",
+   "input": {
+    "z": 119
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(120)",
+   "input": {
+    "z": 120
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(1.5)",
+   "input": {
+    "z": 1.5
+   },
+   "output": null
+  },
+  {
+   "id": "atomicWeight(6.000000001)",
+   "input": {
+    "z": 6.000000001
+   },
+   "output": null
+  }
+ ],
+ "commit": "2469c945afe5d3e983f60cfb90d0526cad7a60d7",
+ "module": "atomicWeights",
+ "rdkitjs": "2026.09.1",
+ "tolerance": {
+  "exact": "strings, integers, booleans, null, arrays and object keys must be identical",
+  "float": "shortest round-trip string must be identical; otherwise relative error <= relFallback is accepted and the case is recorded in tolerance_cases",
+  "relFallback": 1e-12
+ }
+}

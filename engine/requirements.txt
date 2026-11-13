@@ -1,0 +1,8 @@
+# MoleForm Python engine dependencies (task M00, D63: pinned so output can be compared verbatim with TypeScript).
+# RDKit is aligned with @rdkit/rdkit 2026.9.1 in package.json. Versions taken from engine/.venv (pip freeze, 2026-11-13).
+# Keep this file ASCII-only: pip on Windows decodes it with the locale code page.
+# Any change requires regenerating tests/golden and passing the comparison.
+numpy==2.5.4
+pillow==13.0.0
+rdkit==2026.9.1
+scipy==1.18.1
