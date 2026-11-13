@@ -108,6 +108,35 @@ class EngineProcessTest(unittest.TestCase):
                 self.assertEqual(status, 400)
                 self.assertFalse(body["ok"])
 
+    def test_vw_ok_missing_invalid(self) -> None:
+        """任務 M01：POST /vw。與 TypeScript 黃金輸出的數值相同（聚苯乙烯單元），缺基團回 missing，無效 SMILES 回 400。"""
+        status, body = self.request("POST", "/vw", {"smiles": "[*:1]CC([*:2])c1ccccc1"})
+        self.assertEqual(status, 200)
+        self.assertTrue(body["ok"])
+        q = body["quantity"]
+        self.assertEqual(set(q), {"value", "unit", "source", "status"})
+        self.assertEqual(q["status"], "predicted")
+        self.assertEqual(q["unit"], "cm³/mol")
+        self.assertAlmostEqual(q["value"], 62.83, places=9)  # 10.23 + 52.6（Table 4.2）
+        self.assertTrue(body["polymer"])
+        self.assertEqual([g["id"] for g in body["groups"]], ["V01", "V02"])
+        # 缺基團（噻吩的 S 與芳香碳）：不計算，列出原子
+        status, body = self.request("POST", "/vw", {"smiles": "c1ccsc1"})
+        self.assertEqual(status, 200)
+        self.assertEqual(body["quantity"]["status"], "missing")
+        self.assertIsNone(body["quantity"]["value"])
+        self.assertTrue(body["missing"])
+        self.assertEqual({m["element"] for m in body["missing"]} >= {"S"}, True)
+        # 無法解析、空字串、多個分子、缺欄位、型別錯誤
+        for bad in ({"smiles": "xyz"}, {"smiles": ""}, {"smiles": "CC.CC"}, {}, {"smiles": 1}, {"smiles": "C" * 10001}):
+            with self.subTest(bad=str(bad)[:40]):
+                status, body = self.request("POST", "/vw", bad)
+                self.assertEqual(status, 400)
+                self.assertFalse(body["ok"])
+
+    def test_vw_requires_token(self) -> None:
+        self.assertEqual(self.request("POST", "/vw", {"smiles": "CC"}, headers={"Authorization": "Bearer wrong"})[0], 401)
+
     def test_exits_when_stdin_closes(self) -> None:
         assert self.proc.stdin
         self.proc.stdin.close()

@@ -1,17 +1,19 @@
 """MoleForm Python 引擎原型（任務 039 B-6，D62）。
 
-只做握手與 JSON 格式示範，不含任何物性或微影公式。
+握手、JSON 格式示範，以及 VW（任務 M01）；不含其他物性或微影公式。
 - 只監聽 127.0.0.1，埠由作業系統隨機指定（port 0）。
 - 一次性權杖由父程式（Electron 主程式）從 stdin 第一行傳入，不放在命令列或環境變數。
 - stdin 關閉（父程式結束或主動關閉）時，引擎自行結束。
 - 只用 Python 標準函式庫；NumPy／SciPy／RDKit 只讀取已安裝版本（importlib.metadata），未安裝回報 null。
 - 不發出任何對外連線。
+- 任務 M01 起新增 POST /vw（van der Waals 體積）；除此之外不含任何物性公式。尚未接到介面，TypeScript 仍是預設計算來源。
 """
 
 from __future__ import annotations
 
 import hmac
 import json
+import os
 import platform
 import sys
 import threading
@@ -76,6 +78,57 @@ def validate_quantity(obj: object) -> list[str]:
     return errors
 
 
+def handle_demo_quantity(request: object) -> tuple[int, dict]:
+    quantity = request.get("quantity") if isinstance(request, dict) else None
+    errors = validate_quantity(quantity)
+    if errors:
+        return 400, {"ok": False, "errors": errors}
+    # 原樣回傳（格式示範）；不做任何計算
+    return 200, {"ok": True, "quantity": quantity, "note": "格式示範：引擎未計算任何數值"}
+
+
+ENGINE_DIR = os.path.dirname(os.path.abspath(__file__))
+MAX_SMILES_CHARS = 10000
+VW_UNIT = "cm³/mol"
+
+
+def handle_vw(request: object) -> tuple[int, dict]:
+    """van der Waals 體積（任務 M01）。請求 {"smiles": "<小分子或含 * 的重複單元 SMILES>"}。
+
+    回應沿用「值、單位、來源、狀態」格式（quantity），另附基團、缺基團清單、Bondi 補充標示與質量核對。
+    缺基團：HTTP 200，quantity.status = "missing"、value = null，missing 列出原子位置與描述（不計算、不拋例外）。
+    SMILES 無法解析、含多個分子、沒有重原子：HTTP 400。只做 VW，不含其他物性公式；尚未接到介面（TypeScript 仍是預設）。
+    """
+    smiles = request.get("smiles") if isinstance(request, dict) else None
+    if not isinstance(smiles, str):
+        return 400, {"ok": False, "errors": ["請求需要字串欄位 smiles"]}
+    if len(smiles) > MAX_SMILES_CHARS:
+        return 400, {"ok": False, "errors": [f"smiles 太長（上限 {MAX_SMILES_CHARS} 字元）"]}
+    try:
+        # 延後載入：握手不需要 RDKit。以 python -I 啟動時 sys.path 不含腳本所在目錄，所以明確加入引擎自己的目錄。
+        if ENGINE_DIR not in sys.path:
+            sys.path.insert(0, ENGINE_DIR)
+        from moleform_core import vw
+    except ImportError as e:
+        return 503, {"ok": False, "errors": [f"引擎無法載入 VW 模組（RDKit 沒有安裝？）：{e}"]}
+    try:
+        result = vw.compute_vdw_volume(smiles)
+    except (vw.VwDataError, ValueError, OSError) as e:
+        return 500, {"ok": False, "errors": [f"VW 資料表或 SMARTS 錯誤：{e}"]}
+    if result["status"] == "invalid":
+        return 400, {"ok": False, "errors": [result["message"]]}
+    if result["status"] == "missing":
+        quantity = {"value": None, "unit": VW_UNIT, "source": vw.VW_MODEL, "status": "missing"}
+        body = {k: result[k] for k in ("polymer", "groups", "missing", "bondiSupplement")}
+        return 200, {"ok": True, "quantity": quantity, **body, "disclaimer": vw.VW_DISCLAIMER}
+    quantity = {"value": result["vw"], "unit": VW_UNIT, "source": vw.VW_MODEL, "status": "predicted"}
+    keys = ("polymer", "groups", "corrections", "sources", "bondiSupplement", "bondiNotes", "sumMi", "formulaMass", "massDelta", "massWithinTolerance")
+    return 200, {"ok": True, "quantity": quantity, **{k: result[k] for k in keys}, "disclaimer": vw.VW_DISCLAIMER}
+
+
+POST_ROUTES = {"/demo/quantity": handle_demo_quantity, "/vw": handle_vw}
+
+
 class EngineServer(ThreadingHTTPServer):
     daemon_threads = True
 
@@ -128,7 +181,7 @@ class EngineHandler(BaseHTTPRequestHandler):
     def do_POST(self) -> None:  # noqa: N802
         if not self._authorized():
             return
-        if self.path != "/demo/quantity":
+        if self.path not in POST_ROUTES:
             self._send(404, {"error": "not found"})
             return
         try:
@@ -143,13 +196,8 @@ class EngineHandler(BaseHTTPRequestHandler):
         except (UnicodeDecodeError, json.JSONDecodeError):
             self._send(400, {"ok": False, "errors": ["請求不是有效的 JSON"]})
             return
-        quantity = request.get("quantity") if isinstance(request, dict) else None
-        errors = validate_quantity(quantity)
-        if errors:
-            self._send(400, {"ok": False, "errors": errors})
-            return
-        # 原樣回傳（格式示範）；不做任何計算
-        self._send(200, {"ok": True, "quantity": quantity, "note": "格式示範：引擎未計算任何數值"})
+        code, payload = POST_ROUTES[self.path](request)
+        self._send(code, payload)
 
     def do_PUT(self) -> None:  # noqa: N802
         self._send(405, {"error": "method not allowed"})
