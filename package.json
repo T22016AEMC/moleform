@@ -29,7 +29,7 @@
     "desktop:pack": "npm run dist --prefix desktop",
     "desktop:build": "npm run build && npm run dist --prefix desktop",
     "desktop:selftest": "npm run selftest --prefix desktop",
-    "engine:test": "python -m unittest discover -s engine/tests -v"
+    "engine:test": "engine\\.venv\\Scripts\\python -m pytest engine/tests"
   },
   "dependencies": {
     "@rdkit/rdkit": "2026.9.1",

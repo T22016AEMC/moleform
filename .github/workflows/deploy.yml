@@ -37,6 +37,52 @@ jobs:
         with:
           path: dist
 
+  # Python 引擎測試（任務 M00a）：含黃金比對。與 build 並行，不影響 build 與 deploy。
+  engine:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - run: pip install -r engine/requirements-dev.txt
+      - run: python -m pytest engine/tests -q
+
+  # 黃金檔過期檢查（任務 M00a）：重跑 scripts/golden/export-*.ts，與已提交的 tests/golden/*.json 比對。
+  # 只比對實質內容，排除 commit 欄位（記錄產生時的 HEAD，每次提交都會變）。
+  golden-fresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci
+      - name: 重新產生黃金檔
+        run: |
+          set -e
+          for f in scripts/golden/export-*.ts; do node "$f"; done
+      - name: 與已提交的黃金檔比對（排除 commit 欄位）
+        run: |
+          python3 - <<'PY'
+          import glob, json, subprocess, sys
+          stale = []
+          for path in sorted(p.replace("\\", "/") for p in glob.glob("tests/golden/*.json")):
+              committed = json.loads(subprocess.check_output(["git", "show", f"HEAD:{path}"]))
+              fresh = json.load(open(path, encoding="utf-8"))
+              committed.pop("commit", None)
+              fresh.pop("commit", None)
+              if committed != fresh:
+                  stale.append(path)
+          if stale:
+              print("::error::黃金檔已過期：TS 計算或資料表改了，請重產黃金檔"
+                    "（node scripts/golden/export-<module>.ts，並重跑 engine 測試後一起提交）。過期檔案：" + "、".join(stale))
+              sys.exit(1)
+          print("黃金檔與 TS 輸出一致")
+          PY
+
   # 暫停：D62，本機版不以部署為目標。要恢復時移除下一行的 if: false。
   deploy:
     if: false
