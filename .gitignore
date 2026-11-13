@@ -25,3 +25,8 @@ experiments/mmff-validation/data/
 
 # Reference papers (copyright; do not commit)
 docs/references/
+
+
+# 本機版（任務 039）：打包輸出與 Python 虛擬環境不提交
+desktop/release/
+engine/.venv/

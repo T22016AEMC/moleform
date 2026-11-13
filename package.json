@@ -24,7 +24,12 @@
     "verify:phase6-fv": "node scripts/verification/phase6-自由體積-經驗係數.ts",
     "verify:phase6-relative-tg": "node scripts/verification/phase6-相對Tg.ts",
     "verify:031":"node scripts/verification/031-補收驗證.ts",
-    "verify:031b": "node scripts/verification/031-第二批-補收驗證.ts"
+    "verify:031b": "node scripts/verification/031-第二批-補收驗證.ts",
+    "desktop:dev": "npm start --prefix desktop",
+    "desktop:pack": "npm run dist --prefix desktop",
+    "desktop:build": "npm run build && npm run dist --prefix desktop",
+    "desktop:selftest": "npm run selftest --prefix desktop",
+    "engine:test": "python -m unittest discover -s engine/tests -v"
   },
   "dependencies": {
     "@rdkit/rdkit": "^2026.9.1",

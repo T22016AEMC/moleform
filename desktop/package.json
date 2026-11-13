@@ -1,0 +1,62 @@
+{
+  "name": "moleform-desktop",
+  "private": true,
+  "version": "0.0.0",
+  "description": "MoleForm 本機版（Windows 桌面）原型：以 Electron 載入現有 dist，並啟動本機 Python 引擎（任務 039，D62）",
+  "author": "MoleForm",
+  "main": "main.cjs",
+  "scripts": {
+    "start": "node run.cjs",
+    "selftest": "node run.cjs --selftest=compare",
+    "selftest:persist": "node run.cjs --selftest=persist",
+    "dist": "electron-builder --win portable"
+  },
+  "devDependencies": {
+    "electron": "45.3.1",
+    "electron-builder": "26.18.0"
+  },
+  "build": {
+    "appId": "local.moleform.desktop",
+    "productName": "MoleForm",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "main.cjs",
+      "protocol.cjs",
+      "engine-host.cjs",
+      "selftest.cjs",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "../dist",
+        "to": "app-dist"
+      },
+      {
+        "from": "../engine",
+        "to": "engine",
+        "filter": [
+          "moleform_engine.py"
+        ]
+      }
+    ],
+    "electronFuses": {
+      "runAsNode": false,
+      "enableNodeOptionsEnvironmentVariable": false,
+      "enableNodeCliInspectArguments": false,
+      "enableEmbeddedAsarIntegrityValidation": true,
+      "onlyLoadAppFromAsar": true,
+      "grantFileProtocolExtraPrivileges": false
+    },
+    "win": {
+      "target": [
+        "portable"
+      ],
+      "signAndEditExecutable": false
+    },
+    "portable": {
+      "artifactName": "MoleForm-${version}-portable.exe"
+    }
+  }
+}
