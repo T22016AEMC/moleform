@@ -68,12 +68,24 @@ jobs:
         run: |
           python3 - <<'PY'
           import glob, json, subprocess, sys
+          def lf(v):
+              # csv.json 內嵌 src/data/*.csv 的原始文字；Windows 本機 autocrlf 檢出為 CRLF、CI（Linux）為 LF，
+              # 只對以實際資料檔為輸入的案例（parseCsv/data:* 與 readTable/*/real）把 CRLF 視為 LF，其餘案例（含刻意測 CRLF 的輸入）逐字比對。
+              if isinstance(v, str):
+                  return v.replace("\r\n", "\n")
+              if isinstance(v, list):
+                  return [lf(x) for x in v]
+              if isinstance(v, dict):
+                  return {k: lf(x) for k, x in v.items()}
+              return v
+          def norm(doc):
+              doc.pop("commit", None)
+              doc["cases"] = [lf(c) if c["id"].startswith("parseCsv/data:") or c["id"].endswith("/real") else c for c in doc["cases"]]
+              return doc
           stale = []
           for path in sorted(p.replace("\\", "/") for p in glob.glob("tests/golden/*.json")):
-              committed = json.loads(subprocess.check_output(["git", "show", f"HEAD:{path}"]))
-              fresh = json.load(open(path, encoding="utf-8"))
-              committed.pop("commit", None)
-              fresh.pop("commit", None)
+              committed = norm(json.loads(subprocess.check_output(["git", "show", f"HEAD:{path}"])))
+              fresh = norm(json.load(open(path, encoding="utf-8")))
               if committed != fresh:
                   stale.append(path)
           if stale:
