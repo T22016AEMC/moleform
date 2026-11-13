@@ -22,6 +22,7 @@
     "verify:phase6-dielectric": "node scripts/verification/phase6-介電-極化率.ts",
     "verify:phase6-cte": "node scripts/verification/phase6-自由體積-CTE.ts",
     "verify:phase6-fv": "node scripts/verification/phase6-自由體積-經驗係數.ts",
+    "verify:phase6-relative-tg": "node scripts/verification/phase6-相對Tg.ts",
     "verify:031":"node scripts/verification/031-補收驗證.ts",
     "verify:031b": "node scripts/verification/031-第二批-補收驗證.ts"
   },

@@ -260,6 +260,25 @@ MoleForm 的化學資料放在 `src/data/` 的四個 CSV。**目前只有任務 
 
 程式：`src/core/data/freeVolumeTables.ts`（格式與 RDKit 檢查）、`src/core/properties/freeVolume.ts`（切分、係數選擇、共聚物加權、Vf／Va）；測試 `tests/properties/freeVolume.test.ts`；輸出 `docs/verification/phase6-自由體積-經驗係數-輸出.md`（`npm run verify:phase6-fv`）。
 
+## 堆積係數 k 與純聚物 Tg 表（任務 038，D22、D43、D61）
+
+`src/data/packing_coefficient_k.csv`（50 列，UTF-8 含 BOM）：使用者 2026-11-07 提供的 k／Tg 表，由任務卡 `docs/tasks/038-relative-tg-ffv.md` 的表格以程式逐字轉錄。小寫 k＝堆積係數（Vω／V，無單位，0 到 1；程式稱 `packingK`），與大寫 K（Δα 覆寫值，K = 1／Δα，程式稱 `alphaOverride`）是不同的量。表中沒有 SMILES，不得自行補。表中的 Tg 是各材料的初始 Tg，不拿來互相運算或互相驗證。k 的溫度基準與定義、Tg 的來源論文與量測方法使用者未註明（待補）。
+
+| 欄位 | 說明 |
+|---|---|
+| `id` | PK01–PK50，依使用者表的順序 |
+| `結構類別` | 使用者表的類別（逐字）；任務 038 用來判斷 A、B 是否同一結構家族 |
+| `材料名稱` | 逐字；查表用精確比對，不重複 |
+| `k` | 堆積係數（逐字，保留末位的 0）；必須在 0 與 1 之間 |
+| `Tg原文` | 使用者的寫法（逐字）：數值、「下限–上限」（en dash）、前面加「約」、或「—」（沒有） |
+| `Tg下限`、`Tg上限` | °C；單一數值兩者相同，範圍取兩端，「—」留空；必須與 `Tg原文` 一致 |
+| `Tg近似` | true／false（`Tg原文` 有「約」為 true） |
+| `出處` | 「使用者提供的 k／Tg 表（來源論文待補），2026-11-07」；缺出處報錯（D22） |
+| `稽核狀態` | 目前只能是「待使用者審」 |
+| `備註` | 只放材料名稱本身帶的條件（未固化、250°C、加成型…），沒有其他說明或數值；可留空 |
+
+程式：`src/core/data/packingCoefficientK.ts`（讀取、格式檢查、查表 `resolvePackingK`、Tg 解析 `parseTgText`、表內 Tg `tableTgOf`）、`src/core/properties/relativeTg.ts`（簡易 Tg 相對估算）；測試 `tests/properties/packingK.test.ts`、`relativeTg.test.ts`；輸出 `docs/verification/phase6-相對Tg-輸出.md`（`npm run verify:phase6-relative-tg`）。
+
 
 - 讀取程式與檢查：`src/core/data/`（`csv.ts`、`readers.ts`、`validate.ts`、`chemcheck.ts`、`load.ts`）
 - 測試：`tests/data/`

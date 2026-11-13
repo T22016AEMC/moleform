@@ -141,6 +141,7 @@ U02 已由 D46 決定（任務 019）。
   - 補註（任務 036d）：經驗自由體積的芳香 C 依 Bondi Table XV 分 C–H 8.11、取代 5.54、縮合 4.74，並依 Table XVII 套用修正（D60）：`src/data/free_volume_groups.csv` 21 列、`src/data/free_volume_corrections.csv` 6 列；不勾選。
   - 補註（任務 037）：VW 缺基團以 Bondi (1964) 補充（D59）：`src/data/vw_groups_bondi.csv`（13 個基團 BG、5 個 Table XVII 修正 BC）、`src/core/data/vwGroupsBondi.ts`；書的基團先配對，補充結果標「含 Bondi 補充基團（非書值）」；環氧、五員雜環（醯亞胺、PBO、內酯）、籠狀環維持缺基團；結果見 `docs/reports/037-結果.md`，6.4 仍不勾選
   - 補註：Tg–Mn 文獻資料與 K 擬合（任務 035）已做：Lin-Gibson 2001 的鄰、對甲酚酚醛各自擬合 Tg∞ 與 K（異構物互檢誤差 ≤ 8 K，兩類收錄，低可信度，待使用者審）；BPA 環氧鏈只做參考擬合與 EPON 順序檢查，未收錄 K；ECN、PGMA 只登錄與觀察，不擬合；Szeluga 2008、Sadeghinia 2012 只記為驗證候選；`src/core/properties/tgFit.ts`、`novolacUnits.ts`，輸出 `docs/verification/phase6-Tg-混合-輸出.md` 第 7–9 節。6.7 仍不勾選
+  - 補註（任務 038，D61）：簡易 Tg 相對估算（任務 038，D61）：Tg_B = Tg_A − Δf／Δα，Δf =（Vf_B − Vf_A）／V_A（使用者 2026-11-13 指定的範例算法），Bondi 型 FFV = 1 − 1.3 × VvdW／Vm；`src/data/packing_coefficient_k.csv`（使用者的 k／Tg 表 50 列，「待使用者審」）、`src/core/data/packingCoefficientK.ts`、`src/core/properties/relativeTg.ts`（只有核心函式，沒有畫面），輸出 `docs/verification/phase6-相對Tg-輸出.md`，結果見 `docs/reports/038-結果.md`。6.7 不勾選
 - [ ] 6.8 每個公式的自動測試（檢查程式是否照公式算對）
 - [ ] 6.9 使用者驗證清單
   - 補註（僅供驗證，不作為程式輸入，D02）：使用者有配方**固化前** Tg 實測值，用於比對 6.7 混合配方 Tg（Fox／Gordon–Taylor）
