@@ -9,11 +9,17 @@
 //  - alphaOverride：Δα 覆寫值（大寫 K = 1／Δα，單位 K），使用者可選的輸入。packingK 與 alphaOverride 是不同的量，不可混用。
 //
 // 計算流程：
-//  1. 每個單體 i：VvdW_i（現有 VW 函式）；Vm_i 依序取 (1) 堆積係數 k（使用者輸入優先，其次 k 表依材料名稱精確比對）：Vm = VvdW／k；
-//     (1b) 不在 k 表也沒輸入 k：D57 的結構類別係數 c 換算 k = 1／(c + 1.3)（類別由現有 computeFreeVolumeUnit 取得，不重寫辨識），標「類別預設，非材料值」；
-//     (2) 使用者輸入的密度與結構單元質量：Vm = M／ρ；(3) 任務 029 的 Va（298 K），標「Va 估算」。都沒有 → 「缺莫耳體積」，不能把 VvdW 當 FFV 的替代。
+//  1. 每個單體 i：VvdW_i（現有 VW 函式）；Vm_i 依序取（任務 038c，使用者 2026-11-13 決定，取代任務 038 的順序）：
+//     (1) 堆積係數 k（使用者輸入優先，其次 k 表依材料名稱精確比對）：Vm = VvdW／k；
+//     (2) 使用者輸入的密度與結構單元質量：Vm = M／ρ（材料本身的密度比類別預設更貼近該材料）；
+//     (3) D57 的結構類別係數 c 換算 k = 1／(c + 1.3)（類別由現有 computeFreeVolumeUnit 取得，不重寫辨識），標「類別預設，非材料值」；
+//     (4) 任務 029 的 Va（298 K），標「Va 估算」。都沒有 → 「缺莫耳體積」，不能把 VvdW 當 FFV 的替代。
 //  2. Vf_i = Vm_i − 1.3 × VvdW_i。組成（均聚物是只有一項的組成）採理想體積加成（Gordon & Taylor 1952, J. Appl. Chem. 2, 493 的基礎假設）：
-//     V = Σ n_i·Vm_i、Vf = Σ n_i·Vf_i，n_i 為莫耳數（A、B 必須用同一基準，例如都以 1 mol 的 A 單元為準）。
+//     V = Σ n_i·Vm_i、Vf = Σ n_i·Vf_i，n_i 為莫耳數。
+//     莫耳數基準（任務 038c，使用者 2026-11-13 決定）：B 的組成一律以「A 的每 1 mol 重複單元」為基準，輸入各成分「每 1 mol A」的莫耳數。
+//     以比例輸入（B 的 basis = 'ratio'）時，先把參考成分（A 的重複單元）換算成 1 mol，其餘成分按比例換算：n_i = r_i／r_參考。
+//     例：Cardo：萘 = 1:1 → Cardo 1 mol ＋ 萘 1 mol；2:1 → Cardo 1 mol ＋ 萘 0.5 mol。
+//     不接受「分率加總為 1」當作此基準：B 以 mol 輸入且看起來像分率（兩項以上、總和為 1、每項小於 1）時警告「請以每 1 mol A 為基準輸入」，不自行換算。
 //  3. Bondi 型 FFV = 1 − 1.3 × VvdW／Vm（= Vf／V）。1.3 取自 van Krevelen & te Nijenhuis 2009 式 4.2（書頁 76）：V0(0)／VW ≈ 1.3（Bondi 的近似）；
 //     書沒有把它定義為自由體積，所以只稱「Bondi 型 FFV」。1.3 是固定常數（使用者 2026-11-07：不開放覆寫）。
 //  4. Δf =（Vf_B − Vf_A）／V_A（使用者 2026-11-13 指定的「範例算法」：B 視為 A 再增減或替換單元，分母只用 A 的體積）。
@@ -61,6 +67,10 @@ export const RELATIVE_TG_TABLE_B_NOTE = 'B 是 k／Tg 表內的材料且組成�
 export const RELATIVE_TG_FOX_LABEL = '比較用，與本法獨立';
 export const RELATIVE_TG_CALIBRATION_LABEL = '單一組校正，未經驗證';
 export const RELATIVE_TG_MOLE_WEIGHTED_LABEL = '莫耳加權近似';
+export const RELATIVE_TG_FRACTION_WARNING =
+  '請以每 1 mol A 為基準輸入：B 的莫耳數看起來是分率（總和為 1 且每項小於 1），基準不明；程式不自行換算（比例請用 basis「ratio」輸入）';
+/** 判斷「總和為 1」的容許差 */
+export const FRACTION_SUM_TOLERANCE = 1e-6;
 
 export const VM_SOURCE_LABELS = {
   userK: 'Vm 由使用者堆積係數估算（非實測）；堆積係數 k 為使用者輸入',
@@ -134,6 +144,21 @@ export function compositionVolumes(items: readonly VolumeItem[]): CompositionVol
   return { moles, vomega, vm, v0, vf: vm - v0, ffv: bondiFfv(vomega, vm) };
 }
 
+/**
+ * 比例 → 每 1 mol A 的莫耳數（任務 038c）：參考成分（A 的重複單元）換算成 1 mol，其餘按比例：n_i = r_i／r_參考。
+ * 例：[1, 1] → [1, 1]（Cardo 1 mol ＋ 萘 1 mol）；[2, 1] → [1, 0.5]（Cardo 1 mol ＋ 萘 0.5 mol）。比例不是正數或參考索引超出範圍時拋出
+ */
+export function molesPerMoleA(ratio: readonly number[], referenceIndex: number): number[] {
+  if (ratio.length === 0) throw new Error('比例是空的');
+  if (!Number.isInteger(referenceIndex) || referenceIndex < 0 || referenceIndex >= ratio.length) throw new Error(`參考成分的索引超出範圍：${referenceIndex}`);
+  if (!ratio.every(positive)) throw new Error('比例必須都是大於 0 的數字');
+  return ratio.map((r) => r / ratio[referenceIndex]);
+}
+
+/** 看起來像分率：兩項以上、每項小於 1、總和為 1（容許差 FRACTION_SUM_TOLERANCE） */
+export const looksLikeFractions = (amounts: readonly number[]): boolean =>
+  amounts.length >= 2 && amounts.every((x) => x < 1) && Math.abs(amounts.reduce((s, x) => s + x, 0) - 1) <= FRACTION_SUM_TOLERANCE;
+
 /** Δf =（Vf_B − Vf_A）／V_A（範例算法：分母只用 A 的體積） */
 export const freeVolumeIncrement = (a: CompositionVolumes, b: CompositionVolumes): number => (b.vf - a.vf) / a.vm;
 
@@ -199,6 +224,10 @@ export interface RelativeTgNumericItem {
 export interface RelativeTgNumericInput {
   a: readonly RelativeTgNumericItem[];
   b: readonly RelativeTgNumericItem[];
+  /** B 的 moles 單位：mol（每 1 mol A 的莫耳數，預設）或 ratio（比例，以 bReferenceIndex 的成分換算成 1 mol，見 molesPerMoleA） */
+  bBasis?: 'mol' | 'ratio';
+  /** bBasis 為 ratio 時必填：B 中參考成分（A 的重複單元）的索引；不自行猜 */
+  bReferenceIndex?: number;
   tgA: TemperatureInput;
   /** Δα 覆寫值 K（= 1／Δα，單位 K） */
   alphaOverride?: number;
@@ -214,6 +243,8 @@ export interface RelativeTgNumericResult {
   deltaAlphaB: number;
   tgAK: number;
   tgB: RelativeTgEstimate;
+  /** 例如 B 的莫耳數看起來是分率（RELATIVE_TG_FRACTION_WARNING） */
+  warnings: string[];
 }
 
 function numericItems(items: readonly RelativeTgNumericItem[]): VolumeItem[] {
@@ -226,13 +257,25 @@ function numericItems(items: readonly RelativeTgNumericItem[]): VolumeItem[] {
 
 /** 純計算：輸入各單體的 VvdW 與堆積係數 k（或 Vm）、莫耳數、A 的 Tg；與手算逐項比對用。輸入不合法時拋出 */
 export function relativeTgFromVolumes(input: RelativeTgNumericInput): RelativeTgNumericResult {
+  const warnings: string[] = [];
+  let bItems = input.b;
+  const bMoles = input.b.map((it) => it.moles ?? 1);
+  if (input.bBasis === 'ratio') {
+    if (input.bReferenceIndex === undefined) throw new Error('比例輸入必須指定參考成分（A 的重複單元）的索引');
+    const converted = molesPerMoleA(bMoles, input.bReferenceIndex);
+    bItems = input.b.map((it, i) => ({ ...it, moles: converted[i] }));
+  } else if (input.bBasis !== undefined && input.bBasis !== 'mol') {
+    throw new Error(`B 的 moles 單位只能是 mol 或 ratio：${String(input.bBasis)}`);
+  } else if (looksLikeFractions(bMoles)) {
+    warnings.push(RELATIVE_TG_FRACTION_WARNING);
+  }
   const a = compositionVolumes(numericItems(input.a));
-  const b = compositionVolumes(numericItems(input.b));
+  const b = compositionVolumes(numericItems(bItems));
   const tgAK = toKelvin(input.tgA);
   if (!positive(tgAK)) throw new Error('A 的 Tg 必須高於絕對零度');
   const deltaF = freeVolumeIncrement(a, b);
   const deltaAlphaA = deltaAlphaFromCte(a.vomega, a.vm);
-  return { a, b, deltaF, deltaAlphaA, deltaAlphaB: deltaAlphaFromCte(b.vomega, b.vm), tgAK, tgB: estimateTgB(tgAK, deltaF, deltaAlphaA, input.alphaOverride) };
+  return { a, b, deltaF, deltaAlphaA, deltaAlphaB: deltaAlphaFromCte(b.vomega, b.vm), tgAK, tgB: estimateTgB(tgAK, deltaF, deltaAlphaA, input.alphaOverride), warnings };
 }
 
 export type AlphaOverrideCalibration = { status: 'ok'; alphaOverride: number; label: string } | { status: 'rejected'; message: string };
@@ -256,11 +299,11 @@ export interface RelativeTgMonomerInput {
   name?: string;
   /** 重複單元（含連接點 *）或分子的 SMILES：VvdW、D57 類別、Va、單元質量都由它計算。k 表材料沒有 SMILES 時可省略（只能顯示 FFV = 1 − 1.3k） */
   smiles?: string;
-  /** 用量：莫耳數（組成的 basis 為 mol）或質量（basis 為 wt）；A、B 必須用同一基準。省略視為 1 */
+  /** 用量：每 1 mol A 的莫耳數（basis 為 mol）、質量（basis 為 wt）或比例（basis 為 ratio，只用於 B）。省略視為 1 */
   amount?: number;
   /** 使用者直接輸入的堆積係數 k（0 到 1）；優先於 k 表 */
   packingK?: number;
-  /** 使用者輸入的密度（g/cm³）；只有在沒有堆積係數 k 時才用 */
+  /** 使用者輸入的密度（g/cm³）；沒有堆積係數 k（使用者輸入或 k 表）時使用，優先於 D57 類別預設（任務 038c） */
   density?: number;
   /** 密度的溫度（°C）；省略視為 25 °C */
   densityTemperatureC?: number;
@@ -271,8 +314,13 @@ export interface RelativeTgMonomerInput {
 export interface RelativeTgCompositionInput {
   /** 組成清單；均聚物是只有一項的組成 */
   monomers: readonly RelativeTgMonomerInput[];
-  /** amount 的單位：mol（預設）或 wt（質量；以結構單元質量換成莫耳數） */
-  basis?: 'mol' | 'wt';
+  /**
+   * amount 的單位：mol（預設；B 為每 1 mol A 的莫耳數）、wt（質量；以結構單元質量換成莫耳數），
+   * 或 ratio（比例，只用於 B：以參考成分換算成每 1 mol A，見 molesPerMoleA；A 須為單一成分）
+   */
+  basis?: 'mol' | 'wt' | 'ratio';
+  /** basis 為 ratio 時 B 中參考成分（A 的重複單元）的索引；省略時取與 A 的單體名稱或 SMILES 相同的那一項（恰好一項時），否則拒絕 */
+  referenceIndex?: number;
   /** Mn（選填）：只用來顯示 A、B 的 Mn 比值 */
   mn?: number;
 }
@@ -439,10 +487,11 @@ function evaluateMonomer(RDKit: RDKitModule, m: RelativeTgMonomerInput, basis: '
     missing.push({ what: 'VW', message: '缺 VW：沒有結構（k／Tg 表不含 SMILES），請提供重複單元的 SMILES' });
   }
 
-  // ---- 堆積係數 k：使用者輸入 ＞ k 表（名稱精確比對）＞ D57 類別預設 ----
+  // ---- 堆積係數 k：使用者輸入 ＞ k 表（名稱精確比對）；都沒有且沒有可用的密度時才用 D57 類別預設（任務 038c） ----
   const row = name !== null ? findPackingKRow(name, rows) : null;
   let packingK: number | null = null;
   let packingKSource: RelativeTgMonomerResult['packingKSource'] = null;
+  const densityUsable = m.packingK === undefined && row === null && m.density !== undefined && mass !== null;
   if (m.packingK !== undefined) {
     packingK = m.packingK;
     packingKSource = 'user';
@@ -451,7 +500,9 @@ function evaluateMonomer(RDKit: RDKitModule, m: RelativeTgMonomerInput, basis: '
     packingKSource = 'table';
   } else {
     if (name !== null) notes.push(`${PACKING_K_NOT_FOUND}：${name}`);
-    if (smiles !== null) {
+    if (densityUsable) {
+      notes.push('已輸入密度：Vm 用密度，D57 類別預設沒有使用（取得順序：堆積係數 k ＞ 密度 ＞ 類別預設 ＞ Va）');
+    } else if (smiles !== null) {
       const fv = computeFreeVolumeUnit(RDKit, smiles);
       if (fv.status === 'ok') {
         packingK = packingKFromClassCoefficient(fv.coefficient.coefficient);
@@ -463,15 +514,21 @@ function evaluateMonomer(RDKit: RDKitModule, m: RelativeTgMonomerInput, basis: '
     }
   }
 
-  // ---- Vm：堆積係數 k ＞ 使用者密度 ＞ Va ----
+  // ---- Vm：堆積係數 k（使用者輸入、k 表）＞ 使用者密度 ＞ D57 類別預設 ＞ Va（任務 038c；密度可用時不會有類別預設的 k） ----
   let vm: number | null = null;
   let vmSource: VmSource | null = null;
   let vmTemperatureK: number | null = null;
   if (packingK !== null) {
     vmSource = packingKSource === 'user' ? 'userK' : packingKSource === 'table' ? 'tableK' : 'classK';
     if (vomega !== null) vm = vmFromPackingK(vomega, packingK);
-    if (m.density !== undefined) notes.push('已輸入密度，但堆積係數 k 優先（取得順序：堆積係數 k ＞ 密度 ＞ Va），密度沒有使用');
-  } else if (m.density !== undefined && mass !== null) {
+    if (m.density !== undefined) {
+      notes.push(
+        packingKSource === 'class'
+          ? '已輸入密度，但缺結構單元質量（缺 VW），無法由密度算 Vm'
+          : '已輸入密度，但堆積係數 k 優先（取得順序：堆積係數 k ＞ 密度 ＞ 類別預設 ＞ Va），密度沒有使用',
+      );
+    }
+  } else if (densityUsable && m.density !== undefined && mass !== null) {
     vm = mass / m.density;
     vmSource = 'density';
     vmTemperatureK = (m.densityTemperatureC ?? DEFAULT_DENSITY_TEMPERATURE_C) + KELVIN_OFFSET;
@@ -522,7 +579,7 @@ function evaluateMonomer(RDKit: RDKitModule, m: RelativeTgMonomerInput, basis: '
 function evaluateSide(RDKit: RDKitModule, comp: RelativeTgCompositionInput, sideName: string, rows: readonly PackingKRow[]): SideEval | Rejection {
   if (comp.monomers.length === 0) return reject('INVALID_INPUT', `${sideName}：組成是空的`);
   const basis = comp.basis ?? 'mol';
-  if (basis !== 'mol' && basis !== 'wt') return reject('INVALID_INPUT', `${sideName}：用量的單位只能是 mol 或 wt`);
+  if (basis !== 'mol' && basis !== 'wt') return reject('INVALID_INPUT', `${sideName}：用量的單位只能是 mol 或 wt（比例 ratio 只用於 A、B 比較時的 B）`);
   if (comp.mn !== undefined && !positive(comp.mn)) return reject('INVALID_INPUT', `${sideName}：Mn 必須是大於 0 的數字：${comp.mn}`);
   const monomers: MonomerEval[] = [];
   for (const m of comp.monomers) {
@@ -612,6 +669,35 @@ function foxComparison(b: SideEval): FoxComparison | null {
 
 const fmt = (v: number, digits = 4): string => String(Number(v.toPrecision(digits)));
 
+const sameMonomerInput = (x: RelativeTgMonomerInput, y: RelativeTgMonomerInput): boolean =>
+  (x.name !== undefined && x.name !== '' && x.name === y.name) || (x.smiles !== undefined && x.smiles.trim() !== '' && x.smiles.trim() === y.smiles?.trim());
+
+/**
+ * B 以比例輸入（basis = 'ratio'）時換算成每 1 mol A 的莫耳數（任務 038c）。參考成分：referenceIndex，
+ * 省略時取與 A（單一成分）名稱或 SMILES 相同的那一項（恰好一項）；找不到或不只一項時拒絕，不猜。
+ */
+function ratioToMolesPerA(a: RelativeTgCompositionInput, b: RelativeTgCompositionInput): { comp: RelativeTgCompositionInput; note: string } | Rejection {
+  if (a.monomers.length !== 1) return reject('INVALID_INPUT', 'B：比例輸入需換算成每 1 mol A，A 必須是單一成分；A 是共聚物時請直接輸入每 1 mol A 的莫耳數（basis mol）');
+  let ref = b.referenceIndex;
+  if (ref === undefined) {
+    const matches = b.monomers.map((m, i) => (sameMonomerInput(a.monomers[0], m) ? i : -1)).filter((i) => i >= 0);
+    if (matches.length !== 1) return reject('INVALID_INPUT', `B：比例輸入找不到唯一的參考成分（與 A 相同名稱或 SMILES 的成分有 ${matches.length} 項），請指定 referenceIndex`);
+    ref = matches[0];
+  }
+  const ratio = b.monomers.map((m) => m.amount ?? 1);
+  let moles: number[];
+  try {
+    moles = molesPerMoleA(ratio, ref);
+  } catch (e) {
+    return reject('INVALID_INPUT', `B：${(e as Error).message}`);
+  }
+  const labels = b.monomers.map((m) => m.name || m.smiles || '');
+  return {
+    comp: { ...b, basis: 'mol', monomers: b.monomers.map((m, i) => ({ ...m, amount: moles[i] })) },
+    note: `B 以比例 ${ratio.map((r) => fmt(r)).join(':')} 輸入，以「${labels[ref]}」為參考成分換算成每 1 mol A：${labels.map((l, i) => `${l} ${fmt(moles[i])} mol`).join('、')}`,
+  };
+}
+
 /**
  * 簡易 Tg 相對估算（結構輸入）。A、B 各為組成清單（均聚物只有一項）；任意比例、換單體、增減單元都用同一個算式：
  * Δf =（Vf_B − Vf_A）／V_A、Tg_B = Tg_A − Δf／Δα。
@@ -623,9 +709,20 @@ export function relativeTg(RDKit: RDKitModule, input: RelativeTgInput, options: 
     tgAUser = toKelvin(input.tgA);
     if (!positive(tgAUser)) return { status: 'rejected', code: 'INVALID_INPUT', message: `A 的 Tg 必須是高於絕對零度的數字：${input.tgA.value} ${input.tgA.unit === 'K' ? 'K' : '°C'}` };
   }
+  // ---- 莫耳數基準（任務 038c）：B 以每 1 mol A 為基準；比例先換算；看起來像分率時警告，不猜 ----
+  if (input.a.basis === 'ratio') return { status: 'rejected', code: 'INVALID_INPUT', message: 'A：比例輸入只用於 B（換算成每 1 mol A）；A 的組成請以 mol 或 wt 輸入' };
+  let bComp = input.b;
+  let basisNote: string | null = null;
+  if (input.b.basis === 'ratio') {
+    const c = ratioToMolesPerA(input.a, input.b);
+    if ('rejected' in c) return { status: 'rejected', ...c.rejected };
+    bComp = c.comp;
+    basisNote = c.note;
+  }
+  const fractionWarning = (input.b.basis ?? 'mol') === 'mol' && looksLikeFractions(input.b.monomers.map((m) => m.amount ?? 1));
   const ea = evaluateSide(RDKit, input.a, 'A', rows);
   if ('rejected' in ea) return { status: 'rejected', ...ea.rejected };
-  const eb = evaluateSide(RDKit, input.b, 'B', rows);
+  const eb = evaluateSide(RDKit, bComp, 'B', rows);
   if ('rejected' in eb) return { status: 'rejected', ...eb.rejected };
   const a = ea.side;
   const b = eb.side;
@@ -643,8 +740,8 @@ export function relativeTg(RDKit: RDKitModule, input: RelativeTgInput, options: 
     };
   }
 
-  const warnings: string[] = [];
-  const notes: string[] = [RELATIVE_TG_INCREMENT_NOTE, RELATIVE_TG_FFV_NOTE];
+  const warnings: string[] = fractionWarning ? [RELATIVE_TG_FRACTION_WARNING] : [];
+  const notes: string[] = [RELATIVE_TG_INCREMENT_NOTE, RELATIVE_TG_FFV_NOTE, ...(basisNote !== null ? [basisNote] : [])];
   const missing: RelativeTgMissing[] = [
     ...ea.monomers.flatMap((e) => e.missing.map((x) => ({ side: 'A' as const, monomer: e.result.label, ...x }))),
     ...eb.monomers.flatMap((e) => e.missing.map((x) => ({ side: 'B' as const, monomer: e.result.label, ...x }))),

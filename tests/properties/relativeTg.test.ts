@@ -21,7 +21,10 @@ import {
   deltaAlphaFromCte,
   evaluateRelativeTgComposition,
   ffvFromPackingK,
+  looksLikeFractions,
+  molesPerMoleA,
   packingKFromClassCoefficient,
+  RELATIVE_TG_FRACTION_WARNING,
   relativeTg,
   relativeTgFromVolumes,
   type RelativeTgInput,
@@ -267,16 +270,19 @@ describe('由結構計算：均聚物、同一結構、退階', () => {
     expect(r.b.monomers[0].ffv).toBeCloseTo(1 - 1.3 * 0.66, 12);
   });
 
-  it('退階 (2)：沒有堆積係數 k 時用使用者密度（Vm = M／ρ）；有 k 時密度不使用並註明', () => {
+  it('退階 (2)：沒有堆積係數 k 時用使用者密度（Vm = M／ρ）；有 k（使用者輸入或 k 表）時密度不使用並註明', () => {
     const mass = (computeVdwVolume(RDKit, PVC) as { formulaMass: number }).formulaMass;
     const r = done(run({ a: { monomers: [{ smiles: PVC, density: 1.4 }] }, b: { monomers: [{ smiles: PVC, density: 1.35 }] }, tgA: { value: 80, unit: 'C' } }));
     expect(r.a.monomers[0]).toMatchObject({ vmSource: 'density', packingK: null });
     expect(r.a.monomers[0].vm).toBeCloseTo(mass / 1.4, 9);
     expect(r.a.monomers[0].vmTemperatureK).toBeCloseTo(298.15, 9);
     expect(r.deltaF).toBeCloseTo((mass / 1.35 - mass / 1.4) / (mass / 1.4), 9);
-    const withK = done(run({ a: { monomers: [{ smiles: PS, density: 1.05 }] }, b: { monomers: [{ smiles: PS }] } }));
-    expect(withK.a.monomers[0].vmSource).toBe('classK');
-    expect(withK.a.monomers[0].notes.join('；')).toContain('密度沒有使用');
+    const tableK = done(run({ a: { monomers: [{ name: 'PMMA', smiles: PMMA, density: 1.18 }] }, b: { monomers: [{ smiles: PMMA }] } }));
+    expect(tableK.a.monomers[0]).toMatchObject({ vmSource: 'tableK', packingK: 0.66 });
+    expect(tableK.a.monomers[0].notes.join('；')).toContain('密度沒有使用');
+    const userK = done(run({ a: { monomers: [{ smiles: PS, packingK: 0.6, density: 1.05 }] }, b: { monomers: [{ smiles: PS }] } }));
+    expect(userK.a.monomers[0]).toMatchObject({ vmSource: 'userK', packingK: 0.6 });
+    expect(userK.a.monomers[0].notes.join('；')).toContain('密度沒有使用');
   });
 
   it('缺 VW（缺基團）：明確回報、不計算、不輸出 Tg_B', () => {
@@ -523,6 +529,99 @@ describe('Fox 混合式的並列比較（重用任務 034 的 foxMix；與本法
     expect(given.fox?.status).toBe('ok');
     expect(given.tgB).toEqual(missing.tgB);
     expect(done(run({ a: { monomers: [pmma(1)] }, b: { monomers: [{ smiles: PS }] }, tgA })).fox).toBeNull();
+  });
+});
+
+describe('莫耳數基準固定為每 1 mol A（任務 038c）', () => {
+  const cardo = { vomega: 242.4, packingK: 0.628 };
+  const naph = { vomega: 81.1, packingK: 0.628 };
+  const tgA = { value: 350, unit: 'C' as const };
+  const dfPerMoleNaph = (1 - 1.3 * 0.628) * (81.1 / 242.4);
+  const dAlpha = 0.55e-3 * 0.628;
+
+  it('molesPerMoleA：1:1 → 1＋1；2:1 → 1＋0.5；參考成分可在任一位置；不合法時拋出', () => {
+    expect(molesPerMoleA([1, 1], 0)).toEqual([1, 1]);
+    expect(molesPerMoleA([2, 1], 0)).toEqual([1, 0.5]);
+    expect(molesPerMoleA([1, 2], 1)).toEqual([0.5, 1]);
+    expect(molesPerMoleA([0.5, 0.5], 0)).toEqual([1, 1]);
+    expect(() => molesPerMoleA([1, 1], 2)).toThrow();
+    expect(() => molesPerMoleA([1, 0], 0)).toThrow();
+    expect(() => molesPerMoleA([], 0)).toThrow();
+  });
+
+  it('驗收範例不變：Cardo：萘 = 1:1（比例）與直接輸入 1＋1 mol 相同，Δf = 0.061427、Tg_B = 172.16 °C', () => {
+    const direct = relativeTgFromVolumes({ a: [cardo], b: [cardo, naph], tgA });
+    const ratio = relativeTgFromVolumes({ a: [cardo], b: [{ ...cardo, moles: 1 }, { ...naph, moles: 1 }], bBasis: 'ratio', bReferenceIndex: 0, tgA });
+    for (const r of [direct, ratio]) {
+      expect(Number(r.deltaF.toFixed(6))).toBe(0.061427);
+      expect(r.tgB.status === 'ok' && Number(r.tgB.tgC.toFixed(2))).toBe(172.16);
+      expect(r.warnings).toEqual([]);
+    }
+    expect(ratio.deltaF).toBe(direct.deltaF);
+  });
+
+  it('P 樹脂 2:1（Cardo 1 mol ＋ 萘 0.5 mol）：Δf ≈ 0.0307，與手算相同', () => {
+    const r = relativeTgFromVolumes({ a: [cardo], b: [{ ...cardo, moles: 2 }, { ...naph, moles: 1 }], bBasis: 'ratio', bReferenceIndex: 0, tgA });
+    expect(r.b.moles).toBeCloseTo(1.5, 12);
+    expect(r.deltaF).toBeCloseTo(0.5 * dfPerMoleNaph, 12);
+    expect(Number(r.deltaF.toFixed(4))).toBe(0.0307);
+    expect(r.tgB.status === 'ok' && r.tgB.tgC).toBeCloseTo(350 - (0.5 * dfPerMoleNaph) / dAlpha, 9);
+  });
+
+  it('看起來像分率（0.5＋0.5）：警告「請以每 1 mol A 為基準輸入」，不自行換算', () => {
+    const r = relativeTgFromVolumes({ a: [cardo], b: [{ ...cardo, moles: 0.5 }, { ...naph, moles: 0.5 }], tgA });
+    expect(r.warnings).toEqual([RELATIVE_TG_FRACTION_WARNING]);
+    expect(RELATIVE_TG_FRACTION_WARNING).toContain('請以每 1 mol A 為基準輸入');
+    expect(r.b.moles).toBe(1);
+    expect(r.deltaF).toBeCloseTo((0.5 * (242.4 + 81.1) * (1 / 0.628 - 1.3) - 242.4 * (1 / 0.628 - 1.3)) / (242.4 / 0.628), 12);
+    expect(looksLikeFractions([0.7, 0.3])).toBe(true);
+    expect(looksLikeFractions([1, 1])).toBe(false);
+    expect(looksLikeFractions([1])).toBe(false);
+    expect(looksLikeFractions([0.5, 0.4])).toBe(false);
+    expect(() => relativeTgFromVolumes({ a: [cardo], b: [cardo, naph], bBasis: 'ratio', tgA })).toThrow();
+  });
+
+  it('由結構計算：B 以比例輸入，參考成分自動取與 A 相同的單體；換算註明於備註', () => {
+    const a = { monomers: [{ smiles: PS, packingK: 0.6 }] };
+    const mol = estimate(run({ a, b: { monomers: [{ smiles: PS, packingK: 0.6, amount: 1 }, { smiles: PE, packingK: 0.6, amount: 0.5 }] }, tgA }));
+    const ratio = estimate(run({ a, b: { basis: 'ratio', monomers: [{ smiles: PE, packingK: 0.6, amount: 1 }, { smiles: PS, packingK: 0.6, amount: 2 }] }, tgA }));
+    expect(ratio.b.monomers.map((m) => m.moles)).toEqual([0.5, 1]);
+    expect(ratio.deltaF).toBeCloseTo(mol.deltaF as number, 12);
+    expect(ratio.deltaF).toBeCloseTo(0.5 * (1 - 1.3 * 0.6) * (VW.PE / VW.PS), 9);
+    expect(ratio.notes.some((n) => n.includes('換算成每 1 mol A'))).toBe(true);
+    expect(ratio.warnings).not.toContain(RELATIVE_TG_FRACTION_WARNING);
+    const explicit = estimate(run({ a, b: { basis: 'ratio', referenceIndex: 1, monomers: [{ smiles: PE, packingK: 0.6, amount: 1 }, { smiles: PS, packingK: 0.6, amount: 2 }] }, tgA }));
+    expect(explicit.deltaF).toBe(ratio.deltaF);
+  });
+
+  it('由結構計算：B 以 mol 輸入且像分率時警告；比例輸入不明時拒絕（不猜參考成分）', () => {
+    const a = { monomers: [{ smiles: PS }] };
+    const frac = done(run({ a, b: { monomers: [{ smiles: PS, amount: 0.5 }, { smiles: PE, amount: 0.5 }] }, tgA }));
+    expect(frac.warnings).toContain(RELATIVE_TG_FRACTION_WARNING);
+    expect(done(run({ a, b: { monomers: [{ smiles: PS, amount: 1 }, { smiles: PE, amount: 1 }] }, tgA })).warnings).not.toContain(RELATIVE_TG_FRACTION_WARNING);
+    expect(run({ a, b: { basis: 'ratio', monomers: [{ smiles: PE }, { smiles: PVC }] }, tgA })).toMatchObject({ status: 'rejected', code: 'INVALID_INPUT' });
+    expect(run({ a: { monomers: [pmma(1), tbma(1)] }, b: { basis: 'ratio', referenceIndex: 0, monomers: [pmma(2), tbma(1)] } })).toMatchObject({ status: 'rejected', code: 'INVALID_INPUT' });
+    expect(run({ a: { basis: 'ratio', monomers: [{ smiles: PS }] }, b: a })).toMatchObject({ status: 'rejected', code: 'INVALID_INPUT' });
+    expect(run({ a, b: { basis: 'ratio', referenceIndex: 5, monomers: [{ smiles: PS }, { smiles: PE }] } })).toMatchObject({ status: 'rejected', code: 'INVALID_INPUT' });
+  });
+});
+
+describe('Vm 取得順序：堆積係數 k ＞ 使用者密度 ＞ D57 類別預設 ＞ Va（任務 038c）', () => {
+  it('不在 k 表、沒輸入 k：有密度時用密度（不用類別預設）；沒有密度時回到類別預設', () => {
+    const mass = (computeVdwVolume(RDKit, PS) as { formulaMass: number }).formulaMass;
+    const withDensity = done(run({ a: { monomers: [{ smiles: PS, density: 1.05 }] }, b: { monomers: [{ smiles: PS, density: 1.05 }] } }));
+    expect(withDensity.a.monomers[0]).toMatchObject({ vmSource: 'density', packingK: null, packingKSource: null });
+    expect(withDensity.a.monomers[0].vm).toBeCloseTo(mass / 1.05, 9);
+    expect(withDensity.a.monomers[0].ffv).toBeCloseTo(1 - (1.3 * VW.PS) / (mass / 1.05), 6);
+    expect(withDensity.a.monomers[0].notes.join('；')).toContain('D57 類別預設沒有使用');
+    const noDensity = done(run({ a: { monomers: [{ smiles: PS }] }, b: { monomers: [{ smiles: PS }] } }));
+    expect(noDensity.a.monomers[0]).toMatchObject({ vmSource: 'classK', packingKSource: 'class' });
+    expect(noDensity.a.monomers[0].packingK).toBeCloseTo(K_AROMATIC, 12);
+  });
+
+  it('D57 缺基團且沒有密度：退到 Va；有密度時用密度', () => {
+    expect(done(run({ a: { monomers: [{ smiles: PVC }] }, b: { monomers: [{ smiles: PVC }] } })).a.monomers[0].vmSource).toBe('va');
+    expect(done(run({ a: { monomers: [{ smiles: PVC, density: 1.4 }] }, b: { monomers: [{ smiles: PVC, density: 1.4 }] } })).a.monomers[0].vmSource).toBe('density');
   });
 });
 
