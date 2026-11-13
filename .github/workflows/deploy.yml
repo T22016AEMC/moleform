@@ -37,7 +37,9 @@ jobs:
         with:
           path: dist
 
+  # 暫停：D62，本機版不以部署為目標。要恢復時移除下一行的 if: false。
   deploy:
+    if: false
     needs: build
     runs-on: ubuntu-latest
     environment:

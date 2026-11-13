@@ -128,7 +128,7 @@ U02 已由 D46 決定（任務 019）。
 開工前需要使用者決定：使用者需先在 Windows 電腦安裝 Python（版本與安裝方式於 6A.0 盤點時確認）
 
 - [x] 6A.0 盤點現有架構與離線障礙（任務 039 的 A；見 `docs/reports/039-結果.md`）
-- [x] 6A.1 Windows 桌面外殼：Electron 封裝現有網頁（任務 039 的 B-1 到 B-5；原型 `desktop/`，app:// 載入 dist，可攜式 exe）
+- [x] 6A.1 Windows 桌面外殼：Electron 封裝現有網頁（任務 039 的 B-1 到 B-5；原型 `desktop/`，app:// 載入 dist，可攜式 exe）（補註：deploy 已暫停（任務 039b））
 - [x] 6A.2 Python 計算引擎原型：只監聽 127.0.0.1；資料格式含值、單位、來源、狀態（`measured / literature / fitted / predicted / assumed / missing`）（任務 039 的 B-6；原型 `engine/`，只握手、不含公式；Python 打包方式待使用者決定）
 - [ ] 6A.3 搬遷盤點：列出每個現有計算模組、依賴與對應測試，訂搬遷順序（新模組要用到的核心鏈優先：VW、Va、莫耳體積與密度、Tg、CTE）。規則：以 TypeScript 輸出為黃金標準，Python 版逐字相同才停用 TypeScript 版；過渡期用開關切換，預設用 TypeScript
 - [ ] 6A.4 計算模組逐一搬遷（每模組一張卡，通過黃金比對才算完成）

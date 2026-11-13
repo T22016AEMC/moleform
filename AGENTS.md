@@ -59,13 +59,13 @@ MoleForm（化學配方物性與交聯預測引擎）是一個網頁程式：輸
 
 ## 技術堆疊
 
-架構已定為**純前端**（DECISIONS D33）：Vite + React + TypeScript + Vitest，套件管理器 **npm**（D20），部署為公開靜態網站（D24），資料只存使用者自己的電腦（D23）。
+架構依 D62、D63：介面與桌面外殼為 **TypeScript**（Vite + React + Electron + Vitest），套件管理器 **npm**（D20）；計算引擎最終在 **Python**，只在本機以 127.0.0.1 內部連線，不對外、不連外網，以內嵌方式打包（D63）；資料只存使用者自己的電腦（D23）。
 
 - 2D、SMILES／SMARTS、描述子：RDKit.js（`@rdkit/rdkit`，與 CheMScutter 同版本）
 - 3D 構象與 MMFF94 最佳化：OpenChemLib JS（`openchemlib`），在 Web Worker 中執行；使用前須先載入 `resources.json`
 - 2D 繪圖：Ketcher，iframe 獨立子專案（D28）
 
-不得加入伺服器、資料庫或 Python 執行環境。成熟 Python 套件（例如 thermo／chemicals）的內建數值只能**轉錄成資料表**使用（D18，標出套件名稱、版本與原始文獻），不能在執行時呼叫。
+不得加入對外的伺服器或資料庫；Python 引擎只限本機 127.0.0.1 內部連線。成熟 Python 套件（例如 thermo／chemicals）的內建數值只能**轉錄成資料表**使用（D18，標出套件名稱、版本與原始文獻），不能在執行時呼叫。
 
 ## 與其他專案的關係
 
