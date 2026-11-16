@@ -11,6 +11,7 @@ import type { PolymerSpec, RepeatUnitAnalysis } from '../../core/polymer/types';
 import { analyzeRepeatUnitInWorker, averageWeightOf } from '../../worker/client';
 import { CrosslinkPage } from '../crosslink/CrosslinkPage';
 import { UnifiedNote } from '../components/UnifiedNote';
+import { EnginePropertiesBlock } from '../engine/EnginePropertiesBlock';
 import { FormulationLibrary } from '../formulation/FormulationLibrary';
 import {
   emptyState,
@@ -483,8 +484,9 @@ export function Workbench({ storage }: Props) {
   }, [polymerTargets, units]);
 
   const ready = needed.every((s) => s in weights);
-  const outcome = useMemo<FormulationOutcome | null>(() => {
-    if (!ready) return null;
+  // 成分 id → 每分子質量（小分子）或 Mn（聚合物）；同一份換算結果也交給「物性（Python 引擎）」面板（任務 I01）
+  const { outcome, mnById } = useMemo<{ outcome: FormulationOutcome | null; mnById: Record<string, number | undefined> }>(() => {
+    if (!ready) return { outcome: null, mnById: {} };
     const byId: Record<string, number | undefined> = {};
     const unitWeights: Record<string, number | undefined> = {};
     for (const c of [...debounced.solid.components, ...debounced.liquid.components]) {
@@ -498,7 +500,7 @@ export function Workbench({ storage }: Props) {
         byId[c.id] = weights[c.canonicalSmiles] ?? undefined;
       }
     }
-    return computeFormulation(debounced, byId, { unitWeights });
+    return { outcome: computeFormulation(debounced, byId, { unitWeights }), mnById: byId };
   }, [debounced, weights, ready, units]);
 
   // 新加入、尚未填用量的成分先不顯示數值錯誤（輸入過或離開欄位後才顯示）
@@ -644,6 +646,7 @@ export function Workbench({ storage }: Props) {
               <UnifiedNote />
             </div>
           </ResultBlock>
+          <EnginePropertiesBlock formulation={debounced} outcome={outcome} mnById={mnById} />
           <CrosslinkPage formulation={formulation} />
         </div>
       </div>

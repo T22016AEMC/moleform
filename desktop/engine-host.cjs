@@ -61,7 +61,7 @@ function startEngine(engineDir) {
   const token = crypto.randomBytes(32).toString('hex');
   const t0 = Date.now();
   const child = spawn(python, ['-I', '-u', script], { stdio: ['pipe', 'pipe', 'pipe'], windowsHide: true });
-  const engine = { child, token, port: 0, python, pid: child.pid, startMs: 0, stderr: '' };
+  const engine = { child, token, host: '127.0.0.1', port: 0, python, pid: child.pid, startMs: 0, stderr: '' };
   child.stderr.on('data', (d) => {
     engine.stderr = (engine.stderr + d.toString('utf8')).slice(-4000);
   });
@@ -137,4 +137,4 @@ async function handshake(engine) {
   return { hello, demo: { request: { quantity: sample }, response: demo }, rejected, handshakeMs };
 }
 
-module.exports = { findPython, startEngine, stopEngine, handshake };
+module.exports = { findPython, startEngine, stopEngine, handshake, request };

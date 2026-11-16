@@ -183,6 +183,120 @@ async function compare(ctx, out) {
   }
 }
 
+// ---- engine 模式（任務 I01）：桌面版啟動引擎 → 面板算出 Tg、Vm → 與引擎直接呼叫比對 → 關閉後行程與埠已釋放 ----
+const PMMA = '[*:1]CC([*:2])(C)C(=O)OC';
+const ENGINE_SCENARIO = `(async () => {
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  const waitFor = async (fn, ms, label) => {
+    const t = Date.now();
+    while (Date.now() - t < ms) { const v = fn(); if (v) return v; await sleep(100); }
+    throw new Error('timeout: ' + label);
+  };
+  const setValue = (el, v) => {
+    Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(el, v);
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+  };
+  const setSelect = (el, v) => {
+    Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value').set.call(el, v);
+    el.dispatchEvent(new Event('change', { bubbles: true }));
+  };
+  const addComponent = async (smiles, polymerValue, amount, index) => {
+    (await waitFor(() => document.querySelector('button.add-component'), 60000, 'add button')).click();
+    setValue(await waitFor(() => document.querySelector('#add-smiles'), 10000, 'smiles input'), smiles);
+    if (polymerValue) {
+      const radio = await waitFor(() => [...document.querySelectorAll('.modal .polymer-basis label.check')].find((l) => l.textContent.trim() === 'Mn（g/mol）')?.querySelector('input'), 60000, 'basis radio');
+      if (!radio.checked) radio.click();
+      setValue(await waitFor(() => document.querySelector('.modal input[aria-label="Mn（g/mol）"]'), 10000, 'polymer value input'), polymerValue);
+    }
+    (await waitFor(() => [...document.querySelectorAll('.modal button')].find((b) => b.textContent.trim() === '加入' && !b.disabled), 60000, 'add enabled')).click();
+    await waitFor(() => !document.querySelector('.modal'), 10000, 'modal closed');
+    const amounts = await waitFor(() => { const a = document.querySelectorAll('input[aria-label$=" 用量"]'); return a.length === index + 1 ? a : null; }, 10000, 'amount input');
+    setValue(amounts[index], amount);
+  };
+  const readRows = () => [...document.querySelectorAll('#block-engine-properties tbody tr')].map((tr) => [...tr.children].map((c) => c.innerText.trim()));
+  const settle = async (select, value) => {
+    setSelect(select, value);
+    let last = '', since = performance.now();
+    const t0 = performance.now();
+    while (performance.now() - t0 < 120000) {
+      const txt = document.querySelector('#block-engine-properties').innerText;
+      if (txt !== last) { last = txt; since = performance.now(); }
+      else if (performance.now() - since > 1500 && !/計算中|啟動中/.test(txt)) break;
+      await sleep(200);
+    }
+    return readRows();
+  };
+  await addComponent('${PMMA}', '10000', '90', 0);
+  await addComponent('CCO', '', '10', 1);
+  const select = await waitFor(() => document.querySelector('#engine-target'), 60000, 'engine panel (引擎是否啟動？)');
+  const optionOf = (name) => [...select.options].find((o) => o.textContent === name)?.value;
+  const polymerId = await waitFor(() => optionOf('成分 1'), 10000, 'option 成分 1');
+  const smallId = await waitFor(() => optionOf('成分 2'), 10000, 'option 成分 2');
+  const polymerRows = await settle(select, polymerId);
+  const smallRows = await settle(select, smallId);
+  const formulationRows = await settle(select, '__formulation__');
+  // 橋接：同一個 SMILES 直接問引擎（經 preload 的 window.moleformEngine）
+  const bridge = {
+    keys: Object.keys(window.moleformEngine),
+    tg: await window.moleformEngine.call('/tg', { smiles: '${PMMA}' }),
+    vm: await window.moleformEngine.call('/vm', { smiles: '${PMMA}' }),
+    forbidden: await window.moleformEngine.call('/handshake', {}),
+    url: await window.moleformEngine.call('http://example.com/tg', { smiles: 'CC' }),
+  };
+  return { polymerRows, smallRows, formulationRows, bridge, windowKeys: Object.keys(window).filter((k) => /token|engine|port/i.test(k)) };
+})()`;
+
+function runPython(python, engineDir, code) {
+  const { execFileSync } = require('node:child_process');
+  return JSON.parse(execFileSync(python, ['-I', '-c', `import sys, json; sys.path.insert(0, ${JSON.stringify(engineDir)}); ${code}`], { encoding: 'utf8', windowsHide: true }));
+}
+
+function descendantsAlive(pid) {
+  // 引擎啟動器 pid（venv 的 python.exe）與其子行程：用 wmic/powershell 查是否還有行程
+  const { execFileSync } = require('node:child_process');
+  try {
+    const out = execFileSync('powershell', ['-NoProfile', '-Command', `Get-CimInstance Win32_Process | Where-Object { $_.ProcessId -eq ${pid} -or $_.ParentProcessId -eq ${pid} } | ForEach-Object { $_.ProcessId }`], { encoding: 'utf8', windowsHide: true });
+    return out.split(/\s+/).filter(Boolean).map(Number);
+  } catch {
+    return [];
+  }
+}
+
+async function engineMode(ctx, out) {
+  const info = await ctx.launchEngine(); // 與正式啟動相同的流程（橋接會等它完成）
+  out.engine = { state: info.state, pid: info.pid, port: info.port, python: info.python, startMs: info.startMs, error: info.error };
+  if (info.state !== 'ready') throw new Error(`engine not ready: ${info.error}`);
+  const win = ctx.createWindow({ show: false });
+  out.console = [];
+  collectConsole(win, out.console);
+  await win.loadURL(START_URL);
+  out.ui = await runIn(win, ENGINE_SCENARIO);
+
+  // 與引擎直接呼叫比對（不經橋接，直接 import engine 的處理函式）
+  const engineDir = ctx.engineDir;
+  const direct = runPython(info.python, engineDir, `import moleform_engine as e; print(json.dumps({'tg': e.handle_tg({'smiles': ${JSON.stringify(PMMA)}})[1], 'vm': e.handle_vm({'smiles': ${JSON.stringify(PMMA)}})[1]}))`);
+  const norm = (v) => JSON.stringify(v);
+  out.direct = { tgQuantity: direct.tg.quantity, vmQuantity: direct.vm.quantity, densityQuantity: direct.vm.density };
+  const viaBridge = out.ui.bridge;
+  out.sameAsDirect = {
+    tg: norm(viaBridge.tg.body) === norm(direct.tg),
+    vm: norm(viaBridge.vm.body) === norm(direct.vm),
+  };
+  const panelRow = (label) => out.ui.polymerRows.find((r) => r[0].startsWith(label));
+  const fmt = (v) => String(Number(v.toPrecision(6)));
+  out.panelMatchesDirect = {
+    tg: panelRow('Tg')?.[1] === fmt(direct.tg.quantity.value),
+    vm: panelRow('Vm')?.[1] === fmt(direct.vm.quantity.value),
+    density: panelRow('密度')?.[1] === fmt(direct.vm.density.value),
+  };
+
+  // 關閉後：行程與埠已釋放
+  const { port, pid } = info;
+  out.descendantsBefore = descendantsAlive(pid);
+  await ctx.stopEngine();
+  out.afterStop = { portClosed: await portClosed(port), launcherPidAlive: pidAlive(pid), pidsStillAlive: descendantsAlive(pid) };
+}
+
 async function persist(ctx, out) {
   const win = ctx.createWindow({ show: false });
   await win.loadURL(START_URL);
@@ -195,6 +309,7 @@ async function runSelftest(ctx) {
   try {
     if (ctx.mode === 'compare') await compare(ctx, out);
     else if (ctx.mode === 'persist') await persist(ctx, out);
+    else if (ctx.mode === 'engine') await engineMode(ctx, out);
     else throw new Error(`unknown selftest mode: ${ctx.mode}`);
   } catch (err) {
     out.error = String(err && err.stack ? err.stack : err);

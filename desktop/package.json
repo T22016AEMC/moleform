@@ -9,6 +9,7 @@
     "start": "node run.cjs",
     "selftest": "node run.cjs --selftest=compare",
     "selftest:persist": "node run.cjs --selftest=persist",
+    "selftest:engine": "node run.cjs --selftest=engine",
     "dist": "electron-builder --win portable"
   },
   "devDependencies": {
@@ -25,6 +26,8 @@
       "main.cjs",
       "protocol.cjs",
       "engine-host.cjs",
+      "bridge.cjs",
+      "preload.cjs",
       "selftest.cjs",
       "package.json"
     ],

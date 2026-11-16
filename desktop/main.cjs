@@ -5,10 +5,11 @@
 // - 啟動時在背景啟動本機 Python 引擎並握手；程式結束時一併關閉。
 'use strict';
 
-const { app, BrowserWindow, protocol, session } = require('electron');
+const { app, BrowserWindow, ipcMain, protocol, session } = require('electron');
 const path = require('node:path');
 const { SCHEME, START_URL, PRIVILEGES, isAppUrl, makeHandler } = require('./protocol.cjs');
-const { startEngine, stopEngine, handshake } = require('./engine-host.cjs');
+const { startEngine, stopEngine, handshake, request: engineRequest } = require('./engine-host.cjs');
+const { callEngine } = require('./bridge.cjs');
 
 const DIST_DIR = app.isPackaged ? path.join(process.resourcesPath, 'app-dist') : path.join(__dirname, '..', 'dist');
 const ENGINE_DIR = app.isPackaged ? path.join(process.resourcesPath, 'engine') : path.join(__dirname, '..', 'engine');
@@ -61,6 +62,7 @@ function guardContents(contents, allowOrigin) {
 }
 
 const WEB_PREFERENCES = {
+  preload: path.join(__dirname, 'preload.cjs'), // 只暴露 window.moleformEngine（任務 I01）
   nodeIntegration: false,
   contextIsolation: true,
   sandbox: true,
@@ -96,6 +98,29 @@ async function launchEngine() {
   }
   return engineInfo;
 }
+
+// 橋接（任務 I01）：只接受本程式頁面的主框架（不含 Ketcher iframe）；權杖與埠只留在這裡
+let enginePromise = Promise.resolve(engineInfo);
+function isTrustedSender(event) {
+  const frame = event.senderFrame;
+  return Boolean(frame) && frame === event.sender.mainFrame && isAppUrl(frame.url);
+}
+// 引擎（標準函式庫 HTTP 伺服器）的連線佇列只有 5：同時送出太多請求會被拒絕（ECONNREFUSED），所以橋接一次只送一個
+let callQueue = Promise.resolve();
+ipcMain.handle('moleform-engine:call', (event, p, body) => {
+  if (!isTrustedSender(event)) return { ok: false, error: '呼叫來源不受信任' };
+  const result = callQueue.then(async () => {
+    await enginePromise;
+    return callEngine(engine, p, body, engineRequest);
+  });
+  callQueue = result.catch(() => undefined);
+  return result;
+});
+ipcMain.handle('moleform-engine:status', async (event) => {
+  if (!isTrustedSender(event)) return { state: 'unavailable', error: '呼叫來源不受信任' };
+  const info = await enginePromise;
+  return { state: info.state, ...(info.error ? { error: info.error } : {}) };
+});
 
 let quitting = false;
 app.on('before-quit', (event) => {
@@ -133,7 +158,8 @@ if (!selftestArg && !app.requestSingleInstanceLock()) {
         distDir: DIST_DIR,
         createWindow,
         secureSession,
-        launchEngine,
+        engineDir: ENGINE_DIR,
+        launchEngine: () => (enginePromise = launchEngine()),
         stopEngine: async () => {
           await stopEngine(engine);
           engine = null;
@@ -143,9 +169,9 @@ if (!selftestArg && !app.requestSingleInstanceLock()) {
       return;
     }
 
+    enginePromise = launchEngine(); // 與載入頁面同時進行；失敗時其餘功能照常（面板顯示訊息）
     const win = createWindow();
     await win.loadURL(START_URL);
-    void launchEngine();
   });
 }
 
