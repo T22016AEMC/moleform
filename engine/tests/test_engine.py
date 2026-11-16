@@ -289,6 +289,66 @@ class EngineProcessTest(unittest.TestCase):
         for path in ("/polymer/repeat-unit", "/polymer/end-groups", "/polymer/copolymer", "/polymer/convert", "/polymer/distribution"):
             self.assertEqual(self.request("POST", path, {"smiles": "*CC*"}, headers={"Authorization": "Bearer wrong"})[0], 401)
 
+    def test_m05_endpoints(self) -> None:
+        """任務 M05：其餘計算模組的端點（value/unit/source/status；輸入無效回 400；沒有權杖回 401）。"""
+        PS = "*CC(*)c1ccccc1"
+        status, body = self.request("POST", "/free-volume", {"smiles": PS})
+        self.assertEqual((status, body["quantity"]["unit"], body["quantity"]["status"]), (200, "cm³/mol", "predicted"))
+        self.assertEqual(self.request("POST", "/free-volume", {"smiles": "*C#N"})[1]["quantity"]["status"], "missing")
+        status, body = self.request("POST", "/joback", {"smiles": "CCO"})
+        self.assertEqual((status, body["quantities"]["tb"]["unit"], body["quantities"]["tb"]["status"]), (200, "K", "predicted"))
+        self.assertTrue(self.request("POST", "/joback", {"smiles": PS})[1]["notApplicable"])
+        status, body = self.request("POST", "/dielectric", {"smiles": PS})
+        self.assertEqual((status, body["quantities"]["epsilon"]["status"], body["quantities"]["alpha"]["status"]), (200, "predicted", "predicted"))
+        status, body = self.request("POST", "/tpsa-logp", {"smiles": "*CC(*)c1ccccc1O"})
+        self.assertEqual((status, body["capped"], body["quantities"]["tpsa"]["unit"]), (200, True, "Å²"))
+        status, body = self.request(
+            "POST", "/relative-tg", {"a": {"monomers": [{"name": "PMMA", "smiles": "*CC(*)(C)C(=O)OC"}]}, "b": {"monomers": [{"name": "X", "smiles": "*CC(*)(C)C(=O)OCC"}]}}
+        )
+        self.assertEqual((status, body["quantity"]["status"], body["confidence"]), (200, "predicted", "參考趨勢"))
+        status, body = self.request("POST", "/tg/flory-fit", {"points": [{"mn": 1000, "tgK": 300}, {"mn": 2000, "tgK": 330}, {"mn": 4000, "tgK": 345}]})
+        self.assertEqual((status, body["quantities"]["tgInf"]["status"]), (200, "fitted"))
+        status, body = self.request(
+            "POST",
+            "/tg/mixing",
+            {"components": [{"id": "p", "name": "P", "category": "Resin", "canonicalSmiles": "[*:1]Cc1cc([*:2])ccc1O"}], "wtPct": {"p": 100}, "mn": {"p": 1000}},
+        )
+        self.assertEqual((status, body["status"]), (200, "complete"))
+        comps = [
+            {"id": "E", "name": "E", "category": "Resin", "canonicalSmiles": "[*:1]CC([*:2])(C)C(=O)OCC1CO1", "polymer": {"dpInput": 21}},
+            {"id": "P", "name": "P", "category": "Resin", "canonicalSmiles": "[*:1]Cc1cc([*:2])ccc1O", "polymer": {"mnInput": 6000}},
+        ]
+        status, analysis = self.request("POST", "/crosslink/analyze", {"components": comps})
+        self.assertEqual((status, analysis["verdict"]), (200, "network"))
+        solid = {"unit": "wt", "components": [{**c, "amount": a} for c, a in zip(comps, (20, 80))]}
+        status, prep = self.request("POST", "/crosslink/prepare", {"result": analysis, "solid": solid, "wtPct": {"E": 20, "P": 80}})
+        self.assertEqual((status, prep["ok"]), (200, True))
+        status, body = self.request("POST", "/crosslink/layer1", {"setup": prep["setup"], "conversion": 1, "stoichiometric": True})
+        self.assertEqual((status, body["result"]["gelled"], body["stoichiometric"]["result"]["limiting"]), (200, True, "equal"))
+        status, body = self.request(
+            "POST", "/crosslink/layer1/scan", {"setup": prep["setup"], "conversion": 1, "option": {"property": "crosslinkDensity", "direction": "max"}, "settings": {"min": 0.8, "max": 1.2, "points": 5}}
+        )
+        self.assertEqual((status, len(body["points"])), (200, 5))
+        for path, bad in (
+            ("/free-volume", {"smiles": ""}),
+            ("/free-volume", {"smiles": "CCO.CC"}),
+            ("/joback", {"smiles": "not a smiles"}),
+            ("/dielectric", {"smiles": "not a smiles"}),
+            ("/tpsa-logp", {"smiles": "*"}),
+            ("/relative-tg", {"a": {"monomers": []}, "b": {"monomers": []}}),
+            ("/tg/flory-fit", {"points": [{"mn": 1000, "tgK": 300}]}),
+            ("/tg/mixing", {"components": [{"id": "p"}]}),
+            ("/crosslink/analyze", {"components": [{"id": 1}]}),
+            ("/crosslink/layer1", {"setup": prep["setup"], "conversion": 2}),
+            ("/crosslink/layer1/scan", {"setup": prep["setup"], "conversion": 1, "option": {"property": "nope", "direction": "max"}}),
+            ("/crosslink/prepare", {}),
+        ):
+            with self.subTest(path=path, bad=str(bad)):
+                status, body = self.request("POST", path, bad)
+                self.assertEqual((status, body["ok"]), (400, False))
+        for path in ("/free-volume", "/relative-tg", "/joback", "/tg/mixing", "/tg/flory-fit", "/dielectric", "/tpsa-logp", "/crosslink/analyze", "/crosslink/prepare", "/crosslink/layer1", "/crosslink/layer1/scan"):
+            self.assertEqual(self.request("POST", path, {"smiles": PS}, headers={"Authorization": "Bearer wrong"})[0], 401)
+
     def test_exits_when_stdin_closes(self) -> None:
         assert self.proc.stdin
         self.proc.stdin.close()
