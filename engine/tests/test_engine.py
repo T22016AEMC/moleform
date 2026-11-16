@@ -137,6 +137,41 @@ class EngineProcessTest(unittest.TestCase):
     def test_vw_requires_token(self) -> None:
         self.assertEqual(self.request("POST", "/vw", {"smiles": "CC"}, headers={"Authorization": "Bearer wrong"})[0], 401)
 
+    def test_tg_ok_calibrated_missing_invalid(self) -> None:
+        """任務 M02：POST /tg。書中基團算得出（PVC：ΣYg 22.1／ΣM 62.5）、含校準基團（PVPh）、缺基團回 missing，無效輸入回 400。"""
+        status, body = self.request("POST", "/tg", {"smiles": "*CC(Cl)*"})
+        self.assertEqual(status, 200)
+        self.assertTrue(body["ok"])
+        q = body["quantity"]
+        self.assertEqual(set(q), {"value", "unit", "source", "status"})
+        self.assertEqual((q["status"], q["unit"]), ("predicted", "K"))
+        self.assertAlmostEqual(q["value"], 1000 * 22.1 / 62.5, places=9)
+        self.assertAlmostEqual(body["tgC"], q["value"] - 273.15, places=9)
+        self.assertFalse(body["containsCalibrated"])
+        self.assertTrue(body["polymer"])
+        self.assertIn("非實測值", body["disclaimer"])
+        # 含校準基團（酚羥基，D54）：算得出但要標示
+        status, body = self.request("POST", "/tg", {"smiles": "[*:1]CC([*:2])c1ccc(O)cc1"})
+        self.assertEqual(status, 200)
+        self.assertEqual(body["quantity"]["status"], "predicted")
+        self.assertTrue(body["containsCalibrated"])
+        self.assertAlmostEqual(body["tgC"], 186.7, delta=0.1)
+        # 缺基團（2-萘基）：不計算，列出原子
+        status, body = self.request("POST", "/tg", {"smiles": "*CC(c1ccc2ccccc2c1)*"})
+        self.assertEqual(status, 200)
+        self.assertEqual(body["quantity"]["status"], "missing")
+        self.assertIsNone(body["quantity"]["value"])
+        self.assertTrue(body["missing"])
+        # 無法解析、空字串、空白、沒有重原子、缺欄位、型別錯誤、太長
+        for bad in ({"smiles": "xyz"}, {"smiles": ""}, {"smiles": "   "}, {"smiles": "[H+]"}, {"smiles": "*"}, {}, {"smiles": 1}, {"smiles": "C" * 10001}):
+            with self.subTest(bad=str(bad)[:40]):
+                status, body = self.request("POST", "/tg", bad)
+                self.assertEqual(status, 400)
+                self.assertFalse(body["ok"])
+
+    def test_tg_requires_token(self) -> None:
+        self.assertEqual(self.request("POST", "/tg", {"smiles": "CC"}, headers={"Authorization": "Bearer wrong"})[0], 401)
+
     def test_exits_when_stdin_closes(self) -> None:
         assert self.proc.stdin
         self.proc.stdin.close()

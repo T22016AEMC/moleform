@@ -1,18 +1,20 @@
 """MoleForm Python 引擎原型（任務 039 B-6，D62）。
 
-握手、JSON 格式示範，以及 VW（任務 M01）；不含其他物性或微影公式。
+握手、JSON 格式示範，以及 VW（任務 M01）、Tg（任務 M02）；不含其他物性或微影公式。
 - 只監聽 127.0.0.1，埠由作業系統隨機指定（port 0）。
 - 一次性權杖由父程式（Electron 主程式）從 stdin 第一行傳入，不放在命令列或環境變數。
 - stdin 關閉（父程式結束或主動關閉）時，引擎自行結束。
 - 只用 Python 標準函式庫；NumPy／SciPy／RDKit 只讀取已安裝版本（importlib.metadata），未安裝回報 null。
 - 不發出任何對外連線。
-- 任務 M01 起新增 POST /vw（van der Waals 體積）；除此之外不含任何物性公式。尚未接到介面，TypeScript 仍是預設計算來源。
+- 任務 M01 起新增 POST /vw（van der Waals 體積）、任務 M02 起新增 POST /tg（Tg，Yg 基團貢獻）；除此之外不含任何物性公式。
+  尚未接到介面，TypeScript 仍是預設計算來源。
 """
 
 from __future__ import annotations
 
 import hmac
 import json
+import math
 import os
 import platform
 import sys
@@ -126,7 +128,50 @@ def handle_vw(request: object) -> tuple[int, dict]:
     return 200, {"ok": True, "quantity": quantity, **{k: result[k] for k in keys}, "disclaimer": vw.VW_DISCLAIMER}
 
 
-POST_ROUTES = {"/demo/quantity": handle_demo_quantity, "/vw": handle_vw}
+TG_UNIT = "K"
+
+
+def handle_tg(request: object) -> tuple[int, dict]:
+    """Tg（van Krevelen Yg 基團貢獻，含校準基團；任務 M02）。請求 {"smiles": "<小分子或含 * 的重複單元 SMILES>"}。
+
+    回應沿用「值、單位、來源、狀態」格式（quantity，單位 K），另附基團、缺基團清單、是否含校準基團與質量核對。
+    算得出：HTTP 200、status = "predicted"（基團增量估算，非實測）；含校準基團時 containsCalibrated = true（非書中值）。
+    缺基團：HTTP 200，quantity.status = "missing"、value = null，missing 列出原子位置與描述（不計算、不拋例外）。
+    SMILES 無法解析、空白、沒有可計算的基團（沒有重原子）：HTTP 400。只做 Tg，不含其他物性公式；尚未接到介面（TypeScript 仍是預設）。
+    """
+    smiles = request.get("smiles") if isinstance(request, dict) else None
+    if not isinstance(smiles, str):
+        return 400, {"ok": False, "errors": ["請求需要字串欄位 smiles"]}
+    if len(smiles) > MAX_SMILES_CHARS:
+        return 400, {"ok": False, "errors": [f"smiles 太長（上限 {MAX_SMILES_CHARS} 字元）"]}
+    if smiles.strip() == "":
+        return 400, {"ok": False, "errors": ["沒有結構（SMILES 是空的）"]}
+    try:
+        if ENGINE_DIR not in sys.path:
+            sys.path.insert(0, ENGINE_DIR)
+        from moleform_core import tg
+    except ImportError as e:
+        return 503, {"ok": False, "errors": [f"引擎無法載入 Tg 模組（RDKit 沒有安裝？）：{e}"]}
+    try:
+        result = tg.compute_tg(smiles)
+    except tg.EmptyMoleculeError as e:
+        return 400, {"ok": False, "errors": [str(e)]}
+    except (tg.TgDataError, ValueError, OSError) as e:
+        return 500, {"ok": False, "errors": [f"Tg 資料表或 SMARTS 錯誤：{e}"]}
+    if result["status"] == "invalid":
+        return 400, {"ok": False, "errors": [result["message"]]}
+    if result["status"] == "missing":
+        quantity = {"value": None, "unit": TG_UNIT, "source": tg.TG_MODEL, "status": "missing"}
+        body = {k: result[k] for k in ("polymer", "containsCalibrated", "groups", "missing")}
+        return 200, {"ok": True, "quantity": quantity, **body, "disclaimer": tg.TG_DISCLAIMER}
+    if not math.isfinite(result["tgK"]):
+        return 400, {"ok": False, "errors": ["沒有可計算的基團（沒有重原子）"]}
+    quantity = {"value": result["tgK"], "unit": TG_UNIT, "source": tg.TG_MODEL, "status": "predicted"}
+    keys = ("polymer", "tgC", "sumYg", "sumM", "containsCalibrated", "formulaMass", "massDelta", "massWithinTolerance", "groups", "sources")
+    return 200, {"ok": True, "quantity": quantity, **{k: result[k] for k in keys}, "disclaimer": tg.TG_DISCLAIMER}
+
+
+POST_ROUTES = {"/demo/quantity": handle_demo_quantity, "/vw": handle_vw, "/tg": handle_tg}
 
 
 class EngineServer(ThreadingHTTPServer):
