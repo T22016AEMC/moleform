@@ -90,3 +90,19 @@ def js_to_fixed(x: float, digits: int) -> str:
         d = Decimal(abs(x)).quantize(Decimal(1).scaleb(-digits), rounding=ROUND_HALF_UP)
         s = format(d, "f")
     return ("-" if negative else "") + s
+
+
+def js_to_precision_number(x: float, precision: int) -> float:
+    """`Number(x.toPrecision(precision))`（M05 新增）：JS 的 toPrecision 取最接近的有效位數；兩個一樣近時取較大的（正好一半往遠離零進位）。
+    Python 的 `format(x, ".3e")` 在正好一半時是銀行家捨入，不能用；以精確的十進位展開計算（`Decimal(float)` 是精確的）。
+    NaN／±Infinity 原樣回傳（`NaN.toPrecision()` 是 "NaN"，`Number("NaN")` 仍是 NaN）。"""
+    x = float(x)
+    if math.isnan(x) or math.isinf(x) or x == 0:
+        return x
+    with localcontext() as ctx:
+        ctx.prec = 120
+        d = Decimal(abs(x))
+        e = d.adjusted()  # 十進位指數：d = m × 10^e，1 ≤ m < 10
+        rounded = d.quantize(Decimal(1).scaleb(e - precision + 1), rounding=ROUND_HALF_UP)
+        v = float(rounded)
+    return -v if x < 0 else v
