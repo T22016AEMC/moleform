@@ -172,6 +172,82 @@ class EngineProcessTest(unittest.TestCase):
     def test_tg_requires_token(self) -> None:
         self.assertEqual(self.request("POST", "/tg", {"smiles": "CC"}, headers={"Authorization": "Bearer wrong"})[0], 401)
 
+    def test_vm_ok_missing_unsupported_invalid(self) -> None:
+        """任務 M03：POST /vm。聚苯乙烯（Vm = ΣVa 100.53、玻璃態）、聚乙烯（橡膠態）、缺基團、小分子（不支援）、無效輸入回 400。"""
+        status, body = self.request("POST", "/vm", {"smiles": "[*:1]CC([*:2])c1ccccc1"})
+        self.assertEqual(status, 200)
+        self.assertTrue(body["ok"])
+        q = body["quantity"]
+        self.assertEqual(set(q), {"value", "unit", "source", "status"})
+        self.assertEqual((q["status"], q["unit"]), ("predicted", "cm³/mol"))
+        self.assertAlmostEqual(q["value"], 16.37 + 84.16, places=9)
+        self.assertEqual((body["density"]["status"], body["density"]["unit"]), ("predicted", "g/cm³"))
+        self.assertAlmostEqual(body["density"]["value"], body["unitMass"] / q["value"], places=12)
+        self.assertEqual(body["state"]["state"], "glassy")
+        self.assertEqual(body["glassy"], body["rubbery"])
+        self.assertIn("非實測", body["disclaimer"])
+        status, body = self.request("POST", "/vm", {"smiles": "*CC*"})
+        self.assertEqual((status, body["state"]["state"]), (200, "rubbery"))
+        # 缺基團：不計算，列出原子與補充說明
+        status, body = self.request("POST", "/vm", {"smiles": "*CC(=O)OCC*"})
+        self.assertEqual(status, 200)
+        self.assertEqual(body["quantity"]["status"], "missing")
+        self.assertIsNone(body["quantity"]["value"])
+        self.assertTrue(body["missing"])
+        # 不含 * 的小分子：200、missing、unsupported
+        status, body = self.request("POST", "/vm", {"smiles": "CCO"})
+        self.assertEqual(status, 200)
+        self.assertTrue(body["unsupported"])
+        self.assertEqual(body["quantity"]["status"], "missing")
+        # 無法解析、空字串、空白、沒有重原子、多個分子、缺欄位、型別錯誤、太長
+        bad_requests = ({"smiles": "xyz"}, {"smiles": ""}, {"smiles": "   "}, {"smiles": "[H+]"}, {"smiles": "*"}, {"smiles": "*CC*.*OC*"}, {}, {"smiles": 1}, {"smiles": "C" * 10001})
+        for bad in bad_requests:
+            with self.subTest(bad=str(bad)[:40]):
+                status, body = self.request("POST", "/vm", bad)
+                self.assertEqual(status, 400)
+                self.assertFalse(body["ok"])
+
+    def test_cte_ok_missing_notapplicable_invalid(self) -> None:
+        """任務 M03：POST /cte。聚苯乙烯（α_l = 6.25e-4、α_g = 2.8125e-4）、Tg 缺基團（式 4.27 回 missing）、缺 VW、小分子、無效輸入回 400。"""
+        status, body = self.request("POST", "/cte", {"smiles": "[*:1]CC([*:2])c1ccccc1"})
+        self.assertEqual(status, 200)
+        self.assertTrue(body["ok"])
+        quantities = body["quantities"]
+        self.assertEqual(set(quantities), {"rubberyAlpha", "rubberyBeta", "glassyAlpha", "glassyBeta", "glassyFromTgAlpha", "glassyFromTgBeta"})
+        for q in quantities.values():
+            self.assertEqual(set(q), {"value", "unit", "source", "status"})
+            self.assertEqual((q["status"], q["unit"]), ("predicted", "K⁻¹"))
+        self.assertAlmostEqual(quantities["rubberyAlpha"]["value"], 6.25e-4, places=12)
+        self.assertAlmostEqual(quantities["glassyAlpha"]["value"], 2.8125e-4, places=12)
+        self.assertAlmostEqual(quantities["rubberyBeta"]["value"], quantities["rubberyAlpha"]["value"] / 3, places=15)
+        self.assertEqual(body["glassyFromTg"]["status"], "ok")
+        self.assertIn("非實測", body["disclaimer"])
+        # VW 可算、Tg 缺基團（聚丙烯腈）：式 4.27 為 missing，其餘照算
+        status, body = self.request("POST", "/cte", {"smiles": "[*:1]CC([*:2])C#N"})
+        self.assertEqual(status, 200)
+        self.assertEqual(body["quantities"]["glassyAlpha"]["status"], "predicted")
+        self.assertEqual(body["quantities"]["glassyFromTgAlpha"]["status"], "missing")
+        self.assertIsNone(body["quantities"]["glassyFromTgAlpha"]["value"])
+        # 缺 VW
+        status, body = self.request("POST", "/cte", {"smiles": "[*:1]C[Se]C[*:2]"})
+        self.assertEqual(status, 200)
+        self.assertEqual(body["quantities"]["rubberyAlpha"]["status"], "missing")
+        self.assertTrue(body["missing"])
+        # 小分子：不適用（D56）
+        status, body = self.request("POST", "/cte", {"smiles": "CCO"})
+        self.assertEqual(status, 200)
+        self.assertTrue(body["notApplicable"])
+        self.assertEqual(body["quantities"]["glassyAlpha"]["status"], "missing")
+        for bad in ({"smiles": "xyz"}, {"smiles": ""}, {"smiles": "   "}, {"smiles": "[H+]"}, {"smiles": "*"}, {}, {"smiles": 1}, {"smiles": "C" * 10001}):
+            with self.subTest(bad=str(bad)[:40]):
+                status, body = self.request("POST", "/cte", bad)
+                self.assertEqual(status, 400)
+                self.assertFalse(body["ok"])
+
+    def test_vm_cte_require_token(self) -> None:
+        for path in ("/vm", "/cte"):
+            self.assertEqual(self.request("POST", path, {"smiles": "*CC*"}, headers={"Authorization": "Bearer wrong"})[0], 401)
+
     def test_exits_when_stdin_closes(self) -> None:
         assert self.proc.stdin
         self.proc.stdin.close()

@@ -1,12 +1,13 @@
 """MoleForm Python 引擎原型（任務 039 B-6，D62）。
 
-握手、JSON 格式示範，以及 VW（任務 M01）、Tg（任務 M02）；不含其他物性或微影公式。
+握手、JSON 格式示範，以及 VW（任務 M01）、Tg（任務 M02）、Vm／密度與 CTE（任務 M03）；不含其他物性或微影公式。
 - 只監聽 127.0.0.1，埠由作業系統隨機指定（port 0）。
 - 一次性權杖由父程式（Electron 主程式）從 stdin 第一行傳入，不放在命令列或環境變數。
 - stdin 關閉（父程式結束或主動關閉）時，引擎自行結束。
 - 只用 Python 標準函式庫；NumPy／SciPy／RDKit 只讀取已安裝版本（importlib.metadata），未安裝回報 null。
 - 不發出任何對外連線。
-- 任務 M01 起新增 POST /vw（van der Waals 體積）、任務 M02 起新增 POST /tg（Tg，Yg 基團貢獻）；除此之外不含任何物性公式。
+- 任務 M01 起新增 POST /vw（van der Waals 體積）、任務 M02 起新增 POST /tg（Tg，Yg 基團貢獻）、任務 M03 起新增 POST /vm
+  （莫耳體積與密度）與 POST /cte（熱膨脹係數）；除此之外不含任何物性公式。
   尚未接到介面，TypeScript 仍是預設計算來源。
 """
 
@@ -171,7 +172,130 @@ def handle_tg(request: object) -> tuple[int, dict]:
     return 200, {"ok": True, "quantity": quantity, **{k: result[k] for k in keys}, "disclaimer": tg.TG_DISCLAIMER}
 
 
-POST_ROUTES = {"/demo/quantity": handle_demo_quantity, "/vw": handle_vw, "/tg": handle_tg}
+VM_UNIT = "cm³/mol"
+DENSITY_UNIT = "g/cm³"
+CTE_UNIT = "K⁻¹"
+
+
+def _json_safe(value: object) -> bool:
+    """結果裡所有數字都是有限的（JSON 不能表示 NaN／Infinity）。"""
+    if isinstance(value, float):
+        return math.isfinite(value)
+    if isinstance(value, dict):
+        return all(_json_safe(v) for v in value.values())
+    if isinstance(value, (list, tuple)):
+        return all(_json_safe(v) for v in value)
+    return True
+
+
+def _read_smiles(request: object) -> tuple[str | None, tuple[int, dict] | None]:
+    """取出並檢查請求的 smiles；回傳 (smiles, None) 或 (None, 錯誤回應)。空白由這裡先擋下（與 /tg 相同）。"""
+    smiles = request.get("smiles") if isinstance(request, dict) else None
+    if not isinstance(smiles, str):
+        return None, (400, {"ok": False, "errors": ["請求需要字串欄位 smiles"]})
+    if len(smiles) > MAX_SMILES_CHARS:
+        return None, (400, {"ok": False, "errors": [f"smiles 太長（上限 {MAX_SMILES_CHARS} 字元）"]})
+    if smiles.strip() == "":
+        return None, (400, {"ok": False, "errors": ["沒有結構（SMILES 是空的）"]})
+    return smiles, None
+
+
+def handle_vm(request: object) -> tuple[int, dict]:
+    """聚合物重複單元 298 K 的莫耳體積與密度（任務 M03）。請求 {"smiles": "<含 * 的重複單元 SMILES>"}。
+
+    回應沿用「值、單位、來源、狀態」格式（quantity：莫耳體積 Vm，cm³/mol；density：密度，g/cm³），另附結晶態、玻璃態／橡膠態、
+    298 K 狀態判斷（依 Tg）、基團與來源。算得出：HTTP 200、status = "predicted"（基團增量估算，非實測）。
+    缺基團：HTTP 200，quantity.status = "missing"、value = null，missing 列出原子位置、描述與補充說明。
+    不含 * 的小分子：HTTP 200，quantity.status = "missing"、value = null、unsupported = true（本卡不做小分子液體法，Fedors 1974 另開任務）。
+    SMILES 無法解析、空白、含多個分子、沒有重原子：HTTP 400。只做 Vm／密度；尚未接到介面（TypeScript 仍是預設）。
+    """
+    smiles, error = _read_smiles(request)
+    if error is not None:
+        return error
+    assert smiles is not None
+    try:
+        if ENGINE_DIR not in sys.path:
+            sys.path.insert(0, ENGINE_DIR)
+        from moleform_core import vm
+    except ImportError as e:
+        return 503, {"ok": False, "errors": [f"引擎無法載入 Vm 模組（RDKit 沒有安裝？）：{e}"]}
+    try:
+        result = vm.compute_molar_volume_density(smiles)
+    except (vm.MolarVolumeDataError, ValueError, OSError) as e:
+        return 500, {"ok": False, "errors": [f"Vm 資料表或 SMARTS 錯誤：{e}"]}
+    status = result["status"]
+    if status == "invalid":
+        return 400, {"ok": False, "errors": [result["message"]]}
+    absent = {"value": None, "unit": VM_UNIT, "source": vm.MOLAR_VOLUME_MODEL, "status": "missing"}
+    if status == "unsupported":
+        return 200, {"ok": True, "quantity": absent, "unsupported": True, "message": result["message"], "disclaimer": vm.MOLAR_VOLUME_DISCLAIMER}
+    if status == "missing":
+        body = {k: result[k] for k in ("polymer", "groups", "missing")}
+        return 200, {"ok": True, "quantity": absent, **body, "disclaimer": vm.MOLAR_VOLUME_DISCLAIMER}
+    amorphous = result["amorphous"]
+    if amorphous is None or not _json_safe(result):
+        return 400, {"ok": False, "errors": ["沒有可計算的莫耳體積或密度（單元質量無法計算）"]}
+    quantity = {"value": amorphous["vm"], "unit": VM_UNIT, "source": vm.MOLAR_VOLUME_MODEL, "status": "predicted"}
+    density = {"value": amorphous["density"], "unit": DENSITY_UNIT, "source": vm.MOLAR_VOLUME_MODEL, "status": "predicted"}
+    keys = ("polymer", "unitMass", "amorphous", "crystalline", "glassy", "rubbery", "state", "groups", "usesTentative", "sources")
+    return 200, {"ok": True, "quantity": quantity, "density": density, **{k: result[k] for k in keys}, "disclaimer": vm.MOLAR_VOLUME_DISCLAIMER}
+
+
+def handle_cte(request: object) -> tuple[int, dict]:
+    """聚合物重複單元的熱膨脹係數 CTE（任務 M03）。請求 {"smiles": "<含 * 的重複單元 SMILES>"}。
+
+    CTE 沒有單一數值（書中橡膠態、玻璃態兩種，玻璃態另有兩種算法），所以 `quantities` 是一組「值、單位、來源、狀態」物件：
+    rubberyAlpha／rubberyBeta／glassyAlpha／glassyBeta（式 4.8b，不需 Tg）／glassyFromTgAlpha／glassyFromTgBeta（式 4.27，需要 Tg，缺 Tg 時為 missing）。
+    算得出：HTTP 200、status = "predicted"。缺 VW：HTTP 200，各 quantity 為 missing，missing 列出缺基團的原子。
+    不含 * 的小分子：HTTP 200，各 quantity 為 missing、notApplicable = true（D56）。
+    SMILES 無法解析、空白、含多個分子、沒有重原子：HTTP 400。只做 CTE；尚未接到介面（TypeScript 仍是預設）。
+    """
+    smiles, error = _read_smiles(request)
+    if error is not None:
+        return error
+    assert smiles is not None
+    try:
+        if ENGINE_DIR not in sys.path:
+            sys.path.insert(0, ENGINE_DIR)
+        from moleform_core import cte, tg, vw
+    except ImportError as e:
+        return 503, {"ok": False, "errors": [f"引擎無法載入 CTE 模組（RDKit 沒有安裝？）：{e}"]}
+    try:
+        result = cte.compute_cte(smiles)
+    except (vw.VwDataError, tg.TgDataError, ValueError, OSError) as e:
+        return 500, {"ok": False, "errors": [f"CTE 所需的資料表或 SMARTS 錯誤：{e}"]}
+    status = result["status"]
+    if status == "invalid":
+        return 400, {"ok": False, "errors": [result["message"]]}
+    names = ("rubberyAlpha", "rubberyBeta", "glassyAlpha", "glassyBeta", "glassyFromTgAlpha", "glassyFromTgBeta")
+    if status in ("notApplicable", "missing"):
+        absent = {n: {"value": None, "unit": CTE_UNIT, "source": cte.CTE_MODEL, "status": "missing"} for n in names}
+        if status == "notApplicable":
+            return 200, {"ok": True, "quantities": absent, "notApplicable": True, "message": result["message"], "disclaimer": cte.CTE_DISCLAIMER}
+        return 200, {"ok": True, "quantities": absent, "message": result["message"], "missing": result["missing"], "disclaimer": cte.CTE_DISCLAIMER}
+    if not _json_safe(result):
+        return 400, {"ok": False, "errors": ["沒有可計算的 VW（結果不是有限數字）"]}
+
+    def q(value: float | None) -> dict:
+        if value is None:
+            return {"value": None, "unit": CTE_UNIT, "source": cte.CTE_MODEL, "status": "missing"}
+        return {"value": value, "unit": CTE_UNIT, "source": cte.CTE_MODEL, "status": "predicted"}
+
+    gt = result["glassyFromTg"]
+    from_tg = gt["status"] == "ok"
+    quantities = {
+        "rubberyAlpha": q(result["rubbery"]["alpha"]),
+        "rubberyBeta": q(result["rubbery"]["beta"]),
+        "glassyAlpha": q(result["glassy"]["alpha"]),
+        "glassyBeta": q(result["glassy"]["beta"]),
+        "glassyFromTgAlpha": q(gt["alpha"] if from_tg else None),
+        "glassyFromTgBeta": q(gt["beta"] if from_tg else None),
+    }
+    keys = ("polymer", "vw", "rubbery", "glassy", "glassyFromTg", "vwBondiSupplement", "vwBondiNotes", "sources")
+    return 200, {"ok": True, "quantities": quantities, **{k: result[k] for k in keys}, "disclaimer": cte.CTE_DISCLAIMER}
+
+
+POST_ROUTES = {"/demo/quantity": handle_demo_quantity, "/vw": handle_vw, "/tg": handle_tg, "/vm": handle_vm, "/cte": handle_cte}
 
 
 class EngineServer(ThreadingHTTPServer):
