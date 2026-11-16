@@ -28,9 +28,11 @@ Vm／密度**不受** K01–K03 影響：TS 的 `judgeState` 以 `calibrated: fa
 
 | 編號 | 現象 | 發生條件 | 影響 | 來源報告 | 處理計畫 |
 |---|---|---|---|---|---|
-| D01 | **資料表格式錯誤**：TS 讀 CSV 時**靜默丟掉**格式錯誤的列（`VW_GROUPS`、`YG_GROUPS`、`MOLAR_VOLUME_GROUPS`），靠測試把關；Python 載入時**直接報錯**（`VwDataError`、`TgDataError`、`MolarVolumeDataError`，D22）。 | 只在 CSV 有格式錯誤時（目前三張資料表都沒有）。 | 若 CSV 壞了：TS 少一列基團而**誤報缺基團**或切分不同；Python 拒絕計算。資料正常時兩邊結果相同。 | M01 §8-2、M02 §9-2、M03 §6 | 不需要修 Python。TS 退場後此差異自然消失；資料表打包路徑等 D63 再定。 |
+| D01 | **資料表格式錯誤**：TS 讀 CSV 時**靜默丟掉**格式錯誤的列（`VW_GROUPS`、`YG_GROUPS`、`MOLAR_VOLUME_GROUPS`；M05 起另有 `FREE_VOLUME_GROUPS`／`_COEFFICIENTS`／`_CORRECTIONS`、`PACKING_K_ROWS`、`JOBACK_GROUPS`、`POLARIZATION_GROUPS`、`MOLAR_REFRACTION_GROUPS`、`TG_K_ROWS`，官能基表與反應規則表只在 `loadTables` 回報 issues、資料列照用），靠測試把關；Python 載入時**直接報錯**（`VwDataError`、`TgDataError`、`MolarVolumeDataError`、`TableDataError`，D22）。 | 只在 CSV 有格式錯誤時（目前所有資料表都沒有）。 | 若 CSV 壞了：TS 少一列基團而**誤報缺基團**或切分不同；Python 拒絕計算。資料正常時兩邊結果相同。 | M01 §8-2、M02 §9-2、M03 §6 | 不需要修 Python。TS 退場後此差異自然消失；資料表打包路徑等 D63 再定。 |
 | D02 | **長鏈解析上限**：RDKit.js 解析 900 個以上原子的鏈會直接判為無效（700 個還可以），Python 的 RDKit 沒有這個限制。 | SMILES 的重原子數 ≳ 900（實務輸入碰不到）。 | 同一個輸入 TS 回 `invalid`、Python 算得出結果；黃金案例在 RDKit.js 側無法覆蓋，`maxMatches = 1000` 的上限同樣觸發不到。 | M01 §3（R3 限制）、M02 §4、M03 §4 | 不需要修；TS 退場後 Python 的行為就是正式行為，再決定是否設輸入大小上限（HTTP 介面目前以 10000 字元限制請求）。 |
 | D03 | **結構輸入格式**：TS 的 `RDKit.get_mol` 也接受 Molfile 與 JSON 字串；Python 端只用 `Chem.MolFromSmiles`（M00 的決定），只接 SMILES。 | 把 Molfile 當重複單元或端基送進來時。 | 介面送進來的一律是 SMILES，沒有影響。 | M04 | 無（黃金案例都是 SMILES） |
+| D04 | **呼叫端傳入的輸入**：TS 的 `computeFormulationTg`、`prepareLayer1`、`analyzeComponent` 內部呼叫 `formulation/compute` 與 `averageMolecularWeight`（039a：不搬）；Python 版改由呼叫端傳入已算好的質量百分比（`wtPct`）、Mn（`mn`）、Solid 區成分與單位、小分子的每分子質量（`molarMass`）。TS 對小分子優先用 `molfile` 分析；Python 只用 `canonicalSmiles`（同 D03）。 | 使用 `/tg/mixing`、`/crosslink/prepare`、`/crosslink/analyze` 時。 | 黃金檔的 `input` 就是 Python 收到的輸入（由匯出程式用現有 TS 函式先算好），同輸入下兩邊逐字相同。用 molfile 畫的小分子，Python 的原子索引是 SMILES 的索引。 | M05 | 配方換算搬到 Python（若之後決定）時自然消失；`molfile` 的處理等 D63 打包時再定。 |
+| D05 | **`Math.exp`／`Math.log`／`**` 的最後一位**：V8 的實作與 Python（Windows 的 C 執行庫）在極少數輸入上差 1 個 ulp。只影響第 1 層的有效交聯點機率（`effectiveJunctionProbability` 的 `exp`／`log`）與其下游（交聯密度、Mc、比例掃描）。 | 凝膠後（`gelled`）的第 1 層結果。 | 相對誤差 ≤ 2.2e-15（小於 1e-12 容差），不影響任何顯示位數；黃金比對把這些點列入 `tolerance_cases`（32 個案例、166 個比對點）。 | M05 | 不需要修；Linux 上的 CI 結果以 `tolerance_cases` 的清單為準。 |
 
 ## C. 待使用者決定（不是錯誤，沒有照 TS 以外的做法）
 

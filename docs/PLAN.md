@@ -132,11 +132,11 @@ U02 已由 D46 決定（任務 019）。
 - [x] 6A.1 Windows 桌面外殼：Electron 封裝現有網頁（任務 039 的 B-1 到 B-5；原型 `desktop/`，app:// 載入 dist，可攜式 exe）（補註：deploy 已暫停（任務 039b））
 - [x] 6A.2 Python 計算引擎原型：只監聽 127.0.0.1；資料格式含值、單位、來源、狀態（`measured / literature / fitted / predicted / assumed / missing`）（任務 039 的 B-6；原型 `engine/`，只握手、不含公式；Python 打包方式待使用者決定）
 - [x] 6A.3（完成：任務 039a，報告 `docs/reports/039a-結果.md`）搬遷盤點：列出每個現有計算模組、依賴與對應測試，訂搬遷順序（新模組要用到的核心鏈優先：VW、Va、莫耳體積與密度、Tg、CTE）。規則：以 TypeScript 輸出為黃金標準，Python 版逐字相同才停用 TypeScript 版；過渡期用開關切換，預設用 TypeScript
-- [ ] 6A.4 計算模組搬遷（2026-11-16 依 D64 改為：相關模組合併成卡，驗證集中一次；原「每模組一張卡、逐一黃金比對」不再適用於後續卡）
+- [x] 6A.4 計算模組搬遷（2026-11-16 依 D64 改為：相關模組合併成卡，驗證集中一次；原「每模組一張卡、逐一黃金比對」不再適用於後續卡）
   - [x] M00 共用層（atomicWeights、molGraph、CSV 讀取）、RDKit 版本對齊 2026.9.1、黃金比對框架；M00a CI 新增 Python 引擎測試與黃金檔過期檢查（報告 `docs/reports/M00-結果.md`、`M00a-結果.md`）
   - [x] M01 VW（793 案例逐字相符）、M02 Tg（2320 案例）、M03 Vm／密度與 CTE（2286 案例）：均已逐字比對通過；TS 既有特性見 `docs/migration-known-issues.md`
   - [x] M04 聚合物基礎（repeatUnit、endGroups、copolymer、convert、distribution）（報告 `docs/reports/M04-結果.md`）
-  - [ ] M05 其餘計算模組一次搬完（自由體積、相對 Tg、Joback、成分 Tg、介電、TPSA／LogP、交聯第 0、1 層），全部完成後驗證一次
+  - [x] M05 其餘計算模組一次搬完（自由體積、相對 Tg、Joback、成分 Tg、介電、TPSA／LogP、交聯第 0、1 層），全部完成後驗證一次（報告 `docs/reports/M05-結果.md`）
 - 補註：介面與桌面外殼維持 TypeScript，計算最終在 Python。**6A.2 完成後，新的計算模組一律直接寫在 Python，不先寫 TypeScript**。任務 038 已定稿且依賴 TypeScript 函式，仍以 TypeScript 完成，之後隨 6A.4 搬遷。即時輸入回饋類的小計算可留在 TypeScript，由 6A.3 逐項決定
 
 ## Phase 6：單一化合物、聚合物與混合配方物性

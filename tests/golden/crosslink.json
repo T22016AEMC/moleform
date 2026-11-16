@@ -1,0 +1,9451 @@
+{
+ "cases": [
+  {
+   "id": "analyze/4A-P-E-PGMEA",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc(C([*:2])c4ccc5ccccc5c4)c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+      "category": "Resin",
+      "id": "P",
+      "name": "酚醛樹脂 P",
+      "polymer": {
+       "mnInput": 6000
+      }
+     },
+     {
+      "canonicalSmiles": "[*:1]CC([*:2])(C)C(=O)OCC1CO1",
+      "category": "Resin",
+      "id": "E",
+      "name": "環氧寡聚物 E",
+      "polymer": {
+       "dpInput": 21
+      }
+     },
+     {
+      "canonicalSmiles": "COCC(C)OC(C)=O",
+      "category": "Solvent",
+      "id": "L",
+      "molarMass": 132.159,
+      "name": "PGMEA"
+     }
+    ],
+    "kind": "analyze"
+   },
+   "output": {
+    "components": [
+     {
+      "distribution": {
+       "mEnds": 0,
+       "mUnit": 488.5860000000002,
+       "mn": 6000,
+       "mw": 12000
+      },
+      "dp": 12.280335498765822,
+      "endGroupCounts": {},
+      "ends": null,
+      "groups": [
+       {
+        "groupId": "hydroxyl.phenolic",
+        "sites": [
+         [
+          23
+         ],
+         [
+          39
+         ]
+        ]
+       }
+      ],
+      "id": "P",
+      "isPolymer": true,
+      "molarMass": 6000,
+      "name": "酚醛樹脂 P",
+      "problem": null,
+      "source": "[*:1]c1ccc(C2(c3ccc(C([*:2])c4ccc5ccccc5c4)c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+      "unitGroupCounts": {
+       "hydroxyl.phenolic": 2
+      },
+      "units": [
+       {
+        "groups": [
+         {
+          "groupId": "hydroxyl.phenolic",
+          "sites": [
+           [
+            23
+           ],
+           [
+            39
+           ]
+          ]
+         }
+        ],
+        "molFraction": 1,
+        "smiles": "[*:1]c1ccc(C2(c3ccc(C([*:2])c4ccc5ccccc5c4)c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+       }
+      ]
+     },
+     {
+      "distribution": {
+       "mEnds": 0,
+       "mUnit": 142.15399999999997,
+       "mn": 2985.2339999999995,
+       "mw": 5970.467999999999
+      },
+      "dp": 21,
+      "endGroupCounts": {},
+      "ends": null,
+      "groups": [
+       {
+        "groupId": "ether.epoxide",
+        "sites": [
+         [
+          11,
+          10,
+          9
+         ]
+        ]
+       }
+      ],
+      "id": "E",
+      "isPolymer": true,
+      "molarMass": 2985.2339999999995,
+      "name": "環氧寡聚物 E",
+      "problem": null,
+      "source": "[*:1]CC([*:2])(C)C(=O)OCC1CO1",
+      "unitGroupCounts": {
+       "ether.epoxide": 1
+      },
+      "units": [
+       {
+        "groups": [
+         {
+          "groupId": "ether.epoxide",
+          "sites": [
+           [
+            11,
+            10,
+            9
+           ]
+          ]
+         }
+        ],
+        "molFraction": 1,
+        "smiles": "[*:1]CC([*:2])(C)C(=O)OCC1CO1"
+       }
+      ]
+     },
+     {
+      "distribution": null,
+      "dp": null,
+      "endGroupCounts": {},
+      "ends": null,
+      "groups": [],
+      "id": "L",
+      "isPolymer": false,
+      "molarMass": 132.159,
+      "name": "PGMEA",
+      "problem": null,
+      "source": "COCC(C)OC(C)=O",
+      "unitGroupCounts": {},
+      "units": null
+     }
+    ],
+    "confidence": "direct",
+    "markedAtoms": {
+     "E": [
+      9,
+      10,
+      11
+     ],
+     "P": [
+      23,
+      39
+     ]
+    },
+    "markedEndAtoms": {},
+    "markedUnitAtoms": {},
+    "modelName": "反應規則表（交聯第 0 層）",
+    "nonParticipants": [
+     {
+      "id": "L",
+      "name": "PGMEA"
+     }
+    ],
+    "pairs": [
+     {
+      "a": {
+       "componentId": "E",
+       "f": 21,
+       "groupId": "ether.epoxide",
+       "isPolymer": true,
+       "name": "環氧寡聚物 E",
+       "perChain": 0,
+       "perUnit": 1
+      },
+      "b": {
+       "componentId": "P",
+       "f": 24.560670997531645,
+       "groupId": "hydroxyl.phenolic",
+       "isPolymer": true,
+       "name": "酚醛樹脂 P",
+       "perChain": 0,
+       "perUnit": 2
+      },
+      "catalyst": {
+       "message": "不需催化劑",
+       "status": "none"
+      },
+      "groupAName": "環氧基",
+      "groupBName": "酚羥基",
+      "kind": "network",
+      "reactionLabel": "環氧基–酚羥基 開環加成",
+      "ruleId": "epoxy+phenol",
+      "self": false,
+      "temperature": "尚無文獻資料"
+     }
+    ],
+    "pendingReview": {
+     "groups": [],
+     "rules": []
+    },
+    "verdict": "network",
+    "warnings": []
+   }
+  },
+  {
+   "id": "analyze/4B-P-E-S-PGMEA",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc(C([*:2])c4ccc5ccccc5c4)c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+      "category": "Resin",
+      "id": "P",
+      "name": "酚醛樹脂 P",
+      "polymer": {
+       "mnInput": 6000
+      }
+     },
+     {
+      "canonicalSmiles": "[*:1]CC([*:2])(C)C(=O)OCC1CO1",
+      "category": "Resin",
+      "id": "E",
+      "name": "環氧寡聚物 E",
+      "polymer": {
+       "dpInput": 21
+      }
+     },
+     {
+      "canonicalSmiles": "OC(=CC=C1C2(C)C)C=C1C(C2)(CC1(C)C)C(=CC(O)=C2)C1=C2",
+      "category": "Small Molecule",
+      "id": "S",
+      "molarMass": 308.421,
+      "name": "SBI 雙酚 S"
+     },
+     {
+      "canonicalSmiles": "COCC(C)OC(C)=O",
+      "category": "Solvent",
+      "id": "L",
+      "molarMass": 132.159,
+      "name": "PGMEA"
+     }
+    ],
+    "kind": "analyze"
+   },
+   "output": {
+    "components": [
+     {
+      "distribution": {
+       "mEnds": 0,
+       "mUnit": 488.5860000000002,
+       "mn": 6000,
+       "mw": 12000
+      },
+      "dp": 12.280335498765822,
+      "endGroupCounts": {},
+      "ends": null,
+      "groups": [
+       {
+        "groupId": "hydroxyl.phenolic",
+        "sites": [
+         [
+          23
+         ],
+         [
+          39
+         ]
+        ]
+       }
+      ],
+      "id": "P",
+      "isPolymer": true,
+      "molarMass": 6000,
+      "name": "酚醛樹脂 P",
+      "problem": null,
+      "source": "[*:1]c1ccc(C2(c3ccc(C([*:2])c4ccc5ccccc5c4)c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+      "unitGroupCounts": {
+       "hydroxyl.phenolic": 2
+      },
+      "units": [
+       {
+        "groups": [
+         {
+          "groupId": "hydroxyl.phenolic",
+          "sites": [
+           [
+            23
+           ],
+           [
+            39
+           ]
+          ]
+         }
+        ],
+        "molFraction": 1,
+        "smiles": "[*:1]c1ccc(C2(c3ccc(C([*:2])c4ccc5ccccc5c4)c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+       }
+      ]
+     },
+     {
+      "distribution": {
+       "mEnds": 0,
+       "mUnit": 142.15399999999997,
+       "mn": 2985.2339999999995,
+       "mw": 5970.467999999999
+      },
+      "dp": 21,
+      "endGroupCounts": {},
+      "ends": null,
+      "groups": [
+       {
+        "groupId": "ether.epoxide",
+        "sites": [
+         [
+          11,
+          10,
+          9
+         ]
+        ]
+       }
+      ],
+      "id": "E",
+      "isPolymer": true,
+      "molarMass": 2985.2339999999995,
+      "name": "環氧寡聚物 E",
+      "problem": null,
+      "source": "[*:1]CC([*:2])(C)C(=O)OCC1CO1",
+      "unitGroupCounts": {
+       "ether.epoxide": 1
+      },
+      "units": [
+       {
+        "groups": [
+         {
+          "groupId": "ether.epoxide",
+          "sites": [
+           [
+            11,
+            10,
+            9
+           ]
+          ]
+         }
+        ],
+        "molFraction": 1,
+        "smiles": "[*:1]CC([*:2])(C)C(=O)OCC1CO1"
+       }
+      ]
+     },
+     {
+      "distribution": null,
+      "dp": null,
+      "endGroupCounts": {},
+      "ends": null,
+      "groups": [
+       {
+        "groupId": "hydroxyl.phenolic",
+        "sites": [
+         [
+          0
+         ],
+         [
+          19
+         ]
+        ]
+       }
+      ],
+      "id": "S",
+      "isPolymer": false,
+      "molarMass": 308.421,
+      "name": "SBI 雙酚 S",
+      "problem": null,
+      "source": "OC(=CC=C1C2(C)C)C=C1C(C2)(CC1(C)C)C(=CC(O)=C2)C1=C2",
+      "unitGroupCounts": {},
+      "units": null
+     },
+     {
+      "distribution": null,
+      "dp": null,
+      "endGroupCounts": {},
+      "ends": null,
+      "groups": [],
+      "id": "L",
+      "isPolymer": false,
+      "molarMass": 132.159,
+      "name": "PGMEA",
+      "problem": null,
+      "source": "COCC(C)OC(C)=O",
+      "unitGroupCounts": {},
+      "units": null
+     }
+    ],
+    "confidence": "direct",
+    "markedAtoms": {
+     "E": [
+      9,
+      10,
+      11
+     ],
+     "P": [
+      23,
+      39
+     ],
+     "S": [
+      0,
+      19
+     ]
+    },
+    "markedEndAtoms": {},
+    "markedUnitAtoms": {},
+    "modelName": "反應規則表（交聯第 0 層）",
+    "nonParticipants": [
+     {
+      "id": "L",
+      "name": "PGMEA"
+     }
+    ],
+    "pairs": [
+     {
+      "a": {
+       "componentId": "E",
+       "f": 21,
+       "groupId": "ether.epoxide",
+       "isPolymer": true,
+       "name": "環氧寡聚物 E",
+       "perChain": 0,
+       "perUnit": 1
+      },
+      "b": {
+       "componentId": "P",
+       "f": 24.560670997531645,
+       "groupId": "hydroxyl.phenolic",
+       "isPolymer": true,
+       "name": "酚醛樹脂 P",
+       "perChain": 0,
+       "perUnit": 2
+      },
+      "catalyst": {
+       "message": "不需催化劑",
+       "status": "none"
+      },
+      "groupAName": "環氧基",
+      "groupBName": "酚羥基",
+      "kind": "network",
+      "reactionLabel": "環氧基–酚羥基 開環加成",
+      "ruleId": "epoxy+phenol",
+      "self": false,
+      "temperature": "尚無文獻資料"
+     },
+     {
+      "a": {
+       "componentId": "E",
+       "f": 21,
+       "groupId": "ether.epoxide",
+       "isPolymer": true,
+       "name": "環氧寡聚物 E",
+       "perChain": 0,
+       "perUnit": 1
+      },
+      "b": {
+       "componentId": "S",
+       "f": 2,
+       "groupId": "hydroxyl.phenolic",
+       "isPolymer": false,
+       "name": "SBI 雙酚 S",
+       "perChain": null,
+       "perUnit": null
+      },
+      "catalyst": {
+       "message": "不需催化劑",
+       "status": "none"
+      },
+      "groupAName": "環氧基",
+      "groupBName": "酚羥基",
+      "kind": "network",
+      "reactionLabel": "環氧基–酚羥基 開環加成",
+      "ruleId": "epoxy+phenol",
+      "self": false,
+      "temperature": "尚無文獻資料"
+     }
+    ],
+    "pendingReview": {
+     "groups": [],
+     "rules": []
+    },
+    "verdict": "network",
+    "warnings": []
+   }
+  },
+  {
+   "id": "analyze/P-without-molecular-weight",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc(C([*:2])c4ccc5ccccc5c4)c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+      "category": "Resin",
+      "id": "P",
+      "name": "P"
+     },
+     {
+      "canonicalSmiles": "[*:1]CC([*:2])(C)C(=O)OCC1CO1",
+      "category": "Resin",
+      "id": "E",
+      "name": "環氧寡聚物 E",
+      "polymer": {
+       "dpInput": 21
+      }
+     },
+     {
+      "canonicalSmiles": "COCC(C)OC(C)=O",
+      "category": "Solvent",
+      "id": "L",
+      "molarMass": 132.159,
+      "name": "PGMEA"
+     }
+    ],
+    "kind": "analyze"
+   },
+   "output": {
+    "components": [
+     {
+      "distribution": null,
+      "dp": null,
+      "endGroupCounts": {},
+      "ends": null,
+      "groups": [
+       {
+        "groupId": "hydroxyl.phenolic",
+        "sites": [
+         [
+          23
+         ],
+         [
+          39
+         ]
+        ]
+       }
+      ],
+      "id": "P",
+      "isPolymer": true,
+      "molarMass": null,
+      "name": "P",
+      "problem": "聚合物需要填入 Mw（或 Mn、DP），才能判定",
+      "source": "[*:1]c1ccc(C2(c3ccc(C([*:2])c4ccc5ccccc5c4)c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+      "unitGroupCounts": {
+       "hydroxyl.phenolic": 2
+      },
+      "units": [
+       {
+        "groups": [
+         {
+          "groupId": "hydroxyl.phenolic",
+          "sites": [
+           [
+            23
+           ],
+           [
+            39
+           ]
+          ]
+         }
+        ],
+        "molFraction": 1,
+        "smiles": "[*:1]c1ccc(C2(c3ccc(C([*:2])c4ccc5ccccc5c4)c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+       }
+      ]
+     },
+     {
+      "distribution": {
+       "mEnds": 0,
+       "mUnit": 142.15399999999997,
+       "mn": 2985.2339999999995,
+       "mw": 5970.467999999999
+      },
+      "dp": 21,
+      "endGroupCounts": {},
+      "ends": null,
+      "groups": [
+       {
+        "groupId": "ether.epoxide",
+        "sites": [
+         [
+          11,
+          10,
+          9
+         ]
+        ]
+       }
+      ],
+      "id": "E",
+      "isPolymer": true,
+      "molarMass": 2985.2339999999995,
+      "name": "環氧寡聚物 E",
+      "problem": null,
+      "source": "[*:1]CC([*:2])(C)C(=O)OCC1CO1",
+      "unitGroupCounts": {
+       "ether.epoxide": 1
+      },
+      "units": [
+       {
+        "groups": [
+         {
+          "groupId": "ether.epoxide",
+          "sites": [
+           [
+            11,
+            10,
+            9
+           ]
+          ]
+         }
+        ],
+        "molFraction": 1,
+        "smiles": "[*:1]CC([*:2])(C)C(=O)OCC1CO1"
+       }
+      ]
+     },
+     {
+      "distribution": null,
+      "dp": null,
+      "endGroupCounts": {},
+      "ends": null,
+      "groups": [],
+      "id": "L",
+      "isPolymer": false,
+      "molarMass": 132.159,
+      "name": "PGMEA",
+      "problem": null,
+      "source": "COCC(C)OC(C)=O",
+      "unitGroupCounts": {},
+      "units": null
+     }
+    ],
+    "confidence": "direct",
+    "markedAtoms": {
+     "E": [
+      9,
+      10,
+      11
+     ],
+     "P": [
+      23,
+      39
+     ]
+    },
+    "markedEndAtoms": {},
+    "markedUnitAtoms": {},
+    "modelName": "反應規則表（交聯第 0 層）",
+    "nonParticipants": [
+     {
+      "id": "L",
+      "name": "PGMEA"
+     }
+    ],
+    "pairs": [
+     {
+      "a": {
+       "componentId": "E",
+       "f": 21,
+       "groupId": "ether.epoxide",
+       "isPolymer": true,
+       "name": "環氧寡聚物 E",
+       "perChain": 0,
+       "perUnit": 1
+      },
+      "b": {
+       "componentId": "P",
+       "f": null,
+       "groupId": "hydroxyl.phenolic",
+       "isPolymer": true,
+       "name": "P",
+       "perChain": 0,
+       "perUnit": 2
+      },
+      "catalyst": {
+       "message": "不需催化劑",
+       "status": "none"
+      },
+      "groupAName": "環氧基",
+      "groupBName": "酚羥基",
+      "kind": "undetermined",
+      "reactionLabel": "環氧基–酚羥基 開環加成",
+      "ruleId": "epoxy+phenol",
+      "self": false,
+      "temperature": "尚無文獻資料"
+     }
+    ],
+    "pendingReview": {
+     "groups": [],
+     "rules": []
+    },
+    "verdict": "undetermined",
+    "warnings": [
+     "「P」：聚合物需要填入 Mw（或 Mn、DP），才能判定"
+    ]
+   }
+  },
+  {
+   "id": "analyze/solvent-only",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "COCC(C)OC(C)=O",
+      "category": "Solvent",
+      "id": "L",
+      "molarMass": 132.159,
+      "name": "PGMEA"
+     }
+    ],
+    "kind": "analyze"
+   },
+   "output": {
+    "components": [
+     {
+      "distribution": null,
+      "dp": null,
+      "endGroupCounts": {},
+      "ends": null,
+      "groups": [],
+      "id": "L",
+      "isPolymer": false,
+      "molarMass": 132.159,
+      "name": "PGMEA",
+      "problem": null,
+      "source": "COCC(C)OC(C)=O",
+      "unitGroupCounts": {},
+      "units": null
+     }
+    ],
+    "confidence": "direct",
+    "markedAtoms": {},
+    "markedEndAtoms": {},
+    "markedUnitAtoms": {},
+    "modelName": "反應規則表（交聯第 0 層）",
+    "nonParticipants": [
+     {
+      "id": "L",
+      "name": "PGMEA"
+     }
+    ],
+    "pairs": [],
+    "pendingReview": {
+     "groups": [],
+     "rules": []
+    },
+    "verdict": "none",
+    "warnings": []
+   }
+  },
+  {
+   "id": "analyze/BADGE-BPA",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "CC(C)(c1ccc(OCC2CO2)cc1)c1ccc(OCC2CO2)cc1",
+      "category": "Resin",
+      "id": "B",
+      "molarMass": 340.4190000000001,
+      "name": "BADGE"
+     },
+     {
+      "canonicalSmiles": "CC(C)(c1ccc(O)cc1)c1ccc(O)cc1",
+      "category": "Crosslinker",
+      "id": "A",
+      "molarMass": 228.291,
+      "name": "BPA"
+     }
+    ],
+    "kind": "analyze"
+   },
+   "output": {
+    "components": [
+     {
+      "distribution": null,
+      "dp": null,
+      "endGroupCounts": {},
+      "ends": null,
+      "groups": [
+       {
+        "groupId": "ether.epoxide",
+        "sites": [
+         [
+          11,
+          10,
+          9
+         ],
+         [
+          22,
+          21,
+          20
+         ]
+        ]
+       }
+      ],
+      "id": "B",
+      "isPolymer": false,
+      "molarMass": 340.4190000000001,
+      "name": "BADGE",
+      "problem": null,
+      "source": "CC(C)(c1ccc(OCC2CO2)cc1)c1ccc(OCC2CO2)cc1",
+      "unitGroupCounts": {},
+      "units": null
+     },
+     {
+      "distribution": null,
+      "dp": null,
+      "endGroupCounts": {},
+      "ends": null,
+      "groups": [
+       {
+        "groupId": "hydroxyl.phenolic",
+        "sites": [
+         [
+          7
+         ],
+         [
+          14
+         ]
+        ]
+       }
+      ],
+      "id": "A",
+      "isPolymer": false,
+      "molarMass": 228.291,
+      "name": "BPA",
+      "problem": null,
+      "source": "CC(C)(c1ccc(O)cc1)c1ccc(O)cc1",
+      "unitGroupCounts": {},
+      "units": null
+     }
+    ],
+    "confidence": "direct",
+    "markedAtoms": {
+     "A": [
+      7,
+      14
+     ],
+     "B": [
+      9,
+      10,
+      11,
+      20,
+      21,
+      22
+     ]
+    },
+    "markedEndAtoms": {},
+    "markedUnitAtoms": {},
+    "modelName": "反應規則表（交聯第 0 層）",
+    "nonParticipants": [],
+    "pairs": [
+     {
+      "a": {
+       "componentId": "B",
+       "f": 2,
+       "groupId": "ether.epoxide",
+       "isPolymer": false,
+       "name": "BADGE",
+       "perChain": null,
+       "perUnit": null
+      },
+      "b": {
+       "componentId": "A",
+       "f": 2,
+       "groupId": "hydroxyl.phenolic",
+       "isPolymer": false,
+       "name": "BPA",
+       "perChain": null,
+       "perUnit": null
+      },
+      "catalyst": {
+       "message": "不需催化劑",
+       "status": "none"
+      },
+      "groupAName": "環氧基",
+      "groupBName": "酚羥基",
+      "kind": "chain",
+      "reactionLabel": "環氧基–酚羥基 開環加成",
+      "ruleId": "epoxy+phenol",
+      "self": false,
+      "temperature": "尚無文獻資料"
+     }
+    ],
+    "pendingReview": {
+     "groups": [],
+     "rules": []
+    },
+    "verdict": "chain",
+    "warnings": []
+   }
+  },
+  {
+   "id": "analyze/BADGE-phenol",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "CC(C)(c1ccc(OCC2CO2)cc1)c1ccc(OCC2CO2)cc1",
+      "category": "Resin",
+      "id": "B",
+      "molarMass": 340.4190000000001,
+      "name": "BADGE"
+     },
+     {
+      "canonicalSmiles": "Oc1ccccc1",
+      "category": "Small Molecule",
+      "id": "H",
+      "molarMass": 94.11299999999999,
+      "name": "苯酚"
+     }
+    ],
+    "kind": "analyze"
+   },
+   "output": {
+    "components": [
+     {
+      "distribution": null,
+      "dp": null,
+      "endGroupCounts": {},
+      "ends": null,
+      "groups": [
+       {
+        "groupId": "ether.epoxide",
+        "sites": [
+         [
+          11,
+          10,
+          9
+         ],
+         [
+          22,
+          21,
+          20
+         ]
+        ]
+       }
+      ],
+      "id": "B",
+      "isPolymer": false,
+      "molarMass": 340.4190000000001,
+      "name": "BADGE",
+      "problem": null,
+      "source": "CC(C)(c1ccc(OCC2CO2)cc1)c1ccc(OCC2CO2)cc1",
+      "unitGroupCounts": {},
+      "units": null
+     },
+     {
+      "distribution": null,
+      "dp": null,
+      "endGroupCounts": {},
+      "ends": null,
+      "groups": [
+       {
+        "groupId": "hydroxyl.phenolic",
+        "sites": [
+         [
+          0
+         ]
+        ]
+       }
+      ],
+      "id": "H",
+      "isPolymer": false,
+      "molarMass": 94.11299999999999,
+      "name": "苯酚",
+      "problem": null,
+      "source": "Oc1ccccc1",
+      "unitGroupCounts": {},
+      "units": null
+     }
+    ],
+    "confidence": "direct",
+    "markedAtoms": {
+     "B": [
+      9,
+      10,
+      11,
+      20,
+      21,
+      22
+     ],
+     "H": [
+      0
+     ]
+    },
+    "markedEndAtoms": {},
+    "markedUnitAtoms": {},
+    "modelName": "反應規則表（交聯第 0 層）",
+    "nonParticipants": [],
+    "pairs": [
+     {
+      "a": {
+       "componentId": "B",
+       "f": 2,
+       "groupId": "ether.epoxide",
+       "isPolymer": false,
+       "name": "BADGE",
+       "perChain": null,
+       "perUnit": null
+      },
+      "b": {
+       "componentId": "H",
+       "f": 1,
+       "groupId": "hydroxyl.phenolic",
+       "isPolymer": false,
+       "name": "苯酚",
+       "perChain": null,
+       "perUnit": null
+      },
+      "catalyst": {
+       "message": "不需催化劑",
+       "status": "none"
+      },
+      "groupAName": "環氧基",
+      "groupBName": "酚羥基",
+      "kind": "capping",
+      "reactionLabel": "環氧基–酚羥基 開環加成",
+      "ruleId": "epoxy+phenol",
+      "self": false,
+      "temperature": "尚無文獻資料"
+     }
+    ],
+    "pendingReview": {
+     "groups": [],
+     "rules": []
+    },
+    "verdict": "capping",
+    "warnings": []
+   }
+  },
+  {
+   "id": "analyze/E-phenol-graft",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]CC([*:2])(C)C(=O)OCC1CO1",
+      "category": "Resin",
+      "id": "E",
+      "name": "環氧寡聚物 E",
+      "polymer": {
+       "dpInput": 21
+      }
+     },
+     {
+      "canonicalSmiles": "Oc1ccccc1",
+      "category": "Small Molecule",
+      "id": "H",
+      "molarMass": 94.11299999999999,
+      "name": "苯酚"
+     }
+    ],
+    "kind": "analyze"
+   },
+   "output": {
+    "components": [
+     {
+      "distribution": {
+       "mEnds": 0,
+       "mUnit": 142.15399999999997,
+       "mn": 2985.2339999999995,
+       "mw": 5970.467999999999
+      },
+      "dp": 21,
+      "endGroupCounts": {},
+      "ends": null,
+      "groups": [
+       {
+        "groupId": "ether.epoxide",
+        "sites": [
+         [
+          11,
+          10,
+          9
+         ]
+        ]
+       }
+      ],
+      "id": "E",
+      "isPolymer": true,
+      "molarMass": 2985.2339999999995,
+      "name": "環氧寡聚物 E",
+      "problem": null,
+      "source": "[*:1]CC([*:2])(C)C(=O)OCC1CO1",
+      "unitGroupCounts": {
+       "ether.epoxide": 1
+      },
+      "units": [
+       {
+        "groups": [
+         {
+          "groupId": "ether.epoxide",
+          "sites": [
+           [
+            11,
+            10,
+            9
+           ]
+          ]
+         }
+        ],
+        "molFraction": 1,
+        "smiles": "[*:1]CC([*:2])(C)C(=O)OCC1CO1"
+       }
+      ]
+     },
+     {
+      "distribution": null,
+      "dp": null,
+      "endGroupCounts": {},
+      "ends": null,
+      "groups": [
+       {
+        "groupId": "hydroxyl.phenolic",
+        "sites": [
+         [
+          0
+         ]
+        ]
+       }
+      ],
+      "id": "H",
+      "isPolymer": false,
+      "molarMass": 94.11299999999999,
+      "name": "苯酚",
+      "problem": null,
+      "source": "Oc1ccccc1",
+      "unitGroupCounts": {},
+      "units": null
+     }
+    ],
+    "confidence": "direct",
+    "markedAtoms": {
+     "E": [
+      9,
+      10,
+      11
+     ],
+     "H": [
+      0
+     ]
+    },
+    "markedEndAtoms": {},
+    "markedUnitAtoms": {},
+    "modelName": "反應規則表（交聯第 0 層）",
+    "nonParticipants": [],
+    "pairs": [
+     {
+      "a": {
+       "componentId": "E",
+       "f": 21,
+       "groupId": "ether.epoxide",
+       "isPolymer": true,
+       "name": "環氧寡聚物 E",
+       "perChain": 0,
+       "perUnit": 1
+      },
+      "b": {
+       "componentId": "H",
+       "f": 1,
+       "groupId": "hydroxyl.phenolic",
+       "isPolymer": false,
+       "name": "苯酚",
+       "perChain": null,
+       "perUnit": null
+      },
+      "catalyst": {
+       "message": "不需催化劑",
+       "status": "none"
+      },
+      "groupAName": "環氧基",
+      "groupBName": "酚羥基",
+      "kind": "graft",
+      "reactionLabel": "環氧基–酚羥基 開環加成",
+      "ruleId": "epoxy+phenol",
+      "self": false,
+      "temperature": "尚無文獻資料"
+     }
+    ],
+    "pendingReview": {
+     "groups": [],
+     "rules": []
+    },
+    "verdict": "capping",
+    "warnings": []
+   }
+  },
+  {
+   "id": "analyze/self-reactive-small",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "Oc1ccc(OCC2CO2)cc1",
+      "category": "Small Molecule",
+      "id": "X",
+      "molarMass": 166.17600000000002,
+      "name": "X"
+     }
+    ],
+    "kind": "analyze"
+   },
+   "output": {
+    "components": [
+     {
+      "distribution": null,
+      "dp": null,
+      "endGroupCounts": {},
+      "ends": null,
+      "groups": [
+       {
+        "groupId": "hydroxyl.phenolic",
+        "sites": [
+         [
+          0
+         ]
+        ]
+       },
+       {
+        "groupId": "ether.epoxide",
+        "sites": [
+         [
+          9,
+          8,
+          7
+         ]
+        ]
+       }
+      ],
+      "id": "X",
+      "isPolymer": false,
+      "molarMass": 166.17600000000002,
+      "name": "X",
+      "problem": null,
+      "source": "Oc1ccc(OCC2CO2)cc1",
+      "unitGroupCounts": {},
+      "units": null
+     }
+    ],
+    "confidence": "direct",
+    "markedAtoms": {
+     "X": [
+      0,
+      7,
+      8,
+      9
+     ]
+    },
+    "markedEndAtoms": {},
+    "markedUnitAtoms": {},
+    "modelName": "反應規則表（交聯第 0 層）",
+    "nonParticipants": [],
+    "pairs": [
+     {
+      "a": {
+       "componentId": "X",
+       "f": 1,
+       "groupId": "ether.epoxide",
+       "isPolymer": false,
+       "name": "X",
+       "perChain": null,
+       "perUnit": null
+      },
+      "b": {
+       "componentId": "X",
+       "f": 1,
+       "groupId": "hydroxyl.phenolic",
+       "isPolymer": false,
+       "name": "X",
+       "perChain": null,
+       "perUnit": null
+      },
+      "catalyst": {
+       "message": "不需催化劑",
+       "status": "none"
+      },
+      "groupAName": "環氧基",
+      "groupBName": "酚羥基",
+      "kind": "capping",
+      "reactionLabel": "環氧基–酚羥基 開環加成",
+      "ruleId": "epoxy+phenol",
+      "self": true,
+      "temperature": "尚無文獻資料"
+     }
+    ],
+    "pendingReview": {
+     "groups": [],
+     "rules": []
+    },
+    "verdict": "capping",
+    "warnings": []
+   }
+  },
+  {
+   "id": "analyze/BADGE-BPA-TPP",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "CC(C)(c1ccc(OCC2CO2)cc1)c1ccc(OCC2CO2)cc1",
+      "category": "Resin",
+      "id": "B",
+      "molarMass": 340.4190000000001,
+      "name": "BADGE"
+     },
+     {
+      "canonicalSmiles": "CC(C)(c1ccc(O)cc1)c1ccc(O)cc1",
+      "category": "Crosslinker",
+      "id": "A",
+      "molarMass": 228.291,
+      "name": "BPA"
+     },
+     {
+      "canonicalSmiles": "c1ccc(P(c2ccccc2)c2ccccc2)cc1",
+      "category": "Catalyst/Initiator",
+      "id": "T",
+      "molarMass": 262.29200000000003,
+      "name": "TPP"
+     }
+    ],
+    "kind": "analyze"
+   },
+   "output": {
+    "components": [
+     {
+      "distribution": null,
+      "dp": null,
+      "endGroupCounts": {},
+      "ends": null,
+      "groups": [
+       {
+        "groupId": "ether.epoxide",
+        "sites": [
+         [
+          11,
+          10,
+          9
+         ],
+         [
+          22,
+          21,
+          20
+         ]
+        ]
+       }
+      ],
+      "id": "B",
+      "isPolymer": false,
+      "molarMass": 340.4190000000001,
+      "name": "BADGE",
+      "problem": null,
+      "source": "CC(C)(c1ccc(OCC2CO2)cc1)c1ccc(OCC2CO2)cc1",
+      "unitGroupCounts": {},
+      "units": null
+     },
+     {
+      "distribution": null,
+      "dp": null,
+      "endGroupCounts": {},
+      "ends": null,
+      "groups": [
+       {
+        "groupId": "hydroxyl.phenolic",
+        "sites": [
+         [
+          7
+         ],
+         [
+          14
+         ]
+        ]
+       }
+      ],
+      "id": "A",
+      "isPolymer": false,
+      "molarMass": 228.291,
+      "name": "BPA",
+      "problem": null,
+      "source": "CC(C)(c1ccc(O)cc1)c1ccc(O)cc1",
+      "unitGroupCounts": {},
+      "units": null
+     },
+     {
+      "distribution": null,
+      "dp": null,
+      "endGroupCounts": {},
+      "ends": null,
+      "groups": [],
+      "id": "T",
+      "isPolymer": false,
+      "molarMass": 262.29200000000003,
+      "name": "TPP",
+      "problem": null,
+      "source": "c1ccc(P(c2ccccc2)c2ccccc2)cc1",
+      "unitGroupCounts": {},
+      "units": null
+     }
+    ],
+    "confidence": "direct",
+    "markedAtoms": {
+     "A": [
+      7,
+      14
+     ],
+     "B": [
+      9,
+      10,
+      11,
+      20,
+      21,
+      22
+     ]
+    },
+    "markedEndAtoms": {},
+    "markedUnitAtoms": {},
+    "modelName": "反應規則表（交聯第 0 層）",
+    "nonParticipants": [
+     {
+      "id": "T",
+      "name": "TPP"
+     }
+    ],
+    "pairs": [
+     {
+      "a": {
+       "componentId": "B",
+       "f": 2,
+       "groupId": "ether.epoxide",
+       "isPolymer": false,
+       "name": "BADGE",
+       "perChain": null,
+       "perUnit": null
+      },
+      "b": {
+       "componentId": "A",
+       "f": 2,
+       "groupId": "hydroxyl.phenolic",
+       "isPolymer": false,
+       "name": "BPA",
+       "perChain": null,
+       "perUnit": null
+      },
+      "catalyst": {
+       "message": "不需催化劑",
+       "status": "none"
+      },
+      "groupAName": "環氧基",
+      "groupBName": "酚羥基",
+      "kind": "chain",
+      "reactionLabel": "環氧基–酚羥基 開環加成",
+      "ruleId": "epoxy+phenol",
+      "self": false,
+      "temperature": "尚無文獻資料"
+     }
+    ],
+    "pendingReview": {
+     "groups": [],
+     "rules": []
+    },
+    "verdict": "chain",
+    "warnings": []
+   }
+  },
+  {
+   "id": "analyze/BT05-with-S",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]Oc1ccc(cc1)C(C)(C)c1ccc(cc1)OCC(O)C[*:2]",
+      "category": "Resin",
+      "id": "P",
+      "name": "P",
+      "polymer": {
+       "endGroups": {
+        "end1": {
+         "presetId": "EG09",
+         "smiles": "[*]CC1CO1"
+        },
+        "end2": {
+         "smiles": "[*]Oc1ccc(cc1)C(C)(C)c1ccc(cc1)OCC1CO1"
+        }
+       },
+       "mwInput": 1000,
+       "pdiInput": 2
+      }
+     },
+     {
+      "canonicalSmiles": "OC(=CC=C1C2(C)C)C=C1C(C2)(CC1(C)C)C(=CC(O)=C2)C1=C2",
+      "category": "Small Molecule",
+      "id": "S",
+      "molarMass": 308.421,
+      "name": "S"
+     }
+    ],
+    "kind": "analyze"
+   },
+   "output": {
+    "components": [
+     {
+      "distribution": {
+       "mEnds": 340.41900000000004,
+       "mUnit": 284.355,
+       "mn": 500,
+       "mw": 1000
+      },
+      "dp": 0.5612034252958448,
+      "endGroupCounts": {
+       "ether.epoxide": 2
+      },
+      "ends": [
+       {
+        "groups": [
+         {
+          "groupId": "ether.epoxide",
+          "sites": [
+           [
+            4,
+            3,
+            2
+           ]
+          ]
+         }
+        ],
+        "smiles": "[*]CC1CO1"
+       },
+       {
+        "groups": [
+         {
+          "groupId": "ether.epoxide",
+          "sites": [
+           [
+            21,
+            20,
+            19
+           ]
+          ]
+         }
+        ],
+        "smiles": "[*]Oc1ccc(cc1)C(C)(C)c1ccc(cc1)OCC1CO1"
+       }
+      ],
+      "groups": [
+       {
+        "groupId": "ether.epoxide",
+        "sites": []
+       }
+      ],
+      "id": "P",
+      "isPolymer": true,
+      "molarMass": 500,
+      "name": "P",
+      "problem": null,
+      "source": "[*:1]Oc1ccc(cc1)C(C)(C)c1ccc(cc1)OCC(O)C[*:2]",
+      "unitGroupCounts": {},
+      "units": [
+       {
+        "groups": [],
+        "molFraction": 1,
+        "smiles": "[*:1]Oc1ccc(cc1)C(C)(C)c1ccc(cc1)OCC(O)C[*:2]"
+       }
+      ]
+     },
+     {
+      "distribution": null,
+      "dp": null,
+      "endGroupCounts": {},
+      "ends": null,
+      "groups": [
+       {
+        "groupId": "hydroxyl.phenolic",
+        "sites": [
+         [
+          0
+         ],
+         [
+          19
+         ]
+        ]
+       }
+      ],
+      "id": "S",
+      "isPolymer": false,
+      "molarMass": 308.421,
+      "name": "S",
+      "problem": null,
+      "source": "OC(=CC=C1C2(C)C)C=C1C(C2)(CC1(C)C)C(=CC(O)=C2)C1=C2",
+      "unitGroupCounts": {},
+      "units": null
+     }
+    ],
+    "confidence": "direct",
+    "markedAtoms": {
+     "P": [],
+     "S": [
+      0,
+      19
+     ]
+    },
+    "markedEndAtoms": {
+     "P": [
+      [
+       2,
+       3,
+       4
+      ],
+      [
+       19,
+       20,
+       21
+      ]
+     ]
+    },
+    "markedUnitAtoms": {},
+    "modelName": "反應規則表（交聯第 0 層）",
+    "nonParticipants": [],
+    "pairs": [
+     {
+      "a": {
+       "componentId": "P",
+       "f": 2,
+       "groupId": "ether.epoxide",
+       "isPolymer": true,
+       "name": "P",
+       "perChain": 2,
+       "perUnit": 0
+      },
+      "b": {
+       "componentId": "S",
+       "f": 2,
+       "groupId": "hydroxyl.phenolic",
+       "isPolymer": false,
+       "name": "S",
+       "perChain": null,
+       "perUnit": null
+      },
+      "catalyst": {
+       "message": "不需催化劑",
+       "status": "none"
+      },
+      "groupAName": "環氧基",
+      "groupBName": "酚羥基",
+      "kind": "chain",
+      "reactionLabel": "環氧基–酚羥基 開環加成",
+      "ruleId": "epoxy+phenol",
+      "self": false,
+      "temperature": "尚無文獻資料"
+     }
+    ],
+    "pendingReview": {
+     "groups": [],
+     "rules": []
+    },
+    "verdict": "chain",
+    "warnings": []
+   }
+  },
+  {
+   "id": "analyze/BT01-with-S",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]Cc1cc([*:2])ccc1O",
+      "category": "Resin",
+      "id": "P",
+      "name": "P",
+      "polymer": {
+       "endGroups": {
+        "end1": {
+         "presetId": "EG12",
+         "smiles": "[*]c1ccccc1O"
+        },
+        "end2": {
+         "presetId": "EG01",
+         "smiles": "[*][H]"
+        }
+       },
+       "mwInput": 3000,
+       "pdiInput": 1.5
+      }
+     },
+     {
+      "canonicalSmiles": "OC(=CC=C1C2(C)C)C=C1C(C2)(CC1(C)C)C(=CC(O)=C2)C1=C2",
+      "category": "Small Molecule",
+      "id": "S",
+      "molarMass": 308.421,
+      "name": "S"
+     }
+    ],
+    "kind": "analyze"
+   },
+   "output": {
+    "components": [
+     {
+      "distribution": {
+       "mEnds": 94.11299999999999,
+       "mUnit": 106.12399999999997,
+       "mn": 2000,
+       "mw": 3000
+      },
+      "dp": 17.959057329162118,
+      "endGroupCounts": {
+       "hydroxyl.phenolic": 1
+      },
+      "ends": [
+       {
+        "groups": [
+         {
+          "groupId": "hydroxyl.phenolic",
+          "sites": [
+           [
+            7
+           ]
+          ]
+         }
+        ],
+        "smiles": "[*]c1ccccc1O"
+       },
+       {
+        "groups": [],
+        "smiles": "[*][H]"
+       }
+      ],
+      "groups": [
+       {
+        "groupId": "hydroxyl.phenolic",
+        "sites": [
+         [
+          9
+         ]
+        ]
+       }
+      ],
+      "id": "P",
+      "isPolymer": true,
+      "molarMass": 2000,
+      "name": "P",
+      "problem": null,
+      "source": "[*:1]Cc1cc([*:2])ccc1O",
+      "unitGroupCounts": {
+       "hydroxyl.phenolic": 1
+      },
+      "units": [
+       {
+        "groups": [
+         {
+          "groupId": "hydroxyl.phenolic",
+          "sites": [
+           [
+            9
+           ]
+          ]
+         }
+        ],
+        "molFraction": 1,
+        "smiles": "[*:1]Cc1cc([*:2])ccc1O"
+       }
+      ]
+     },
+     {
+      "distribution": null,
+      "dp": null,
+      "endGroupCounts": {},
+      "ends": null,
+      "groups": [
+       {
+        "groupId": "hydroxyl.phenolic",
+        "sites": [
+         [
+          0
+         ],
+         [
+          19
+         ]
+        ]
+       }
+      ],
+      "id": "S",
+      "isPolymer": false,
+      "molarMass": 308.421,
+      "name": "S",
+      "problem": null,
+      "source": "OC(=CC=C1C2(C)C)C=C1C(C2)(CC1(C)C)C(=CC(O)=C2)C1=C2",
+      "unitGroupCounts": {},
+      "units": null
+     }
+    ],
+    "confidence": "direct",
+    "markedAtoms": {},
+    "markedEndAtoms": {},
+    "markedUnitAtoms": {},
+    "modelName": "反應規則表（交聯第 0 層）",
+    "nonParticipants": [
+     {
+      "id": "P",
+      "name": "P"
+     },
+     {
+      "id": "S",
+      "name": "S"
+     }
+    ],
+    "pairs": [],
+    "pendingReview": {
+     "groups": [],
+     "rules": []
+    },
+    "verdict": "none",
+    "warnings": []
+   }
+  },
+  {
+   "id": "analyze/BT05-mw-3000",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]Oc1ccc(cc1)C(C)(C)c1ccc(cc1)OCC(O)C[*:2]",
+      "category": "Resin",
+      "id": "P",
+      "name": "P",
+      "polymer": {
+       "endGroups": {
+        "end1": {
+         "presetId": "EG09",
+         "smiles": "[*]CC1CO1"
+        },
+        "end2": {
+         "smiles": "[*]Oc1ccc(cc1)C(C)(C)c1ccc(cc1)OCC1CO1"
+        }
+       },
+       "mwInput": 3000,
+       "pdiInput": 2
+      }
+     },
+     {
+      "canonicalSmiles": "OC(=CC=C1C2(C)C)C=C1C(C2)(CC1(C)C)C(=CC(O)=C2)C1=C2",
+      "category": "Small Molecule",
+      "id": "S",
+      "molarMass": 308.421,
+      "name": "S"
+     }
+    ],
+    "kind": "analyze"
+   },
+   "output": {
+    "components": [
+     {
+      "distribution": {
+       "mEnds": 340.41900000000004,
+       "mUnit": 284.355,
+       "mn": 1500,
+       "mw": 3000
+      },
+      "dp": 4.077934272300469,
+      "endGroupCounts": {
+       "ether.epoxide": 2
+      },
+      "ends": [
+       {
+        "groups": [
+         {
+          "groupId": "ether.epoxide",
+          "sites": [
+           [
+            4,
+            3,
+            2
+           ]
+          ]
+         }
+        ],
+        "smiles": "[*]CC1CO1"
+       },
+       {
+        "groups": [
+         {
+          "groupId": "ether.epoxide",
+          "sites": [
+           [
+            21,
+            20,
+            19
+           ]
+          ]
+         }
+        ],
+        "smiles": "[*]Oc1ccc(cc1)C(C)(C)c1ccc(cc1)OCC1CO1"
+       }
+      ],
+      "groups": [
+       {
+        "groupId": "ether.epoxide",
+        "sites": []
+       }
+      ],
+      "id": "P",
+      "isPolymer": true,
+      "molarMass": 1500,
+      "name": "P",
+      "problem": null,
+      "source": "[*:1]Oc1ccc(cc1)C(C)(C)c1ccc(cc1)OCC(O)C[*:2]",
+      "unitGroupCounts": {},
+      "units": [
+       {
+        "groups": [],
+        "molFraction": 1,
+        "smiles": "[*:1]Oc1ccc(cc1)C(C)(C)c1ccc(cc1)OCC(O)C[*:2]"
+       }
+      ]
+     },
+     {
+      "distribution": null,
+      "dp": null,
+      "endGroupCounts": {},
+      "ends": null,
+      "groups": [
+       {
+        "groupId": "hydroxyl.phenolic",
+        "sites": [
+         [
+          0
+         ],
+         [
+          19
+         ]
+        ]
+       }
+      ],
+      "id": "S",
+      "isPolymer": false,
+      "molarMass": 308.421,
+      "name": "S",
+      "problem": null,
+      "source": "OC(=CC=C1C2(C)C)C=C1C(C2)(CC1(C)C)C(=CC(O)=C2)C1=C2",
+      "unitGroupCounts": {},
+      "units": null
+     }
+    ],
+    "confidence": "direct",
+    "markedAtoms": {
+     "P": [],
+     "S": [
+      0,
+      19
+     ]
+    },
+    "markedEndAtoms": {
+     "P": [
+      [
+       2,
+       3,
+       4
+      ],
+      [
+       19,
+       20,
+       21
+      ]
+     ]
+    },
+    "markedUnitAtoms": {},
+    "modelName": "反應規則表（交聯第 0 層）",
+    "nonParticipants": [],
+    "pairs": [
+     {
+      "a": {
+       "componentId": "P",
+       "f": 2,
+       "groupId": "ether.epoxide",
+       "isPolymer": true,
+       "name": "P",
+       "perChain": 2,
+       "perUnit": 0
+      },
+      "b": {
+       "componentId": "S",
+       "f": 2,
+       "groupId": "hydroxyl.phenolic",
+       "isPolymer": false,
+       "name": "S",
+       "perChain": null,
+       "perUnit": null
+      },
+      "catalyst": {
+       "message": "不需催化劑",
+       "status": "none"
+      },
+      "groupAName": "環氧基",
+      "groupBName": "酚羥基",
+      "kind": "chain",
+      "reactionLabel": "環氧基–酚羥基 開環加成",
+      "ruleId": "epoxy+phenol",
+      "self": false,
+      "temperature": "尚無文獻資料"
+     }
+    ],
+    "pendingReview": {
+     "groups": [],
+     "rules": []
+    },
+    "verdict": "chain",
+    "warnings": []
+   }
+  },
+  {
+   "id": "analyze/DGEBA-small-with-S",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "C1OC1COc1ccc(cc1)C(C)(C)c1ccc(cc1)OCC1CO1",
+      "category": "Resin",
+      "id": "D",
+      "molarMass": 340.4190000000001,
+      "name": "DGEBA"
+     },
+     {
+      "canonicalSmiles": "OC(=CC=C1C2(C)C)C=C1C(C2)(CC1(C)C)C(=CC(O)=C2)C1=C2",
+      "category": "Small Molecule",
+      "id": "S",
+      "molarMass": 308.421,
+      "name": "S"
+     }
+    ],
+    "kind": "analyze"
+   },
+   "output": {
+    "components": [
+     {
+      "distribution": null,
+      "dp": null,
+      "endGroupCounts": {},
+      "ends": null,
+      "groups": [
+       {
+        "groupId": "ether.epoxide",
+        "sites": [
+         [
+          1,
+          0,
+          2
+         ],
+         [
+          24,
+          23,
+          22
+         ]
+        ]
+       }
+      ],
+      "id": "D",
+      "isPolymer": false,
+      "molarMass": 340.4190000000001,
+      "name": "DGEBA",
+      "problem": null,
+      "source": "C1OC1COc1ccc(cc1)C(C)(C)c1ccc(cc1)OCC1CO1",
+      "unitGroupCounts": {},
+      "units": null
+     },
+     {
+      "distribution": null,
+      "dp": null,
+      "endGroupCounts": {},
+      "ends": null,
+      "groups": [
+       {
+        "groupId": "hydroxyl.phenolic",
+        "sites": [
+         [
+          0
+         ],
+         [
+          19
+         ]
+        ]
+       }
+      ],
+      "id": "S",
+      "isPolymer": false,
+      "molarMass": 308.421,
+      "name": "S",
+      "problem": null,
+      "source": "OC(=CC=C1C2(C)C)C=C1C(C2)(CC1(C)C)C(=CC(O)=C2)C1=C2",
+      "unitGroupCounts": {},
+      "units": null
+     }
+    ],
+    "confidence": "direct",
+    "markedAtoms": {
+     "D": [
+      0,
+      1,
+      2,
+      22,
+      23,
+      24
+     ],
+     "S": [
+      0,
+      19
+     ]
+    },
+    "markedEndAtoms": {},
+    "markedUnitAtoms": {},
+    "modelName": "反應規則表（交聯第 0 層）",
+    "nonParticipants": [],
+    "pairs": [
+     {
+      "a": {
+       "componentId": "D",
+       "f": 2,
+       "groupId": "ether.epoxide",
+       "isPolymer": false,
+       "name": "DGEBA",
+       "perChain": null,
+       "perUnit": null
+      },
+      "b": {
+       "componentId": "S",
+       "f": 2,
+       "groupId": "hydroxyl.phenolic",
+       "isPolymer": false,
+       "name": "S",
+       "perChain": null,
+       "perUnit": null
+      },
+      "catalyst": {
+       "message": "不需催化劑",
+       "status": "none"
+      },
+      "groupAName": "環氧基",
+      "groupBName": "酚羥基",
+      "kind": "chain",
+      "reactionLabel": "環氧基–酚羥基 開環加成",
+      "ruleId": "epoxy+phenol",
+      "self": false,
+      "temperature": "尚無文獻資料"
+     }
+    ],
+    "pendingReview": {
+     "groups": [],
+     "rules": []
+    },
+    "verdict": "chain",
+    "warnings": []
+   }
+  },
+  {
+   "id": "analyze/copolymer-PS-like",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc(C([*:2])c4ccc5ccccc5c4)c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+      "category": "Resin",
+      "id": "C",
+      "name": "C",
+      "polymer": {
+       "mnInput": 6000,
+       "units": [
+        {
+         "fraction": 60,
+         "smiles": "[*:1]c1ccc(C2(c3ccc(C([*:2])c4ccc5ccccc5c4)c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+        },
+        {
+         "fraction": 40,
+         "smiles": "[*:1]CC([*:2])(C)C(=O)OCC1CO1"
+        }
+       ]
+      }
+     },
+     {
+      "canonicalSmiles": "[*:1]CC([*:2])(C)C(=O)OCC1CO1",
+      "category": "Resin",
+      "id": "E",
+      "name": "環氧寡聚物 E",
+      "polymer": {
+       "dpInput": 21
+      }
+     }
+    ],
+    "kind": "analyze"
+   },
+   "output": {
+    "components": [
+     {
+      "distribution": {
+       "mEnds": 0,
+       "mUnit": 350.0132000000001,
+       "mn": 6000,
+       "mw": 12000
+      },
+      "dp": 17.142210636627414,
+      "endGroupCounts": {},
+      "ends": null,
+      "groups": [
+       {
+        "groupId": "hydroxyl.phenolic",
+        "sites": [
+         [
+          23
+         ],
+         [
+          39
+         ]
+        ]
+       },
+       {
+        "groupId": "ether.epoxide",
+        "sites": []
+       }
+      ],
+      "id": "C",
+      "isPolymer": true,
+      "molarMass": 6000,
+      "name": "C",
+      "problem": null,
+      "source": "[*:1]c1ccc(C2(c3ccc(C([*:2])c4ccc5ccccc5c4)c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+      "unitGroupCounts": {
+       "ether.epoxide": 0.4,
+       "hydroxyl.phenolic": 1.2
+      },
+      "units": [
+       {
+        "groups": [
+         {
+          "groupId": "hydroxyl.phenolic",
+          "sites": [
+           [
+            23
+           ],
+           [
+            39
+           ]
+          ]
+         }
+        ],
+        "molFraction": 0.6,
+        "smiles": "[*:1]c1ccc(C2(c3ccc(C([*:2])c4ccc5ccccc5c4)c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+       },
+       {
+        "groups": [
+         {
+          "groupId": "ether.epoxide",
+          "sites": [
+           [
+            11,
+            10,
+            9
+           ]
+          ]
+         }
+        ],
+        "molFraction": 0.4,
+        "smiles": "[*:1]CC([*:2])(C)C(=O)OCC1CO1"
+       }
+      ]
+     },
+     {
+      "distribution": {
+       "mEnds": 0,
+       "mUnit": 142.15399999999997,
+       "mn": 2985.2339999999995,
+       "mw": 5970.467999999999
+      },
+      "dp": 21,
+      "endGroupCounts": {},
+      "ends": null,
+      "groups": [
+       {
+        "groupId": "ether.epoxide",
+        "sites": [
+         [
+          11,
+          10,
+          9
+         ]
+        ]
+       }
+      ],
+      "id": "E",
+      "isPolymer": true,
+      "molarMass": 2985.2339999999995,
+      "name": "環氧寡聚物 E",
+      "problem": null,
+      "source": "[*:1]CC([*:2])(C)C(=O)OCC1CO1",
+      "unitGroupCounts": {
+       "ether.epoxide": 1
+      },
+      "units": [
+       {
+        "groups": [
+         {
+          "groupId": "ether.epoxide",
+          "sites": [
+           [
+            11,
+            10,
+            9
+           ]
+          ]
+         }
+        ],
+        "molFraction": 1,
+        "smiles": "[*:1]CC([*:2])(C)C(=O)OCC1CO1"
+       }
+      ]
+     }
+    ],
+    "confidence": "direct",
+    "markedAtoms": {
+     "C": [
+      23,
+      39
+     ],
+     "E": [
+      9,
+      10,
+      11
+     ]
+    },
+    "markedEndAtoms": {},
+    "markedUnitAtoms": {
+     "C": [
+      [
+       23,
+       39
+      ],
+      [
+       9,
+       10,
+       11
+      ]
+     ]
+    },
+    "modelName": "反應規則表（交聯第 0 層）",
+    "nonParticipants": [],
+    "pairs": [
+     {
+      "a": {
+       "componentId": "C",
+       "f": 6.856884254650966,
+       "groupId": "ether.epoxide",
+       "isPolymer": true,
+       "name": "C",
+       "perChain": 0,
+       "perUnit": 0.4
+      },
+      "b": {
+       "componentId": "C",
+       "f": 20.570652763952896,
+       "groupId": "hydroxyl.phenolic",
+       "isPolymer": true,
+       "name": "C",
+       "perChain": 0,
+       "perUnit": 1.2
+      },
+      "catalyst": {
+       "message": "不需催化劑",
+       "status": "none"
+      },
+      "groupAName": "環氧基",
+      "groupBName": "酚羥基",
+      "kind": "network",
+      "reactionLabel": "環氧基–酚羥基 開環加成",
+      "ruleId": "epoxy+phenol",
+      "self": true,
+      "temperature": "尚無文獻資料"
+     },
+     {
+      "a": {
+       "componentId": "E",
+       "f": 21,
+       "groupId": "ether.epoxide",
+       "isPolymer": true,
+       "name": "環氧寡聚物 E",
+       "perChain": 0,
+       "perUnit": 1
+      },
+      "b": {
+       "componentId": "C",
+       "f": 20.570652763952896,
+       "groupId": "hydroxyl.phenolic",
+       "isPolymer": true,
+       "name": "C",
+       "perChain": 0,
+       "perUnit": 1.2
+      },
+      "catalyst": {
+       "message": "不需催化劑",
+       "status": "none"
+      },
+      "groupAName": "環氧基",
+      "groupBName": "酚羥基",
+      "kind": "network",
+      "reactionLabel": "環氧基–酚羥基 開環加成",
+      "ruleId": "epoxy+phenol",
+      "self": false,
+      "temperature": "尚無文獻資料"
+     }
+    ],
+    "pendingReview": {
+     "groups": [],
+     "rules": []
+    },
+    "verdict": "network",
+    "warnings": []
+   }
+  },
+  {
+   "id": "analyzeComponent/userUnit/P 單元 A（雙酚茀）",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 348.40100000000007,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 17.221534955410572,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [
+     {
+      "groupId": "hydroxyl.phenolic",
+      "sites": [
+       [
+        12
+       ],
+       [
+        28
+       ]
+      ]
+     }
+    ],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "unitGroupCounts": {
+     "hydroxyl.phenolic": 2
+    },
+    "units": [
+     {
+      "groups": [
+       {
+        "groupId": "hydroxyl.phenolic",
+        "sites": [
+         [
+          12
+         ],
+         [
+          28
+         ]
+        ]
+       }
+      ],
+      "molFraction": 1,
+      "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/userUnit/P 單元 B（萘基次甲基）",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]C([*:2])c1ccc2ccccc2c1",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 140.18499999999997,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 42.80058494132754,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]C([*:2])c1ccc2ccccc2c1",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/userUnit/E PGMA 型環氧單元",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]CC([*:2])(C)C(=O)OCC1CO1",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 142.15399999999997,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 42.207746528412855,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [
+     {
+      "groupId": "ether.epoxide",
+      "sites": [
+       [
+        11,
+        10,
+        9
+       ]
+      ]
+     }
+    ],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]CC([*:2])(C)C(=O)OCC1CO1",
+    "unitGroupCounts": {
+     "ether.epoxide": 1
+    },
+    "units": [
+     {
+      "groups": [
+       {
+        "groupId": "ether.epoxide",
+        "sites": [
+         [
+          11,
+          10,
+          9
+         ]
+        ]
+       }
+      ],
+      "molFraction": 1,
+      "smiles": "[*:1]CC([*:2])(C)C(=O)OCC1CO1"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/BT/BT01",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]Cc1cc([*:2])ccc1O",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 106.12399999999997,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 56.53763521917758,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [
+     {
+      "groupId": "hydroxyl.phenolic",
+      "sites": [
+       [
+        9
+       ]
+      ]
+     }
+    ],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]Cc1cc([*:2])ccc1O",
+    "unitGroupCounts": {
+     "hydroxyl.phenolic": 1
+    },
+    "units": [
+     {
+      "groups": [
+       {
+        "groupId": "hydroxyl.phenolic",
+        "sites": [
+         [
+          9
+         ]
+        ]
+       }
+      ],
+      "molFraction": 1,
+      "smiles": "[*:1]Cc1cc([*:2])ccc1O"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/BT/BT02",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]Cc1cc([*:2])cc(C)c1O",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 120.15099999999997,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 49.93716240397501,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [
+     {
+      "groupId": "hydroxyl.phenolic",
+      "sites": [
+       [
+        10
+       ]
+      ]
+     }
+    ],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]Cc1cc([*:2])cc(C)c1O",
+    "unitGroupCounts": {
+     "hydroxyl.phenolic": 1
+    },
+    "units": [
+     {
+      "groups": [
+       {
+        "groupId": "hydroxyl.phenolic",
+        "sites": [
+         [
+          10
+         ]
+        ]
+       }
+      ],
+      "molFraction": 1,
+      "smiles": "[*:1]Cc1cc([*:2])cc(C)c1O"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/BT/BT03",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]Cc1cc([*:2])ccc1OCC2CO2",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 162.18799999999996,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 36.99410560584015,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [
+     {
+      "groupId": "ether.epoxide",
+      "sites": [
+       [
+        13,
+        12,
+        11
+       ]
+      ]
+     }
+    ],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]Cc1cc([*:2])ccc1OCC2CO2",
+    "unitGroupCounts": {
+     "ether.epoxide": 1
+    },
+    "units": [
+     {
+      "groups": [
+       {
+        "groupId": "ether.epoxide",
+        "sites": [
+         [
+          13,
+          12,
+          11
+         ]
+        ]
+       }
+      ],
+      "molFraction": 1,
+      "smiles": "[*:1]Cc1cc([*:2])ccc1OCC2CO2"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/BT/BT04",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]Cc1cc([*:2])cc(C)c1OCC2CO2",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 176.21499999999995,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 34.049314757540515,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [
+     {
+      "groupId": "ether.epoxide",
+      "sites": [
+       [
+        14,
+        13,
+        12
+       ]
+      ]
+     }
+    ],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]Cc1cc([*:2])cc(C)c1OCC2CO2",
+    "unitGroupCounts": {
+     "ether.epoxide": 1
+    },
+    "units": [
+     {
+      "groups": [
+       {
+        "groupId": "ether.epoxide",
+        "sites": [
+         [
+          14,
+          13,
+          12
+         ]
+        ]
+       }
+      ],
+      "molFraction": 1,
+      "smiles": "[*:1]Cc1cc([*:2])cc(C)c1OCC2CO2"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/BT/BT05",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]Oc1ccc(cc1)C(C)(C)c1ccc(cc1)OCC(O)C[*:2]",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 284.355,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 21.100385082027746,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]Oc1ccc(cc1)C(C)(C)c1ccc(cc1)OCC(O)C[*:2]",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]Oc1ccc(cc1)C(C)(C)c1ccc(cc1)OCC(O)C[*:2]"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/BT/BT06",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]Oc1ccc(cc1)C1(c2ccccc2-c2ccccc21)c1ccc(cc1)OCC(O)C[*:2]",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 406.4810000000002,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 14.76083752992144,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]Oc1ccc(cc1)C1(c2ccccc2-c2ccccc21)c1ccc(cc1)OCC(O)C[*:2]",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]Oc1ccc(cc1)C1(c2ccccc2-c2ccccc21)c1ccc(cc1)OCC(O)C[*:2]"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#17",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]CC[*:2]",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 28.053999999999995,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 213.87324445711846,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]CC[*:2]",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]CC[*:2]"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#18",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]CC([*:2])c1ccccc1",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 104.15199999999997,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 57.60811122206008,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]CC([*:2])c1ccccc1",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]CC([*:2])c1ccccc1"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#19",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]CC([*:2])c1ccc(O)cc1",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 120.15099999999997,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 49.93716240397501,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [
+     {
+      "groupId": "hydroxyl.phenolic",
+      "sites": [
+       [
+        8
+       ]
+      ]
+     }
+    ],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]CC([*:2])c1ccc(O)cc1",
+    "unitGroupCounts": {
+     "hydroxyl.phenolic": 1
+    },
+    "units": [
+     {
+      "groups": [
+       {
+        "groupId": "hydroxyl.phenolic",
+        "sites": [
+         [
+          8
+         ]
+        ]
+       }
+      ],
+      "molFraction": 1,
+      "smiles": "[*:1]CC([*:2])c1ccc(O)cc1"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#20",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]C12CC3CC(CC(C3)C1)C2",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": null,
+    "name": "m",
+    "problem": "重複單元需要恰好兩個連接點（*），目前只有 1 個。",
+    "source": "[*:1]C12CC3CC(CC(C3)C1)C2",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#21",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "CC1(C)CC2(CC(C)(C)c3cc([*:2])ccc23)c2ccc([*:1])cc12",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 274.40700000000004,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 21.865331423761052,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "CC1(C)CC2(CC(C)(C)c3cc([*:2])ccc23)c2ccc([*:1])cc12",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "CC1(C)CC2(CC(C)(C)c3cc([*:2])ccc23)c2ccc([*:1])cc12"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#58",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]CC([*:2])C(=O)OCC1CO1",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 128.12699999999998,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 46.82853731063711,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [
+     {
+      "groupId": "ether.epoxide",
+      "sites": [
+       [
+        10,
+        9,
+        8
+       ]
+      ]
+     }
+    ],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]CC([*:2])C(=O)OCC1CO1",
+    "unitGroupCounts": {
+     "ether.epoxide": 1
+    },
+    "units": [
+     {
+      "groups": [
+       {
+        "groupId": "ether.epoxide",
+        "sites": [
+         [
+          10,
+          9,
+          8
+         ]
+        ]
+       }
+      ],
+      "molFraction": 1,
+      "smiles": "[*:1]CC([*:2])C(=O)OCC1CO1"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#115",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]CC([*:2])c1ccc(cc1)C12CC3CC(CC(C3)C1)C2",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 238.3739999999999,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 25.170530343074336,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]CC([*:2])c1ccc(cc1)C12CC3CC(CC(C3)C1)C2",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]CC([*:2])c1ccc(cc1)C12CC3CC(CC(C3)C1)C2"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#117",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": null,
+    "name": "m",
+    "problem": "重複單元需要恰好兩個連接點（*），目前只有 1 個。",
+    "source": "[*:1]",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#137",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]CC([*:2])C(=O)N",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 71.07900000000001,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 84.41311779850588,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]CC([*:2])C(=O)N",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]CC([*:2])C(=O)N"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#141",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]CC([*:2])Cl",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 62.498999999999995,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 96.0015360245764,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]CC([*:2])Cl",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]CC([*:2])Cl"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#173",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1][*:2]",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": null,
+    "name": "m",
+    "problem": "兩個連接點（*）不可直接相連。",
+    "source": "[*:1][*:2]",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolumeCases.ts#64",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]CCOC[*:2]",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 58.07999999999999,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 103.30578512396696,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]CCOC[*:2]",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]CCOC[*:2]"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolumeCases.ts#79",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]CC(=O)C[*:2]",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 56.064,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 107.02054794520548,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]CC(=O)C[*:2]",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]CC(=O)C[*:2]"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolumeCases.ts#99",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]CC([*:2])C(=O)OC",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 86.08999999999999,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 69.69450574979673,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]CC([*:2])C(=O)OC",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]CC([*:2])C(=O)OC"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolumeCases.ts#113",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]CCO",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": null,
+    "name": "m",
+    "problem": "重複單元需要恰好兩個連接點（*），目前只有 1 個。",
+    "source": "[*:1]CCO",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolumeCases.ts#185",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]CC([*:2])(C)C(=O)OC",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 100.11699999999998,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 59.929882038015535,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]CC([*:2])(C)C(=O)OC",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]CC([*:2])(C)C(=O)OC"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolumeCases.ts#223",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]c1ccc(cc1)C1(c2ccc([*:2])cc2)c2ccccc2-c2ccccc12",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 316.403,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 18.9631577450277,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]c1ccc(cc1)C1(c2ccc([*:2])cc2)c2ccccc2-c2ccccc12",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]c1ccc(cc1)C1(c2ccc([*:2])cc2)c2ccccc2-c2ccccc12"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolumeCases.ts#224",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]c1ccc(cc1)C1(c2ccc3cc([*:2])ccc3c2)c2ccccc2-c2ccccc12",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 366.4630000000001,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 16.37273067130924,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]c1ccc(cc1)C1(c2ccc3cc([*:2])ccc3c2)c2ccccc2-c2ccccc12",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]c1ccc(cc1)C1(c2ccc3cc([*:2])ccc3c2)c2ccccc2-c2ccccc12"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolumeCases.ts#225",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]c1cccc2ccccc12",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": null,
+    "name": "m",
+    "problem": "重複單元需要恰好兩個連接點（*），目前只有 1 個。",
+    "source": "[*:1]c1cccc2ccccc12",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolumeCases.ts#226",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]C1CC2CC1CC2C1CC2CCC1C2",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": null,
+    "name": "m",
+    "problem": "重複單元需要恰好兩個連接點（*），目前只有 1 個。",
+    "source": "[*:1]C1CC2CC1CC2C1CC2CCC1C2",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolumeCases.ts#229",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]c1ccc(Oc2ccccc2)cc1",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": null,
+    "name": "m",
+    "problem": "重複單元需要恰好兩個連接點（*），目前只有 1 個。",
+    "source": "[*:1]c1ccc(Oc2ccccc2)cc1",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolumeCases.ts#230",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]C1c2cccc3cccc(c23)C1[*:2]",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 152.19599999999997,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 39.42284948356068,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]C1c2cccc3cccc(c23)C1[*:2]",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]C1c2cccc3cccc(c23)C1[*:2]"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolumeCases.ts#231",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]C1Cc2ccccc2C1[*:2]",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 116.16299999999997,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 51.65155858578034,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]C1Cc2ccccc2C1[*:2]",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]C1Cc2ccccc2C1[*:2]"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/relativeTg.test.ts#10",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]CC([*:2])(C)C(=O)OC(C)(C)C",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 142.19799999999998,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 42.1946862825075,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]CC([*:2])(C)C(=O)OC(C)(C)C",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]CC([*:2])(C)C(=O)OC(C)(C)C"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/relativeTg.test.ts#14",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]CC(Cl)[*:2]",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 62.498999999999995,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 96.0015360245764,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]CC(Cl)[*:2]",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]CC(Cl)[*:2]"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/relativeTg.test.ts#15",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]CC([*:2])C#N",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 53.06399999999999,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 113.07100859339667,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]CC([*:2])C#N",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]CC([*:2])C#N"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/jobackTbTf.test.ts#97",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "*CC*",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 28.053999999999995,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 213.87324445711846,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "*CC*",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "*CC*"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/jobackTbTf.test.ts#99",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*]",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": null,
+    "name": "m",
+    "problem": "重複單元需要恰好兩個連接點（*），目前只有 1 個。",
+    "source": "[*]",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/jobackTbTf.test.ts#100",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "CC*",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": null,
+    "name": "m",
+    "problem": "重複單元需要恰好兩個連接點（*），目前只有 1 個。",
+    "source": "CC*",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/dielectricRefraction.test.ts#19",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]OC(=O)Oc1ccc(cc1)C(C)(C)c1ccc(cc1)[*:2]",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 254.285,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 23.59557189767387,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]OC(=O)Oc1ccc(cc1)C(C)(C)c1ccc(cc1)[*:2]",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]OC(=O)Oc1ccc(cc1)C(C)(C)c1ccc(cc1)[*:2]"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/dielectricRefraction.test.ts#28",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]CO[*:2]",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 30.026,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 199.82681675880903,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]CO[*:2]",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]CO[*:2]"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/dielectricRefraction.test.ts#30",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]CCOC(=O)c1ccc(cc1)C(=O)O[*:2]",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 192.16999999999996,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 31.222355206327737,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]CCOC(=O)c1ccc(cc1)C(=O)O[*:2]",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]CCOC(=O)c1ccc(cc1)C(=O)O[*:2]"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/dielectricRefraction.test.ts#35",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]Cc1ccccc1[*:2]",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 90.12499999999999,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 66.5742024965326,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]Cc1ccccc1[*:2]",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]Cc1ccccc1[*:2]"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/dielectricRefraction.test.ts#39",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]Cc1cccc([*:2])c1",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 90.12499999999999,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 66.5742024965326,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]Cc1cccc([*:2])c1",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]Cc1cccc([*:2])c1"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/dielectricRefraction.test.ts#42",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]CC([*:2])C1CO1",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 70.091,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 85.60300181193021,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [
+     {
+      "groupId": "ether.epoxide",
+      "sites": [
+       [
+        6,
+        5,
+        4
+       ]
+      ]
+     }
+    ],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]CC([*:2])C1CO1",
+    "unitGroupCounts": {
+     "ether.epoxide": 1
+    },
+    "units": [
+     {
+      "groups": [
+       {
+        "groupId": "ether.epoxide",
+        "sites": [
+         [
+          6,
+          5,
+          4
+         ]
+        ]
+       }
+      ],
+      "molFraction": 1,
+      "smiles": "[*:1]CC([*:2])C1CO1"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/dielectricRefraction.test.ts#52",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]N1C(=O)c2ccccc2C1=O",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": null,
+    "name": "m",
+    "problem": "重複單元需要恰好兩個連接點（*），目前只有 1 個。",
+    "source": "[*:1]N1C(=O)c2ccccc2C1=O",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/dielectricRefraction.test.ts#61",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]CC([*:2])c1ccc(OC)cc1",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 134.178,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 44.71671958145151,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]CC([*:2])c1ccc(OC)cc1",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]CC([*:2])c1ccc(OC)cc1"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/dielectricRefraction.test.ts#62",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]CC([*:2])c1ccc(cc1)C(=O)OC",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 162.18799999999996,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 36.99410560584015,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]CC([*:2])c1ccc(cc1)C(=O)OC",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]CC([*:2])c1ccc(cc1)C(=O)OC"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/dielectricRefraction.test.ts#63",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]CC([*:2])c1ccc(cc1)C(=O)OCC",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 176.21499999999995,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 34.049314757540515,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]CC([*:2])c1ccc(cc1)C(=O)OCC",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]CC([*:2])c1ccc(cc1)C(=O)OCC"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/dielectricRefraction.test.ts#64",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]CC([*:2])c1ccc(OC(C)=O)cc1",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 162.188,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 36.99410560584014,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]CC([*:2])c1ccc(OC(C)=O)cc1",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]CC([*:2])c1ccc(OC(C)=O)cc1"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/dielectricRefraction.test.ts#65",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]CC([*:2])c1ccc(cc1)C(C)=O",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 146.18899999999996,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 41.04275971516326,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]CC([*:2])c1ccc(cc1)C(C)=O",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]CC([*:2])c1ccc(cc1)C(C)=O"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/dielectricRefraction.test.ts#71",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]C(F)(F)C(F)(F)[*:2]",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 100.01400000000001,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 59.99160117583538,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]C(F)(F)C(F)(F)[*:2]",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]C(F)(F)C(F)(F)[*:2]"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/dielectricRefraction.test.ts#82",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]CC[*:2].[*:1]CC[*:2]",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": null,
+    "name": "m",
+    "problem": "重複單元需要恰好兩個連接點（*），目前有 4 個。",
+    "source": "[*:1]CC[*:2].[*:1]CC[*:2]",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/dielectricCases.ts#3",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]CC([*:2])C",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 42.080999999999996,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 142.5821629714123,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]CC([*:2])C",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]CC([*:2])C"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/dielectricCases.ts#31",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]c1ccc([*:2])cc1",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 76.098,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 78.84569896712135,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]c1ccc([*:2])cc1",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]c1ccc([*:2])cc1"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/dielectricCases.ts#57",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]C(=O)NCC[*:2]",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 71.07900000000001,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 84.41311779850588,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]C(=O)NCC[*:2]",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]C(=O)NCC[*:2]"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/dielectricCases.ts#63",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]OC(=O)Oc1ccccc1",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": null,
+    "name": "m",
+    "problem": "重複單元需要恰好兩個連接點（*），目前只有 1 個。",
+    "source": "[*:1]OC(=O)Oc1ccccc1",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/dielectricCases.ts#125",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]Cc1ccc(cc1)[*:2]",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 90.12499999999999,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 66.5742024965326,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]Cc1ccc(cc1)[*:2]",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]Cc1ccc(cc1)[*:2]"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/dielectricCases.ts#211",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]CC([*:2])OC(C)=O",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 86.08999999999999,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 69.69450574979673,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]CC([*:2])OC(C)=O",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]CC([*:2])OC(C)=O"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/dielectricCases.ts#317",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]NC(=O)CCCCC(=O)NCCCCCC[*:2]",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 226.31999999999994,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 26.511134676564165,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]NC(=O)CCCCC(=O)NCCCCCC[*:2]",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]NC(=O)CCCCC(=O)NCCCCCC[*:2]"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/dielectricCases.ts#331",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]CC([*:2])(C)C(=O)OCC",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 114.14399999999998,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 52.56518082422205,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]CC([*:2])(C)C(=O)OCC",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]CC([*:2])(C)C(=O)OCC"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/tgMixing.test.ts#37",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:2]Cc1cc([*:1])ccc1O",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 106.12399999999997,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 56.53763521917758,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [
+     {
+      "groupId": "hydroxyl.phenolic",
+      "sites": [
+       [
+        9
+       ]
+      ]
+     }
+    ],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:2]Cc1cc([*:1])ccc1O",
+    "unitGroupCounts": {
+     "hydroxyl.phenolic": 1
+    },
+    "units": [
+     {
+      "groups": [
+       {
+        "groupId": "hydroxyl.phenolic",
+        "sites": [
+         [
+          9
+         ]
+        ]
+       }
+      ],
+      "molFraction": 1,
+      "smiles": "[*:2]Cc1cc([*:1])ccc1O"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/tgMn035.test.ts#12",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]c1cc(C[*:2])cc(C)c1O",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 120.15099999999997,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 49.93716240397501,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [
+     {
+      "groupId": "hydroxyl.phenolic",
+      "sites": [
+       [
+        10
+       ]
+      ]
+     }
+    ],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]c1cc(C[*:2])cc(C)c1O",
+    "unitGroupCounts": {
+     "hydroxyl.phenolic": 1
+    },
+    "units": [
+     {
+      "groups": [
+       {
+        "groupId": "hydroxyl.phenolic",
+        "sites": [
+         [
+          10
+         ]
+        ]
+       }
+      ],
+      "molFraction": 1,
+      "smiles": "[*:1]c1cc(C[*:2])cc(C)c1O"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/tgMn035.test.ts#13",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]Cc1cc(C)cc([*:2])c1O",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 120.15099999999997,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 49.93716240397501,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [
+     {
+      "groupId": "hydroxyl.phenolic",
+      "sites": [
+       [
+        10
+       ]
+      ]
+     }
+    ],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]Cc1cc(C)cc([*:2])c1O",
+    "unitGroupCounts": {
+     "hydroxyl.phenolic": 1
+    },
+    "units": [
+     {
+      "groups": [
+       {
+        "groupId": "hydroxyl.phenolic",
+        "sites": [
+         [
+          10
+         ]
+        ]
+       }
+      ],
+      "molFraction": 1,
+      "smiles": "[*:1]Cc1cc(C)cc([*:2])c1O"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/tgMn035.test.ts#18",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:2]Cc1cc([*:1])cc(C)c1O",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 120.15099999999997,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 49.93716240397501,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [
+     {
+      "groupId": "hydroxyl.phenolic",
+      "sites": [
+       [
+        10
+       ]
+      ]
+     }
+    ],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:2]Cc1cc([*:1])cc(C)c1O",
+    "unitGroupCounts": {
+     "hydroxyl.phenolic": 1
+    },
+    "units": [
+     {
+      "groups": [
+       {
+        "groupId": "hydroxyl.phenolic",
+        "sites": [
+         [
+          10
+         ]
+        ]
+       }
+      ],
+      "molFraction": 1,
+      "smiles": "[*:2]Cc1cc([*:1])cc(C)c1O"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/tgMn035.test.ts#19",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:2]Cc1cc(C)cc([*:1])c1O",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 120.15099999999997,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 49.93716240397501,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [
+     {
+      "groupId": "hydroxyl.phenolic",
+      "sites": [
+       [
+        10
+       ]
+      ]
+     }
+    ],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:2]Cc1cc(C)cc([*:1])c1O",
+    "unitGroupCounts": {
+     "hydroxyl.phenolic": 1
+    },
+    "units": [
+     {
+      "groups": [
+       {
+        "groupId": "hydroxyl.phenolic",
+        "sites": [
+         [
+          10
+         ]
+        ]
+       }
+      ],
+      "molFraction": 1,
+      "smiles": "[*:2]Cc1cc(C)cc([*:1])c1O"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/tgMn035.test.ts#20",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]Cc1cc([*:2])c(C)cc1O",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 120.15099999999997,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 49.93716240397501,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [
+     {
+      "groupId": "hydroxyl.phenolic",
+      "sites": [
+       [
+        10
+       ]
+      ]
+     }
+    ],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]Cc1cc([*:2])c(C)cc1O",
+    "unitGroupCounts": {
+     "hydroxyl.phenolic": 1
+    },
+    "units": [
+     {
+      "groups": [
+       {
+        "groupId": "hydroxyl.phenolic",
+        "sites": [
+         [
+          10
+         ]
+        ]
+       }
+      ],
+      "molFraction": 1,
+      "smiles": "[*:1]Cc1cc([*:2])c(C)cc1O"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/tgMn035.test.ts#21",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]Cc1cc(C)c(O)c(C)c1",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [
+     {
+      "groupId": "hydroxyl.phenolic",
+      "sites": [
+       [
+        7
+       ]
+      ]
+     }
+    ],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": null,
+    "name": "m",
+    "problem": "重複單元需要恰好兩個連接點（*），目前只有 1 個。",
+    "source": "[*:1]Cc1cc(C)c(O)c(C)c1",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/tgMn035.test.ts#23",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]Cc1cc2ccccc2c([*:2])c1O",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 156.18399999999997,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 38.41622701429085,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [
+     {
+      "groupId": "hydroxyl.phenolic",
+      "sites": [
+       [
+        13
+       ]
+      ]
+     }
+    ],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]Cc1cc2ccccc2c([*:2])c1O",
+    "unitGroupCounts": {
+     "hydroxyl.phenolic": 1
+    },
+    "units": [
+     {
+      "groups": [
+       {
+        "groupId": "hydroxyl.phenolic",
+        "sites": [
+         [
+          13
+         ]
+        ]
+       }
+      ],
+      "molFraction": 1,
+      "smiles": "[*:1]Cc1cc2ccccc2c([*:2])c1O"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/tgMn035.test.ts#25",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]Cc1cc(C[*:2])cc(C)c1O",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 134.178,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 44.71671958145151,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [
+     {
+      "groupId": "hydroxyl.phenolic",
+      "sites": [
+       [
+        11
+       ]
+      ]
+     }
+    ],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]Cc1cc(C[*:2])cc(C)c1O",
+    "unitGroupCounts": {
+     "hydroxyl.phenolic": 1
+    },
+    "units": [
+     {
+      "groups": [
+       {
+        "groupId": "hydroxyl.phenolic",
+        "sites": [
+         [
+          11
+         ]
+        ]
+       }
+      ],
+      "molFraction": 1,
+      "smiles": "[*:1]Cc1cc(C[*:2])cc(C)c1O"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/tgMn035.test.ts#26",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]Cc1c(Cl)c([*:2])cc(C)c1O",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 154.59599999999998,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 38.81083598540713,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [
+     {
+      "groupId": "hydroxyl.phenolic",
+      "sites": [
+       [
+        11
+       ]
+      ]
+     }
+    ],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]Cc1c(Cl)c([*:2])cc(C)c1O",
+    "unitGroupCounts": {
+     "hydroxyl.phenolic": 1
+    },
+    "units": [
+     {
+      "groups": [
+       {
+        "groupId": "hydroxyl.phenolic",
+        "sites": [
+         [
+          11
+         ]
+        ]
+       }
+      ],
+      "molFraction": 1,
+      "smiles": "[*:1]Cc1c(Cl)c([*:2])cc(C)c1O"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/tgMn035.test.ts#27",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]Cc1cc(C)cc([*:2])c1OC",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 134.17799999999997,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 44.716719581451514,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]Cc1cc(C)cc([*:2])c1OC",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]Cc1cc(C)cc([*:2])c1OC"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/crosslink/crosslink.test.ts#10",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc(C([*:2])c4ccc5ccccc5c4)c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 488.5860000000002,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 12.280335498765822,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [
+     {
+      "groupId": "hydroxyl.phenolic",
+      "sites": [
+       [
+        23
+       ],
+       [
+        39
+       ]
+      ]
+     }
+    ],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]c1ccc(C2(c3ccc(C([*:2])c4ccc5ccccc5c4)c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "unitGroupCounts": {
+     "hydroxyl.phenolic": 2
+    },
+    "units": [
+     {
+      "groups": [
+       {
+        "groupId": "hydroxyl.phenolic",
+        "sites": [
+         [
+          23
+         ],
+         [
+          39
+         ]
+        ]
+       }
+      ],
+      "molFraction": 1,
+      "smiles": "[*:1]c1ccc(C2(c3ccc(C([*:2])c4ccc5ccccc5c4)c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/crosslink/crosslink.test.ts#33",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]O",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": null,
+    "name": "m",
+    "problem": "重複單元需要恰好兩個連接點（*），目前只有 1 個。",
+    "source": "[*:1]O",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/polymer/unitFragment.test.ts#25",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]C([*:2])(C)c1ccccc1",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 104.15199999999997,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 57.60811122206008,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]C([*:2])(C)c1ccccc1",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]C([*:2])(C)c1ccccc1"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/polymer/unitFragment.test.ts#30",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*]CC[*]",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 28.053999999999995,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 213.87324445711846,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*]CC[*]",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*]CC[*]"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/polymer/unitFragment.test.ts#34",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "*",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": null,
+    "name": "m",
+    "problem": "重複單元需要恰好兩個連接點（*），目前只有 1 個。",
+    "source": "*",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/docs/verification/phase6-介電-極化率-輸出.md#28",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]Cc1ccc(cc1)Cc1ccc(O)c([*:2])c1",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 196.249,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 30.57340419569017,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [
+     {
+      "groupId": "hydroxyl.phenolic",
+      "sites": [
+       [
+        13
+       ]
+      ]
+     }
+    ],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]Cc1ccc(cc1)Cc1ccc(O)c([*:2])c1",
+    "unitGroupCounts": {
+     "hydroxyl.phenolic": 1
+    },
+    "units": [
+     {
+      "groups": [
+       {
+        "groupId": "hydroxyl.phenolic",
+        "sites": [
+         [
+          13
+         ]
+        ]
+       }
+      ],
+      "molFraction": 1,
+      "smiles": "[*:1]Cc1ccc(cc1)Cc1ccc(O)c([*:2])c1"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/docs/verification/phase6-介電-極化率-輸出.md#29",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]Cc1ccc(cc1)-c1ccc(cc1)Cc1ccc(O)c([*:2])c1",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 272.347,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 22.030718164694306,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [
+     {
+      "groupId": "hydroxyl.phenolic",
+      "sites": [
+       [
+        19
+       ]
+      ]
+     }
+    ],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]Cc1ccc(cc1)-c1ccc(cc1)Cc1ccc(O)c([*:2])c1",
+    "unitGroupCounts": {
+     "hydroxyl.phenolic": 1
+    },
+    "units": [
+     {
+      "groups": [
+       {
+        "groupId": "hydroxyl.phenolic",
+        "sites": [
+         [
+          19
+         ]
+        ]
+       }
+      ],
+      "molFraction": 1,
+      "smiles": "[*:1]Cc1ccc(cc1)-c1ccc(cc1)Cc1ccc(O)c([*:2])c1"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/docs/verification/phase6-介電-極化率-輸出.md#38",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]N1C(=O)c2cc3C(=O)N(C(=O)c3cc2C1=O)c1ccc(Oc2ccc([*:2])cc2)cc1",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 382.3310000000001,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 15.69320824102675,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]N1C(=O)c2cc3C(=O)N(C(=O)c3cc2C1=O)c1ccc(Oc2ccc([*:2])cc2)cc1",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]N1C(=O)c2cc3C(=O)N(C(=O)c3cc2C1=O)c1ccc(Oc2ccc([*:2])cc2)cc1"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/docs/verification/phase6-介電-極化率-輸出.md#39",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]N1C(=O)c2ccc(cc2C1=O)-c1ccc2C(=O)N(C(=O)c2c1)c1ccc([*:2])cc1",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 366.33200000000005,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 16.3785855453523,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]N1C(=O)c2ccc(cc2C1=O)-c1ccc2C(=O)N(C(=O)c2c1)c1ccc([*:2])cc1",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]N1C(=O)c2ccc(cc2C1=O)-c1ccc2C(=O)N(C(=O)c2c1)c1ccc([*:2])cc1"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/docs/verification/phase6-介電-極化率-輸出.md#40",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]c1ccc(cc1)-c1nc2cc3nc([*:2])oc3cc2o1",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 234.21399999999997,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 25.617597581698792,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]c1ccc(cc1)-c1nc2cc3nc([*:2])oc3cc2o1",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]c1ccc(cc1)-c1nc2cc3nc([*:2])oc3cc2o1"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/docs/verification/phase6-介電-極化率-輸出.md#46",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]CC([*:2])(C)C(=O)OC1(C)C2CC3CC(C2)CC1C3",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 234.3389999999999,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 25.60393276407257,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]CC([*:2])(C)C(=O)OC1(C)C2CC3CC(C2)CC1C3",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]CC([*:2])(C)C(=O)OC1(C)C2CC3CC(C2)CC1C3"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/docs/verification/phase6-介電-極化率-輸出.md#47",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]CC([*:2])(C)C(=O)OC1CCOC1=O",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 170.16399999999996,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 35.26010201922852,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]CC([*:2])(C)C(=O)OC1CCOC1=O",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]CC([*:2])(C)C(=O)OC1CCOC1=O"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/docs/verification/phase6-介電-極化率-輸出.md#51",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]CC([*:2])c1ccccc1Cl",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 138.59699999999998,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 43.290980324249446,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]CC([*:2])c1ccccc1Cl",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]CC([*:2])c1ccccc1Cl"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/docs/verification/phase6-介電-極化率-輸出.md#57",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]CC([*:2])(Cl)C(=O)OC",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 120.53499999999998,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 49.77807275894969,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]CC([*:2])(Cl)C(=O)OC",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]CC([*:2])(Cl)C(=O)OC"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/docs/verification/phase6-介電-極化率-輸出.md#58",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]CC([*:2])(Cl)C(=O)OCC",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 134.56199999999998,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 44.58911133901102,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]CC([*:2])(Cl)C(=O)OCC",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]CC([*:2])(Cl)C(=O)OCC"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/docs/verification/phase6-介電-極化率-輸出.md#61",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]Oc1c(C)cc([*:2])cc1C",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 120.15099999999997,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 49.93716240397501,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]Oc1c(C)cc([*:2])cc1C",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]Oc1c(C)cc([*:2])cc1C"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/docs/verification/phase6-介電-極化率-輸出.md#62",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]CC(CCl)(CCl)CO[*:2]",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 155.024,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 38.703684590773044,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]CC(CCl)(CCl)CO[*:2]",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]CC(CCl)(CCl)CO[*:2]"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/scripts/verification/phase6-Tg-混合.ts#37",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*]CC1CO1",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [
+     {
+      "groupId": "ether.epoxide",
+      "sites": [
+       [
+        4,
+        3,
+        2
+       ]
+      ]
+     }
+    ],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": null,
+    "name": "m",
+    "problem": "重複單元需要恰好兩個連接點（*），目前只有 1 個。",
+    "source": "[*]CC1CO1",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/scripts/verification/phase6-Tg-混合.ts#38",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*]Oc1ccc(cc1)C(C)(C)c1ccc(cc1)OCC1CO1",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [
+     {
+      "groupId": "ether.epoxide",
+      "sites": [
+       [
+        21,
+        20,
+        19
+       ]
+      ]
+     }
+    ],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": null,
+    "name": "m",
+    "problem": "重複單元需要恰好兩個連接點（*），目前只有 1 個。",
+    "source": "[*]Oc1ccc(cc1)C(C)(C)c1ccc(cc1)OCC1CO1",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/scripts/verification/phase6-Vm-密度.ts#27",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]CC([*:2])C1CCCCC1",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 110.2,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 54.4464609800363,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]CC([*:2])C1CCCCC1",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]CC([*:2])C1CCCCC1"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/scripts/verification/phase6-Vm-密度.ts#30",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]CCOC(=O)c1cccc(c1)C(=O)O[*:2]",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 192.16999999999996,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 31.222355206327737,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]CCOC(=O)c1cccc(c1)C(=O)O[*:2]",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]CCOC(=O)c1cccc(c1)C(=O)O[*:2]"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/scripts/verification/phase6-Vm-密度.ts#31",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]C(=O)NCCCCC[*:2]",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 113.16000000000001,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 53.02226935312831,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]C(=O)NCCCCC[*:2]",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]C(=O)NCCCCC[*:2]"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/scripts/verification/phase6-自由體積-CTE.ts#8",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]CC(C)(C)[*:2]",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 56.10799999999999,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 106.93662222855923,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]CC(C)(C)[*:2]",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]CC(C)(C)[*:2]"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/scripts/verification/phase6-自由體積-CTE.ts#14",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "[*:1]NC(=O)CCCCC[*:2]",
+      "category": "Resin",
+      "id": "m",
+      "name": "m",
+      "polymer": {
+       "mnInput": 6000
+      }
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": {
+     "mEnds": 0,
+     "mUnit": 113.16000000000001,
+     "mn": 6000,
+     "mw": 12000
+    },
+    "dp": 53.02226935312831,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": true,
+    "molarMass": 6000,
+    "name": "m",
+    "problem": null,
+    "source": "[*:1]NC(=O)CCCCC[*:2]",
+    "unitGroupCounts": {},
+    "units": [
+     {
+      "groups": [],
+      "molFraction": 1,
+      "smiles": "[*:1]NC(=O)CCCCC[*:2]"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#54",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "C1CCCCC1",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 84.162,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 84.162,
+    "name": "m",
+    "problem": null,
+    "source": "C1CCCCC1",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#56",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "CC1CO1",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 58.08,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [
+     {
+      "groupId": "ether.epoxide",
+      "sites": [
+       [
+        3,
+        2,
+        1
+       ]
+      ]
+     }
+    ],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 58.08,
+    "name": "m",
+    "problem": null,
+    "source": "CC1CO1",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#60",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "c1ccccc1",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 78.11399999999999,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 78.11399999999999,
+    "name": "m",
+    "problem": null,
+    "source": "c1ccccc1",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#64",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "CC(C)=O",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 58.080000000000005,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 58.080000000000005,
+    "name": "m",
+    "problem": null,
+    "source": "CC(C)=O",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#65",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "CC=O",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 44.053,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 44.053,
+    "name": "m",
+    "problem": null,
+    "source": "CC=O",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#66",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "CCO",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 46.069,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 46.069,
+    "name": "m",
+    "problem": null,
+    "source": "CCO",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#67",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "CC(C)O",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 60.096000000000004,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 60.096000000000004,
+    "name": "m",
+    "problem": null,
+    "source": "CC(C)O",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#68",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "CC(C)(C)O",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 74.12299999999999,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 74.12299999999999,
+    "name": "m",
+    "problem": null,
+    "source": "CC(C)(C)O",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#69",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "Oc1ccccc1",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 94.11299999999999,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [
+     {
+      "groupId": "hydroxyl.phenolic",
+      "sites": [
+       [
+        0
+       ]
+      ]
+     }
+    ],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 94.11299999999999,
+    "name": "m",
+    "problem": null,
+    "source": "Oc1ccccc1",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#70",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "CC(F)(F)F",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 84.04,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 84.04,
+    "name": "m",
+    "problem": null,
+    "source": "CC(F)(F)F",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#71",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "Fc1ccccc1",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 96.10399999999998,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 96.10399999999998,
+    "name": "m",
+    "problem": null,
+    "source": "Fc1ccccc1",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#72",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "COC",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 46.069,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 46.069,
+    "name": "m",
+    "problem": null,
+    "source": "COC",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#73",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "CC(=O)OC",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 74.07900000000001,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 74.07900000000001,
+    "name": "m",
+    "problem": null,
+    "source": "CC(=O)OC",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#77",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "O=C1CCCCC1",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 98.14500000000001,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 98.14500000000001,
+    "name": "m",
+    "problem": null,
+    "source": "O=C1CCCCC1",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#79",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "O=C1CCCO1",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 86.09,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 86.09,
+    "name": "m",
+    "problem": null,
+    "source": "O=C1CCCO1",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#80",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "CC(=O)c1ccccc1",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 120.15099999999995,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 120.15099999999995,
+    "name": "m",
+    "problem": null,
+    "source": "CC(=O)c1ccccc1",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#81",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "CCOC(=O)c1ccccc1",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 150.177,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 150.177,
+    "name": "m",
+    "problem": null,
+    "source": "CCOC(=O)c1ccccc1",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#82",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "COC(=O)CC(=O)OC",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 132.115,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 132.115,
+    "name": "m",
+    "problem": null,
+    "source": "COC(=O)CC(=O)OC",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#83",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "COCC(=O)OC",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 104.10499999999999,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 104.10499999999999,
+    "name": "m",
+    "problem": null,
+    "source": "COCC(=O)OC",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#84",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "CC(=O)O",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 60.05200000000001,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 60.05200000000001,
+    "name": "m",
+    "problem": null,
+    "source": "CC(=O)O",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#85",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "COC(=O)OC",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 90.078,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 90.078,
+    "name": "m",
+    "problem": null,
+    "source": "COC(=O)OC",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#86",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "CC(=O)N",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 59.068,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 59.068,
+    "name": "m",
+    "problem": null,
+    "source": "CC(=O)N",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#87",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "NC(=O)N",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 60.056,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 60.056,
+    "name": "m",
+    "problem": null,
+    "source": "NC(=O)N",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#88",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "NC(=O)OC",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 75.06700000000001,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 75.06700000000001,
+    "name": "m",
+    "problem": null,
+    "source": "NC(=O)OC",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#89",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "CC(=O)Cl",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 78.498,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 78.498,
+    "name": "m",
+    "problem": null,
+    "source": "CC(=O)Cl",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#90",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "C=O",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 30.026,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 30.026,
+    "name": "m",
+    "problem": null,
+    "source": "C=O",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#91",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "CC(=O)OC(C)=O",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 102.089,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 102.089,
+    "name": "m",
+    "problem": null,
+    "source": "CC(=O)OC(C)=O",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#101",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "c1ccc2ccccc2c1",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 128.17399999999995,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 128.17399999999995,
+    "name": "m",
+    "problem": null,
+    "source": "c1ccc2ccccc2c1",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#102",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "Cc1ccccc1",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 92.14099999999999,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 92.14099999999999,
+    "name": "m",
+    "problem": null,
+    "source": "Cc1ccccc1",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#103",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "c1ccc(cc1)-c1ccccc1",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 154.21199999999996,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 154.21199999999996,
+    "name": "m",
+    "problem": null,
+    "source": "c1ccc(cc1)-c1ccccc1",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#104",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "c1ccc(cc1)Oc1ccccc1",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 170.21099999999998,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 170.21099999999998,
+    "name": "m",
+    "problem": null,
+    "source": "c1ccc(cc1)Oc1ccccc1",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#105",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "C1Cc2ccccc2C1",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 118.17899999999997,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 118.17899999999997,
+    "name": "m",
+    "problem": null,
+    "source": "C1Cc2ccccc2C1",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#106",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "C1CCc2ccccc2C1",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 132.20599999999996,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 132.20599999999996,
+    "name": "m",
+    "problem": null,
+    "source": "C1CCc2ccccc2C1",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#107",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "C1c2ccccc2-c2ccccc12",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 166.22299999999998,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 166.22299999999998,
+    "name": "m",
+    "problem": null,
+    "source": "C1c2ccccc2-c2ccccc12",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#108",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "CC1(C)c2ccccc2-c2ccccc12",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 194.277,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 194.277,
+    "name": "m",
+    "problem": null,
+    "source": "CC1(C)c2ccccc2-c2ccccc12",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#110",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "CC1CCCC1",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 84.162,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 84.162,
+    "name": "m",
+    "problem": null,
+    "source": "CC1CCCC1",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#112",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "C=CC=C",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 54.09199999999999,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 54.09199999999999,
+    "name": "m",
+    "problem": null,
+    "source": "C=CC=C",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#114",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "C1CCC2CCCCC2C1",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 138.254,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 138.254,
+    "name": "m",
+    "problem": null,
+    "source": "C1CCC2CCCCC2C1",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#120",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "c1ccccc1C1CC2CCC1C2",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 172.27099999999996,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 172.27099999999996,
+    "name": "m",
+    "problem": null,
+    "source": "c1ccccc1C1CC2CCC1C2",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#122",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "c1ccccc1CC",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 106.16799999999999,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 106.16799999999999,
+    "name": "m",
+    "problem": null,
+    "source": "c1ccccc1CC",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#124",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "C1CCCCC1CC",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 112.216,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 112.216,
+    "name": "m",
+    "problem": null,
+    "source": "C1CCCCC1CC",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#126",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "CCCC",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 58.123999999999995,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 58.123999999999995,
+    "name": "m",
+    "problem": null,
+    "source": "CCCC",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#138",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "N",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 17.031,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 17.031,
+    "name": "m",
+    "problem": null,
+    "source": "N",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#139",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "CCN",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 45.084999999999994,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 45.084999999999994,
+    "name": "m",
+    "problem": null,
+    "source": "CCN",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#142",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "Cl",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 36.461000000000006,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 36.461000000000006,
+    "name": "m",
+    "problem": null,
+    "source": "Cl",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#143",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "CBr",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 94.939,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 94.939,
+    "name": "m",
+    "problem": null,
+    "source": "CBr",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#144",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "Br",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 80.91199999999999,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 80.91199999999999,
+    "name": "m",
+    "problem": null,
+    "source": "Br",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#145",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "CSC",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 62.137,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 62.137,
+    "name": "m",
+    "problem": null,
+    "source": "CSC",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#146",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "S",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 34.083,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 34.083,
+    "name": "m",
+    "problem": null,
+    "source": "S",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#147",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "C[Si](C)(C)C",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 88.22599999999998,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 88.22599999999998,
+    "name": "m",
+    "problem": null,
+    "source": "C[Si](C)(C)C",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#149",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "CP(C)C",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 76.079,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 76.079,
+    "name": "m",
+    "problem": null,
+    "source": "CP(C)C",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#150",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "P",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 33.998,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 33.998,
+    "name": "m",
+    "problem": null,
+    "source": "P",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#151",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "CB(C)C",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 55.917,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 55.917,
+    "name": "m",
+    "problem": null,
+    "source": "CB(C)C",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#152",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "B",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 13.835999999999999,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 13.835999999999999,
+    "name": "m",
+    "problem": null,
+    "source": "B",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#153",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "C=CC",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 42.080999999999996,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 42.080999999999996,
+    "name": "m",
+    "problem": null,
+    "source": "C=CC",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#154",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "CC#C",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 40.065000000000005,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 40.065000000000005,
+    "name": "m",
+    "problem": null,
+    "source": "CC#C",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#158",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "c1ccncc1",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 79.10199999999998,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 79.10199999999998,
+    "name": "m",
+    "problem": null,
+    "source": "c1ccncc1",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolume.test.ts#171",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "CC.CC",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 60.14,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 60.14,
+    "name": "m",
+    "problem": null,
+    "source": "CC.CC",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolumeCases.ts#7",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "CC",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 30.07,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 30.07,
+    "name": "m",
+    "problem": null,
+    "source": "CC",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolumeCases.ts#8",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "C=C",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 28.053999999999995,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 28.053999999999995,
+    "name": "m",
+    "problem": null,
+    "source": "C=C",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolumeCases.ts#9",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "Cc1c(C)c(C)c(C)c(C)c1C",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 162.27599999999998,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 162.27599999999998,
+    "name": "m",
+    "problem": null,
+    "source": "Cc1c(C)c(C)c(C)c(C)c1C",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolumeCases.ts#11",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "CC(C)(C)C",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 72.151,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 72.151,
+    "name": "m",
+    "problem": null,
+    "source": "CC(C)(C)C",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolumeCases.ts#13",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "CC1(C)CCC1",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 84.162,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 84.162,
+    "name": "m",
+    "problem": null,
+    "source": "CC1(C)CCC1",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolumeCases.ts#14",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "CCC",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 44.096999999999994,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 44.096999999999994,
+    "name": "m",
+    "problem": null,
+    "source": "CCC",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolumeCases.ts#15",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "O=C1CCCC1",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 84.11800000000001,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 84.11800000000001,
+    "name": "m",
+    "problem": null,
+    "source": "O=C1CCCC1",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolumeCases.ts#17",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "CC(=O)C",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 58.08,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 58.08,
+    "name": "m",
+    "problem": null,
+    "source": "CC(=O)C",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolumeCases.ts#22",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "CC(C)C",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 58.123999999999995,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 58.123999999999995,
+    "name": "m",
+    "problem": null,
+    "source": "CC(C)C",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolumeCases.ts#25",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "CC1CCCCC1",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 98.18900000000001,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 98.18900000000001,
+    "name": "m",
+    "problem": null,
+    "source": "CC1CCCCC1",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolumeCases.ts#28",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "O=Cc1ccccc1",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 106.12399999999997,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 106.12399999999997,
+    "name": "m",
+    "problem": null,
+    "source": "O=Cc1ccccc1",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolumeCases.ts#43",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "CC1(C)CCCCC1",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 112.21600000000001,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 112.21600000000001,
+    "name": "m",
+    "problem": null,
+    "source": "CC1(C)CCCCC1",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolumeCases.ts#56",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "C1CO1",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 44.053,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [
+     {
+      "groupId": "ether.epoxide",
+      "sites": [
+       [
+        2,
+        1,
+        0
+       ]
+      ]
+     }
+    ],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 44.053,
+    "name": "m",
+    "problem": null,
+    "source": "C1CO1",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolumeCases.ts#62",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "c1ccccc1Oc1ccccc1",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 170.211,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 170.211,
+    "name": "m",
+    "problem": null,
+    "source": "c1ccccc1Oc1ccccc1",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolumeCases.ts#63",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "C1CCOC1",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 72.107,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 72.107,
+    "name": "m",
+    "problem": null,
+    "source": "C1CCOC1",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolumeCases.ts#74",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "C1COC1",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 58.07999999999999,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 58.07999999999999,
+    "name": "m",
+    "problem": null,
+    "source": "C1COC1",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolumeCases.ts#93",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "COC=O",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 60.05200000000001,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 60.05200000000001,
+    "name": "m",
+    "problem": null,
+    "source": "COC=O",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolumeCases.ts#98",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "C=CC(=O)OC",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 86.08999999999999,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 86.08999999999999,
+    "name": "m",
+    "problem": null,
+    "source": "C=CC(=O)OC",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolumeCases.ts#101",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "CC(=O)Oc1ccccc1",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 136.14999999999998,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 136.14999999999998,
+    "name": "m",
+    "problem": null,
+    "source": "CC(=O)Oc1ccccc1",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolumeCases.ts#112",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "CO",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 32.042,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 32.042,
+    "name": "m",
+    "problem": null,
+    "source": "CO",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolumeCases.ts#120",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "OC1CCCCC1",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 100.161,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 100.161,
+    "name": "m",
+    "problem": null,
+    "source": "OC1CCCCC1",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "analyzeComponent/tests/properties/freeVolumeCases.ts#131",
+   "input": {
+    "components": [
+     {
+      "canonicalSmiles": "Cc1ccc(O)cc1",
+      "category": "Small Molecule",
+      "id": "m",
+      "molarMass": 108.13999999999999,
+      "name": "m"
+     }
+    ],
+    "kind": "analyzeComponent"
+   },
+   "output": {
+    "distribution": null,
+    "dp": null,
+    "endGroupCounts": {},
+    "ends": null,
+    "groups": [
+     {
+      "groupId": "hydroxyl.phenolic",
+      "sites": [
+       [
+        5
+       ]
+      ]
+     }
+    ],
+    "id": "m",
+    "isPolymer": false,
+    "molarMass": 108.13999999999999,
+    "name": "m",
+    "problem": null,
+    "source": "Cc1ccc(O)cc1",
+    "unitGroupCounts": {},
+    "units": null
+   }
+  },
+  {
+   "id": "judgePair/2-2-false-false",
+   "input": {
+    "aIsPolymer": false,
+    "bIsPolymer": false,
+    "fA": 2,
+    "fB": 2,
+    "kind": "judgePair"
+   },
+   "output": "chain"
+  },
+  {
+   "id": "judgePair/2-3-false-false",
+   "input": {
+    "aIsPolymer": false,
+    "bIsPolymer": false,
+    "fA": 2,
+    "fB": 3,
+    "kind": "judgePair"
+   },
+   "output": "network"
+  },
+  {
+   "id": "judgePair/3-3-false-false",
+   "input": {
+    "aIsPolymer": false,
+    "bIsPolymer": false,
+    "fA": 3,
+    "fB": 3,
+    "kind": "judgePair"
+   },
+   "output": "network"
+  },
+  {
+   "id": "judgePair/1-2-false-false",
+   "input": {
+    "aIsPolymer": false,
+    "bIsPolymer": false,
+    "fA": 1,
+    "fB": 2,
+    "kind": "judgePair"
+   },
+   "output": "capping"
+  },
+  {
+   "id": "judgePair/1-20-false-true",
+   "input": {
+    "aIsPolymer": false,
+    "bIsPolymer": true,
+    "fA": 1,
+    "fB": 20,
+    "kind": "judgePair"
+   },
+   "output": "graft"
+  },
+  {
+   "id": "judgePair/20-1-true-false",
+   "input": {
+    "aIsPolymer": true,
+    "bIsPolymer": false,
+    "fA": 20,
+    "fB": 1,
+    "kind": "judgePair"
+   },
+   "output": "graft"
+  },
+  {
+   "id": "judgePair/null-2-false-true",
+   "input": {
+    "aIsPolymer": false,
+    "bIsPolymer": true,
+    "fA": null,
+    "fB": 2,
+    "kind": "judgePair"
+   },
+   "output": "undetermined"
+  },
+  {
+   "id": "judgePair/2-2.000000000001-false-false",
+   "input": {
+    "aIsPolymer": false,
+    "bIsPolymer": false,
+    "fA": 2,
+    "fB": 2.000000000001,
+    "kind": "judgePair"
+   },
+   "output": "chain"
+  },
+  {
+   "id": "judgePair/1.999999999999-2-false-false",
+   "input": {
+    "aIsPolymer": false,
+    "bIsPolymer": false,
+    "fA": 1.999999999999,
+    "fB": 2,
+    "kind": "judgePair"
+   },
+   "output": "chain"
+  },
+  {
+   "id": "judgeFormulation/[\"capping\",\"network\"]",
+   "input": {
+    "kind": "judgeFormulation",
+    "kinds": [
+     "capping",
+     "network"
+    ]
+   },
+   "output": "network"
+  },
+  {
+   "id": "judgeFormulation/[\"chain\",\"capping\"]",
+   "input": {
+    "kind": "judgeFormulation",
+    "kinds": [
+     "chain",
+     "capping"
+    ]
+   },
+   "output": "chain"
+  },
+  {
+   "id": "judgeFormulation/[\"graft\"]",
+   "input": {
+    "kind": "judgeFormulation",
+    "kinds": [
+     "graft"
+    ]
+   },
+   "output": "capping"
+  },
+  {
+   "id": "judgeFormulation/[]",
+   "input": {
+    "kind": "judgeFormulation",
+    "kinds": []
+   },
+   "output": "none"
+  },
+  {
+   "id": "judgeFormulation/[\"undetermined\"]",
+   "input": {
+    "kind": "judgeFormulation",
+    "kinds": [
+     "undetermined"
+    ]
+   },
+   "output": "undetermined"
+  },
+  {
+   "id": "judgeFormulation/[\"undetermined\",\"chain\"]",
+   "input": {
+    "kind": "judgeFormulation",
+    "kinds": [
+     "undetermined",
+     "chain"
+    ]
+   },
+   "output": "chain"
+  },
+  {
+   "id": "queryAtomMaps/[OX2H:1][cX3]:[c]",
+   "input": {
+    "kind": "queryAtomMaps",
+    "smarts": "[OX2H:1][cX3]:[c]"
+   },
+   "output": [
+    1,
+    0,
+    0
+   ]
+  },
+  {
+   "id": "queryAtomMaps/[O:1]1[C:2][C:3]1",
+   "input": {
+    "kind": "queryAtomMaps",
+    "smarts": "[O:1]1[C:2][C:3]1"
+   },
+   "output": [
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "id": "queryAtomMaps/O1CC1",
+   "input": {
+    "kind": "queryAtomMaps",
+    "smarts": "O1CC1"
+   },
+   "output": [
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "id": "queryAtomMaps/[$([OH]C)]Cl[Br:5]",
+   "input": {
+    "kind": "queryAtomMaps",
+    "smarts": "[$([OH]C)]Cl[Br:5]"
+   },
+   "output": [
+    0,
+    0,
+    5
+   ]
+  }
+ ],
+ "commit": "2c2b860618c17a97dfeefcee4cf5ae68e9098abb",
+ "module": "crosslink",
+ "rdkitjs": "2026.09.1",
+ "tolerance": {
+  "exact": "strings, integers, booleans, null, arrays and object keys must be identical",
+  "float": "shortest round-trip string must be identical; otherwise relative error <= relFallback is accepted and the case is recorded in tolerance_cases",
+  "relFallback": 1e-12
+ }
+}

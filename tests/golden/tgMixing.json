@@ -1,0 +1,5696 @@
+{
+ "cases": [
+  {
+   "id": "foxFlory/400-50000-1000",
+   "input": {
+    "k": 50000,
+    "kind": "foxFlory",
+    "mn": 1000,
+    "tgInfK": 400
+   },
+   "output": 350
+  },
+  {
+   "id": "foxFlory/415.93-76819-864",
+   "input": {
+    "k": 76819,
+    "kind": "foxFlory",
+    "mn": 864,
+    "tgInfK": 415.93
+   },
+   "output": 327.0191203703704
+  },
+  {
+   "id": "foxFlory/400-50000-1000000000000000",
+   "input": {
+    "k": 50000,
+    "kind": "foxFlory",
+    "mn": 1000000000000000,
+    "tgInfK": 400
+   },
+   "output": 399.99999999995
+  },
+  {
+   "id": "foxFlory/400-50000-0",
+   "input": {
+    "k": 50000,
+    "kind": "foxFlory",
+    "mn": 0,
+    "tgInfK": 400
+   },
+   "output": {
+    "message": "Mn 必須大於 0",
+    "threw": true
+   }
+  },
+  {
+   "id": "foxFlory/400-50000--5",
+   "input": {
+    "k": 50000,
+    "kind": "foxFlory",
+    "mn": -5,
+    "tgInfK": 400
+   },
+   "output": {
+    "message": "Mn 必須大於 0",
+    "threw": true
+   }
+  },
+  {
+   "id": "foxMix/half-half",
+   "input": {
+    "items": [
+     {
+      "tgK": 300,
+      "w": 0.5
+     },
+     {
+      "tgK": 400,
+      "w": 0.5
+     }
+    ],
+    "kind": "foxMix"
+   },
+   "output": 342.85714285714283
+  },
+  {
+   "id": "foxMix/20-80",
+   "input": {
+    "items": [
+     {
+      "tgK": 250,
+      "w": 0.2
+     },
+     {
+      "tgK": 350,
+      "w": 0.8
+     }
+    ],
+    "kind": "foxMix"
+   },
+   "output": 324.0740740740741
+  },
+  {
+   "id": "foxMix/single",
+   "input": {
+    "items": [
+     {
+      "tgK": 333,
+      "w": 1
+     }
+    ],
+    "kind": "foxMix"
+   },
+   "output": 333
+  },
+  {
+   "id": "foxMix/single-0.37",
+   "input": {
+    "items": [
+     {
+      "tgK": 333,
+      "w": 0.37
+     }
+    ],
+    "kind": "foxMix"
+   },
+   "output": 333
+  },
+  {
+   "id": "foxMix/normalised",
+   "input": {
+    "items": [
+     {
+      "tgK": 300,
+      "w": 2
+     },
+     {
+      "tgK": 400,
+      "w": 2
+     }
+    ],
+    "kind": "foxMix"
+   },
+   "output": 342.85714285714283
+  },
+  {
+   "id": "foxMix/same-Tg",
+   "input": {
+    "items": [
+     {
+      "tgK": 350,
+      "w": 0.3
+     },
+     {
+      "tgK": 350,
+      "w": 0.7
+     }
+    ],
+    "kind": "foxMix"
+   },
+   "output": 350
+  },
+  {
+   "id": "foxMix/empty",
+   "input": {
+    "items": [],
+    "kind": "foxMix"
+   },
+   "output": {
+    "message": "沒有成分可混合",
+    "threw": true
+   }
+  },
+  {
+   "id": "foxMix/w-zero",
+   "input": {
+    "items": [
+     {
+      "tgK": 300,
+      "w": 0
+     }
+    ],
+    "kind": "foxMix"
+   },
+   "output": {
+    "message": "質量分率與 Tg 都必須大於 0",
+    "threw": true
+   }
+  },
+  {
+   "id": "foxMix/tg-zero",
+   "input": {
+    "items": [
+     {
+      "tgK": 0,
+      "w": 1
+     }
+    ],
+    "kind": "foxMix"
+   },
+   "output": {
+    "message": "質量分率與 Tg 都必須大於 0",
+    "threw": true
+   }
+  },
+  {
+   "id": "fitFlory/literal-3-points",
+   "input": {
+    "kind": "fitFlory",
+    "points": [
+     {
+      "mn": 1,
+      "tgK": 2
+     },
+     {
+      "mn": 0.5,
+      "tgK": 3
+     },
+     {
+      "mn": 0.3333333333333333,
+      "tgK": 5
+     }
+    ]
+   },
+   "output": {
+    "k": -1.5,
+    "n": 3,
+    "r2": 0.9642857142857143,
+    "residualSd": 0.40824829046386285,
+    "residuals": [
+     0.16666666666666652,
+     -0.3333333333333335,
+     0.16666666666666607
+    ],
+    "seK": 0.28867513459481275,
+    "seTgInf": 0.6236095644623233,
+    "tgInfK": 0.3333333333333335
+   }
+  },
+  {
+   "id": "predictFlory/literal-3-points",
+   "input": {
+    "kind": "predictFlory",
+    "mn": 1000,
+    "points": [
+     {
+      "mn": 1,
+      "tgK": 2
+     },
+     {
+      "mn": 0.5,
+      "tgK": 3
+     },
+     {
+      "mn": 0.3333333333333333,
+      "tgK": 5
+     }
+    ]
+   },
+   "output": 0.3348333333333335
+  },
+  {
+   "id": "fitFlory/exact-line",
+   "input": {
+    "kind": "fitFlory",
+    "points": [
+     {
+      "mn": 100,
+      "tgK": 300
+     },
+     {
+      "mn": 200,
+      "tgK": 350
+     },
+     {
+      "mn": 400,
+      "tgK": 375
+     },
+     {
+      "mn": 800,
+      "tgK": 387.5
+     }
+    ]
+   },
+   "output": {
+    "k": 9999.999999999998,
+    "n": 4,
+    "r2": 1,
+    "residualSd": 0,
+    "residuals": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "seK": 0,
+    "seTgInf": 0,
+    "tgInfK": 400
+   }
+  },
+  {
+   "id": "predictFlory/exact-line",
+   "input": {
+    "kind": "predictFlory",
+    "mn": 1000,
+    "points": [
+     {
+      "mn": 100,
+      "tgK": 300
+     },
+     {
+      "mn": 200,
+      "tgK": 350
+     },
+     {
+      "mn": 400,
+      "tgK": 375
+     },
+     {
+      "mn": 800,
+      "tgK": 387.5
+     }
+    ]
+   },
+   "output": 390
+  },
+  {
+   "id": "fitFlory/one-point",
+   "input": {
+    "kind": "fitFlory",
+    "points": [
+     {
+      "mn": 100,
+      "tgK": 300
+     }
+    ]
+   },
+   "output": {
+    "message": "至少需要 2 個點",
+    "threw": true
+   }
+  },
+  {
+   "id": "predictFlory/one-point",
+   "input": {
+    "kind": "predictFlory",
+    "mn": 1000,
+    "points": [
+     {
+      "mn": 100,
+      "tgK": 300
+     }
+    ]
+   },
+   "output": {
+    "message": "至少需要 2 個點",
+    "threw": true
+   }
+  },
+  {
+   "id": "fitFlory/mn-zero",
+   "input": {
+    "kind": "fitFlory",
+    "points": [
+     {
+      "mn": 0,
+      "tgK": 300
+     },
+     {
+      "mn": 100,
+      "tgK": 300
+     }
+    ]
+   },
+   "output": {
+    "message": "Mn 與 Tg 都必須大於 0",
+    "threw": true
+   }
+  },
+  {
+   "id": "predictFlory/mn-zero",
+   "input": {
+    "kind": "predictFlory",
+    "mn": 1000,
+    "points": [
+     {
+      "mn": 0,
+      "tgK": 300
+     },
+     {
+      "mn": 100,
+      "tgK": 300
+     }
+    ]
+   },
+   "output": {
+    "message": "Mn 與 Tg 都必須大於 0",
+    "threw": true
+   }
+  },
+  {
+   "id": "fitFlory/tg-negative",
+   "input": {
+    "kind": "fitFlory",
+    "points": [
+     {
+      "mn": 100,
+      "tgK": -1
+     },
+     {
+      "mn": 200,
+      "tgK": 300
+     }
+    ]
+   },
+   "output": {
+    "message": "Mn 與 Tg 都必須大於 0",
+    "threw": true
+   }
+  },
+  {
+   "id": "predictFlory/tg-negative",
+   "input": {
+    "kind": "predictFlory",
+    "mn": 1000,
+    "points": [
+     {
+      "mn": 100,
+      "tgK": -1
+     },
+     {
+      "mn": 200,
+      "tgK": 300
+     }
+    ]
+   },
+   "output": {
+    "message": "Mn 與 Tg 都必須大於 0",
+    "threw": true
+   }
+  },
+  {
+   "id": "fitFlory/same-mn",
+   "input": {
+    "kind": "fitFlory",
+    "points": [
+     {
+      "mn": 100,
+      "tgK": 300
+     },
+     {
+      "mn": 100,
+      "tgK": 310
+     }
+    ]
+   },
+   "output": {
+    "message": "所有點的 Mn 相同，無法回歸",
+    "threw": true
+   }
+  },
+  {
+   "id": "predictFlory/same-mn",
+   "input": {
+    "kind": "predictFlory",
+    "mn": 1000,
+    "points": [
+     {
+      "mn": 100,
+      "tgK": 300
+     },
+     {
+      "mn": 100,
+      "tgK": 310
+     }
+    ]
+   },
+   "output": {
+    "message": "所有點的 Mn 相同，無法回歸",
+    "threw": true
+   }
+  },
+  {
+   "id": "fitFlory/table/novolac_phenol_general",
+   "input": {
+    "kind": "fitFlory",
+    "points": [
+     {
+      "mn": 780,
+      "tgK": 324.1
+     },
+     {
+      "mn": 824,
+      "tgK": 316.4
+     }
+    ]
+   },
+   "output": {
+    "k": -112476.00000000051,
+    "n": 2,
+    "r2": 1,
+    "residualSd": {
+     "$nonfinite": "NaN"
+    },
+    "residuals": [
+     0,
+     0
+    ],
+    "seK": {
+     "$nonfinite": "NaN"
+    },
+    "seTgInf": {
+     "$nonfinite": "NaN"
+    },
+    "tgInfK": 179.89999999999935
+   }
+  },
+  {
+   "id": "predictFlory/table/novolac_phenol_general",
+   "input": {
+    "kind": "predictFlory",
+    "mn": 1000,
+    "points": [
+     {
+      "mn": 780,
+      "tgK": 324.1
+     },
+     {
+      "mn": 824,
+      "tgK": 316.4
+     }
+    ]
+   },
+   "output": 292.37599999999986
+  },
+  {
+   "id": "fitFlory/table/novolac_cresol_ortho",
+   "input": {
+    "kind": "fitFlory",
+    "points": [
+     {
+      "mn": 490,
+      "tgK": 313.15
+     },
+     {
+      "mn": 930,
+      "tgK": 349.15
+     },
+     {
+      "mn": 1380,
+      "tgK": 365.15
+     },
+     {
+      "mn": 2250,
+      "tgK": 377.15
+     }
+    ]
+   },
+   "output": {
+    "k": 39915.396461023185,
+    "n": 4,
+    "r2": 0.997903405959518,
+    "residualSd": 1.5595028332642284,
+    "residuals": [
+     0.6989551632340181,
+     -1.8412564734791772,
+     0.16316271971044216,
+     0.9791385905348307
+    ],
+    "seK": 1293.7142757162808,
+    "seTgInf": 1.5902381108940598,
+    "tgInfK": 393.9110376143643
+   }
+  },
+  {
+   "id": "predictFlory/table/novolac_cresol_ortho",
+   "input": {
+    "kind": "predictFlory",
+    "mn": 1000,
+    "points": [
+     {
+      "mn": 490,
+      "tgK": 313.15
+     },
+     {
+      "mn": 930,
+      "tgK": 349.15
+     },
+     {
+      "mn": 1380,
+      "tgK": 365.15
+     },
+     {
+      "mn": 2250,
+      "tgK": 377.15
+     }
+    ]
+   },
+   "output": 353.9956411533411
+  },
+  {
+   "id": "fitFlory/table/novolac_cresol_para",
+   "input": {
+    "kind": "fitFlory",
+    "points": [
+     {
+      "mn": 510,
+      "tgK": 316.15
+     },
+     {
+      "mn": 1010,
+      "tgK": 349.15
+     },
+     {
+      "mn": 1460,
+      "tgK": 372.15
+     },
+     {
+      "mn": 2150,
+      "tgK": 383.15
+     }
+    ]
+   },
+   "output": {
+    "k": 44213.567362753485,
+    "n": 4,
+    "r2": 0.9707499054106651,
+    "residualSd": 6.201925054769323,
+    "residuals": [
+     2.36407087325631,
+     -7.553389195423051,
+     1.9540668514784443,
+     3.235251470688411
+    ],
+    "seK": 5426.883747806677,
+    "seTgInf": 6.369619419079304,
+    "tgInfK": 400.479198465476
+   }
+  },
+  {
+   "id": "predictFlory/table/novolac_cresol_para",
+   "input": {
+    "kind": "predictFlory",
+    "mn": 1000,
+    "points": [
+     {
+      "mn": 510,
+      "tgK": 316.15
+     },
+     {
+      "mn": 1010,
+      "tgK": 349.15
+     },
+     {
+      "mn": 1460,
+      "tgK": 372.15
+     },
+     {
+      "mn": 2150,
+      "tgK": 383.15
+     }
+    ]
+   },
+   "output": 356.26563110272247
+  },
+  {
+   "id": "unit/userUnit/P 單元 A（雙酚茀）",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/userUnit/P 單元 A（雙酚茀）",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [
+     "含校準基團"
+    ],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺 K：此重複單元不屬於任何已有 K 的樹脂類別，未做分子量修正（只輸出 Tg∞）",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": 546.2973593570608,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/userUnit/P 單元 B（萘基次甲基）",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/userUnit/P 單元 B（萘基次甲基）",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]C([*:2])c1ccc2ccccc2c1",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/userUnit/E PGMA 型環氧單元",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]CC([*:2])(C)C(=O)OCC1CO1"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/userUnit/E PGMA 型環氧單元",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]CC([*:2])(C)C(=O)OCC1CO1",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/BT/BT01",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]Cc1cc([*:2])ccc1O"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": "novolac_phenol_general"
+   }
+  },
+  {
+   "id": "polymerComponent/BT/BT01",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]Cc1cc([*:2])ccc1O",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [
+     "含校準基團",
+     "低可信度"
+    ],
+    "id": "x",
+    "kUsed": 76820,
+    "kind": "polymer",
+    "missingReason": null,
+    "mn": 1000,
+    "name": "x",
+    "resinClass": "novolac_phenol_general",
+    "solidFraction": 0.5,
+    "status": "ok",
+    "tgInfGroupK": 415.92836946277095,
+    "tgK": 339.10836946277095,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/BT/BT02",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]Cc1cc([*:2])cc(C)c1O"
+   },
+   "output": {
+    "cresol": "novolac_cresol_ortho",
+    "kClass": "novolac_cresol_ortho"
+   }
+  },
+  {
+   "id": "polymerComponent/BT/BT02",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]Cc1cc([*:2])cc(C)c1O",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [
+     "低可信度"
+    ],
+    "id": "x",
+    "kUsed": 39915,
+    "kind": "polymer",
+    "missingReason": null,
+    "mn": 1000,
+    "name": "x",
+    "resinClass": "novolac_cresol_ortho",
+    "solidFraction": 0.5,
+    "status": "ok",
+    "tgInfGroupK": null,
+    "tgK": 353.995,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/BT/BT03",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]Cc1cc([*:2])ccc1OCC2CO2"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/BT/BT03",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]Cc1cc([*:2])ccc1OCC2CO2",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/BT/BT04",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]Cc1cc([*:2])cc(C)c1OCC2CO2"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/BT/BT04",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]Cc1cc([*:2])cc(C)c1OCC2CO2",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/BT/BT05",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]Oc1ccc(cc1)C(C)(C)c1ccc(cc1)OCC(O)C[*:2]"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": "dgeba"
+   }
+  },
+  {
+   "id": "polymerComponent/BT/BT05",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]Oc1ccc(cc1)C(C)(C)c1ccc(cc1)OCC(O)C[*:2]",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺 K：類別「DGEBA／雙酚 A 環氧寡聚物與苯氧樹脂」資料不足，未做分子量修正（只輸出 Tg∞）",
+    "mn": null,
+    "name": "x",
+    "resinClass": "dgeba",
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": 398.87442842068236,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/BT/BT06",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]Oc1ccc(cc1)C1(c2ccccc2-c2ccccc21)c1ccc(cc1)OCC(O)C[*:2]"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/BT/BT06",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]Oc1ccc(cc1)C1(c2ccccc2-c2ccccc21)c1ccc(cc1)OCC(O)C[*:2]",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [
+     "含校準基團"
+    ],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺 K：此重複單元不屬於任何已有 K 的樹脂類別，未做分子量修正（只輸出 Tg∞）",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": 452.4360236220472,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/freeVolume.test.ts#17",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]CC[*:2]"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/freeVolume.test.ts#17",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]CC[*:2]",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺 K：此重複單元不屬於任何已有 K 的樹脂類別，未做分子量修正（只輸出 Tg∞）",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": 192.85714285714286,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/freeVolume.test.ts#18",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]CC([*:2])c1ccccc1"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/freeVolume.test.ts#18",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]CC([*:2])c1ccccc1",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺 K：此重複單元不屬於任何已有 K 的樹脂類別，未做分子量修正（只輸出 Tg∞）",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": 372.718539865514,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/freeVolume.test.ts#19",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]CC([*:2])c1ccc(O)cc1"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/freeVolume.test.ts#19",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]CC([*:2])c1ccc(O)cc1",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [
+     "含校準基團"
+    ],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺 K：此重複單元不屬於任何已有 K 的樹脂類別，未做分子量修正（只輸出 Tg∞）",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": 459.8667776852624,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/freeVolume.test.ts#20",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]C12CC3CC(CC(C3)C1)C2"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/freeVolume.test.ts#20",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]C12CC3CC(CC(C3)C1)C2",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/freeVolume.test.ts#21",
+   "input": {
+    "kind": "unit",
+    "smiles": "CC1(C)CC2(CC(C)(C)c3cc([*:2])ccc23)c2ccc([*:1])cc12"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/freeVolume.test.ts#21",
+   "input": {
+    "component": {
+     "canonicalSmiles": "CC1(C)CC2(CC(C)(C)c3cc([*:2])ccc23)c2ccc([*:1])cc12",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/freeVolume.test.ts#58",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]CC([*:2])C(=O)OCC1CO1"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/freeVolume.test.ts#58",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]CC([*:2])C(=O)OCC1CO1",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/freeVolume.test.ts#115",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]CC([*:2])c1ccc(cc1)C12CC3CC(CC(C3)C1)C2"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/freeVolume.test.ts#115",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]CC([*:2])c1ccc(cc1)C12CC3CC(CC(C3)C1)C2",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/freeVolume.test.ts#117",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/freeVolume.test.ts#117",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺 K：此重複單元不屬於任何已有 K 的樹脂類別，未做分子量修正（只輸出 Tg∞）",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": {
+     "$nonfinite": "NaN"
+    },
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/freeVolume.test.ts#137",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]CC([*:2])C(=O)N"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/freeVolume.test.ts#137",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]CC([*:2])C(=O)N",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/freeVolume.test.ts#141",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]CC([*:2])Cl"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/freeVolume.test.ts#141",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]CC([*:2])Cl",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺 K：此重複單元不屬於任何已有 K 的樹脂類別，未做分子量修正（只輸出 Tg∞）",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": 353.59999999999997,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/freeVolume.test.ts#173",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1][*:2]"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/freeVolume.test.ts#173",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1][*:2]",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺 K：此重複單元不屬於任何已有 K 的樹脂類別，未做分子量修正（只輸出 Tg∞）",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": {
+     "$nonfinite": "NaN"
+    },
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/freeVolumeCases.ts#64",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]CCOC[*:2]"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/freeVolumeCases.ts#64",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]CCOC[*:2]",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺 K：此重複單元不屬於任何已有 K 的樹脂類別，未做分子量修正（只輸出 Tg∞）",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": 208.62068965517244,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/freeVolumeCases.ts#79",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]CC(=O)C[*:2]"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/freeVolumeCases.ts#79",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]CC(=O)C[*:2]",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺 K：此重複單元不屬於任何已有 K 的樹脂類別，未做分子量修正（只輸出 Tg∞）",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": 301.7857142857143,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/freeVolumeCases.ts#99",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]CC([*:2])C(=O)OC"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/freeVolumeCases.ts#99",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]CC([*:2])C(=O)OC",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺 K：此重複單元不屬於任何已有 K 的樹脂類別，未做分子量修正（只輸出 Tg∞）",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": 278.74564459930315,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/freeVolumeCases.ts#113",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]CCO"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/freeVolumeCases.ts#113",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]CCO",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/freeVolumeCases.ts#185",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]CC([*:2])(C)C(=O)OC"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/freeVolumeCases.ts#185",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]CC([*:2])(C)C(=O)OC",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺 K：此重複單元不屬於任何已有 K 的樹脂類別，未做分子量修正（只輸出 Tg∞）",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": 377.6223776223777,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/freeVolumeCases.ts#223",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]c1ccc(cc1)C1(c2ccc([*:2])cc2)c2ccccc2-c2ccccc12"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/freeVolumeCases.ts#223",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]c1ccc(cc1)C1(c2ccc([*:2])cc2)c2ccccc2-c2ccccc12",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [
+     "含校準基團"
+    ],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺 K：此重複單元不屬於任何已有 K 的樹脂類別，未做分子量修正（只輸出 Tg∞）",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": 497.692793931732,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/freeVolumeCases.ts#224",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]c1ccc(cc1)C1(c2ccc3cc([*:2])ccc3c2)c2ccccc2-c2ccccc12"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/freeVolumeCases.ts#224",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]c1ccc(cc1)C1(c2ccc3cc([*:2])ccc3c2)c2ccccc2-c2ccccc12",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/freeVolumeCases.ts#225",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]c1cccc2ccccc12"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/freeVolumeCases.ts#225",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]c1cccc2ccccc12",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/freeVolumeCases.ts#226",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]C1CC2CC1CC2C1CC2CCC1C2"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/freeVolumeCases.ts#226",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]C1CC2CC1CC2C1CC2CCC1C2",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/freeVolumeCases.ts#229",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]c1ccc(Oc2ccccc2)cc1"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/freeVolumeCases.ts#229",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]c1ccc(Oc2ccccc2)cc1",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/freeVolumeCases.ts#230",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]C1c2cccc3cccc(c23)C1[*:2]"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/freeVolumeCases.ts#230",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]C1c2cccc3cccc(c23)C1[*:2]",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/freeVolumeCases.ts#231",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]C1Cc2ccccc2C1[*:2]"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/freeVolumeCases.ts#231",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]C1Cc2ccccc2C1[*:2]",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/relativeTg.test.ts#10",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]CC([*:2])(C)C(=O)OC(C)(C)C"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/relativeTg.test.ts#10",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]CC([*:2])(C)C(=O)OC(C)(C)C",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/relativeTg.test.ts#14",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]CC(Cl)[*:2]"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/relativeTg.test.ts#14",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]CC(Cl)[*:2]",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺 K：此重複單元不屬於任何已有 K 的樹脂類別，未做分子量修正（只輸出 Tg∞）",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": 353.59999999999997,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/relativeTg.test.ts#15",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]CC([*:2])C#N"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/relativeTg.test.ts#15",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]CC([*:2])C#N",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/jobackTbTf.test.ts#97",
+   "input": {
+    "kind": "unit",
+    "smiles": "*CC*"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/jobackTbTf.test.ts#97",
+   "input": {
+    "component": {
+     "canonicalSmiles": "*CC*",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺 K：此重複單元不屬於任何已有 K 的樹脂類別，未做分子量修正（只輸出 Tg∞）",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": 192.85714285714286,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/jobackTbTf.test.ts#99",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*]"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/jobackTbTf.test.ts#99",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*]",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺 K：此重複單元不屬於任何已有 K 的樹脂類別，未做分子量修正（只輸出 Tg∞）",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": {
+     "$nonfinite": "NaN"
+    },
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/jobackTbTf.test.ts#100",
+   "input": {
+    "kind": "unit",
+    "smiles": "CC*"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/jobackTbTf.test.ts#100",
+   "input": {
+    "component": {
+     "canonicalSmiles": "CC*",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/dielectricRefraction.test.ts#19",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]OC(=O)Oc1ccc(cc1)C(C)(C)c1ccc(cc1)[*:2]"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/dielectricRefraction.test.ts#19",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]OC(=O)Oc1ccc(cc1)C(C)(C)c1ccc(cc1)[*:2]",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺 K：此重複單元不屬於任何已有 K 的樹脂類別，未做分子量修正（只輸出 Tg∞）",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": 420.7628784899725,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/dielectricRefraction.test.ts#28",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]CO[*:2]"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/dielectricRefraction.test.ts#28",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]CO[*:2]",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺 K：此重複單元不屬於任何已有 K 的樹脂類別，未做分子量修正（只輸出 Tg∞）",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": 223.33333333333334,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/dielectricRefraction.test.ts#30",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]CCOC(=O)c1ccc(cc1)C(=O)O[*:2]"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/dielectricRefraction.test.ts#30",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]CCOC(=O)c1ccc(cc1)C(=O)O[*:2]",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺 K：此重複單元不屬於任何已有 K 的樹脂類別，未做分子量修正（只輸出 Tg∞）",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": 350.8589276418532,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/dielectricRefraction.test.ts#35",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]Cc1ccccc1[*:2]"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/dielectricRefraction.test.ts#35",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]Cc1ccccc1[*:2]",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/dielectricRefraction.test.ts#39",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]Cc1cccc([*:2])c1"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/dielectricRefraction.test.ts#39",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]Cc1cccc([*:2])c1",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺 K：此重複單元不屬於任何已有 K 的樹脂類別，未做分子量修正（只輸出 Tg∞）",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": 307.4361820199778,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/dielectricRefraction.test.ts#42",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]CC([*:2])C1CO1"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/dielectricRefraction.test.ts#42",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]CC([*:2])C1CO1",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/dielectricRefraction.test.ts#52",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]N1C(=O)c2ccccc2C1=O"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/dielectricRefraction.test.ts#52",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]N1C(=O)c2ccccc2C1=O",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/dielectricRefraction.test.ts#61",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]CC([*:2])c1ccc(OC)cc1"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/dielectricRefraction.test.ts#61",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]CC([*:2])c1ccc(OC)cc1",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/dielectricRefraction.test.ts#62",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]CC([*:2])c1ccc(cc1)C(=O)OC"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/dielectricRefraction.test.ts#62",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]CC([*:2])c1ccc(cc1)C(=O)OC",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/dielectricRefraction.test.ts#63",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]CC([*:2])c1ccc(cc1)C(=O)OCC"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/dielectricRefraction.test.ts#63",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]CC([*:2])c1ccc(cc1)C(=O)OCC",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/dielectricRefraction.test.ts#64",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]CC([*:2])c1ccc(OC(C)=O)cc1"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/dielectricRefraction.test.ts#64",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]CC([*:2])c1ccc(OC(C)=O)cc1",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/dielectricRefraction.test.ts#65",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]CC([*:2])c1ccc(cc1)C(C)=O"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/dielectricRefraction.test.ts#65",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]CC([*:2])c1ccc(cc1)C(C)=O",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/dielectricRefraction.test.ts#71",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]C(F)(F)C(F)(F)[*:2]"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/dielectricRefraction.test.ts#71",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]C(F)(F)C(F)(F)[*:2]",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺 K：此重複單元不屬於任何已有 K 的樹脂類別，未做分子量修正（只輸出 Tg∞）",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": 210,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/dielectricRefraction.test.ts#82",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]CC[*:2].[*:1]CC[*:2]"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/dielectricRefraction.test.ts#82",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]CC[*:2].[*:1]CC[*:2]",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺 K：此重複單元不屬於任何已有 K 的樹脂類別，未做分子量修正（只輸出 Tg∞）",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": 192.85714285714286,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/dielectricCases.ts#3",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]CC([*:2])C"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/dielectricCases.ts#3",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]CC([*:2])C",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺 K：此重複單元不屬於任何已有 K 的樹脂類別，未做分子量修正（只輸出 Tg∞）",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": 254.76190476190476,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/dielectricCases.ts#31",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]c1ccc([*:2])cc1"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/dielectricCases.ts#31",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]c1ccc([*:2])cc1",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺 K：此重複單元不屬於任何已有 K 的樹脂類別，未做分子量修正（只輸出 Tg∞）",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": 387.64783180026285,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/dielectricCases.ts#57",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]C(=O)NCC[*:2]"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/dielectricCases.ts#57",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]C(=O)NCC[*:2]",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺 K：此重複單元不屬於任何已有 K 的樹脂類別，未做分子量修正（只輸出 Tg∞）",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": 332.3943661971831,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/dielectricCases.ts#63",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]OC(=O)Oc1ccccc1"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/dielectricCases.ts#63",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]OC(=O)Oc1ccccc1",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/dielectricCases.ts#125",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]Cc1ccc(cc1)[*:2]"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/dielectricCases.ts#125",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]Cc1ccc(cc1)[*:2]",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺 K：此重複單元不屬於任何已有 K 的樹脂類別，未做分子量修正（只輸出 Tg∞）",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": 357.3806881243064,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/dielectricCases.ts#211",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]CC([*:2])OC(C)=O"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/dielectricCases.ts#211",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]CC([*:2])OC(C)=O",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/dielectricCases.ts#317",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]NC(=O)CCCCC(=O)NCCCCCC[*:2]"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/dielectricCases.ts#317",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]NC(=O)CCCCC(=O)NCCCCCC[*:2]",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺 K：此重複單元不屬於任何已有 K 的樹脂類別，未做分子量修正（只輸出 Tg∞）",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": 323.008849557522,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/dielectricCases.ts#331",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]CC([*:2])(C)C(=O)OCC"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/dielectricCases.ts#331",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]CC([*:2])(C)C(=O)OCC",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/tgMixing.test.ts#37",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:2]Cc1cc([*:1])ccc1O"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": "novolac_phenol_general"
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/tgMixing.test.ts#37",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:2]Cc1cc([*:1])ccc1O",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [
+     "含校準基團",
+     "低可信度"
+    ],
+    "id": "x",
+    "kUsed": 76820,
+    "kind": "polymer",
+    "missingReason": null,
+    "mn": 1000,
+    "name": "x",
+    "resinClass": "novolac_phenol_general",
+    "solidFraction": 0.5,
+    "status": "ok",
+    "tgInfGroupK": 415.92836946277095,
+    "tgK": 339.10836946277095,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/tgMn035.test.ts#12",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]c1cc(C[*:2])cc(C)c1O"
+   },
+   "output": {
+    "cresol": "novolac_cresol_ortho",
+    "kClass": "novolac_cresol_ortho"
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/tgMn035.test.ts#12",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]c1cc(C[*:2])cc(C)c1O",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [
+     "低可信度"
+    ],
+    "id": "x",
+    "kUsed": 39915,
+    "kind": "polymer",
+    "missingReason": null,
+    "mn": 1000,
+    "name": "x",
+    "resinClass": "novolac_cresol_ortho",
+    "solidFraction": 0.5,
+    "status": "ok",
+    "tgInfGroupK": null,
+    "tgK": 353.995,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/tgMn035.test.ts#13",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]Cc1cc(C)cc([*:2])c1O"
+   },
+   "output": {
+    "cresol": "novolac_cresol_para",
+    "kClass": "novolac_cresol_para"
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/tgMn035.test.ts#13",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]Cc1cc(C)cc([*:2])c1O",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [
+     "低可信度"
+    ],
+    "id": "x",
+    "kUsed": 44214,
+    "kind": "polymer",
+    "missingReason": null,
+    "mn": 1000,
+    "name": "x",
+    "resinClass": "novolac_cresol_para",
+    "solidFraction": 0.5,
+    "status": "ok",
+    "tgInfGroupK": null,
+    "tgK": 356.266,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/tgMn035.test.ts#18",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:2]Cc1cc([*:1])cc(C)c1O"
+   },
+   "output": {
+    "cresol": "novolac_cresol_ortho",
+    "kClass": "novolac_cresol_ortho"
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/tgMn035.test.ts#18",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:2]Cc1cc([*:1])cc(C)c1O",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [
+     "低可信度"
+    ],
+    "id": "x",
+    "kUsed": 39915,
+    "kind": "polymer",
+    "missingReason": null,
+    "mn": 1000,
+    "name": "x",
+    "resinClass": "novolac_cresol_ortho",
+    "solidFraction": 0.5,
+    "status": "ok",
+    "tgInfGroupK": null,
+    "tgK": 353.995,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/tgMn035.test.ts#19",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:2]Cc1cc(C)cc([*:1])c1O"
+   },
+   "output": {
+    "cresol": "novolac_cresol_para",
+    "kClass": "novolac_cresol_para"
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/tgMn035.test.ts#19",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:2]Cc1cc(C)cc([*:1])c1O",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [
+     "低可信度"
+    ],
+    "id": "x",
+    "kUsed": 44214,
+    "kind": "polymer",
+    "missingReason": null,
+    "mn": 1000,
+    "name": "x",
+    "resinClass": "novolac_cresol_para",
+    "solidFraction": 0.5,
+    "status": "ok",
+    "tgInfGroupK": null,
+    "tgK": 356.266,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/tgMn035.test.ts#20",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]Cc1cc([*:2])c(C)cc1O"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/tgMn035.test.ts#20",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]Cc1cc([*:2])c(C)cc1O",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/tgMn035.test.ts#21",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]Cc1cc(C)c(O)c(C)c1"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/tgMn035.test.ts#21",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]Cc1cc(C)c(O)c(C)c1",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/tgMn035.test.ts#23",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]Cc1cc2ccccc2c([*:2])c1O"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/tgMn035.test.ts#23",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]Cc1cc2ccccc2c([*:2])c1O",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/tgMn035.test.ts#25",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]Cc1cc(C[*:2])cc(C)c1O"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/tgMn035.test.ts#25",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]Cc1cc(C[*:2])cc(C)c1O",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/tgMn035.test.ts#26",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]Cc1c(Cl)c([*:2])cc(C)c1O"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/tgMn035.test.ts#26",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]Cc1c(Cl)c([*:2])cc(C)c1O",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/properties/tgMn035.test.ts#27",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]Cc1cc(C)cc([*:2])c1OC"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/properties/tgMn035.test.ts#27",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]Cc1cc(C)cc([*:2])c1OC",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/crosslink/crosslink.test.ts#10",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]c1ccc(C2(c3ccc(C([*:2])c4ccc5ccccc5c4)c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/crosslink/crosslink.test.ts#10",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc(C([*:2])c4ccc5ccccc5c4)c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/crosslink/crosslink.test.ts#33",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]O"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/crosslink/crosslink.test.ts#33",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]O",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/polymer/unitFragment.test.ts#25",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]C([*:2])(C)c1ccccc1"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/polymer/unitFragment.test.ts#25",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]C([*:2])(C)c1ccccc1",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺 K：此重複單元不屬於任何已有 K 的樹脂類別，未做分子量修正（只輸出 Tg∞）",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": 489.9135446685879,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/polymer/unitFragment.test.ts#30",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*]CC[*]"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/polymer/unitFragment.test.ts#30",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*]CC[*]",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺 K：此重複單元不屬於任何已有 K 的樹脂類別，未做分子量修正（只輸出 Tg∞）",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": 192.85714285714286,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/tests/polymer/unitFragment.test.ts#34",
+   "input": {
+    "kind": "unit",
+    "smiles": "*"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/tests/polymer/unitFragment.test.ts#34",
+   "input": {
+    "component": {
+     "canonicalSmiles": "*",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺 K：此重複單元不屬於任何已有 K 的樹脂類別，未做分子量修正（只輸出 Tg∞）",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": {
+     "$nonfinite": "NaN"
+    },
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/docs/verification/phase6-介電-極化率-輸出.md#28",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]Cc1ccc(cc1)Cc1ccc(O)c([*:2])c1"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/docs/verification/phase6-介電-極化率-輸出.md#28",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]Cc1ccc(cc1)Cc1ccc(O)c([*:2])c1",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [
+     "含校準基團"
+    ],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺 K：此重複單元不屬於任何已有 K 的樹脂類別，未做分子量修正（只輸出 Tg∞）",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": 389.5514780835882,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/docs/verification/phase6-介電-極化率-輸出.md#29",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]Cc1ccc(cc1)-c1ccc(cc1)Cc1ccc(O)c([*:2])c1"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/docs/verification/phase6-介電-極化率-輸出.md#29",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]Cc1ccc(cc1)-c1ccc(cc1)Cc1ccc(O)c([*:2])c1",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [
+     "含校準基團"
+    ],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺 K：此重複單元不屬於任何已有 K 的樹脂類別，未做分子量修正（只輸出 Tg∞）",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": 429.0488431876608,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/docs/verification/phase6-介電-極化率-輸出.md#38",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]N1C(=O)c2cc3C(=O)N(C(=O)c3cc2C1=O)c1ccc(Oc2ccc([*:2])cc2)cc1"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/docs/verification/phase6-介電-極化率-輸出.md#38",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]N1C(=O)c2cc3C(=O)N(C(=O)c3cc2C1=O)c1ccc(Oc2ccc([*:2])cc2)cc1",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺 K：此重複單元不屬於任何已有 K 的樹脂類別，未做分子量修正（只輸出 Tg∞）",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": 633.0107245618625,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/docs/verification/phase6-介電-極化率-輸出.md#39",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]N1C(=O)c2ccc(cc2C1=O)-c1ccc2C(=O)N(C(=O)c2c1)c1ccc([*:2])cc1"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/docs/verification/phase6-介電-極化率-輸出.md#39",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]N1C(=O)c2ccc(cc2C1=O)-c1ccc2C(=O)N(C(=O)c2c1)c1ccc([*:2])cc1",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/docs/verification/phase6-介電-極化率-輸出.md#40",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]c1ccc(cc1)-c1nc2cc3nc([*:2])oc3cc2o1"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/docs/verification/phase6-介電-極化率-輸出.md#40",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]c1ccc(cc1)-c1nc2cc3nc([*:2])oc3cc2o1",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/docs/verification/phase6-介電-極化率-輸出.md#46",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]CC([*:2])(C)C(=O)OC1(C)C2CC3CC(C2)CC1C3"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/docs/verification/phase6-介電-極化率-輸出.md#46",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]CC([*:2])(C)C(=O)OC1(C)C2CC3CC(C2)CC1C3",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/docs/verification/phase6-介電-極化率-輸出.md#47",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]CC([*:2])(C)C(=O)OC1CCOC1=O"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/docs/verification/phase6-介電-極化率-輸出.md#47",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]CC([*:2])(C)C(=O)OC1CCOC1=O",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/docs/verification/phase6-介電-極化率-輸出.md#51",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]CC([*:2])c1ccccc1Cl"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/docs/verification/phase6-介電-極化率-輸出.md#51",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]CC([*:2])c1ccccc1Cl",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/docs/verification/phase6-介電-極化率-輸出.md#57",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]CC([*:2])(Cl)C(=O)OC"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/docs/verification/phase6-介電-極化率-輸出.md#57",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]CC([*:2])(Cl)C(=O)OC",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/docs/verification/phase6-介電-極化率-輸出.md#58",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]CC([*:2])(Cl)C(=O)OCC"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/docs/verification/phase6-介電-極化率-輸出.md#58",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]CC([*:2])(Cl)C(=O)OCC",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/docs/verification/phase6-介電-極化率-輸出.md#61",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]Oc1c(C)cc([*:2])cc1C"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/docs/verification/phase6-介電-極化率-輸出.md#61",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]Oc1c(C)cc([*:2])cc1C",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/docs/verification/phase6-介電-極化率-輸出.md#62",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]CC(CCl)(CCl)CO[*:2]"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/docs/verification/phase6-介電-極化率-輸出.md#62",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]CC(CCl)(CCl)CO[*:2]",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/scripts/verification/phase6-Tg-混合.ts#37",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*]CC1CO1"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/scripts/verification/phase6-Tg-混合.ts#37",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*]CC1CO1",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/scripts/verification/phase6-Tg-混合.ts#38",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*]Oc1ccc(cc1)C(C)(C)c1ccc(cc1)OCC1CO1"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/scripts/verification/phase6-Tg-混合.ts#38",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*]Oc1ccc(cc1)C(C)(C)c1ccc(cc1)OCC1CO1",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/scripts/verification/phase6-Vm-密度.ts#27",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]CC([*:2])C1CCCCC1"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/scripts/verification/phase6-Vm-密度.ts#27",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]CC([*:2])C1CCCCC1",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺基團，算不出 Tg∞",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/scripts/verification/phase6-Vm-密度.ts#30",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]CCOC(=O)c1cccc(c1)C(=O)O[*:2]"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/scripts/verification/phase6-Vm-密度.ts#30",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]CCOC(=O)c1cccc(c1)C(=O)O[*:2]",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺 K：此重複單元不屬於任何已有 K 的樹脂類別，未做分子量修正（只輸出 Tg∞）",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": 322.22800624674653,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/scripts/verification/phase6-Vm-密度.ts#31",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]C(=O)NCCCCC[*:2]"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/scripts/verification/phase6-Vm-密度.ts#31",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]C(=O)NCCCCC[*:2]",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺 K：此重複單元不屬於任何已有 K 的樹脂類別，未做分子量修正（只輸出 Tg∞）",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": 323.0088495575221,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/scripts/verification/phase6-自由體積-CTE.ts#8",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]CC(C)(C)[*:2]"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/scripts/verification/phase6-自由體積-CTE.ts#8",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]CC(C)(C)[*:2]",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺 K：此重複單元不屬於任何已有 K 的樹脂類別，未做分子量修正（只輸出 Tg∞）",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": 199.6434937611408,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "unit/scripts/verification/phase6-自由體積-CTE.ts#14",
+   "input": {
+    "kind": "unit",
+    "smiles": "[*:1]NC(=O)CCCCC[*:2]"
+   },
+   "output": {
+    "cresol": null,
+    "kClass": null
+   }
+  },
+  {
+   "id": "polymerComponent/scripts/verification/phase6-自由體積-CTE.ts#14",
+   "input": {
+    "component": {
+     "canonicalSmiles": "[*:1]NC(=O)CCCCC[*:2]",
+     "category": "Resin",
+     "id": "x",
+     "name": "x"
+    },
+    "fraction": 0.5,
+    "kind": "polymerComponent",
+    "mn": 1000
+   },
+   "output": {
+    "category": "Resin",
+    "flags": [],
+    "id": "x",
+    "kUsed": null,
+    "kind": "polymer",
+    "missingReason": "缺 K：此重複單元不屬於任何已有 K 的樹脂類別，未做分子量修正（只輸出 Tg∞）",
+    "mn": null,
+    "name": "x",
+    "resinClass": null,
+    "solidFraction": 0.5,
+    "status": "missing",
+    "tgInfGroupK": 323.0088495575221,
+    "tgK": null,
+    "tmK": null
+   }
+  },
+  {
+   "id": "smallMoleculeComponent/SBI",
+   "input": {
+    "component": {
+     "canonicalSmiles": "OC(=CC=C1C2(C)C)C=C1C(C2)(CC1(C)C)C(=CC(O)=C2)C1=C2",
+     "category": "Small Molecule",
+     "id": "s",
+     "name": "S"
+    },
+    "fraction": 1,
+    "kind": "smallComponent"
+   },
+   "output": {
+    "category": "Small Molecule",
+    "flags": [],
+    "id": "s",
+    "kUsed": null,
+    "kind": "small",
+    "missingReason": "不適用（小分子只有 Tm，D56）",
+    "mn": null,
+    "name": "S",
+    "resinClass": null,
+    "solidFraction": 1,
+    "status": "not-applicable",
+    "tgInfGroupK": null,
+    "tgK": null,
+    "tmK": 734.6099999999999
+   }
+  },
+  {
+   "id": "formulation/small-only",
+   "input": {
+    "errors": [],
+    "kind": "formulation",
+    "mn": {
+     "a": 308.421,
+     "b": 72.10699999999999
+    },
+    "solid": [
+     {
+      "amount": 30,
+      "canonicalSmiles": "OC(=CC=C1C2(C)C)C=C1C(C2)(CC1(C)C)C(=CC(O)=C2)C1=C2",
+      "category": "Small Molecule",
+      "id": "a",
+      "name": "成分a"
+     },
+     {
+      "amount": 70,
+      "canonicalSmiles": "CCC(C)=O",
+      "category": "Small Molecule",
+      "id": "b",
+      "name": "成分b"
+     }
+    ],
+    "wtPct": {
+     "a": 30,
+     "b": 70
+    }
+   },
+   "output": {
+    "components": [
+     {
+      "category": "Small Molecule",
+      "flags": [],
+      "id": "a",
+      "kUsed": null,
+      "kind": "small",
+      "missingReason": "不適用（小分子只有 Tm，D56）",
+      "mn": null,
+      "name": "成分a",
+      "resinClass": null,
+      "solidFraction": 0.3,
+      "status": "not-applicable",
+      "tgInfGroupK": null,
+      "tgK": null,
+      "tmK": 734.6099999999999
+     },
+     {
+      "category": "Small Molecule",
+      "flags": [],
+      "id": "b",
+      "kUsed": null,
+      "kind": "small",
+      "missingReason": "不適用（小分子只有 Tm，D56）",
+      "mn": null,
+      "name": "成分b",
+      "resinClass": null,
+      "solidFraction": 0.7,
+      "status": "not-applicable",
+      "tgInfGroupK": null,
+      "tgK": null,
+      "tmK": 184.77
+     }
+    ],
+    "confidence": "trend",
+    "excluded": [],
+    "messages": [
+     "未計入：成分a、成分b（不適用（小分子只有 Tm，D56））；未計入小分子的增塑效應，混合 Tg 可能偏高",
+     "沒有聚合物或寡聚物成分可混合（小分子不計 Tg，D56）"
+    ],
+    "missing": [],
+    "model": "Fox 混合式：1/Tg = Σ wᵢ/Tgᵢ（wᵢ 為質量分率）。書中沒有此式、Fox 1956 原文未核對；由 Gordon–Taylor 1952 式 (1)（原文頁 493）取 k = Tg₁/Tg₂ 導出；屬近似（假設成分互溶、混合體積加成）；Fox–Flory：Tg = Tg∞ − K/Mn（van Krevelen 式 6.10，書頁 146；原出處 Fox and Flory 1950）。K 按樹脂類別由文獻資料擬合（tg_flory_k.csv），不跨類別；小分子不計算 Tg，只給 Tm（Joback，D52；有文獻熔點時另標文獻值）（D56）",
+    "notCounted": [
+     "成分a",
+     "成分b"
+    ],
+    "notes": [
+     "本數值為依理論模型估算之參考值，非實測值。實際結果受原料純度、製程條件與反應動力學影響，請以實驗結果為準。",
+     "Liquid 區成分不混。分子量只用於計算，不顯示在畫面上（D09）。"
+    ],
+    "partial": null,
+    "status": "unavailable",
+    "tgC": null,
+    "tgK": null
+   }
+  },
+  {
+   "id": "formulation/novolac-only",
+   "input": {
+    "errors": [],
+    "kind": "formulation",
+    "mn": {
+     "n": 1000
+    },
+    "solid": [
+     {
+      "amount": 100,
+      "canonicalSmiles": "[*:1]Cc1cc([*:2])ccc1O",
+      "category": "Resin",
+      "id": "n",
+      "name": "成分n",
+      "polymer": {
+       "mnInput": 1000
+      }
+     }
+    ],
+    "wtPct": {
+     "n": 100
+    }
+   },
+   "output": {
+    "components": [
+     {
+      "category": "Resin",
+      "flags": [
+       "含校準基團",
+       "低可信度"
+      ],
+      "id": "n",
+      "kUsed": 76820,
+      "kind": "polymer",
+      "missingReason": null,
+      "mn": 1000,
+      "name": "成分n",
+      "resinClass": "novolac_phenol_general",
+      "solidFraction": 1,
+      "status": "ok",
+      "tgInfGroupK": 415.92836946277095,
+      "tgK": 339.10836946277095,
+      "tmK": null
+     }
+    ],
+    "confidence": "trend",
+    "excluded": [],
+    "messages": [],
+    "missing": [],
+    "model": "Fox 混合式：1/Tg = Σ wᵢ/Tgᵢ（wᵢ 為質量分率）。書中沒有此式、Fox 1956 原文未核對；由 Gordon–Taylor 1952 式 (1)（原文頁 493）取 k = Tg₁/Tg₂ 導出；屬近似（假設成分互溶、混合體積加成）；Fox–Flory：Tg = Tg∞ − K/Mn（van Krevelen 式 6.10，書頁 146；原出處 Fox and Flory 1950）。K 按樹脂類別由文獻資料擬合（tg_flory_k.csv），不跨類別；小分子不計算 Tg，只給 Tm（Joback，D52；有文獻熔點時另標文獻值）（D56）",
+    "notCounted": [],
+    "notes": [
+     "本數值為依理論模型估算之參考值，非實測值。實際結果受原料純度、製程條件與反應動力學影響，請以實驗結果為準。",
+     "Liquid 區成分不混。分子量只用於計算，不顯示在畫面上（D09）。"
+    ],
+    "partial": null,
+    "status": "complete",
+    "tgC": 65.95836946277097,
+    "tgK": 339.10836946277095
+   }
+  },
+  {
+   "id": "formulation/novolac-plus-small",
+   "input": {
+    "errors": [],
+    "kind": "formulation",
+    "mn": {
+     "n": 1000,
+     "s": 308.421
+    },
+    "solid": [
+     {
+      "amount": 60,
+      "canonicalSmiles": "[*:1]Cc1cc([*:2])ccc1O",
+      "category": "Resin",
+      "id": "n",
+      "name": "成分n",
+      "polymer": {
+       "mnInput": 1000
+      }
+     },
+     {
+      "amount": 40,
+      "canonicalSmiles": "OC(=CC=C1C2(C)C)C=C1C(C2)(CC1(C)C)C(=CC(O)=C2)C1=C2",
+      "category": "Small Molecule",
+      "id": "s",
+      "name": "成分s"
+     }
+    ],
+    "wtPct": {
+     "n": 60,
+     "s": 40
+    }
+   },
+   "output": {
+    "components": [
+     {
+      "category": "Resin",
+      "flags": [
+       "含校準基團",
+       "低可信度"
+      ],
+      "id": "n",
+      "kUsed": 76820,
+      "kind": "polymer",
+      "missingReason": null,
+      "mn": 1000,
+      "name": "成分n",
+      "resinClass": "novolac_phenol_general",
+      "solidFraction": 0.6,
+      "status": "ok",
+      "tgInfGroupK": 415.92836946277095,
+      "tgK": 339.10836946277095,
+      "tmK": null
+     },
+     {
+      "category": "Small Molecule",
+      "flags": [],
+      "id": "s",
+      "kUsed": null,
+      "kind": "small",
+      "missingReason": "不適用（小分子只有 Tm，D56）",
+      "mn": null,
+      "name": "成分s",
+      "resinClass": null,
+      "solidFraction": 0.4,
+      "status": "not-applicable",
+      "tgInfGroupK": null,
+      "tgK": null,
+      "tmK": 734.6099999999999
+     }
+    ],
+    "confidence": "trend",
+    "excluded": [],
+    "messages": [
+     "未計入：成分s（不適用（小分子只有 Tm，D56））；未計入小分子的增塑效應，混合 Tg 可能偏高"
+    ],
+    "missing": [],
+    "model": "Fox 混合式：1/Tg = Σ wᵢ/Tgᵢ（wᵢ 為質量分率）。書中沒有此式、Fox 1956 原文未核對；由 Gordon–Taylor 1952 式 (1)（原文頁 493）取 k = Tg₁/Tg₂ 導出；屬近似（假設成分互溶、混合體積加成）；Fox–Flory：Tg = Tg∞ − K/Mn（van Krevelen 式 6.10，書頁 146；原出處 Fox and Flory 1950）。K 按樹脂類別由文獻資料擬合（tg_flory_k.csv），不跨類別；小分子不計算 Tg，只給 Tm（Joback，D52；有文獻熔點時另標文獻值）（D56）",
+    "notCounted": [
+     "成分s"
+    ],
+    "notes": [
+     "本數值為依理論模型估算之參考值，非實測值。實際結果受原料純度、製程條件與反應動力學影響，請以實驗結果為準。",
+     "Liquid 區成分不混。分子量只用於計算，不顯示在畫面上（D09）。"
+    ],
+    "partial": null,
+    "status": "complete",
+    "tgC": 65.95836946277097,
+    "tgK": 339.10836946277095
+   }
+  },
+  {
+   "id": "formulation/novolac-extrapolated-3000",
+   "input": {
+    "errors": [],
+    "kind": "formulation",
+    "mn": {
+     "n": 3000
+    },
+    "solid": [
+     {
+      "amount": 100,
+      "canonicalSmiles": "[*:1]Cc1cc([*:2])ccc1O",
+      "category": "Resin",
+      "id": "n",
+      "name": "成分n",
+      "polymer": {
+       "mnInput": 3000
+      }
+     }
+    ],
+    "wtPct": {
+     "n": 100
+    }
+   },
+   "output": {
+    "components": [
+     {
+      "category": "Resin",
+      "flags": [
+       "含校準基團",
+       "低可信度",
+       "外推，未驗證"
+      ],
+      "id": "n",
+      "kUsed": 76820,
+      "kind": "polymer",
+      "missingReason": null,
+      "mn": 3000,
+      "name": "成分n",
+      "resinClass": "novolac_phenol_general",
+      "solidFraction": 1,
+      "status": "ok",
+      "tgInfGroupK": 415.92836946277095,
+      "tgK": 390.32170279610426,
+      "tmK": null
+     }
+    ],
+    "confidence": "trend",
+    "excluded": [],
+    "messages": [],
+    "missing": [],
+    "model": "Fox 混合式：1/Tg = Σ wᵢ/Tgᵢ（wᵢ 為質量分率）。書中沒有此式、Fox 1956 原文未核對；由 Gordon–Taylor 1952 式 (1)（原文頁 493）取 k = Tg₁/Tg₂ 導出；屬近似（假設成分互溶、混合體積加成）；Fox–Flory：Tg = Tg∞ − K/Mn（van Krevelen 式 6.10，書頁 146；原出處 Fox and Flory 1950）。K 按樹脂類別由文獻資料擬合（tg_flory_k.csv），不跨類別；小分子不計算 Tg，只給 Tm（Joback，D52；有文獻熔點時另標文獻值）（D56）",
+    "notCounted": [],
+    "notes": [
+     "本數值為依理論模型估算之參考值，非實測值。實際結果受原料純度、製程條件與反應動力學影響，請以實驗結果為準。",
+     "Liquid 區成分不混。分子量只用於計算，不顯示在畫面上（D09）。"
+    ],
+    "partial": null,
+    "status": "complete",
+    "tgC": 117.17170279610428,
+    "tgK": 390.32170279610426
+   }
+  },
+  {
+   "id": "formulation/novolac-low-500",
+   "input": {
+    "errors": [],
+    "kind": "formulation",
+    "mn": {
+     "n": 500
+    },
+    "solid": [
+     {
+      "amount": 100,
+      "canonicalSmiles": "[*:1]Cc1cc([*:2])ccc1O",
+      "category": "Resin",
+      "id": "n",
+      "name": "成分n",
+      "polymer": {
+       "mnInput": 500
+      }
+     }
+    ],
+    "wtPct": {
+     "n": 100
+    }
+   },
+   "output": {
+    "components": [
+     {
+      "category": "Resin",
+      "flags": [
+       "含校準基團",
+       "低可信度",
+       "外推，未驗證"
+      ],
+      "id": "n",
+      "kUsed": 76820,
+      "kind": "polymer",
+      "missingReason": null,
+      "mn": 500,
+      "name": "成分n",
+      "resinClass": "novolac_phenol_general",
+      "solidFraction": 1,
+      "status": "ok",
+      "tgInfGroupK": 415.92836946277095,
+      "tgK": 262.28836946277096,
+      "tmK": null
+     }
+    ],
+    "confidence": "trend",
+    "excluded": [],
+    "messages": [],
+    "missing": [],
+    "model": "Fox 混合式：1/Tg = Σ wᵢ/Tgᵢ（wᵢ 為質量分率）。書中沒有此式、Fox 1956 原文未核對；由 Gordon–Taylor 1952 式 (1)（原文頁 493）取 k = Tg₁/Tg₂ 導出；屬近似（假設成分互溶、混合體積加成）；Fox–Flory：Tg = Tg∞ − K/Mn（van Krevelen 式 6.10，書頁 146；原出處 Fox and Flory 1950）。K 按樹脂類別由文獻資料擬合（tg_flory_k.csv），不跨類別；小分子不計算 Tg，只給 Tm（Joback，D52；有文獻熔點時另標文獻值）（D56）",
+    "notCounted": [],
+    "notes": [
+     "本數值為依理論模型估算之參考值，非實測值。實際結果受原料純度、製程條件與反應動力學影響，請以實驗結果為準。",
+     "Liquid 區成分不混。分子量只用於計算，不顯示在畫面上（D09）。"
+    ],
+    "partial": null,
+    "status": "complete",
+    "tgC": -10.861630537229019,
+    "tgK": 262.28836946277096
+   }
+  },
+  {
+   "id": "formulation/novolac-mn-1e12",
+   "input": {
+    "errors": [],
+    "kind": "formulation",
+    "mn": {
+     "n": 1000000000000
+    },
+    "solid": [
+     {
+      "amount": 100,
+      "canonicalSmiles": "[*:1]Cc1cc([*:2])ccc1O",
+      "category": "Resin",
+      "id": "n",
+      "name": "成分n",
+      "polymer": {
+       "mnInput": 1000000000000
+      }
+     }
+    ],
+    "wtPct": {
+     "n": 100
+    }
+   },
+   "output": {
+    "components": [
+     {
+      "category": "Resin",
+      "flags": [
+       "含校準基團",
+       "低可信度",
+       "外推，未驗證"
+      ],
+      "id": "n",
+      "kUsed": 76820,
+      "kind": "polymer",
+      "missingReason": null,
+      "mn": 1000000000000,
+      "name": "成分n",
+      "resinClass": "novolac_phenol_general",
+      "solidFraction": 1,
+      "status": "ok",
+      "tgInfGroupK": 415.92836946277095,
+      "tgK": 415.92836938595093,
+      "tmK": null
+     }
+    ],
+    "confidence": "trend",
+    "excluded": [],
+    "messages": [],
+    "missing": [],
+    "model": "Fox 混合式：1/Tg = Σ wᵢ/Tgᵢ（wᵢ 為質量分率）。書中沒有此式、Fox 1956 原文未核對；由 Gordon–Taylor 1952 式 (1)（原文頁 493）取 k = Tg₁/Tg₂ 導出；屬近似（假設成分互溶、混合體積加成）；Fox–Flory：Tg = Tg∞ − K/Mn（van Krevelen 式 6.10，書頁 146；原出處 Fox and Flory 1950）。K 按樹脂類別由文獻資料擬合（tg_flory_k.csv），不跨類別；小分子不計算 Tg，只給 Tm（Joback，D52；有文獻熔點時另標文獻值）（D56）",
+    "notCounted": [],
+    "notes": [
+     "本數值為依理論模型估算之參考值，非實測值。實際結果受原料純度、製程條件與反應動力學影響，請以實驗結果為準。",
+     "Liquid 區成分不混。分子量只用於計算，不顯示在畫面上（D09）。"
+    ],
+    "partial": null,
+    "status": "complete",
+    "tgC": 142.77836938595095,
+    "tgK": 415.92836938595093
+   }
+  },
+  {
+   "id": "formulation/novolac-mn-900",
+   "input": {
+    "errors": [],
+    "kind": "formulation",
+    "mn": {
+     "n": 900
+    },
+    "solid": [
+     {
+      "amount": 100,
+      "canonicalSmiles": "[*:1]Cc1cc([*:2])ccc1O",
+      "category": "Resin",
+      "id": "n",
+      "name": "成分n",
+      "polymer": {
+       "mnInput": 900
+      }
+     }
+    ],
+    "wtPct": {
+     "n": 100
+    }
+   },
+   "output": {
+    "components": [
+     {
+      "category": "Resin",
+      "flags": [
+       "含校準基團",
+       "低可信度"
+      ],
+      "id": "n",
+      "kUsed": 76820,
+      "kind": "polymer",
+      "missingReason": null,
+      "mn": 900,
+      "name": "成分n",
+      "resinClass": "novolac_phenol_general",
+      "solidFraction": 1,
+      "status": "ok",
+      "tgInfGroupK": 415.92836946277095,
+      "tgK": 330.5728139072154,
+      "tmK": null
+     }
+    ],
+    "confidence": "trend",
+    "excluded": [],
+    "messages": [],
+    "missing": [],
+    "model": "Fox 混合式：1/Tg = Σ wᵢ/Tgᵢ（wᵢ 為質量分率）。書中沒有此式、Fox 1956 原文未核對；由 Gordon–Taylor 1952 式 (1)（原文頁 493）取 k = Tg₁/Tg₂ 導出；屬近似（假設成分互溶、混合體積加成）；Fox–Flory：Tg = Tg∞ − K/Mn（van Krevelen 式 6.10，書頁 146；原出處 Fox and Flory 1950）。K 按樹脂類別由文獻資料擬合（tg_flory_k.csv），不跨類別；小分子不計算 Tg，只給 Tm（Joback，D52；有文獻熔點時另標文獻值）（D56）",
+    "notCounted": [],
+    "notes": [
+     "本數值為依理論模型估算之參考值，非實測值。實際結果受原料純度、製程條件與反應動力學影響，請以實驗結果為準。",
+     "Liquid 區成分不混。分子量只用於計算，不顯示在畫面上（D09）。"
+    ],
+    "partial": null,
+    "status": "complete",
+    "tgC": 57.422813907215414,
+    "tgK": 330.5728139072154
+   }
+  },
+  {
+   "id": "formulation/dgeba-missing-K",
+   "input": {
+    "errors": [],
+    "kind": "formulation",
+    "mn": {
+     "d": 3000,
+     "s": 308.421
+    },
+    "solid": [
+     {
+      "amount": 60,
+      "canonicalSmiles": "[*:1]Oc1ccc(cc1)C(C)(C)c1ccc(cc1)OCC(O)C[*:2]",
+      "category": "Resin",
+      "id": "d",
+      "name": "成分d",
+      "polymer": {
+       "mnInput": 3000
+      }
+     },
+     {
+      "amount": 40,
+      "canonicalSmiles": "OC(=CC=C1C2(C)C)C=C1C(C2)(CC1(C)C)C(=CC(O)=C2)C1=C2",
+      "category": "Small Molecule",
+      "id": "s",
+      "name": "成分s"
+     }
+    ],
+    "wtPct": {
+     "d": 60,
+     "s": 40
+    }
+   },
+   "output": {
+    "components": [
+     {
+      "category": "Resin",
+      "flags": [],
+      "id": "d",
+      "kUsed": null,
+      "kind": "polymer",
+      "missingReason": "缺 K：類別「DGEBA／雙酚 A 環氧寡聚物與苯氧樹脂」資料不足，未做分子量修正（只輸出 Tg∞）",
+      "mn": null,
+      "name": "成分d",
+      "resinClass": "dgeba",
+      "solidFraction": 0.6,
+      "status": "missing",
+      "tgInfGroupK": 398.87442842068236,
+      "tgK": null,
+      "tmK": null
+     },
+     {
+      "category": "Small Molecule",
+      "flags": [],
+      "id": "s",
+      "kUsed": null,
+      "kind": "small",
+      "missingReason": "不適用（小分子只有 Tm，D56）",
+      "mn": null,
+      "name": "成分s",
+      "resinClass": null,
+      "solidFraction": 0.4,
+      "status": "not-applicable",
+      "tgInfGroupK": null,
+      "tgK": null,
+      "tmK": 734.6099999999999
+     }
+    ],
+    "confidence": "trend",
+    "excluded": [],
+    "messages": [
+     "未計入：成分s（不適用（小分子只有 Tm，D56））；未計入小分子的增塑效應，混合 Tg 可能偏高",
+     "缺成分 Tg：成分d（缺 K：類別「DGEBA／雙酚 A 環氧寡聚物與苯氧樹脂」資料不足，未做分子量修正（只輸出 Tg∞））",
+     "所有參與混合的成分都缺 Tg，沒有部分混合值"
+    ],
+    "missing": [
+     "成分d"
+    ],
+    "model": "Fox 混合式：1/Tg = Σ wᵢ/Tgᵢ（wᵢ 為質量分率）。書中沒有此式、Fox 1956 原文未核對；由 Gordon–Taylor 1952 式 (1)（原文頁 493）取 k = Tg₁/Tg₂ 導出；屬近似（假設成分互溶、混合體積加成）；Fox–Flory：Tg = Tg∞ − K/Mn（van Krevelen 式 6.10，書頁 146；原出處 Fox and Flory 1950）。K 按樹脂類別由文獻資料擬合（tg_flory_k.csv），不跨類別；小分子不計算 Tg，只給 Tm（Joback，D52；有文獻熔點時另標文獻值）（D56）",
+    "notCounted": [
+     "成分s"
+    ],
+    "notes": [
+     "本數值為依理論模型估算之參考值，非實測值。實際結果受原料純度、製程條件與反應動力學影響，請以實驗結果為準。",
+     "Liquid 區成分不混。分子量只用於計算，不顯示在畫面上（D09）。"
+    ],
+    "partial": null,
+    "status": "incomplete",
+    "tgC": null,
+    "tgK": null
+   }
+  },
+  {
+   "id": "formulation/dgeba-novolac-small",
+   "input": {
+    "errors": [],
+    "kind": "formulation",
+    "mn": {
+     "d": 3000,
+     "n": 1000,
+     "s": 308.421
+    },
+    "solid": [
+     {
+      "amount": 50,
+      "canonicalSmiles": "[*:1]Oc1ccc(cc1)C(C)(C)c1ccc(cc1)OCC(O)C[*:2]",
+      "category": "Resin",
+      "id": "d",
+      "name": "成分d",
+      "polymer": {
+       "mnInput": 3000
+      }
+     },
+     {
+      "amount": 40,
+      "canonicalSmiles": "[*:1]Cc1cc([*:2])ccc1O",
+      "category": "Resin",
+      "id": "n",
+      "name": "成分n",
+      "polymer": {
+       "mnInput": 1000
+      }
+     },
+     {
+      "amount": 10,
+      "canonicalSmiles": "OC(=CC=C1C2(C)C)C=C1C(C2)(CC1(C)C)C(=CC(O)=C2)C1=C2",
+      "category": "Small Molecule",
+      "id": "s",
+      "name": "成分s"
+     }
+    ],
+    "wtPct": {
+     "d": 50,
+     "n": 40,
+     "s": 10
+    }
+   },
+   "output": {
+    "components": [
+     {
+      "category": "Resin",
+      "flags": [],
+      "id": "d",
+      "kUsed": null,
+      "kind": "polymer",
+      "missingReason": "缺 K：類別「DGEBA／雙酚 A 環氧寡聚物與苯氧樹脂」資料不足，未做分子量修正（只輸出 Tg∞）",
+      "mn": null,
+      "name": "成分d",
+      "resinClass": "dgeba",
+      "solidFraction": 0.5,
+      "status": "missing",
+      "tgInfGroupK": 398.87442842068236,
+      "tgK": null,
+      "tmK": null
+     },
+     {
+      "category": "Resin",
+      "flags": [
+       "含校準基團",
+       "低可信度"
+      ],
+      "id": "n",
+      "kUsed": 76820,
+      "kind": "polymer",
+      "missingReason": null,
+      "mn": 1000,
+      "name": "成分n",
+      "resinClass": "novolac_phenol_general",
+      "solidFraction": 0.4,
+      "status": "ok",
+      "tgInfGroupK": 415.92836946277095,
+      "tgK": 339.10836946277095,
+      "tmK": null
+     },
+     {
+      "category": "Small Molecule",
+      "flags": [],
+      "id": "s",
+      "kUsed": null,
+      "kind": "small",
+      "missingReason": "不適用（小分子只有 Tm，D56）",
+      "mn": null,
+      "name": "成分s",
+      "resinClass": null,
+      "solidFraction": 0.1,
+      "status": "not-applicable",
+      "tgInfGroupK": null,
+      "tgK": null,
+      "tmK": 734.6099999999999
+     }
+    ],
+    "confidence": "trend",
+    "excluded": [],
+    "messages": [
+     "未計入：成分s（不適用（小分子只有 Tm，D56））；未計入小分子的增塑效應，混合 Tg 可能偏高",
+     "缺成分 Tg：成分d（缺 K：類別「DGEBA／雙酚 A 環氧寡聚物與苯氧樹脂」資料不足，未做分子量修正（只輸出 Tg∞））",
+     "部分混合值（非完整配方）：去除 成分d 後，只混 成分n"
+    ],
+    "missing": [
+     "成分d"
+    ],
+    "model": "Fox 混合式：1/Tg = Σ wᵢ/Tgᵢ（wᵢ 為質量分率）。書中沒有此式、Fox 1956 原文未核對；由 Gordon–Taylor 1952 式 (1)（原文頁 493）取 k = Tg₁/Tg₂ 導出；屬近似（假設成分互溶、混合體積加成）；Fox–Flory：Tg = Tg∞ − K/Mn（van Krevelen 式 6.10，書頁 146；原出處 Fox and Flory 1950）。K 按樹脂類別由文獻資料擬合（tg_flory_k.csv），不跨類別；小分子不計算 Tg，只給 Tm（Joback，D52；有文獻熔點時另標文獻值）（D56）",
+    "notCounted": [
+     "成分s"
+    ],
+    "notes": [
+     "本數值為依理論模型估算之參考值，非實測值。實際結果受原料純度、製程條件與反應動力學影響，請以實驗結果為準。",
+     "Liquid 區成分不混。分子量只用於計算，不顯示在畫面上（D09）。"
+    ],
+    "partial": {
+     "fraction": 0.4,
+     "included": [
+      "成分n"
+     ],
+     "removed": [
+      "成分d"
+     ],
+     "tgC": 65.95836946277097,
+     "tgK": 339.10836946277095
+    },
+    "status": "incomplete",
+    "tgC": null,
+    "tgK": null
+   }
+  },
+  {
+   "id": "formulation/all-missing",
+   "input": {
+    "errors": [],
+    "kind": "formulation",
+    "mn": {
+     "e": 2250,
+     "p": 3000
+    },
+    "solid": [
+     {
+      "amount": 50,
+      "canonicalSmiles": "[*:1]CC([*:2])(C)C(=O)OCC1CO1",
+      "category": "Resin",
+      "id": "e",
+      "name": "成分e",
+      "polymer": {
+       "mnInput": 2250
+      }
+     },
+     {
+      "amount": 50,
+      "canonicalSmiles": "[*:1]Cc1cc([*:2])ccc1O",
+      "category": "Resin",
+      "id": "p",
+      "name": "成分p",
+      "polymer": {
+       "mnInput": 3000,
+       "units": [
+        {
+         "fraction": 50,
+         "smiles": "[*:1]Cc1cc([*:2])ccc1O"
+        },
+        {
+         "fraction": 50,
+         "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+        }
+       ]
+      }
+     }
+    ],
+    "wtPct": {
+     "e": 50,
+     "p": 50
+    }
+   },
+   "output": {
+    "components": [
+     {
+      "category": "Resin",
+      "flags": [],
+      "id": "e",
+      "kUsed": null,
+      "kind": "polymer",
+      "missingReason": "缺基團，算不出 Tg∞",
+      "mn": null,
+      "name": "成分e",
+      "resinClass": null,
+      "solidFraction": 0.5,
+      "status": "missing",
+      "tgInfGroupK": null,
+      "tgK": null,
+      "tmK": null
+     },
+     {
+      "category": "Resin",
+      "flags": [],
+      "id": "p",
+      "kUsed": null,
+      "kind": "polymer",
+      "missingReason": "共聚物成分：本卡不處理共聚比例影響，也沒有共聚物的 K（單元 2 缺基團）",
+      "mn": null,
+      "name": "成分p",
+      "resinClass": null,
+      "solidFraction": 0.5,
+      "status": "missing",
+      "tgInfGroupK": null,
+      "tgK": null,
+      "tmK": null
+     }
+    ],
+    "confidence": "trend",
+    "excluded": [],
+    "messages": [
+     "缺成分 Tg：成分e（缺基團，算不出 Tg∞）",
+     "缺成分 Tg：成分p（共聚物成分：本卡不處理共聚比例影響，也沒有共聚物的 K（單元 2 缺基團））",
+     "所有參與混合的成分都缺 Tg，沒有部分混合值"
+    ],
+    "missing": [
+     "成分e",
+     "成分p"
+    ],
+    "model": "Fox 混合式：1/Tg = Σ wᵢ/Tgᵢ（wᵢ 為質量分率）。書中沒有此式、Fox 1956 原文未核對；由 Gordon–Taylor 1952 式 (1)（原文頁 493）取 k = Tg₁/Tg₂ 導出；屬近似（假設成分互溶、混合體積加成）；Fox–Flory：Tg = Tg∞ − K/Mn（van Krevelen 式 6.10，書頁 146；原出處 Fox and Flory 1950）。K 按樹脂類別由文獻資料擬合（tg_flory_k.csv），不跨類別；小分子不計算 Tg，只給 Tm（Joback，D52；有文獻熔點時另標文獻值）（D56）",
+    "notCounted": [],
+    "notes": [
+     "本數值為依理論模型估算之參考值，非實測值。實際結果受原料純度、製程條件與反應動力學影響，請以實驗結果為準。",
+     "Liquid 區成分不混。分子量只用於計算，不顯示在畫面上（D09）。"
+    ],
+    "partial": null,
+    "status": "incomplete",
+    "tgC": null,
+    "tgK": null
+   }
+  },
+  {
+   "id": "formulation/catalyst-volatile-excluded",
+   "input": {
+    "errors": [],
+    "kind": "formulation",
+    "mn": {
+     "a": 1000,
+     "c": 72.10699999999999,
+     "v": 340.4190000000001
+    },
+    "solid": [
+     {
+      "amount": 50,
+      "canonicalSmiles": "[*:1]Cc1cc([*:2])ccc1O",
+      "category": "Resin",
+      "id": "a",
+      "name": "成分a",
+      "polymer": {
+       "mnInput": 1000
+      }
+     },
+     {
+      "amount": 10,
+      "canonicalSmiles": "CCC(C)=O",
+      "category": "Catalyst/Initiator",
+      "id": "c",
+      "name": "成分c"
+     },
+     {
+      "amount": 40,
+      "canonicalSmiles": "CC(C)(c1ccc(OCC2CO2)cc1)c1ccc(OCC2CO2)cc1",
+      "category": "Small Molecule",
+      "id": "v",
+      "name": "成分v",
+      "volatileFlag": true
+     }
+    ],
+    "wtPct": {
+     "a": 50,
+     "c": 10,
+     "v": 40
+    }
+   },
+   "output": {
+    "components": [
+     {
+      "category": "Resin",
+      "flags": [
+       "含校準基團",
+       "低可信度"
+      ],
+      "id": "a",
+      "kUsed": 76820,
+      "kind": "polymer",
+      "missingReason": null,
+      "mn": 1000,
+      "name": "成分a",
+      "resinClass": "novolac_phenol_general",
+      "solidFraction": 0.5,
+      "status": "ok",
+      "tgInfGroupK": 415.92836946277095,
+      "tgK": 339.10836946277095,
+      "tmK": null
+     }
+    ],
+    "confidence": "trend",
+    "excluded": [
+     {
+      "id": "c",
+      "kind": "catalyst",
+      "name": "成分c",
+      "reason": "Catalyst/Initiator（D26），不混入；不假設排除門檻，是否調整由使用者決定"
+     },
+     {
+      "id": "v",
+      "kind": "volatile",
+      "name": "成分v",
+      "reason": "標記為揮發或分解，不混入"
+     }
+    ],
+    "messages": [
+     "催化劑／起始劑成分未混入：成分c（Catalyst/Initiator（D26），不混入；不假設排除門檻，是否調整由使用者決定）",
+     "揮發或分解成分未混入：成分v（標記為揮發或分解，不混入）"
+    ],
+    "missing": [],
+    "model": "Fox 混合式：1/Tg = Σ wᵢ/Tgᵢ（wᵢ 為質量分率）。書中沒有此式、Fox 1956 原文未核對；由 Gordon–Taylor 1952 式 (1)（原文頁 493）取 k = Tg₁/Tg₂ 導出；屬近似（假設成分互溶、混合體積加成）；Fox–Flory：Tg = Tg∞ − K/Mn（van Krevelen 式 6.10，書頁 146；原出處 Fox and Flory 1950）。K 按樹脂類別由文獻資料擬合（tg_flory_k.csv），不跨類別；小分子不計算 Tg，只給 Tm（Joback，D52；有文獻熔點時另標文獻值）（D56）",
+    "notCounted": [],
+    "notes": [
+     "本數值為依理論模型估算之參考值，非實測值。實際結果受原料純度、製程條件與反應動力學影響，請以實驗結果為準。",
+     "Liquid 區成分不混。分子量只用於計算，不顯示在畫面上（D09）。"
+    ],
+    "partial": null,
+    "status": "complete",
+    "tgC": 65.95836946277097,
+    "tgK": 339.10836946277095
+   }
+  },
+  {
+   "id": "formulation/catalyst-only",
+   "input": {
+    "errors": [],
+    "kind": "formulation",
+    "mn": {
+     "c": 72.10699999999999
+    },
+    "solid": [
+     {
+      "amount": 10,
+      "canonicalSmiles": "CCC(C)=O",
+      "category": "Catalyst/Initiator",
+      "id": "c",
+      "name": "成分c"
+     }
+    ],
+    "wtPct": {
+     "c": 100
+    }
+   },
+   "output": {
+    "components": [],
+    "confidence": "trend",
+    "excluded": [
+     {
+      "id": "c",
+      "kind": "catalyst",
+      "name": "成分c",
+      "reason": "Catalyst/Initiator（D26），不混入；不假設排除門檻，是否調整由使用者決定"
+     }
+    ],
+    "messages": [
+     "催化劑／起始劑成分未混入：成分c（Catalyst/Initiator（D26），不混入；不假設排除門檻，是否調整由使用者決定）",
+     "沒有可混合的 Solid 成分"
+    ],
+    "missing": [],
+    "model": "Fox 混合式：1/Tg = Σ wᵢ/Tgᵢ（wᵢ 為質量分率）。書中沒有此式、Fox 1956 原文未核對；由 Gordon–Taylor 1952 式 (1)（原文頁 493）取 k = Tg₁/Tg₂ 導出；屬近似（假設成分互溶、混合體積加成）；Fox–Flory：Tg = Tg∞ − K/Mn（van Krevelen 式 6.10，書頁 146；原出處 Fox and Flory 1950）。K 按樹脂類別由文獻資料擬合（tg_flory_k.csv），不跨類別；小分子不計算 Tg，只給 Tm（Joback，D52；有文獻熔點時另標文獻值）（D56）",
+    "notCounted": [],
+    "notes": [
+     "本數值為依理論模型估算之參考值，非實測值。實際結果受原料純度、製程條件與反應動力學影響，請以實驗結果為準。",
+     "Liquid 區成分不混。分子量只用於計算，不顯示在畫面上（D09）。"
+    ],
+    "partial": null,
+    "status": "unavailable",
+    "tgC": null,
+    "tgK": null
+   }
+  },
+  {
+   "id": "formulation/nan-amount",
+   "input": {
+    "errors": [
+     "Solid 區的「成分a」數值不是有效的數字"
+    ],
+    "kind": "formulation",
+    "mn": {
+     "a": 308.421
+    },
+    "solid": [
+     {
+      "amount": {
+       "$nonfinite": "NaN"
+      },
+      "canonicalSmiles": "OC(=CC=C1C2(C)C)C=C1C(C2)(CC1(C)C)C(=CC(O)=C2)C1=C2",
+      "category": "Small Molecule",
+      "id": "a",
+      "name": "成分a"
+     }
+    ],
+    "wtPct": null
+   },
+   "output": {
+    "components": [],
+    "confidence": "trend",
+    "excluded": [],
+    "messages": [
+     "Solid 區的「成分a」數值不是有效的數字"
+    ],
+    "missing": [],
+    "model": "Fox 混合式：1/Tg = Σ wᵢ/Tgᵢ（wᵢ 為質量分率）。書中沒有此式、Fox 1956 原文未核對；由 Gordon–Taylor 1952 式 (1)（原文頁 493）取 k = Tg₁/Tg₂ 導出；屬近似（假設成分互溶、混合體積加成）；Fox–Flory：Tg = Tg∞ − K/Mn（van Krevelen 式 6.10，書頁 146；原出處 Fox and Flory 1950）。K 按樹脂類別由文獻資料擬合（tg_flory_k.csv），不跨類別；小分子不計算 Tg，只給 Tm（Joback，D52；有文獻熔點時另標文獻值）（D56）",
+    "notCounted": [],
+    "notes": [
+     "本數值為依理論模型估算之參考值，非實測值。實際結果受原料純度、製程條件與反應動力學影響，請以實驗結果為準。",
+     "Liquid 區成分不混。分子量只用於計算，不顯示在畫面上（D09）。"
+    ],
+    "partial": null,
+    "status": "error",
+    "tgC": null,
+    "tgK": null
+   }
+  },
+  {
+   "id": "formulation/novolac-grams",
+   "input": {
+    "errors": [],
+    "kind": "formulation",
+    "mn": {
+     "a": 1000
+    },
+    "solid": [
+     {
+      "amount": 50,
+      "canonicalSmiles": "[*:1]Cc1cc([*:2])ccc1O",
+      "category": "Resin",
+      "id": "a",
+      "name": "成分a",
+      "polymer": {
+       "mnInput": 1000
+      }
+     }
+    ],
+    "wtPct": {
+     "a": 100
+    }
+   },
+   "output": {
+    "components": [
+     {
+      "category": "Resin",
+      "flags": [
+       "含校準基團",
+       "低可信度"
+      ],
+      "id": "a",
+      "kUsed": 76820,
+      "kind": "polymer",
+      "missingReason": null,
+      "mn": 1000,
+      "name": "成分a",
+      "resinClass": "novolac_phenol_general",
+      "solidFraction": 1,
+      "status": "ok",
+      "tgInfGroupK": 415.92836946277095,
+      "tgK": 339.10836946277095,
+      "tmK": null
+     }
+    ],
+    "confidence": "trend",
+    "excluded": [],
+    "messages": [],
+    "missing": [],
+    "model": "Fox 混合式：1/Tg = Σ wᵢ/Tgᵢ（wᵢ 為質量分率）。書中沒有此式、Fox 1956 原文未核對；由 Gordon–Taylor 1952 式 (1)（原文頁 493）取 k = Tg₁/Tg₂ 導出；屬近似（假設成分互溶、混合體積加成）；Fox–Flory：Tg = Tg∞ − K/Mn（van Krevelen 式 6.10，書頁 146；原出處 Fox and Flory 1950）。K 按樹脂類別由文獻資料擬合（tg_flory_k.csv），不跨類別；小分子不計算 Tg，只給 Tm（Joback，D52；有文獻熔點時另標文獻值）（D56）",
+    "notCounted": [],
+    "notes": [
+     "本數值為依理論模型估算之參考值，非實測值。實際結果受原料純度、製程條件與反應動力學影響，請以實驗結果為準。",
+     "Liquid 區成分不混。分子量只用於計算，不顯示在畫面上（D09）。"
+    ],
+    "partial": null,
+    "status": "complete",
+    "tgC": 65.95836946277097,
+    "tgK": 339.10836946277095
+   }
+  }
+ ],
+ "commit": "2c2b860618c17a97dfeefcee4cf5ae68e9098abb",
+ "module": "tgMixing",
+ "rdkitjs": "2026.09.1",
+ "tolerance": {
+  "exact": "strings, integers, booleans, null, arrays and object keys must be identical",
+  "float": "shortest round-trip string must be identical; otherwise relative error <= relFallback is accepted and the case is recorded in tolerance_cases",
+  "relFallback": 1e-12
+ }
+}
