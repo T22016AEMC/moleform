@@ -1,0 +1,744 @@
+{
+ "cases": [
+  {
+   "id": "masses/test/6000-6000over1.8",
+   "input": {
+    "kind": "masses",
+    "mn": 3333.333333333333,
+    "mw": 6000
+   },
+   "output": {
+    "m1": 2000,
+    "m2": 10000,
+    "single": false
+   }
+  },
+  {
+   "id": "masses/test/4500-2250",
+   "input": {
+    "kind": "masses",
+    "mn": 2250,
+    "mw": 4500
+   },
+   "output": {
+    "m1": 1318.0194846605364,
+    "m2": 7681.980515339464,
+    "single": false
+   }
+  },
+  {
+   "id": "masses/test/pdi1",
+   "input": {
+    "kind": "masses",
+    "mn": 5000,
+    "mw": 5000
+   },
+   "output": {
+    "m1": 5000,
+    "m2": 5000,
+    "single": true
+   }
+  },
+  {
+   "id": "masses/test/legacy-default-pdi",
+   "input": {
+    "kind": "masses",
+    "mn": 6000,
+    "mw": 12000
+   },
+   "output": {
+    "m1": 3514.7186257614303,
+    "m2": 20485.28137423857,
+    "single": false
+   }
+  },
+  {
+   "id": "masses/test/phase5-500-1000",
+   "input": {
+    "kind": "masses",
+    "mn": 500,
+    "mw": 1000
+   },
+   "output": {
+    "m1": 292.89321881345245,
+    "m2": 1707.1067811865476,
+    "single": false
+   }
+  },
+  {
+   "id": "masses/test/phase5-3000-6000",
+   "input": {
+    "kind": "masses",
+    "mn": 3000,
+    "mw": 6000
+   },
+   "output": {
+    "m1": 1757.3593128807152,
+    "m2": 10242.640687119285,
+    "single": false
+   }
+  },
+  {
+   "id": "species/test/no-correction/6000-3333.3-0",
+   "input": {
+    "kind": "species",
+    "mEnds": 0,
+    "mn": 3333.3,
+    "mw": 6000
+   },
+   "output": {
+    "lowMw": false,
+    "species": [
+     {
+      "m": 1999.9750000781246,
+      "weightFraction": 0.5
+     },
+     {
+      "m": 10000.024999921876,
+      "weightFraction": 0.5
+     }
+    ]
+   }
+  },
+  {
+   "id": "species/test/no-correction/6000-3333.3-200",
+   "input": {
+    "kind": "species",
+    "mEnds": 200,
+    "mn": 3333.3,
+    "mw": 6000
+   },
+   "output": {
+    "lowMw": false,
+    "species": [
+     {
+      "m": 1999.9750000781246,
+      "weightFraction": 0.5
+     },
+     {
+      "m": 10000.024999921876,
+      "weightFraction": 0.5
+     }
+    ]
+   }
+  },
+  {
+   "id": "species/test/no-correction/1000-500-0",
+   "input": {
+    "kind": "species",
+    "mEnds": 0,
+    "mn": 500,
+    "mw": 1000
+   },
+   "output": {
+    "lowMw": false,
+    "species": [
+     {
+      "m": 292.89321881345245,
+      "weightFraction": 0.5
+     },
+     {
+      "m": 1707.1067811865476,
+      "weightFraction": 0.5
+     }
+    ]
+   }
+  },
+  {
+   "id": "species/test/no-correction/1000-500-292.8",
+   "input": {
+    "kind": "species",
+    "mEnds": 292.8,
+    "mn": 500,
+    "mw": 1000
+   },
+   "output": {
+    "lowMw": false,
+    "species": [
+     {
+      "m": 292.89321881345245,
+      "weightFraction": 0.5
+     },
+     {
+      "m": 1707.1067811865476,
+      "weightFraction": 0.5
+     }
+    ]
+   }
+  },
+  {
+   "id": "species/test/no-correction/5000-2000-100",
+   "input": {
+    "kind": "species",
+    "mEnds": 100,
+    "mn": 2000,
+    "mw": 5000
+   },
+   "output": {
+    "lowMw": false,
+    "species": [
+     {
+      "m": 1127.016653792583,
+      "weightFraction": 0.5
+     },
+     {
+      "m": 8872.983346207417,
+      "weightFraction": 0.5
+     }
+    ]
+   }
+  },
+  {
+   "id": "species/test/pdi1-big-ends",
+   "input": {
+    "kind": "species",
+    "mEnds": 400,
+    "mn": 500,
+    "mw": 500
+   },
+   "output": {
+    "lowMw": false,
+    "species": [
+     {
+      "m": 500,
+      "weightFraction": 1
+     }
+    ]
+   }
+  },
+  {
+   "id": "species/test/low-mw/1000-500-340.41",
+   "input": {
+    "kind": "species",
+    "mEnds": 340.41,
+    "mn": 500,
+    "mw": 1000
+   },
+   "output": {
+    "lowMw": true,
+    "species": [
+     {
+      "m": 340.41,
+      "weightFraction": 0.6178735890795969
+     },
+     {
+      "m": 2066.5141926185847,
+      "weightFraction": 0.3821264109204031
+     }
+    ]
+   }
+  },
+  {
+   "id": "species/test/low-mw/1000-500-450",
+   "input": {
+    "kind": "species",
+    "mEnds": 450,
+    "mn": 500,
+    "mw": 1000
+   },
+   "output": {
+    "lowMw": true,
+    "species": [
+     {
+      "m": 450,
+      "weightFraction": 0.8910891089108911
+     },
+     {
+      "m": 5500.000000000001,
+      "weightFraction": 0.1089108910891089
+     }
+    ]
+   }
+  },
+  {
+   "id": "species/test/low-mw/300-100-94.11",
+   "input": {
+    "kind": "species",
+    "mEnds": 94.11,
+    "mn": 100,
+    "mw": 300
+   },
+   "output": {
+    "lowMw": true,
+    "species": [
+     {
+      "m": 94.11,
+      "weightFraction": 0.939470389964216
+     },
+     {
+      "m": 3495.5857385398886,
+      "weightFraction": 0.060529610035784054
+     }
+    ]
+   }
+  },
+  {
+   "id": "species/test/low-mw/2000-400-399",
+   "input": {
+    "kind": "species",
+    "mEnds": 399,
+    "mn": 400,
+    "mw": 2000
+   },
+   "output": {
+    "lowMw": true,
+    "species": [
+     {
+      "m": 399,
+      "weightFraction": 0.9974984414086855
+     },
+     {
+      "m": 640400.0000000483,
+      "weightFraction": 0.002501558591314512
+     }
+    ]
+   }
+  },
+  {
+   "id": "species/test/low-mw/1500-1000-700",
+   "input": {
+    "kind": "species",
+    "mEnds": 700,
+    "mn": 1000,
+    "mw": 1500
+   },
+   "output": {
+    "lowMw": true,
+    "species": [
+     {
+      "m": 700,
+      "weightFraction": 0.593220338983051
+     },
+     {
+      "m": 2666.6666666666674,
+      "weightFraction": 0.40677966101694896
+     }
+    ]
+   }
+  },
+  {
+   "id": "species/test/phase5-mn3000-mw6000-mends340.41",
+   "input": {
+    "kind": "species",
+    "mEnds": 340.41,
+    "mn": 3000,
+    "mw": 6000
+   },
+   "output": {
+    "lowMw": false,
+    "species": [
+     {
+      "m": 1757.3593128807152,
+      "weightFraction": 0.5
+     },
+     {
+      "m": 10242.640687119285,
+      "weightFraction": 0.5
+     }
+    ]
+   }
+  },
+  {
+   "id": "species/test/layer1-6000-1.8-ends200",
+   "input": {
+    "kind": "species",
+    "mEnds": 200,
+    "mn": 3333.333333333333,
+    "mw": 6000
+   },
+   "output": {
+    "lowMw": false,
+    "species": [
+     {
+      "m": 2000,
+      "weightFraction": 0.5
+     },
+     {
+      "m": 10000,
+      "weightFraction": 0.5
+     }
+    ]
+   }
+  },
+  {
+   "id": "masses/boundary/pdi1+eps",
+   "input": {
+    "kind": "masses",
+    "mn": 999.9999999999998,
+    "mw": 1000
+   },
+   "output": {
+    "m1": 999.9999847412109,
+    "m2": 1000.0000152587891,
+    "single": false
+   }
+  },
+  {
+   "id": "masses/boundary/mn-just-below-mw",
+   "input": {
+    "kind": "masses",
+    "mn": 999.9999999999999,
+    "mw": 1000
+   },
+   "output": {
+    "m1": 999.9999892104067,
+    "m2": 1000.0000107895933,
+    "single": false
+   }
+  },
+  {
+   "id": "masses/boundary/mn-just-above-mw",
+   "input": {
+    "kind": "masses",
+    "mn": 1000.0000000000001,
+    "mw": 1000
+   },
+   "output": {
+    "m1": 1000,
+    "m2": 1000,
+    "single": true
+   }
+  },
+  {
+   "id": "masses/boundary/mn-above-mw",
+   "input": {
+    "kind": "masses",
+    "mn": 2000,
+    "mw": 1000
+   },
+   "output": {
+    "m1": 1000,
+    "m2": 1000,
+    "single": true
+   }
+  },
+  {
+   "id": "masses/boundary/pdi100",
+   "input": {
+    "kind": "masses",
+    "mn": 60,
+    "mw": 6000
+   },
+   "output": {
+    "m1": 30.075377360280072,
+    "m2": 11969.924622639719,
+    "single": false
+   }
+  },
+  {
+   "id": "masses/boundary/pdi1e6",
+   "input": {
+    "kind": "masses",
+    "mn": 0.006,
+    "mw": 6000
+   },
+   "output": {
+    "m1": 0.0030000007500348147,
+    "m2": 11999.99699999925,
+    "single": false
+   }
+  },
+  {
+   "id": "species/boundary/1000-500/ends-equal-m1",
+   "input": {
+    "kind": "species",
+    "mEnds": 292.89321881345245,
+    "mn": 500,
+    "mw": 1000
+   },
+   "output": {
+    "lowMw": false,
+    "species": [
+     {
+      "m": 292.89321881345245,
+      "weightFraction": 0.5
+     },
+     {
+      "m": 1707.1067811865476,
+      "weightFraction": 0.5
+     }
+    ]
+   }
+  },
+  {
+   "id": "species/boundary/1000-500/ends-up-m1",
+   "input": {
+    "kind": "species",
+    "mEnds": 292.8932188134525,
+    "mn": 500,
+    "mw": 1000
+   },
+   "output": {
+    "lowMw": true,
+    "species": [
+     {
+      "m": 292.8932188134525,
+      "weightFraction": 0.5000000000000001
+     },
+     {
+      "m": 1707.1067811865478,
+      "weightFraction": 0.4999999999999999
+     }
+    ]
+   }
+  },
+  {
+   "id": "species/boundary/1000-500/ends-down-m1",
+   "input": {
+    "kind": "species",
+    "mEnds": 292.8932188134524,
+    "mn": 500,
+    "mw": 1000
+   },
+   "output": {
+    "lowMw": false,
+    "species": [
+     {
+      "m": 292.89321881345245,
+      "weightFraction": 0.5
+     },
+     {
+      "m": 1707.1067811865476,
+      "weightFraction": 0.5
+     }
+    ]
+   }
+  },
+  {
+   "id": "species/boundary/6000-3333.3333333333335/ends-equal-m1",
+   "input": {
+    "kind": "species",
+    "mEnds": 2000,
+    "mn": 3333.3333333333335,
+    "mw": 6000
+   },
+   "output": {
+    "lowMw": false,
+    "species": [
+     {
+      "m": 2000,
+      "weightFraction": 0.5
+     },
+     {
+      "m": 10000,
+      "weightFraction": 0.5
+     }
+    ]
+   }
+  },
+  {
+   "id": "species/boundary/6000-3333.3333333333335/ends-up-m1",
+   "input": {
+    "kind": "species",
+    "mEnds": 2000.0000000000002,
+    "mn": 3333.3333333333335,
+    "mw": 6000
+   },
+   "output": {
+    "lowMw": true,
+    "species": [
+     {
+      "m": 2000.0000000000002,
+      "weightFraction": 0.5
+     },
+     {
+      "m": 10000,
+      "weightFraction": 0.5
+     }
+    ]
+   }
+  },
+  {
+   "id": "species/boundary/6000-3333.3333333333335/ends-down-m1",
+   "input": {
+    "kind": "species",
+    "mEnds": 1999.9999999999998,
+    "mn": 3333.3333333333335,
+    "mw": 6000
+   },
+   "output": {
+    "lowMw": false,
+    "species": [
+     {
+      "m": 2000,
+      "weightFraction": 0.5
+     },
+     {
+      "m": 10000,
+      "weightFraction": 0.5
+     }
+    ]
+   }
+  },
+  {
+   "id": "species/boundary/4500-2250/ends-equal-m1",
+   "input": {
+    "kind": "species",
+    "mEnds": 1318.0194846605364,
+    "mn": 2250,
+    "mw": 4500
+   },
+   "output": {
+    "lowMw": false,
+    "species": [
+     {
+      "m": 1318.0194846605364,
+      "weightFraction": 0.5
+     },
+     {
+      "m": 7681.980515339464,
+      "weightFraction": 0.5
+     }
+    ]
+   }
+  },
+  {
+   "id": "species/boundary/4500-2250/ends-up-m1",
+   "input": {
+    "kind": "species",
+    "mEnds": 1318.0194846605366,
+    "mn": 2250,
+    "mw": 4500
+   },
+   "output": {
+    "lowMw": true,
+    "species": [
+     {
+      "m": 1318.0194846605366,
+      "weightFraction": 0.5000000000000002
+     },
+     {
+      "m": 7681.980515339466,
+      "weightFraction": 0.4999999999999998
+     }
+    ]
+   }
+  },
+  {
+   "id": "species/boundary/4500-2250/ends-down-m1",
+   "input": {
+    "kind": "species",
+    "mEnds": 1318.0194846605361,
+    "mn": 2250,
+    "mw": 4500
+   },
+   "output": {
+    "lowMw": false,
+    "species": [
+     {
+      "m": 1318.0194846605364,
+      "weightFraction": 0.5
+     },
+     {
+      "m": 7681.980515339464,
+      "weightFraction": 0.5
+     }
+    ]
+   }
+  },
+  {
+   "id": "species/boundary/mw-below-ends",
+   "input": {
+    "kind": "species",
+    "mEnds": 200,
+    "mn": 50,
+    "mw": 100
+   },
+   "output": {
+    "message": "低分子量修正無解：Mw = 100、Mn = 50、M_ends = 200",
+    "threw": true
+   }
+  },
+  {
+   "id": "species/boundary/mn-equal-ends",
+   "input": {
+    "kind": "species",
+    "mEnds": 400,
+    "mn": 400,
+    "mw": 1000
+   },
+   "output": {
+    "message": "低分子量修正無解：Mw = 1000、Mn = 400、M_ends = 400",
+    "threw": true
+   }
+  },
+  {
+   "id": "species/boundary/ends-above-mn",
+   "input": {
+    "kind": "species",
+    "mEnds": 600,
+    "mn": 500,
+    "mw": 1000
+   },
+   "output": {
+    "message": "低分子量修正無解：Mw = 1000、Mn = 500、M_ends = 600",
+    "threw": true
+   }
+  },
+  {
+   "id": "species/boundary/mn-just-above-ends",
+   "input": {
+    "kind": "species",
+    "mEnds": 400,
+    "mn": 400.00000000000006,
+    "mw": 1000
+   },
+   "output": {
+    "lowMw": true,
+    "species": [
+     {
+      "m": 400,
+      "weightFraction": 0.9999999999999997
+     },
+     {
+      "m": 1801439850948198700,
+      "weightFraction": 3.3306690738754696e-16
+     }
+    ]
+   }
+  },
+  {
+   "id": "species/boundary/pdi-huge-lowmw",
+   "input": {
+    "kind": "species",
+    "mEnds": 99,
+    "mn": 100,
+    "mw": 1000000
+   },
+   "output": {
+    "lowMw": true,
+    "species": [
+     {
+      "m": 99,
+      "weightFraction": 0.9899999900990101
+     },
+     {
+      "m": 99990100.00000075,
+      "weightFraction": 0.010000009900989926
+     }
+    ]
+   }
+  },
+  {
+   "id": "species/boundary/print-1e21",
+   "input": {
+    "kind": "species",
+    "mEnds": 900000000000000000000,
+    "mn": 500000000000000000000,
+    "mw": 1e+21
+   },
+   "output": {
+    "message": "低分子量修正無解：Mw = 1e+21、Mn = 500000000000000000000、M_ends = 900000000000000000000",
+    "threw": true
+   }
+  }
+ ],
+ "commit": "090a89afb660164623de86cd78c23237af099227",
+ "module": "polymer-distribution",
+ "rdkitjs": "2026.09.1",
+ "tolerance": {
+  "exact": "strings, integers, booleans, null, arrays and object keys must be identical",
+  "float": "shortest round-trip string must be identical; otherwise relative error <= relFallback is accepted and the case is recorded in tolerance_cases",
+  "relFallback": 1e-12
+ }
+}

@@ -7,7 +7,8 @@
 - 只用 Python 標準函式庫；NumPy／SciPy／RDKit 只讀取已安裝版本（importlib.metadata），未安裝回報 null。
 - 不發出任何對外連線。
 - 任務 M01 起新增 POST /vw（van der Waals 體積）、任務 M02 起新增 POST /tg（Tg，Yg 基團貢獻）、任務 M03 起新增 POST /vm
-  （莫耳體積與密度）與 POST /cte（熱膨脹係數）；除此之外不含任何物性公式。
+  （莫耳體積與密度）與 POST /cte（熱膨脹係數）；任務 M04 起新增聚合物基礎 POST /polymer/repeat-unit、/polymer/end-groups、
+  /polymer/copolymer、/polymer/convert、/polymer/distribution；除此之外不含任何物性公式。
   尚未接到介面，TypeScript 仍是預設計算來源。
 """
 
@@ -295,7 +296,217 @@ def handle_cte(request: object) -> tuple[int, dict]:
     return 200, {"ok": True, "quantities": quantities, **{k: result[k] for k in keys}, "disclaimer": cte.CTE_DISCLAIMER}
 
 
-POST_ROUTES = {"/demo/quantity": handle_demo_quantity, "/vw": handle_vw, "/tg": handle_tg, "/vm": handle_vm, "/cte": handle_cte}
+MASS_UNIT = "g/mol"
+
+
+def _is_number(v: object) -> bool:
+    return isinstance(v, (int, float)) and not isinstance(v, bool) and math.isfinite(v)
+
+
+def _load_polymer():
+    """延後載入聚合物模組（任務 M04）；RDKit 沒有安裝時回傳 503 的回應。"""
+    try:
+        if ENGINE_DIR not in sys.path:
+            sys.path.insert(0, ENGINE_DIR)
+        from moleform_core import convert, copolymer, distribution, end_groups, polymer_types, repeat_unit
+    except ImportError as e:
+        return None, (503, {"ok": False, "errors": [f"引擎無法載入聚合物模組（RDKit 沒有安裝？）：{e}"]})
+    return (convert, copolymer, distribution, end_groups, polymer_types, repeat_unit), None
+
+
+def _mass(value: float, source: str) -> dict:
+    return {"value": value, "unit": MASS_UNIT, "source": source, "status": "predicted"}
+
+
+def _check_end_groups(value: object) -> str | None:
+    """endGroups 的型別檢查（HTTP 層）；回傳錯誤訊息或 None。"""
+    if value is None:
+        return None
+    if not isinstance(value, dict):
+        return "endGroups 必須是物件"
+    for key in ("end1", "end2"):
+        end = value.get(key)
+        if end is None:
+            continue
+        if not isinstance(end, dict) or not isinstance(end.get("smiles"), str):
+            return f"endGroups.{key} 必須是含字串欄位 smiles 的物件"
+        if len(end["smiles"]) > MAX_SMILES_CHARS:
+            return f"endGroups.{key}.smiles 太長（上限 {MAX_SMILES_CHARS} 字元）"
+    return None
+
+
+def handle_polymer_repeat_unit(request: object) -> tuple[int, dict]:
+    """重複單元分析（任務 M04）。請求 {"smiles": "<含兩個 * 的重複單元 SMILES>"}。
+    200：quantity＝M_unit（g/mol，RDKit 平均分子量，不含連接點、不補氫），另附 formula、attachmentCount、attachmentOrder。
+    連接點不合規則、無法解析、空白：400（errors 為 TS 的中文訊息，code 為 TS 的問題代碼）。尚未接到介面（TypeScript 仍是預設）。"""
+    smiles, error = _read_smiles(request)
+    if error is not None:
+        return error
+    assert smiles is not None
+    mods, err = _load_polymer()
+    if err is not None:
+        return err
+    repeat_unit, polymer_types = mods[5], mods[4]
+    try:
+        result = repeat_unit.analyze_repeat_unit(smiles)
+    except repeat_unit.RdkitCallError as e:
+        return 400, {"ok": False, "errors": [str(e)]}
+    if not result["ok"]:
+        return 400, {"ok": False, "errors": [result["problem"]["message"]], "code": result["problem"]["code"]}
+    return 200, {
+        "ok": True,
+        "quantity": _mass(result["mUnit"], polymer_types.RDKIT_AMW_SOURCE),
+        "formula": result["formula"],
+        "attachmentCount": result["attachmentCount"],
+        "attachmentOrder": result["attachmentOrder"],
+    }
+
+
+def handle_polymer_end_groups(request: object) -> tuple[int, dict]:
+    """端基分析（任務 M04）。請求 {"endGroups": {"end1": {"smiles": "<含一個 * 的端基>"}, "end2": {...}}}（沒填的略過）。
+    200：quantity＝M_ends（已填端基的質量合計，g/mol），另附 ends（各端基 M_end）、filled、note。錯誤（指出端基 1 或 2）：400。"""
+    if not isinstance(request, dict):
+        return 400, {"ok": False, "errors": ["請求需要 JSON 物件"]}
+    problem = _check_end_groups(request.get("endGroups"))
+    if problem is not None:
+        return 400, {"ok": False, "errors": [problem]}
+    mods, err = _load_polymer()
+    if err is not None:
+        return err
+    end_groups, polymer_types = mods[3], mods[4]
+    result = end_groups.analyze_end_groups({"endGroups": request.get("endGroups")})
+    if not result["ok"]:
+        return 400, {"ok": False, "errors": [result["message"]]}
+    return 200, {
+        "ok": True,
+        "quantity": _mass(result["mEnds"], polymer_types.RDKIT_AMW_SOURCE),
+        "ends": result["ends"],
+        "filled": result["filled"],
+        "note": end_groups.end_group_note(result["filled"]),
+    }
+
+
+def handle_polymer_copolymer(request: object) -> tuple[int, dict]:
+    """Random 共聚物的平均重複單元（任務 M04）。請求 {"smiles": "<成分自己的重複單元 SMILES>", "units": [{"smiles", "fraction"}]?,
+    "fractionBasis": "mol"|"wt"?, "endGroups": {...}?}。沒有 units ＝均聚物。
+    200：quantity＝平均單元質量 M̄_unit（g/mol），另附 formula（第一種單元）、units（各單元莫耳分率）、mEnds、endsFilled；
+    單元結構、比例或端基有問題：400（TS 的中文訊息與問題代碼）。"""
+    smiles, error = _read_smiles(request)
+    if error is not None:
+        return error
+    assert smiles is not None and isinstance(request, dict)
+    units = request.get("units")
+    if units is not None:
+        if not isinstance(units, list) or not all(isinstance(u, dict) and isinstance(u.get("smiles"), str) for u in units):
+            return 400, {"ok": False, "errors": ["units 必須是由 {smiles, fraction} 組成的陣列"]}
+        if any(len(u["smiles"]) > MAX_SMILES_CHARS for u in units):
+            return 400, {"ok": False, "errors": [f"units 的 smiles 太長（上限 {MAX_SMILES_CHARS} 字元）"]}
+    basis = request.get("fractionBasis")
+    if basis is not None and basis not in ("mol", "wt"):
+        return 400, {"ok": False, "errors": ["fractionBasis 必須是 mol 或 wt"]}
+    problem = _check_end_groups(request.get("endGroups"))
+    if problem is not None:
+        return 400, {"ok": False, "errors": [problem]}
+    mods, err = _load_polymer()
+    if err is not None:
+        return err
+    copolymer, polymer_types, repeat_unit = mods[1], mods[4], mods[5]
+    spec = {k: request[k] for k in ("units", "fractionBasis", "endGroups") if request.get(k) is not None}
+    try:
+        result = copolymer.analyze_polymer_units(smiles, spec)
+    except repeat_unit.RdkitCallError as e:
+        return 400, {"ok": False, "errors": [str(e)]}
+    if not result["ok"]:
+        return 400, {"ok": False, "errors": [result["problem"]["message"]], "code": result["problem"]["code"]}
+    if not _json_safe(result):
+        return 400, {"ok": False, "errors": ["結果不是有限數字"]}
+    body = {k: result[k] for k in ("formula", "units", "mEnds", "endsFilled", "attachmentCount", "attachmentOrder")}
+    if units is not None and len(units) > 1:
+        body["note"] = polymer_types.COPOLYMER_NOTE
+    return 200, {"ok": True, "quantity": _mass(result["mUnit"], polymer_types.RDKIT_AMW_SOURCE), **body}
+
+
+def handle_polymer_convert(request: object) -> tuple[int, dict]:
+    """Mw／Mn／DP 與 PDI 的換算（任務 M04）。請求 {"polymer": {"mwInput"|"mnInput"|"dpInput": 數字（擇一）, "pdiInput": 數字?},
+    "mUnit": 平均重複單元質量, "ends": {"mEnds": 數字, "filled": [布林, 布林]}?}。
+    200：quantities＝mw、mn（g/mol）、dp、dpW（重複單元數）、pdi（無單位），另附 basis、pdiIsDefault、legacy、note。輸入無效（TS 的 error 訊息）：400。"""
+    if not isinstance(request, dict) or not isinstance(request.get("polymer"), dict):
+        return 400, {"ok": False, "errors": ["請求需要物件欄位 polymer"]}
+    polymer = request["polymer"]
+    for key in ("mwInput", "mnInput", "dpInput", "pdiInput"):
+        if key in polymer and polymer[key] is not None and not _is_number(polymer[key]):
+            return 400, {"ok": False, "errors": [f"polymer.{key} 必須是有限數字"]}
+    if not _is_number(request.get("mUnit")):
+        return 400, {"ok": False, "errors": ["請求需要數字欄位 mUnit"]}
+    ends = request.get("ends")
+    if ends is not None:
+        filled = ends.get("filled") if isinstance(ends, dict) else None
+        valid = isinstance(ends, dict) and _is_number(ends.get("mEnds")) and isinstance(filled, list) and len(filled) == 2 and all(isinstance(f, bool) for f in filled)
+        if not valid:
+            return 400, {"ok": False, "errors": ["ends 必須是 {mEnds: 數字, filled: [布林, 布林]}"]}
+    mods, err = _load_polymer()
+    if err is not None:
+        return err
+    convert = mods[0]
+    spec = {k: polymer[k] for k in ("mwInput", "mnInput", "dpInput", "pdiInput") if polymer.get(k) is not None}
+    result = convert.resolve_polymer(spec, request["mUnit"], ends)
+    if not result["ok"]:
+        return 400, {"ok": False, "errors": [result["error"]]}
+    if not _json_safe(result):
+        return 400, {"ok": False, "errors": ["結果不是有限數字"]}
+    source = "Mn = Mw ÷ PDI；DP_n = (Mn − M_ends) ÷ M̄_unit；DP_w = (Mw − M_ends) ÷ M̄_unit（D47、D50）"
+
+    def q(value: float, unit: str) -> dict:
+        return {"value": value, "unit": unit, "source": source, "status": "predicted"}
+
+    quantities = {
+        "mw": q(result["mw"], MASS_UNIT),
+        "mn": q(result["mn"], MASS_UNIT),
+        "dp": q(result["dp"], "重複單元數"),
+        "dpW": q(result["dpW"], "重複單元數"),
+        "pdi": q(result["pdi"], ""),
+    }
+    return 200, {"ok": True, "quantities": quantities, **{k: result[k] for k in ("basis", "pdiIsDefault", "legacy", "note")}}
+
+
+def handle_polymer_distribution(request: object) -> tuple[int, dict]:
+    """分子量分布的兩成分等重量近似（任務 M04；本專案推導，非論文原式）。請求 {"mw": 數字, "mn": 數字, "mEnds": 數字?}（mEnds 預設 0，須小於 Mn）。
+    200：species＝各虛擬成分 {mass（quantity，g/mol）, weightFraction}，另附 lowMw（是否使用低分子量修正）。輸入無效或找不到解：400。"""
+    if not isinstance(request, dict):
+        return 400, {"ok": False, "errors": ["請求需要 JSON 物件"]}
+    mw, mn = request.get("mw"), request.get("mn")
+    m_ends = request.get("mEnds", 0)
+    if not (_is_number(mw) and mw > 0 and _is_number(mn) and mn > 0):
+        return 400, {"ok": False, "errors": ["mw 與 mn 必須是大於 0 的有限數字"]}
+    if not (_is_number(m_ends) and 0 <= m_ends < mn):
+        return 400, {"ok": False, "errors": ["mEnds 必須是大於或等於 0 且小於 Mn 的有限數字"]}
+    mods, err = _load_polymer()
+    if err is not None:
+        return err
+    distribution = mods[2]
+    try:
+        result = distribution.two_component_species(mw, mn, m_ends)
+    except distribution.LowMwNoSolutionError as e:
+        return 400, {"ok": False, "errors": [str(e)]}
+    if not _json_safe(result):
+        return 400, {"ok": False, "errors": ["結果不是有限數字"]}
+    source = "兩成分等重量近似：M₁,₂ = Mw ∓ √(Mw² − Mn·Mw)；含端基的低分子量修正（D47、D51；本專案推導，非論文原式）"
+    species = [{"mass": {"value": s["m"], "unit": MASS_UNIT, "source": source, "status": "predicted"}, "weightFraction": s["weightFraction"]} for s in result["species"]]
+    return 200, {"ok": True, "species": species, "lowMw": result["lowMw"]}
+
+
+POST_ROUTES = {
+    "/demo/quantity": handle_demo_quantity,
+    "/vw": handle_vw,
+    "/tg": handle_tg,
+    "/vm": handle_vm,
+    "/cte": handle_cte,
+    "/polymer/repeat-unit": handle_polymer_repeat_unit,
+    "/polymer/end-groups": handle_polymer_end_groups,
+    "/polymer/copolymer": handle_polymer_copolymer,
+    "/polymer/convert": handle_polymer_convert,
+    "/polymer/distribution": handle_polymer_distribution,
+}
 
 
 class EngineServer(ThreadingHTTPServer):

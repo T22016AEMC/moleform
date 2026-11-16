@@ -1,0 +1,1377 @@
+{
+ "cases": [
+  {
+   "id": "resolve/test/mn6000-m300",
+   "input": {
+    "kind": "resolve",
+    "mUnit": 300,
+    "spec": {
+     "mnInput": 6000
+    }
+   },
+   "output": {
+    "basis": "mn",
+    "dp": 20,
+    "dpW": 40,
+    "legacy": true,
+    "mn": 6000,
+    "mw": 12000,
+    "note": "未計入端基",
+    "ok": true,
+    "pdi": 2,
+    "pdiIsDefault": true
+   }
+  },
+  {
+   "id": "resolve/test/dp21-m142.15",
+   "input": {
+    "kind": "resolve",
+    "mUnit": 142.15,
+    "spec": {
+     "dpInput": 21
+    }
+   },
+   "output": {
+    "basis": "dp",
+    "dp": 21,
+    "dpW": 42,
+    "legacy": true,
+    "mn": 2985.15,
+    "mw": 5970.3,
+    "note": "未計入端基",
+    "ok": true,
+    "pdi": 2,
+    "pdiIsDefault": true
+   }
+  },
+  {
+   "id": "resolve/test/mn3000-E",
+   "input": {
+    "kind": "resolve",
+    "mUnit": 142.15399999999997,
+    "spec": {
+     "mnInput": 3000
+    }
+   },
+   "output": {
+    "basis": "mn",
+    "dp": 21.103873264206428,
+    "dpW": 42.207746528412855,
+    "legacy": true,
+    "mn": 3000,
+    "mw": 6000,
+    "note": "未計入端基",
+    "ok": true,
+    "pdi": 2,
+    "pdiIsDefault": true
+   }
+  },
+  {
+   "id": "resolve/test/mw6000-pdi1.8-m200",
+   "input": {
+    "kind": "resolve",
+    "mUnit": 200,
+    "spec": {
+     "mwInput": 6000,
+     "pdiInput": 1.8
+    }
+   },
+   "output": {
+    "basis": "mw",
+    "dp": 16.666666666666664,
+    "dpW": 30,
+    "legacy": false,
+    "mn": 3333.333333333333,
+    "mw": 6000,
+    "note": "未計入端基",
+    "ok": true,
+    "pdi": 1.8,
+    "pdiIsDefault": false
+   }
+  },
+  {
+   "id": "resolve/test/mn3000-pdi2.5",
+   "input": {
+    "kind": "resolve",
+    "mUnit": 200,
+    "spec": {
+     "mnInput": 3000,
+     "pdiInput": 2.5
+    }
+   },
+   "output": {
+    "basis": "mn",
+    "dp": 15,
+    "dpW": 37.5,
+    "legacy": false,
+    "mn": 3000,
+    "mw": 7500,
+    "note": "未計入端基",
+    "ok": true,
+    "pdi": 2.5,
+    "pdiIsDefault": false
+   }
+  },
+  {
+   "id": "resolve/test/dp20-pdi1.5",
+   "input": {
+    "kind": "resolve",
+    "mUnit": 200,
+    "spec": {
+     "dpInput": 20,
+     "pdiInput": 1.5
+    }
+   },
+   "output": {
+    "basis": "dp",
+    "dp": 20,
+    "dpW": 30,
+    "legacy": false,
+    "mn": 4000,
+    "mw": 6000,
+    "note": "未計入端基",
+    "ok": true,
+    "pdi": 1.5,
+    "pdiIsDefault": false
+   }
+  },
+  {
+   "id": "resolve/test/mw4500-default-pdi",
+   "input": {
+    "kind": "resolve",
+    "mUnit": 150,
+    "spec": {
+     "mwInput": 4500
+    }
+   },
+   "output": {
+    "basis": "mw",
+    "dp": 15,
+    "dpW": 30,
+    "legacy": false,
+    "mn": 2250,
+    "mw": 4500,
+    "note": "未計入端基",
+    "ok": true,
+    "pdi": 2,
+    "pdiIsDefault": true
+   }
+  },
+  {
+   "id": "resolve/test/mw5000-pdi1",
+   "input": {
+    "kind": "resolve",
+    "mUnit": 100,
+    "spec": {
+     "mwInput": 5000,
+     "pdiInput": 1
+    }
+   },
+   "output": {
+    "basis": "mw",
+    "dp": 50,
+    "dpW": 50,
+    "legacy": false,
+    "mn": 5000,
+    "mw": 5000,
+    "note": "未計入端基",
+    "ok": true,
+    "pdi": 1,
+    "pdiIsDefault": false
+   }
+  },
+  {
+   "id": "resolve/test/pdi-0.99",
+   "input": {
+    "kind": "resolve",
+    "mUnit": 200,
+    "spec": {
+     "mwInput": 6000,
+     "pdiInput": 0.99
+    }
+   },
+   "output": {
+    "error": "PDI 必須是大於或等於 1 的數字。",
+    "ok": false
+   }
+  },
+  {
+   "id": "resolve/test/pdi-0",
+   "input": {
+    "kind": "resolve",
+    "mUnit": 200,
+    "spec": {
+     "mwInput": 6000,
+     "pdiInput": 0
+    }
+   },
+   "output": {
+    "error": "PDI 必須是大於或等於 1 的數字。",
+    "ok": false
+   }
+  },
+  {
+   "id": "resolve/test/pdi--1",
+   "input": {
+    "kind": "resolve",
+    "mUnit": 200,
+    "spec": {
+     "mwInput": 6000,
+     "pdiInput": -1
+    }
+   },
+   "output": {
+    "error": "PDI 必須是大於或等於 1 的數字。",
+    "ok": false
+   }
+  },
+  {
+   "id": "resolve/test/pdi-Infinity",
+   "input": {
+    "kind": "resolve",
+    "mUnit": 200,
+    "spec": {
+     "mwInput": 6000,
+     "pdiInput": {
+      "$nonfinite": "Infinity"
+     }
+    }
+   },
+   "output": {
+    "error": "PDI 必須是大於或等於 1 的數字。",
+    "ok": false
+   }
+  },
+  {
+   "id": "resolve/test/both-mw-mn",
+   "input": {
+    "kind": "resolve",
+    "mUnit": 200,
+    "spec": {
+     "mnInput": 3000,
+     "mwInput": 6000
+    }
+   },
+   "output": {
+    "error": "Mw、Mn、DP 請擇一填寫。",
+    "ok": false
+   }
+  },
+  {
+   "id": "resolve/test/both-mn-dp",
+   "input": {
+    "kind": "resolve",
+    "mUnit": 200,
+    "spec": {
+     "dpInput": 15,
+     "mnInput": 3000
+    }
+   },
+   "output": {
+    "error": "Mw、Mn、DP 請擇一填寫。",
+    "ok": false
+   }
+  },
+  {
+   "id": "resolve/test/pdi-only",
+   "input": {
+    "kind": "resolve",
+    "mUnit": 200,
+    "spec": {
+     "pdiInput": 2
+    }
+   },
+   "output": {
+    "error": "請輸入 Mw（或改填 Mn、DP）。",
+    "ok": false
+   }
+  },
+  {
+   "id": "resolve/test/mw-negative",
+   "input": {
+    "kind": "resolve",
+    "mUnit": 200,
+    "spec": {
+     "mwInput": -5
+    }
+   },
+   "output": {
+    "error": "Mw 必須是大於 0 的數字。",
+    "ok": false
+   }
+  },
+  {
+   "id": "resolve/test/mn-and-dp",
+   "input": {
+    "kind": "resolve",
+    "mUnit": 50,
+    "spec": {
+     "dpInput": 2,
+     "mnInput": 100
+    }
+   },
+   "output": {
+    "error": "Mw、Mn、DP 請擇一填寫。",
+    "ok": false
+   }
+  },
+  {
+   "id": "resolve/test/empty-spec",
+   "input": {
+    "kind": "resolve",
+    "mUnit": 50,
+    "spec": {}
+   },
+   "output": {
+    "error": "請輸入 Mw（或改填 Mn、DP）。",
+    "ok": false
+   }
+  },
+  {
+   "id": "resolve/test/mn-zero",
+   "input": {
+    "kind": "resolve",
+    "mUnit": 50,
+    "spec": {
+     "mnInput": 0
+    }
+   },
+   "output": {
+    "error": "Mn 必須是大於 0 的數字。",
+    "ok": false
+   }
+  },
+  {
+   "id": "resolve/test/dp-negative",
+   "input": {
+    "kind": "resolve",
+    "mUnit": 50,
+    "spec": {
+     "dpInput": -3
+    }
+   },
+   "output": {
+    "error": "DP 必須是大於 0 的數字。",
+    "ok": false
+   }
+  },
+  {
+   "id": "resolve/test/mn-NaN",
+   "input": {
+    "kind": "resolve",
+    "mUnit": 50,
+    "spec": {
+     "mnInput": {
+      "$nonfinite": "NaN"
+     }
+    }
+   },
+   "output": {
+    "error": "請輸入 Mw（或改填 Mn、DP）。",
+    "ok": false
+   }
+  },
+  {
+   "id": "resolve/test/mn-Infinity",
+   "input": {
+    "kind": "resolve",
+    "mUnit": 50,
+    "spec": {
+     "mnInput": {
+      "$nonfinite": "Infinity"
+     }
+    }
+   },
+   "output": {
+    "error": "Mn 必須是大於 0 的數字。",
+    "ok": false
+   }
+  },
+  {
+   "id": "resolve/test/munit-zero",
+   "input": {
+    "kind": "resolve",
+    "mUnit": 0,
+    "spec": {
+     "mnInput": 100
+    }
+   },
+   "output": {
+    "error": "重複單元的分子量無法計算。",
+    "ok": false
+   }
+  },
+  {
+   "id": "resolve/test/Mn50-below-mends",
+   "input": {
+    "ends": {
+     "filled": [
+      true,
+      true
+     ],
+     "mEnds": 58.124
+    },
+    "kind": "resolve",
+    "mUnit": 120.15099999999997,
+    "spec": {
+     "mnInput": 50
+    }
+   },
+   "output": {
+    "error": "Mn 必須大於端基質量合計（M_ends = 58.124）",
+    "ok": false
+   }
+  },
+  {
+   "id": "resolve/test/Mw100-pdi2-below-mends",
+   "input": {
+    "ends": {
+     "filled": [
+      true,
+      true
+     ],
+     "mEnds": 58.124
+    },
+    "kind": "resolve",
+    "mUnit": 120.15099999999997,
+    "spec": {
+     "mwInput": 100,
+     "pdiInput": 2
+    }
+   },
+   "output": {
+    "error": "Mn 必須大於端基質量合計（M_ends = 58.124）",
+    "ok": false
+   }
+  },
+  {
+   "id": "resolve/test/phenol-mn3000-ends",
+   "input": {
+    "ends": {
+     "filled": [
+      true,
+      true
+     ],
+     "mEnds": 58.124
+    },
+    "kind": "resolve",
+    "mUnit": 120.15099999999997,
+    "spec": {
+     "mnInput": 3000
+    }
+   },
+   "output": {
+    "basis": "mn",
+    "dp": 24.4848232640594,
+    "dpW": 49.453404466046905,
+    "legacy": true,
+    "mn": 3000,
+    "mw": 6000,
+    "note": "",
+    "ok": true,
+    "pdi": 2,
+    "pdiIsDefault": true
+   }
+  },
+  {
+   "id": "resolve/test/phenol-dp-back",
+   "input": {
+    "ends": {
+     "filled": [
+      true,
+      true
+     ],
+     "mEnds": 58.124
+    },
+    "kind": "resolve",
+    "mUnit": 120.15099999999997,
+    "spec": {
+     "dpInput": 24.49
+    }
+   },
+   "output": {
+    "basis": "dp",
+    "dp": 24.49,
+    "dpW": 49.4637579379281,
+    "legacy": true,
+    "mn": 3000.6219899999987,
+    "mw": 6001.2439799999975,
+    "note": "",
+    "ok": true,
+    "pdi": 2,
+    "pdiIsDefault": true
+   }
+  },
+  {
+   "id": "resolve/test/mw6000-no-ends-info",
+   "input": {
+    "kind": "resolve",
+    "mUnit": 120.15099999999997,
+    "spec": {
+     "mwInput": 6000
+    }
+   },
+   "output": {
+    "basis": "mw",
+    "dp": 24.968581201987504,
+    "dpW": 49.93716240397501,
+    "legacy": false,
+    "mn": 3000,
+    "mw": 6000,
+    "note": "未計入端基",
+    "ok": true,
+    "pdi": 2,
+    "pdiIsDefault": true
+   }
+  },
+  {
+   "id": "resolve/test/mw6000-end1-only",
+   "input": {
+    "ends": {
+     "filled": [
+      true,
+      false
+     ],
+     "mEnds": 57.116
+    },
+    "kind": "resolve",
+    "mUnit": 120.15099999999997,
+    "spec": {
+     "mwInput": 6000
+    }
+   },
+   "output": {
+    "basis": "mw",
+    "dp": 24.493212707343268,
+    "dpW": 49.46179390933077,
+    "legacy": false,
+    "mn": 3000,
+    "mw": 6000,
+    "note": "端基 2 未填，未計入",
+    "ok": true,
+    "pdi": 2,
+    "pdiIsDefault": true
+   }
+  },
+  {
+   "id": "resolve/test/mw6000-end2-only",
+   "input": {
+    "ends": {
+     "filled": [
+      false,
+      true
+     ],
+     "mEnds": 1.008
+    },
+    "kind": "resolve",
+    "mUnit": 120.15099999999997,
+    "spec": {
+     "mwInput": 6000
+    }
+   },
+   "output": {
+    "basis": "mw",
+    "dp": 24.96019175870364,
+    "dpW": 49.92877296069115,
+    "legacy": false,
+    "mn": 3000,
+    "mw": 6000,
+    "note": "端基 1 未填，未計入",
+    "ok": true,
+    "pdi": 2,
+    "pdiIsDefault": true
+   }
+  },
+  {
+   "id": "resolve/test/mw6000-ends-empty",
+   "input": {
+    "ends": {
+     "filled": [
+      false,
+      false
+     ],
+     "mEnds": 0
+    },
+    "kind": "resolve",
+    "mUnit": 120.15099999999997,
+    "spec": {
+     "mwInput": 6000
+    }
+   },
+   "output": {
+    "basis": "mw",
+    "dp": 24.968581201987504,
+    "dpW": 49.93716240397501,
+    "legacy": false,
+    "mn": 3000,
+    "mw": 6000,
+    "note": "未計入端基",
+    "ok": true,
+    "pdi": 2,
+    "pdiIsDefault": true
+   }
+  },
+  {
+   "id": "resolve/boundary/pdi-1+eps",
+   "input": {
+    "kind": "resolve",
+    "mUnit": 200,
+    "spec": {
+     "mwInput": 6000,
+     "pdiInput": 1.0000000000000002
+    }
+   },
+   "output": {
+    "basis": "mw",
+    "dp": 29.999999999999996,
+    "dpW": 30,
+    "legacy": false,
+    "mn": 5999.999999999999,
+    "mw": 6000,
+    "note": "未計入端基",
+    "ok": true,
+    "pdi": 1.0000000000000002,
+    "pdiIsDefault": false
+   }
+  },
+  {
+   "id": "resolve/boundary/pdi-1-eps",
+   "input": {
+    "kind": "resolve",
+    "mUnit": 200,
+    "spec": {
+     "mwInput": 6000,
+     "pdiInput": 0.9999999999999999
+    }
+   },
+   "output": {
+    "error": "PDI 必須是大於或等於 1 的數字。",
+    "ok": false
+   }
+  },
+  {
+   "id": "resolve/boundary/pdi-1e6",
+   "input": {
+    "kind": "resolve",
+    "mUnit": 200,
+    "spec": {
+     "mwInput": 6000,
+     "pdiInput": 1000000
+    }
+   },
+   "output": {
+    "basis": "mw",
+    "dp": 0.00003,
+    "dpW": 30,
+    "legacy": false,
+    "mn": 0.006,
+    "mw": 6000,
+    "note": "未計入端基",
+    "ok": true,
+    "pdi": 1000000,
+    "pdiIsDefault": false
+   }
+  },
+  {
+   "id": "resolve/boundary/pdi-1e12",
+   "input": {
+    "kind": "resolve",
+    "mUnit": 200,
+    "spec": {
+     "mwInput": 6000,
+     "pdiInput": 1000000000000
+    }
+   },
+   "output": {
+    "basis": "mw",
+    "dp": 3e-11,
+    "dpW": 30,
+    "legacy": false,
+    "mn": 6e-9,
+    "mw": 6000,
+    "note": "未計入端基",
+    "ok": true,
+    "pdi": 1000000000000,
+    "pdiIsDefault": false
+   }
+  },
+  {
+   "id": "resolve/boundary/Mw-below-ends-pdi1",
+   "input": {
+    "ends": {
+     "filled": [
+      true,
+      true
+     ],
+     "mEnds": 58.124
+    },
+    "kind": "resolve",
+    "mUnit": 120.15099999999997,
+    "spec": {
+     "mwInput": 50,
+     "pdiInput": 1
+    }
+   },
+   "output": {
+    "error": "Mn 必須大於端基質量合計（M_ends = 58.124）",
+    "ok": false
+   }
+  },
+  {
+   "id": "resolve/boundary/Mn-equal-ends",
+   "input": {
+    "ends": {
+     "filled": [
+      true,
+      true
+     ],
+     "mEnds": 58.124
+    },
+    "kind": "resolve",
+    "mUnit": 120.15099999999997,
+    "spec": {
+     "mnInput": 58.124
+    }
+   },
+   "output": {
+    "error": "Mn 必須大於端基質量合計（M_ends = 58.124）",
+    "ok": false
+   }
+  },
+  {
+   "id": "resolve/boundary/Mn-just-above-ends",
+   "input": {
+    "ends": {
+     "filled": [
+      true,
+      true
+     ],
+     "mEnds": 58.124
+    },
+    "kind": "resolve",
+    "mUnit": 120.15099999999997,
+    "spec": {
+     "mnInput": 58.12400000000001
+    }
+   },
+   "output": {
+    "basis": "mn",
+    "dp": 5.913747998436137e-17,
+    "dpW": 0.4837579379281074,
+    "legacy": true,
+    "mn": 58.12400000000001,
+    "mw": 116.24800000000002,
+    "note": "",
+    "ok": true,
+    "pdi": 2,
+    "pdiIsDefault": true
+   }
+  },
+  {
+   "id": "resolve/boundary/Mn-just-below-ends",
+   "input": {
+    "ends": {
+     "filled": [
+      true,
+      true
+     ],
+     "mEnds": 58.124
+    },
+    "kind": "resolve",
+    "mUnit": 120.15099999999997,
+    "spec": {
+     "mnInput": 58.123999999999995
+    }
+   },
+   "output": {
+    "error": "Mn 必須大於端基質量合計（M_ends = 58.124）",
+    "ok": false
+   }
+  },
+  {
+   "id": "resolve/boundary/dp-tiny",
+   "input": {
+    "kind": "resolve",
+    "mUnit": 200,
+    "spec": {
+     "dpInput": 1e-300
+    }
+   },
+   "output": {
+    "basis": "dp",
+    "dp": 1.0000000000000002e-300,
+    "dpW": 2.0000000000000004e-300,
+    "legacy": true,
+    "mn": 2.0000000000000002e-298,
+    "mw": 4.0000000000000005e-298,
+    "note": "未計入端基",
+    "ok": true,
+    "pdi": 2,
+    "pdiIsDefault": true
+   }
+  },
+  {
+   "id": "resolve/boundary/mw-huge",
+   "input": {
+    "kind": "resolve",
+    "mUnit": 1e-9,
+    "spec": {
+     "mwInput": 1e+300,
+     "pdiInput": 10000000000
+    }
+   },
+   "output": {
+    "basis": "mw",
+    "dp": 1e+299,
+    "dpW": {
+     "$nonfinite": "Infinity"
+    },
+    "legacy": false,
+    "mn": 1e+290,
+    "mw": 1e+300,
+    "note": "未計入端基",
+    "ok": true,
+    "pdi": 10000000000,
+    "pdiIsDefault": false
+   }
+  },
+  {
+   "id": "resolve/roundhalf/mends-0.0625",
+   "input": {
+    "ends": {
+     "filled": [
+      true,
+      true
+     ],
+     "mEnds": 0.0625
+    },
+    "kind": "resolve",
+    "mUnit": 100,
+    "spec": {
+     "mnInput": 0.03125
+    }
+   },
+   "output": {
+    "error": "Mn 必須大於端基質量合計（M_ends = 0.063）",
+    "ok": false
+   }
+  },
+  {
+   "id": "resolve/roundhalf/mends-0.1875",
+   "input": {
+    "ends": {
+     "filled": [
+      true,
+      true
+     ],
+     "mEnds": 0.1875
+    },
+    "kind": "resolve",
+    "mUnit": 100,
+    "spec": {
+     "mnInput": 0.09375
+    }
+   },
+   "output": {
+    "error": "Mn 必須大於端基質量合計（M_ends = 0.188）",
+    "ok": false
+   }
+  },
+  {
+   "id": "resolve/roundhalf/mends-58.0625",
+   "input": {
+    "ends": {
+     "filled": [
+      true,
+      true
+     ],
+     "mEnds": 58.0625
+    },
+    "kind": "resolve",
+    "mUnit": 100,
+    "spec": {
+     "mnInput": 29.03125
+    }
+   },
+   "output": {
+    "error": "Mn 必須大於端基質量合計（M_ends = 58.063）",
+    "ok": false
+   }
+  },
+  {
+   "id": "resolve/roundhalf/mends-1000.0625",
+   "input": {
+    "ends": {
+     "filled": [
+      true,
+      true
+     ],
+     "mEnds": 1000.0625
+    },
+    "kind": "resolve",
+    "mUnit": 100,
+    "spec": {
+     "mnInput": 500.03125
+    }
+   },
+   "output": {
+    "error": "Mn 必須大於端基質量合計（M_ends = 1000.063）",
+    "ok": false
+   }
+  },
+  {
+   "id": "resolve/roundhalf/mends-12345.1875",
+   "input": {
+    "ends": {
+     "filled": [
+      true,
+      true
+     ],
+     "mEnds": 12345.1875
+    },
+    "kind": "resolve",
+    "mUnit": 100,
+    "spec": {
+     "mnInput": 6172.59375
+    }
+   },
+   "output": {
+    "error": "Mn 必須大於端基質量合計（M_ends = 12345.188）",
+    "ok": false
+   }
+  },
+  {
+   "id": "resolve/roundhalf/mends-2.5",
+   "input": {
+    "ends": {
+     "filled": [
+      true,
+      true
+     ],
+     "mEnds": 2.5
+    },
+    "kind": "resolve",
+    "mUnit": 100,
+    "spec": {
+     "mnInput": 1.25
+    }
+   },
+   "output": {
+    "error": "Mn 必須大於端基質量合計（M_ends = 2.5）",
+    "ok": false
+   }
+  },
+  {
+   "id": "parse/mn6000",
+   "input": {
+    "kind": "parse",
+    "value": {
+     "mnInput": 6000
+    }
+   },
+   "output": {
+    "ok": true,
+    "spec": {
+     "mnInput": 6000
+    }
+   }
+  },
+  {
+   "id": "parse/dp21",
+   "input": {
+    "kind": "parse",
+    "value": {
+     "dpInput": 21
+    }
+   },
+   "output": {
+    "ok": true,
+    "spec": {
+     "dpInput": 21
+    }
+   }
+  },
+  {
+   "id": "parse/mw6000-pdi1.8",
+   "input": {
+    "kind": "parse",
+    "value": {
+     "mwInput": 6000,
+     "pdiInput": 1.8
+    }
+   },
+   "output": {
+    "ok": true,
+    "spec": {
+     "mwInput": 6000,
+     "pdiInput": 1.8
+    }
+   }
+  },
+  {
+   "id": "parse/mw4500-pdi-null",
+   "input": {
+    "kind": "parse",
+    "value": {
+     "mwInput": 4500,
+     "pdiInput": null
+    }
+   },
+   "output": {
+    "ok": true,
+    "spec": {
+     "mwInput": 4500
+    }
+   }
+  },
+  {
+   "id": "parse/mn+dp",
+   "input": {
+    "kind": "parse",
+    "value": {
+     "dpInput": 2,
+     "mnInput": 1
+    }
+   },
+   "output": {
+    "ok": false,
+    "reason": "Mw、Mn、DP 只能填一個"
+   }
+  },
+  {
+   "id": "parse/empty",
+   "input": {
+    "kind": "parse",
+    "value": {}
+   },
+   "output": {
+    "ok": false,
+    "reason": "聚合物缺少 Mw、Mn 或 DP"
+   }
+  },
+  {
+   "id": "parse/mn-negative",
+   "input": {
+    "kind": "parse",
+    "value": {
+     "mnInput": -1
+    }
+   },
+   "output": {
+    "ok": false,
+    "reason": "Mw、Mn 或 DP 必須是大於 0 的數字"
+   }
+  },
+  {
+   "id": "parse/string",
+   "input": {
+    "kind": "parse",
+    "value": "x"
+   },
+   "output": {
+    "ok": false,
+    "reason": "聚合物設定格式錯誤"
+   }
+  },
+  {
+   "id": "parse/pdi-0.5",
+   "input": {
+    "kind": "parse",
+    "value": {
+     "mwInput": 6000,
+     "pdiInput": 0.5
+    }
+   },
+   "output": {
+    "ok": false,
+    "reason": "PDI 必須是大於或等於 1 的數字"
+   }
+  },
+  {
+   "id": "parse/pdi-x",
+   "input": {
+    "kind": "parse",
+    "value": {
+     "mwInput": 6000,
+     "pdiInput": "x"
+    }
+   },
+   "output": {
+    "ok": false,
+    "reason": "PDI 必須是大於或等於 1 的數字"
+   }
+  },
+  {
+   "id": "parse/pdi-only",
+   "input": {
+    "kind": "parse",
+    "value": {
+     "pdiInput": 2
+    }
+   },
+   "output": {
+    "ok": false,
+    "reason": "聚合物缺少 Mw、Mn 或 DP"
+   }
+  },
+  {
+   "id": "parse/mw+dp",
+   "input": {
+    "kind": "parse",
+    "value": {
+     "dpInput": 5,
+     "mwInput": 6000
+    }
+   },
+   "output": {
+    "ok": false,
+    "reason": "Mw、Mn、DP 只能填一個"
+   }
+  },
+  {
+   "id": "parse/copolymer",
+   "input": {
+    "kind": "parse",
+    "value": {
+     "fractionBasis": "mol",
+     "mwInput": 6000,
+     "pdiInput": 1.8,
+     "units": [
+      {
+       "fraction": 66.67,
+       "smiles": "[*:1]CC[*:2]"
+      },
+      {
+       "fraction": 33.33,
+       "smiles": "*CC(*)C"
+      }
+     ]
+    }
+   },
+   "output": {
+    "ok": true,
+    "spec": {
+     "fractionBasis": "mol",
+     "mwInput": 6000,
+     "pdiInput": 1.8,
+     "units": [
+      {
+       "fraction": 66.67,
+       "smiles": "[*:1]CC[*:2]"
+      },
+      {
+       "fraction": 33.33,
+       "smiles": "*CC(*)C"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "parse/units-empty",
+   "input": {
+    "kind": "parse",
+    "value": {
+     "mwInput": 1,
+     "units": []
+    }
+   },
+   "output": {
+    "ok": false,
+    "reason": "共聚物的單元清單格式錯誤"
+   }
+  },
+  {
+   "id": "parse/units-no-star",
+   "input": {
+    "kind": "parse",
+    "value": {
+     "mwInput": 1,
+     "units": [
+      {
+       "fraction": 100,
+       "smiles": "CCO"
+      }
+     ]
+    }
+   },
+   "output": {
+    "ok": false,
+    "reason": "共聚物的單元需有 SMILES 與連接點（*）"
+   }
+  },
+  {
+   "id": "parse/units-fraction-zero",
+   "input": {
+    "kind": "parse",
+    "value": {
+     "mwInput": 1,
+     "units": [
+      {
+       "fraction": 0,
+       "smiles": "*CC*"
+      }
+     ]
+    }
+   },
+   "output": {
+    "ok": false,
+    "reason": "共聚物單元的比例必須是大於 0 的數字"
+   }
+  },
+  {
+   "id": "parse/units-basis-x",
+   "input": {
+    "kind": "parse",
+    "value": {
+     "fractionBasis": "x",
+     "mwInput": 1,
+     "units": [
+      {
+       "fraction": 100,
+       "smiles": "*CC*"
+      }
+     ]
+    }
+   },
+   "output": {
+    "ok": false,
+    "reason": "共聚物的比例基準必須是 mol 或 wt"
+   }
+  },
+  {
+   "id": "parse/ends-both",
+   "input": {
+    "kind": "parse",
+    "value": {
+     "endGroups": {
+      "end1": {
+       "presetId": "EG04",
+       "smiles": "[*]CCCC"
+      },
+      "end2": {
+       "smiles": "[*]CC(C)O"
+      }
+     },
+     "mnInput": 6000
+    }
+   },
+   "output": {
+    "ok": true,
+    "spec": {
+     "endGroups": {
+      "end1": {
+       "presetId": "EG04",
+       "smiles": "[*]CCCC"
+      },
+      "end2": {
+       "smiles": "[*]CC(C)O"
+      }
+     },
+     "mnInput": 6000
+    }
+   }
+  },
+  {
+   "id": "parse/ends-empty",
+   "input": {
+    "kind": "parse",
+    "value": {
+     "endGroups": {},
+     "mnInput": 6000
+    }
+   },
+   "output": {
+    "ok": true,
+    "spec": {
+     "mnInput": 6000
+    }
+   }
+  },
+  {
+   "id": "parse/ends-end1-empty-smiles",
+   "input": {
+    "kind": "parse",
+    "value": {
+     "endGroups": {
+      "end1": {
+       "smiles": ""
+      }
+     },
+     "mnInput": 6000
+    }
+   },
+   "output": {
+    "ok": false,
+    "reason": "端基 1 的 SMILES 格式錯誤"
+   }
+  },
+  {
+   "id": "parse/ends-end2-string",
+   "input": {
+    "kind": "parse",
+    "value": {
+     "endGroups": {
+      "end2": "x"
+     },
+     "mnInput": 6000
+    }
+   },
+   "output": {
+    "ok": false,
+    "reason": "端基 2 的 SMILES 格式錯誤"
+   }
+  },
+  {
+   "id": "parse/ends-number",
+   "input": {
+    "kind": "parse",
+    "value": {
+     "endGroups": 5,
+     "mnInput": 6000
+    }
+   },
+   "output": {
+    "ok": false,
+    "reason": "端基設定格式錯誤"
+   }
+  },
+  {
+   "id": "dpFromMn/3000-150",
+   "input": {
+    "kind": "dpFromMn",
+    "mUnit": 150,
+    "mn": 3000
+   },
+   "output": 20
+  },
+  {
+   "id": "mnFromDp/20-150",
+   "input": {
+    "dp": 20,
+    "kind": "mnFromDp",
+    "mUnit": 150
+   },
+   "output": 3000
+  },
+  {
+   "id": "dpFromMn/zero-unit",
+   "input": {
+    "kind": "dpFromMn",
+    "mUnit": 0,
+    "mn": 3000
+   },
+   "output": {
+    "$nonfinite": "Infinity"
+   }
+  }
+ ],
+ "commit": "090a89afb660164623de86cd78c23237af099227",
+ "module": "polymer-convert",
+ "rdkitjs": "2026.09.1",
+ "tolerance": {
+  "exact": "strings, integers, booleans, null, arrays and object keys must be identical",
+  "float": "shortest round-trip string must be identical; otherwise relative error <= relFallback is accepted and the case is recorded in tolerance_cases",
+  "relFallback": 1e-12
+ }
+}

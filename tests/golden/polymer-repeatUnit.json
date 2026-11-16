@@ -1,0 +1,1796 @@
+{
+ "cases": [
+  {
+   "id": "analyze/map/1-2",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]CC[*:2]"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C2H4",
+    "mUnit": 28.053999999999995,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/map/2-1",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:2]CC[*:1]"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     2,
+     1
+    ],
+    "formula": "C2H4",
+    "mUnit": 28.053999999999995,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/map/0-0",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:0]CC[*:0]"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C2H4",
+    "mUnit": 28.053999999999995,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/map/99-99",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:99]CC[*:99]"
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "BAD_NUMBERING",
+     "message": "兩個連接點的編號須為 [*:1] 與 [*:2]，或兩個都不編號；目前的編號不符（例如只編一個、編號重複或不是 1、2）。"
+    }
+   }
+  },
+  {
+   "id": "analyze/map/100-2",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:100]CC[*:2]"
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "BAD_NUMBERING",
+     "message": "兩個連接點的編號須為 [*:1] 與 [*:2]，或兩個都不編號；目前的編號不符（例如只編一個、編號重複或不是 1、2）。"
+    }
+   }
+  },
+  {
+   "id": "analyze/map/100-100",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:100]CC[*:100]"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C2H4",
+    "mUnit": 28.053999999999995,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/map/1000-1000",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1000]CC[*:1000]"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C2H4",
+    "mUnit": 28.053999999999995,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/map/middle-first",
+   "input": {
+    "kind": "analyze",
+    "smiles": "C([*:2])C[*:1]"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     2,
+     1
+    ],
+    "formula": "C2H4",
+    "mUnit": 28.053999999999995,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/charge/dummy-plus-throws",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*+]CC*"
+   },
+   "output": {
+    "threw": true
+   }
+  },
+  {
+   "id": "analyze/R2/same-atom",
+   "input": {
+    "kind": "analyze",
+    "smiles": "*C(*)CC"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C3H6",
+    "mUnit": 42.081,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/R2/ring",
+   "input": {
+    "kind": "analyze",
+    "smiles": "*C1CCC(*)CC1"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C6H10",
+    "mUnit": 82.14600000000002,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/R2/branch",
+   "input": {
+    "kind": "analyze",
+    "smiles": "*CC(*)C"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C3H6",
+    "mUnit": 42.080999999999996,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/R2/fused-heterocycle",
+   "input": {
+    "kind": "analyze",
+    "smiles": "*c1ccc2cc(*)ccc2c1"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C10H6",
+    "mUnit": 126.15799999999997,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/R2/heteroaromatic",
+   "input": {
+    "kind": "analyze",
+    "smiles": "*c1ccc(*)s1"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C4H2S",
+    "mUnit": 82.12700000000001,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/BT/BT01",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]Cc1cc([*:2])ccc1O"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C7H6O",
+    "mUnit": 106.12399999999997,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/BT/BT02",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]Cc1cc([*:2])cc(C)c1O"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C8H8O",
+    "mUnit": 120.15099999999997,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/BT/BT03",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]Cc1cc([*:2])ccc1OCC2CO2"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C10H10O2",
+    "mUnit": 162.18799999999996,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/BT/BT04",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]Cc1cc([*:2])cc(C)c1OCC2CO2"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C11H12O2",
+    "mUnit": 176.21499999999995,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/BT/BT05",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]Oc1ccc(cc1)C(C)(C)c1ccc(cc1)OCC(O)C[*:2]"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C18H20O3",
+    "mUnit": 284.355,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/BT/BT06",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]Oc1ccc(cc1)C1(c2ccccc2-c2ccccc21)c1ccc(cc1)OCC(O)C[*:2]"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C28H22O3",
+    "mUnit": 406.4810000000002,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/test/none",
+   "input": {
+    "kind": "analyze",
+    "smiles": "CCO"
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "NO_ATTACHMENT",
+     "message": "重複單元需要恰好兩個連接點（*），目前沒有連接點。請用 [*:1]、[*:2] 標出鏈的兩端。"
+    }
+   }
+  },
+  {
+   "id": "analyze/test/blank",
+   "input": {
+    "kind": "analyze",
+    "smiles": "   "
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "UNPARSABLE",
+     "message": "尚未輸入重複單元。"
+    }
+   }
+  },
+  {
+   "id": "analyze/test/ring-not-closed",
+   "input": {
+    "kind": "analyze",
+    "smiles": "C1CC[*:1]"
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "UNPARSABLE",
+     "message": "無法解析這個重複單元的結構。"
+    }
+   }
+  },
+  {
+   "id": "analyze/tests/polymer/repeatUnit.test.ts#1",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]c1ccc(C2(c3ccc(C([*:2])c4ccc5ccccc5c4)c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C36H24O2",
+    "mUnit": 488.5860000000002,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/tests/polymer/repeatUnit.test.ts#2",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]CC([*:2])(C)C(=O)OCC1CO1"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C7H10O3",
+    "mUnit": 142.15399999999997,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/tests/polymer/repeatUnit.test.ts#3",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]CC"
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "TOO_FEW_ATTACHMENTS",
+     "message": "重複單元需要恰好兩個連接點（*），目前只有 1 個。"
+    }
+   }
+  },
+  {
+   "id": "analyze/tests/polymer/repeatUnit.test.ts#4",
+   "input": {
+    "kind": "analyze",
+    "smiles": "*CC"
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "TOO_FEW_ATTACHMENTS",
+     "message": "重複單元需要恰好兩個連接點（*），目前只有 1 個。"
+    }
+   }
+  },
+  {
+   "id": "analyze/tests/polymer/repeatUnit.test.ts#5",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]CC([*:2])C[*:3]"
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "TOO_MANY_ATTACHMENTS",
+     "message": "重複單元需要恰好兩個連接點（*），目前有 3 個。"
+    }
+   }
+  },
+  {
+   "id": "analyze/tests/polymer/repeatUnit.test.ts#6",
+   "input": {
+    "kind": "analyze",
+    "smiles": "*CC(*)C*"
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "TOO_MANY_ATTACHMENTS",
+     "message": "重複單元需要恰好兩個連接點（*），目前有 3 個。"
+    }
+   }
+  },
+  {
+   "id": "analyze/tests/polymer/repeatUnit.test.ts#7",
+   "input": {
+    "kind": "analyze",
+    "smiles": "*.CC.*"
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "DANGLING_ATTACHMENT",
+     "message": "有連接點（*）沒有連到任何原子。"
+    }
+   }
+  },
+  {
+   "id": "analyze/tests/polymer/repeatUnit.test.ts#8",
+   "input": {
+    "kind": "analyze",
+    "smiles": "*[*:1].CC"
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "ATTACHMENT_TO_ATTACHMENT",
+     "message": "兩個連接點（*）不可直接相連。"
+    }
+   }
+  },
+  {
+   "id": "analyze/tests/polymer/repeatUnit.test.ts#9",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]CC*"
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "BAD_NUMBERING",
+     "message": "兩個連接點的編號須為 [*:1] 與 [*:2]，或兩個都不編號；目前的編號不符（例如只編一個、編號重複或不是 1、2）。"
+    }
+   }
+  },
+  {
+   "id": "analyze/tests/polymer/repeatUnit.test.ts#10",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]CC[*:1]"
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "BAD_NUMBERING",
+     "message": "兩個連接點的編號須為 [*:1] 與 [*:2]，或兩個都不編號；目前的編號不符（例如只編一個、編號重複或不是 1、2）。"
+    }
+   }
+  },
+  {
+   "id": "analyze/tests/polymer/repeatUnit.test.ts#11",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]CC[*:3]"
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "BAD_NUMBERING",
+     "message": "兩個連接點的編號須為 [*:1] 與 [*:2]，或兩個都不編號；目前的編號不符（例如只編一個、編號重複或不是 1、2）。"
+    }
+   }
+  },
+  {
+   "id": "analyze/tests/polymer/repeatUnit.test.ts#13",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]C([*:2])CC"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C3H6",
+    "mUnit": 42.081,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/tests/polymer/repeatUnit.test.ts#15",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C11H8",
+    "mUnit": 140.18499999999997,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/tests/polymer/repeatUnit.test.ts#18",
+   "input": {
+    "kind": "analyze",
+    "smiles": "*CC*"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C2H4",
+    "mUnit": 28.053999999999995,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/tests/polymer/repeatUnit.test.ts#19",
+   "input": {
+    "kind": "analyze",
+    "smiles": "*CC(*)(C)C(=O)OCC1CO1"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C7H10O3",
+    "mUnit": 142.15399999999997,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/tests/polymer/repeatUnit.test.ts#20",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:2]CC([*:1])(C)C(=O)OCC1CO1"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     2,
+     1
+    ],
+    "formula": "C7H10O3",
+    "mUnit": 142.15399999999997,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/tests/polymer/endGroups.test.ts#1",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*][H]"
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "TOO_FEW_ATTACHMENTS",
+     "message": "重複單元需要恰好兩個連接點（*），目前只有 1 個。"
+    }
+   }
+  },
+  {
+   "id": "analyze/tests/polymer/endGroups.test.ts#2",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*]OCC1CO1"
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "TOO_FEW_ATTACHMENTS",
+     "message": "重複單元需要恰好兩個連接點（*），目前只有 1 個。"
+    }
+   }
+  },
+  {
+   "id": "analyze/tests/polymer/endGroups.test.ts#3",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*][SiH](C)C"
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "TOO_FEW_ATTACHMENTS",
+     "message": "重複單元需要恰好兩個連接點（*），目前只有 1 個。"
+    }
+   }
+  },
+  {
+   "id": "analyze/tests/polymer/endGroups.test.ts#4",
+   "input": {
+    "kind": "analyze",
+    "smiles": "*.CC"
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "TOO_FEW_ATTACHMENTS",
+     "message": "重複單元需要恰好兩個連接點（*），目前只有 1 個。"
+    }
+   }
+  },
+  {
+   "id": "analyze/tests/polymer/endGroups.test.ts#5",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]CC([*:2])c1ccc(O)cc1"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C8H8O",
+    "mUnit": 120.15099999999997,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/tests/polymer/endGroups.test.ts#6",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*]CC(C)O"
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "TOO_FEW_ATTACHMENTS",
+     "message": "重複單元需要恰好兩個連接點（*），目前只有 1 個。"
+    }
+   }
+  },
+  {
+   "id": "analyze/tests/polymer/copolymer.test.ts#1",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C25H16O2",
+    "mUnit": 348.40100000000007,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/scripts/verification/phase6-Tg-混合.ts#4",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]Cc1cc(C)cc([*:2])c1O"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C8H8O",
+    "mUnit": 120.15099999999997,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/scripts/verification/phase6-Tg-混合.ts#5",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*]CC1CO1"
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "TOO_FEW_ATTACHMENTS",
+     "message": "重複單元需要恰好兩個連接點（*），目前只有 1 個。"
+    }
+   }
+  },
+  {
+   "id": "analyze/scripts/verification/phase6-Tg-混合.ts#6",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*]Oc1ccc(cc1)C(C)(C)c1ccc(cc1)OCC1CO1"
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "TOO_FEW_ATTACHMENTS",
+     "message": "重複單元需要恰好兩個連接點（*），目前只有 1 個。"
+    }
+   }
+  },
+  {
+   "id": "analyze/scripts/verification/phase6-Tg-混合.ts#7",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]c1cc(C[*:2])cc(C)c1O"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C8H8O",
+    "mUnit": 120.15099999999997,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/scripts/verification/phase6-Tg-混合.ts#8",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]Cc1cc([*:2])c(C)cc1O"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C8H8O",
+    "mUnit": 120.15099999999997,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/scripts/verification/phase6-Tg-混合.ts#9",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]Cc1cc(C)c(O)c(C)c1"
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "TOO_FEW_ATTACHMENTS",
+     "message": "重複單元需要恰好兩個連接點（*），目前只有 1 個。"
+    }
+   }
+  },
+  {
+   "id": "analyze/scripts/verification/phase6-Tg-混合.ts#10",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]Cc1cc2ccccc2c([*:2])c1O"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C11H8O",
+    "mUnit": 156.18399999999997,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/scripts/verification/phase6-Vm-密度.ts#1",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]CC([*:2])C"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C3H6",
+    "mUnit": 42.080999999999996,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/scripts/verification/phase6-Vm-密度.ts#2",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]CC([*:2])c1ccccc1"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C8H8",
+    "mUnit": 104.15199999999997,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/scripts/verification/phase6-Vm-密度.ts#3",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]CC(Cl)[*:2]"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C2H3Cl",
+    "mUnit": 62.498999999999995,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/scripts/verification/phase6-Vm-密度.ts#4",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]CC([*:2])C1CCCCC1"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C8H14",
+    "mUnit": 110.2,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/scripts/verification/phase6-Vm-密度.ts#5",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]CC([*:2])(C)C(=O)OC"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C5H8O2",
+    "mUnit": 100.11699999999998,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/scripts/verification/phase6-Vm-密度.ts#6",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]CCOC(=O)c1ccc(cc1)C(=O)O[*:2]"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C10H8O4",
+    "mUnit": 192.16999999999996,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/scripts/verification/phase6-Vm-密度.ts#7",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]CCOC(=O)c1cccc(c1)C(=O)O[*:2]"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C10H8O4",
+    "mUnit": 192.16999999999996,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/scripts/verification/phase6-Vm-密度.ts#8",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]C(=O)NCCCCC[*:2]"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C6H11NO",
+    "mUnit": 113.16000000000001,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/scripts/verification/phase6-Vm-密度.ts#9",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]NC(=O)CCCCC(=O)NCCCCCC[*:2]"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C12H22N2O2",
+    "mUnit": 226.31999999999994,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/scripts/verification/phase6-Vm-密度.ts#10",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]OC(=O)Oc1ccc(cc1)C(C)(C)c1ccc(cc1)[*:2]"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C16H14O3",
+    "mUnit": 254.285,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/scripts/verification/phase6-介電-極化率.ts#1",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]CC([*:2])c1ccccc1Cl"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C8H7Cl",
+    "mUnit": 138.59699999999998,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/scripts/verification/phase6-介電-極化率.ts#2",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]C(F)(F)C(F)(F)[*:2]"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C2F4",
+    "mUnit": 100.01400000000001,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/scripts/verification/phase6-介電-極化率.ts#3",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]CC([*:2])OC(C)=O"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C4H6O2",
+    "mUnit": 86.08999999999999,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/scripts/verification/phase6-介電-極化率.ts#4",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]CC([*:2])(C)C(=O)OCC"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C6H10O2",
+    "mUnit": 114.14399999999998,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/scripts/verification/phase6-介電-極化率.ts#5",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]CC([*:2])(Cl)C(=O)OC"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C4H5ClO2",
+    "mUnit": 120.53499999999998,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/scripts/verification/phase6-介電-極化率.ts#6",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]CC([*:2])(Cl)C(=O)OCC"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C5H7ClO2",
+    "mUnit": 134.56199999999998,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/scripts/verification/phase6-介電-極化率.ts#7",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]CC([*:2])C#N"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C3H3N",
+    "mUnit": 53.06399999999999,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/scripts/verification/phase6-介電-極化率.ts#8",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]CO[*:2]"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "CH2O",
+    "mUnit": 30.026,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/scripts/verification/phase6-介電-極化率.ts#9",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]Oc1c(C)cc([*:2])cc1C"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C8H8O",
+    "mUnit": 120.15099999999997,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/scripts/verification/phase6-介電-極化率.ts#10",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]CC(CCl)(CCl)CO[*:2]"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C5H8Cl2O",
+    "mUnit": 155.024,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/scripts/verification/phase6-自由體積-CTE.ts#1",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]CC(C)(C)[*:2]"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C4H8",
+    "mUnit": 56.10799999999999,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/scripts/verification/phase6-自由體積-CTE.ts#2",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]NC(=O)CCCCC[*:2]"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C6H11NO",
+    "mUnit": 113.16000000000001,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/scripts/verification/phase6-自由體積-經驗係數.ts#1",
+   "input": {
+    "kind": "analyze",
+    "smiles": "*"
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "TOO_FEW_ATTACHMENTS",
+     "message": "重複單元需要恰好兩個連接點（*），目前只有 1 個。"
+    }
+   }
+  },
+  {
+   "id": "analyze/docs/verification/phase5-輸出.md#1",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*]c1ccccc1O"
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "TOO_FEW_ATTACHMENTS",
+     "message": "重複單元需要恰好兩個連接點（*），目前只有 1 個。"
+    }
+   }
+  },
+  {
+   "id": "analyze/docs/verification/phase5-輸出.md#2",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*]c1cccc(C)c1O"
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "TOO_FEW_ATTACHMENTS",
+     "message": "重複單元需要恰好兩個連接點（*），目前只有 1 個。"
+    }
+   }
+  },
+  {
+   "id": "analyze/docs/verification/phase5-輸出.md#4",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*]c1ccccc1OCC1CO1"
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "TOO_FEW_ATTACHMENTS",
+     "message": "重複單元需要恰好兩個連接點（*），目前只有 1 個。"
+    }
+   }
+  },
+  {
+   "id": "analyze/docs/verification/phase5-輸出.md#6",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*]c1cccc(C)c1OCC1CO1"
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "TOO_FEW_ATTACHMENTS",
+     "message": "重複單元需要恰好兩個連接點（*），目前只有 1 個。"
+    }
+   }
+  },
+  {
+   "id": "analyze/docs/verification/phase5-輸出.md#8",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*]Oc1ccc(cc1)C1(c2ccccc2-c2ccccc21)c1ccc(cc1)OCC1CO1"
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "TOO_FEW_ATTACHMENTS",
+     "message": "重複單元需要恰好兩個連接點（*），目前只有 1 個。"
+    }
+   }
+  },
+  {
+   "id": "analyze/docs/verification/phase6-Tg-輸出.md#1",
+   "input": {
+    "kind": "analyze",
+    "smiles": "*CC(Cl)*"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C2H3Cl",
+    "mUnit": 62.498999999999995,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/docs/verification/phase6-Tg-輸出.md#2",
+   "input": {
+    "kind": "analyze",
+    "smiles": "*CC(Cl)(Cl)*"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C2H2Cl2",
+    "mUnit": 96.944,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/docs/verification/phase6-Tg-輸出.md#3",
+   "input": {
+    "kind": "analyze",
+    "smiles": "*CC(F)(F)*"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C2H2F2",
+    "mUnit": 64.034,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/docs/verification/phase6-Tg-輸出.md#4",
+   "input": {
+    "kind": "analyze",
+    "smiles": "*CC(C)(C(=O)OC)*"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C5H8O2",
+    "mUnit": 100.11699999999998,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/docs/verification/phase6-Tg-輸出.md#5",
+   "input": {
+    "kind": "analyze",
+    "smiles": "*CC(C(=O)OC)*"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C4H6O2",
+    "mUnit": 86.08999999999999,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/docs/verification/phase6-Tg-輸出.md#6",
+   "input": {
+    "kind": "analyze",
+    "smiles": "*CC(O)*"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C2H4O",
+    "mUnit": 44.053,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/docs/verification/phase6-Tg-輸出.md#7",
+   "input": {
+    "kind": "analyze",
+    "smiles": "*CC(OC)*"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C3H6O",
+    "mUnit": 58.08,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/docs/verification/phase6-Tg-輸出.md#8",
+   "input": {
+    "kind": "analyze",
+    "smiles": "*CO*"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "CH2O",
+    "mUnit": 30.026,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/docs/verification/phase6-Tg-輸出.md#9",
+   "input": {
+    "kind": "analyze",
+    "smiles": "*CCO*"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C2H4O",
+    "mUnit": 44.053,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/docs/verification/phase6-Tg-輸出.md#10",
+   "input": {
+    "kind": "analyze",
+    "smiles": "*NC(=O)CCCCC(=O)NCCCCCC*"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C12H22N2O2",
+    "mUnit": 226.31999999999994,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/docs/verification/phase6-Tg-輸出.md#11",
+   "input": {
+    "kind": "analyze",
+    "smiles": "*NC(=O)NCCCCCCNC(=O)NCCCCCCCCCCCC*"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C20H40N4O2",
+    "mUnit": 368.5660000000003,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/docs/verification/phase6-Tg-輸出.md#12",
+   "input": {
+    "kind": "analyze",
+    "smiles": "*Oc1ccc(Oc2ccc(C(=O)c3ccc(*)cc3)cc2)cc1"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C19H12O3",
+    "mUnit": 288.302,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/docs/verification/phase6-介電-極化率-輸出.md#1",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]Cc1ccc(cc1)Cc1ccc(O)c([*:2])c1"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C14H12O",
+    "mUnit": 196.249,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/docs/verification/phase6-介電-極化率-輸出.md#2",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]Cc1ccc(cc1)-c1ccc(cc1)Cc1ccc(O)c([*:2])c1"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C20H16O",
+    "mUnit": 272.347,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/docs/verification/phase6-介電-極化率-輸出.md#3",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]N1C(=O)c2cc3C(=O)N(C(=O)c3cc2C1=O)c1ccc(Oc2ccc([*:2])cc2)cc1"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C22H10N2O5",
+    "mUnit": 382.3310000000001,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/docs/verification/phase6-介電-極化率-輸出.md#4",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]N1C(=O)c2ccc(cc2C1=O)-c1ccc2C(=O)N(C(=O)c2c1)c1ccc([*:2])cc1"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C22H10N2O4",
+    "mUnit": 366.33200000000005,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/docs/verification/phase6-介電-極化率-輸出.md#5",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]c1ccc(cc1)-c1nc2cc3nc([*:2])oc3cc2o1"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C14H6N2O2",
+    "mUnit": 234.21399999999997,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/docs/verification/phase6-介電-極化率-輸出.md#6",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]CC([*:2])(C)C(=O)OC(C)(C)C"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C8H14O2",
+    "mUnit": 142.19799999999998,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/docs/verification/phase6-介電-極化率-輸出.md#7",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]CC([*:2])(C)C(=O)OC1(C)C2CC3CC(C2)CC1C3"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C15H22O2",
+    "mUnit": 234.3389999999999,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/docs/verification/phase6-介電-極化率-輸出.md#8",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]CC([*:2])(C)C(=O)OC1CCOC1=O"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C8H10O4",
+    "mUnit": 170.16399999999996,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/docs/verification/phase6-自由體積-經驗係數-輸出.md#1",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]c1ccc(cc1)C1(c2ccc([*:2])cc2)c2ccccc2-c2ccccc12"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C25H16",
+    "mUnit": 316.403,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/docs/verification/phase6-自由體積-經驗係數-輸出.md#2",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]c1ccc(cc1)C1(c2ccc3cc([*:2])ccc3c2)c2ccccc2-c2ccccc12"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C29H18",
+    "mUnit": 366.4630000000001,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/docs/verification/phase6-自由體積-經驗係數-輸出.md#3",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]c1cccc2ccccc12"
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "TOO_FEW_ATTACHMENTS",
+     "message": "重複單元需要恰好兩個連接點（*），目前只有 1 個。"
+    }
+   }
+  },
+  {
+   "id": "analyze/docs/verification/phase6-自由體積-經驗係數-輸出.md#4",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]C1CC2CC1CC2C1CC2CCC1C2"
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "TOO_FEW_ATTACHMENTS",
+     "message": "重複單元需要恰好兩個連接點（*），目前只有 1 個。"
+    }
+   }
+  },
+  {
+   "id": "analyze/docs/verification/phase6-自由體積-經驗係數-輸出.md#5",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]C12CC3CC(CC(C3)C1)C2"
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "TOO_FEW_ATTACHMENTS",
+     "message": "重複單元需要恰好兩個連接點（*），目前只有 1 個。"
+    }
+   }
+  },
+  {
+   "id": "analyze/docs/verification/phase6-自由體積-經驗係數-輸出.md#6",
+   "input": {
+    "kind": "analyze",
+    "smiles": "CC1(C)CC2(CC(C)(C)c3cc([*:2])ccc23)c2ccc([*:1])cc12"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     2,
+     1
+    ],
+    "formula": "C21H22",
+    "mUnit": 274.40700000000004,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/docs/verification/phase6-自由體積-經驗係數-輸出.md#7",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]c1ccc(Oc2ccccc2)cc1"
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "TOO_FEW_ATTACHMENTS",
+     "message": "重複單元需要恰好兩個連接點（*），目前只有 1 個。"
+    }
+   }
+  },
+  {
+   "id": "analyze/docs/verification/phase6-自由體積-經驗係數-輸出.md#8",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]C1c2cccc3cccc(c23)C1[*:2]"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C12H8",
+    "mUnit": 152.19599999999997,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/docs/verification/phase6-自由體積-經驗係數-輸出.md#9",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]C1Cc2ccccc2C1[*:2]"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C9H8",
+    "mUnit": 116.16299999999997,
+    "ok": true
+   }
+  },
+  {
+   "id": "analyze/docs/verification/phase6-自由體積-經驗係數-輸出.md#10",
+   "input": {
+    "kind": "analyze",
+    "smiles": "[*:1]CC([*:2])C(=O)OCC1CO1"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "formula": "C6H8O3",
+    "mUnit": 128.12699999999998,
+    "ok": true
+   }
+  }
+ ],
+ "commit": "090a89afb660164623de86cd78c23237af099227",
+ "module": "polymer-repeatUnit",
+ "rdkitjs": "2026.09.1",
+ "tolerance": {
+  "exact": "strings, integers, booleans, null, arrays and object keys must be identical",
+  "float": "shortest round-trip string must be identical; otherwise relative error <= relFallback is accepted and the case is recorded in tolerance_cases",
+  "relFallback": 1e-12
+ }
+}

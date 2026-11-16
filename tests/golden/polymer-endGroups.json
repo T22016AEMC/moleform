@@ -1,0 +1,1418 @@
+{
+ "cases": [
+  {
+   "id": "endGroup/preset/EG01/which1",
+   "input": {
+    "end": {
+     "presetId": "EG01",
+     "smiles": "[*][H]"
+    },
+    "kind": "endGroup",
+    "which": 1
+   },
+   "output": {
+    "info": {
+     "mEnd": 1.008,
+     "smiles": "[*][H]"
+    },
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroup/preset/EG02/which1",
+   "input": {
+    "end": {
+     "presetId": "EG02",
+     "smiles": "[*]C"
+    },
+    "kind": "endGroup",
+    "which": 1
+   },
+   "output": {
+    "info": {
+     "mEnd": 15.035,
+     "smiles": "[*]C"
+    },
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroup/preset/EG03/which1",
+   "input": {
+    "end": {
+     "presetId": "EG03",
+     "smiles": "[*]c1ccccc1"
+    },
+    "kind": "endGroup",
+    "which": 1
+   },
+   "output": {
+    "info": {
+     "mEnd": 77.106,
+     "smiles": "[*]c1ccccc1"
+    },
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroup/preset/EG04/which1",
+   "input": {
+    "end": {
+     "presetId": "EG04",
+     "smiles": "[*]CCCC"
+    },
+    "kind": "endGroup",
+    "which": 1
+   },
+   "output": {
+    "info": {
+     "mEnd": 57.116,
+     "smiles": "[*]CCCC"
+    },
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroup/preset/EG05/which1",
+   "input": {
+    "end": {
+     "presetId": "EG05",
+     "smiles": "[*]C(C)CC"
+    },
+    "kind": "endGroup",
+    "which": 1
+   },
+   "output": {
+    "info": {
+     "mEnd": 57.116,
+     "smiles": "[*]C(C)CC"
+    },
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroup/preset/EG06/which1",
+   "input": {
+    "end": {
+     "presetId": "EG06",
+     "smiles": "[*]C(C)(C)C#N"
+    },
+    "kind": "endGroup",
+    "which": 1
+   },
+   "output": {
+    "info": {
+     "mEnd": 68.099,
+     "smiles": "[*]C(C)(C)C#N"
+    },
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroup/preset/EG07/which1",
+   "input": {
+    "end": {
+     "presetId": "EG07",
+     "smiles": "[*][Si](C)(C)C"
+    },
+    "kind": "endGroup",
+    "which": 1
+   },
+   "output": {
+    "info": {
+     "mEnd": 73.19099999999999,
+     "smiles": "[*][Si](C)(C)C"
+    },
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroup/preset/EG08/which1",
+   "input": {
+    "end": {
+     "presetId": "EG08",
+     "smiles": "[*]OCC1CO1"
+    },
+    "kind": "endGroup",
+    "which": 1
+   },
+   "output": {
+    "info": {
+     "mEnd": 73.071,
+     "smiles": "[*]OCC1CO1"
+    },
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroup/preset/EG09/which1",
+   "input": {
+    "end": {
+     "presetId": "EG09",
+     "smiles": "[*]CC1CO1"
+    },
+    "kind": "endGroup",
+    "which": 1
+   },
+   "output": {
+    "info": {
+     "mEnd": 57.071999999999996,
+     "smiles": "[*]CC1CO1"
+    },
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroup/preset/EG10/which1",
+   "input": {
+    "end": {
+     "presetId": "EG10",
+     "smiles": "[*]O"
+    },
+    "kind": "endGroup",
+    "which": 1
+   },
+   "output": {
+    "info": {
+     "mEnd": 17.007,
+     "smiles": "[*]O"
+    },
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroup/preset/EG11/which1",
+   "input": {
+    "end": {
+     "presetId": "EG11",
+     "smiles": "[*]c1ccc(O)cc1"
+    },
+    "kind": "endGroup",
+    "which": 1
+   },
+   "output": {
+    "info": {
+     "mEnd": 93.10499999999998,
+     "smiles": "[*]c1ccc(O)cc1"
+    },
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroup/preset/EG12/which1",
+   "input": {
+    "end": {
+     "presetId": "EG12",
+     "smiles": "[*]c1ccccc1O"
+    },
+    "kind": "endGroup",
+    "which": 1
+   },
+   "output": {
+    "info": {
+     "mEnd": 93.10499999999999,
+     "smiles": "[*]c1ccccc1O"
+    },
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroup/preset/EG13/which1",
+   "input": {
+    "end": {
+     "presetId": "EG13",
+     "smiles": "[*]CO"
+    },
+    "kind": "endGroup",
+    "which": 1
+   },
+   "output": {
+    "info": {
+     "mEnd": 31.034,
+     "smiles": "[*]CO"
+    },
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroup/preset/EG14/which1",
+   "input": {
+    "end": {
+     "presetId": "EG14",
+     "smiles": "[*]N"
+    },
+    "kind": "endGroup",
+    "which": 1
+   },
+   "output": {
+    "info": {
+     "mEnd": 16.023,
+     "smiles": "[*]N"
+    },
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroup/preset/EG15/which1",
+   "input": {
+    "end": {
+     "presetId": "EG15",
+     "smiles": "[*]C(=O)O"
+    },
+    "kind": "endGroup",
+    "which": 1
+   },
+   "output": {
+    "info": {
+     "mEnd": 45.017,
+     "smiles": "[*]C(=O)O"
+    },
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroup/preset/EG16/which1",
+   "input": {
+    "end": {
+     "presetId": "EG16",
+     "smiles": "[*]c1ccc2c(c1)C(=O)OC2=O"
+    },
+    "kind": "endGroup",
+    "which": 1
+   },
+   "output": {
+    "info": {
+     "mEnd": 147.10899999999998,
+     "smiles": "[*]c1ccc2c(c1)C(=O)OC2=O"
+    },
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroup/preset/EG17/which1",
+   "input": {
+    "end": {
+     "presetId": "EG17",
+     "smiles": "[*]N1C(=O)C2C3C=CC(C3)C2C1=O"
+    },
+    "kind": "endGroup",
+    "which": 1
+   },
+   "output": {
+    "info": {
+     "mEnd": 162.16799999999998,
+     "smiles": "[*]N1C(=O)C2C3C=CC(C3)C2C1=O"
+    },
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroup/preset/EG18/which1",
+   "input": {
+    "end": {
+     "presetId": "EG18",
+     "smiles": "[*]C#Cc1ccccc1"
+    },
+    "kind": "endGroup",
+    "which": 1
+   },
+   "output": {
+    "info": {
+     "mEnd": 101.12799999999999,
+     "smiles": "[*]C#Cc1ccccc1"
+    },
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroup/preset/EG19/which1",
+   "input": {
+    "end": {
+     "presetId": "EG19",
+     "smiles": "[*]N1C(=O)C=CC1=O"
+    },
+    "kind": "endGroup",
+    "which": 1
+   },
+   "output": {
+    "info": {
+     "mEnd": 96.065,
+     "smiles": "[*]N1C(=O)C=CC1=O"
+    },
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroup/preset/EG20/which1",
+   "input": {
+    "end": {
+     "presetId": "EG20",
+     "smiles": "[*]OC#N"
+    },
+    "kind": "endGroup",
+    "which": 1
+   },
+   "output": {
+    "info": {
+     "mEnd": 42.016999999999996,
+     "smiles": "[*]OC#N"
+    },
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroup/preset/EG21/which1",
+   "input": {
+    "end": {
+     "presetId": "EG21",
+     "smiles": "[*]N=C=O"
+    },
+    "kind": "endGroup",
+    "which": 1
+   },
+   "output": {
+    "info": {
+     "mEnd": 42.017,
+     "smiles": "[*]N=C=O"
+    },
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroup/preset/EG22/which1",
+   "input": {
+    "end": {
+     "presetId": "EG22",
+     "smiles": "[*]S"
+    },
+    "kind": "endGroup",
+    "which": 1
+   },
+   "output": {
+    "info": {
+     "mEnd": 33.075,
+     "smiles": "[*]S"
+    },
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroup/preset/EG23/which1",
+   "input": {
+    "end": {
+     "presetId": "EG23",
+     "smiles": "[*]C=C"
+    },
+    "kind": "endGroup",
+    "which": 1
+   },
+   "output": {
+    "info": {
+     "mEnd": 27.046,
+     "smiles": "[*]C=C"
+    },
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroup/preset/EG24/which1",
+   "input": {
+    "end": {
+     "presetId": "EG24",
+     "smiles": "[*]CC=C"
+    },
+    "kind": "endGroup",
+    "which": 1
+   },
+   "output": {
+    "info": {
+     "mEnd": 41.07299999999999,
+     "smiles": "[*]CC=C"
+    },
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroup/preset/EG25/which1",
+   "input": {
+    "end": {
+     "presetId": "EG25",
+     "smiles": "[*]OC(=O)C=C"
+    },
+    "kind": "endGroup",
+    "which": 1
+   },
+   "output": {
+    "info": {
+     "mEnd": 71.055,
+     "smiles": "[*]OC(=O)C=C"
+    },
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroup/preset/EG26/which1",
+   "input": {
+    "end": {
+     "presetId": "EG26",
+     "smiles": "[*]OC(=O)C(C)=C"
+    },
+    "kind": "endGroup",
+    "which": 1
+   },
+   "output": {
+    "info": {
+     "mEnd": 85.082,
+     "smiles": "[*]OC(=O)C(C)=C"
+    },
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroup/preset/EG27/which1",
+   "input": {
+    "end": {
+     "presetId": "EG27",
+     "smiles": "[*][SiH](C)C"
+    },
+    "kind": "endGroup",
+    "which": 1
+   },
+   "output": {
+    "info": {
+     "mEnd": 59.164,
+     "smiles": "[*][SiH](C)C"
+    },
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroup/BT/BT01/end1/which1",
+   "input": {
+    "end": {
+     "presetId": "EG12",
+     "smiles": "[*]c1ccccc1O"
+    },
+    "kind": "endGroup",
+    "which": 1
+   },
+   "output": {
+    "info": {
+     "mEnd": 93.10499999999999,
+     "smiles": "[*]c1ccccc1O"
+    },
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroup/BT/BT01/end2/which2",
+   "input": {
+    "end": {
+     "presetId": "EG01",
+     "smiles": "[*][H]"
+    },
+    "kind": "endGroup",
+    "which": 2
+   },
+   "output": {
+    "info": {
+     "mEnd": 1.008,
+     "smiles": "[*][H]"
+    },
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroup/BT/BT02/end1/which1",
+   "input": {
+    "end": {
+     "smiles": "[*]c1cccc(C)c1O"
+    },
+    "kind": "endGroup",
+    "which": 1
+   },
+   "output": {
+    "info": {
+     "mEnd": 107.13199999999999,
+     "smiles": "[*]c1cccc(C)c1O"
+    },
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroup/BT/BT02/end2/which2",
+   "input": {
+    "end": {
+     "presetId": "EG01",
+     "smiles": "[*][H]"
+    },
+    "kind": "endGroup",
+    "which": 2
+   },
+   "output": {
+    "info": {
+     "mEnd": 1.008,
+     "smiles": "[*][H]"
+    },
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroup/BT/BT03/end1/which1",
+   "input": {
+    "end": {
+     "smiles": "[*]c1ccccc1OCC1CO1"
+    },
+    "kind": "endGroup",
+    "which": 1
+   },
+   "output": {
+    "info": {
+     "mEnd": 149.16899999999998,
+     "smiles": "[*]c1ccccc1OCC1CO1"
+    },
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroup/BT/BT03/end2/which2",
+   "input": {
+    "end": {
+     "presetId": "EG01",
+     "smiles": "[*][H]"
+    },
+    "kind": "endGroup",
+    "which": 2
+   },
+   "output": {
+    "info": {
+     "mEnd": 1.008,
+     "smiles": "[*][H]"
+    },
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroup/BT/BT04/end1/which1",
+   "input": {
+    "end": {
+     "smiles": "[*]c1cccc(C)c1OCC1CO1"
+    },
+    "kind": "endGroup",
+    "which": 1
+   },
+   "output": {
+    "info": {
+     "mEnd": 163.196,
+     "smiles": "[*]c1cccc(C)c1OCC1CO1"
+    },
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroup/BT/BT04/end2/which2",
+   "input": {
+    "end": {
+     "presetId": "EG01",
+     "smiles": "[*][H]"
+    },
+    "kind": "endGroup",
+    "which": 2
+   },
+   "output": {
+    "info": {
+     "mEnd": 1.008,
+     "smiles": "[*][H]"
+    },
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroup/BT/BT05/end1/which1",
+   "input": {
+    "end": {
+     "presetId": "EG09",
+     "smiles": "[*]CC1CO1"
+    },
+    "kind": "endGroup",
+    "which": 1
+   },
+   "output": {
+    "info": {
+     "mEnd": 57.071999999999996,
+     "smiles": "[*]CC1CO1"
+    },
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroup/BT/BT05/end2/which2",
+   "input": {
+    "end": {
+     "smiles": "[*]Oc1ccc(cc1)C(C)(C)c1ccc(cc1)OCC1CO1"
+    },
+    "kind": "endGroup",
+    "which": 2
+   },
+   "output": {
+    "info": {
+     "mEnd": 283.34700000000004,
+     "smiles": "[*]Oc1ccc(cc1)C(C)(C)c1ccc(cc1)OCC1CO1"
+    },
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroup/BT/BT06/end1/which1",
+   "input": {
+    "end": {
+     "presetId": "EG09",
+     "smiles": "[*]CC1CO1"
+    },
+    "kind": "endGroup",
+    "which": 1
+   },
+   "output": {
+    "info": {
+     "mEnd": 57.071999999999996,
+     "smiles": "[*]CC1CO1"
+    },
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroup/BT/BT06/end2/which2",
+   "input": {
+    "end": {
+     "smiles": "[*]Oc1ccc(cc1)C1(c2ccccc2-c2ccccc21)c1ccc(cc1)OCC1CO1"
+    },
+    "kind": "endGroup",
+    "which": 2
+   },
+   "output": {
+    "info": {
+     "mEnd": 405.47300000000024,
+     "smiles": "[*]Oc1ccc(cc1)C1(c2ccccc2-c2ccccc21)c1ccc(cc1)OCC1CO1"
+    },
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroup/test/CCO/which1",
+   "input": {
+    "end": {
+     "smiles": "CCO"
+    },
+    "kind": "endGroup",
+    "which": 1
+   },
+   "output": {
+    "message": "端基 1：端基需要恰好一個連接點（*），目前有 0 個。",
+    "ok": false
+   }
+  },
+  {
+   "id": "endGroup/test/two-stars/which2",
+   "input": {
+    "end": {
+     "smiles": "*CC*"
+    },
+    "kind": "endGroup",
+    "which": 2
+   },
+   "output": {
+    "message": "端基 2：端基需要恰好一個連接點（*），目前有 2 個。",
+    "ok": false
+   }
+  },
+  {
+   "id": "endGroup/test/dangling/which1",
+   "input": {
+    "end": {
+     "smiles": "*.CC"
+    },
+    "kind": "endGroup",
+    "which": 1
+   },
+   "output": {
+    "message": "端基 1：連接點（*）沒有連到任何原子。",
+    "ok": false
+   }
+  },
+  {
+   "id": "endGroup/test/unparsable/which2",
+   "input": {
+    "end": {
+     "smiles": "C("
+    },
+    "kind": "endGroup",
+    "which": 2
+   },
+   "output": {
+    "message": "端基 2：無法解析這個結構。",
+    "ok": false
+   }
+  },
+  {
+   "id": "endGroup/test/empty/which1",
+   "input": {
+    "end": {
+     "smiles": ""
+    },
+    "kind": "endGroup",
+    "which": 1
+   },
+   "output": {
+    "message": "端基 1：尚未輸入 SMILES。",
+    "ok": false
+   }
+  },
+  {
+   "id": "endGroup/test/spaces/which2",
+   "input": {
+    "end": {
+     "smiles": "   "
+    },
+    "kind": "endGroup",
+    "which": 2
+   },
+   "output": {
+    "message": "端基 2：尚未輸入 SMILES。",
+    "ok": false
+   }
+  },
+  {
+   "id": "endGroup/test/custom-isopropanol/which1",
+   "input": {
+    "end": {
+     "smiles": "[*]CC(C)O"
+    },
+    "kind": "endGroup",
+    "which": 1
+   },
+   "output": {
+    "info": {
+     "mEnd": 59.088,
+     "smiles": "[*]CC(C)O"
+    },
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroup/test/custom-padded/which1",
+   "input": {
+    "end": {
+     "smiles": " [*]CC(C)O "
+    },
+    "kind": "endGroup",
+    "which": 1
+   },
+   "output": {
+    "info": {
+     "mEnd": 59.088,
+     "smiles": "[*]CC(C)O"
+    },
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroup/test/mapped/which1",
+   "input": {
+    "end": {
+     "smiles": "[*:1]CC"
+    },
+    "kind": "endGroup",
+    "which": 1
+   },
+   "output": {
+    "info": {
+     "mEnd": 29.061999999999998,
+     "smiles": "[*:1]CC"
+    },
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroups/test/undefined",
+   "input": {
+    "kind": "endGroups"
+   },
+   "output": {
+    "ends": [
+     null,
+     null
+    ],
+    "filled": [
+     false,
+     false
+    ],
+    "mEnds": 0,
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroups/test/null",
+   "input": {
+    "kind": "endGroups",
+    "spec": null
+   },
+   "output": {
+    "ends": [
+     null,
+     null
+    ],
+    "filled": [
+     false,
+     false
+    ],
+    "mEnds": 0,
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroups/test/empty",
+   "input": {
+    "kind": "endGroups",
+    "spec": {}
+   },
+   "output": {
+    "ends": [
+     null,
+     null
+    ],
+    "filled": [
+     false,
+     false
+    ],
+    "mEnds": 0,
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroups/test/endGroups-empty",
+   "input": {
+    "kind": "endGroups",
+    "spec": {
+     "endGroups": {}
+    }
+   },
+   "output": {
+    "ends": [
+     null,
+     null
+    ],
+    "filled": [
+     false,
+     false
+    ],
+    "mEnds": 0,
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroups/test/butyl-hydrogen",
+   "input": {
+    "kind": "endGroups",
+    "spec": {
+     "endGroups": {
+      "end1": {
+       "presetId": "EG04",
+       "smiles": "[*]CCCC"
+      },
+      "end2": {
+       "presetId": "EG01",
+       "smiles": "[*][H]"
+      }
+     }
+    }
+   },
+   "output": {
+    "ends": [
+     {
+      "mEnd": 57.116,
+      "smiles": "[*]CCCC"
+     },
+     {
+      "mEnd": 1.008,
+      "smiles": "[*][H]"
+     }
+    ],
+    "filled": [
+     true,
+     true
+    ],
+    "mEnds": 58.124,
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroups/test/butyl-only",
+   "input": {
+    "kind": "endGroups",
+    "spec": {
+     "endGroups": {
+      "end1": {
+       "presetId": "EG04",
+       "smiles": "[*]CCCC"
+      }
+     }
+    }
+   },
+   "output": {
+    "ends": [
+     {
+      "mEnd": 57.116,
+      "smiles": "[*]CCCC"
+     },
+     null
+    ],
+    "filled": [
+     true,
+     false
+    ],
+    "mEnds": 57.116,
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroups/test/hydrogen-only",
+   "input": {
+    "kind": "endGroups",
+    "spec": {
+     "endGroups": {
+      "end2": {
+       "presetId": "EG01",
+       "smiles": "[*][H]"
+      }
+     }
+    }
+   },
+   "output": {
+    "ends": [
+     null,
+     {
+      "mEnd": 1.008,
+      "smiles": "[*][H]"
+     }
+    ],
+    "filled": [
+     false,
+     true
+    ],
+    "mEnds": 1.008,
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroups/test/glycidyl-both",
+   "input": {
+    "kind": "endGroups",
+    "spec": {
+     "endGroups": {
+      "end1": {
+       "presetId": "EG08",
+       "smiles": "[*]OCC1CO1"
+      },
+      "end2": {
+       "presetId": "EG08",
+       "smiles": "[*]OCC1CO1"
+      }
+     }
+    }
+   },
+   "output": {
+    "ends": [
+     {
+      "mEnd": 73.071,
+      "smiles": "[*]OCC1CO1"
+     },
+     {
+      "mEnd": 73.071,
+      "smiles": "[*]OCC1CO1"
+     }
+    ],
+    "filled": [
+     true,
+     true
+    ],
+    "mEnds": 146.142,
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroups/test/phenol-hydrogen",
+   "input": {
+    "kind": "endGroups",
+    "spec": {
+     "endGroups": {
+      "end1": {
+       "presetId": "EG11",
+       "smiles": "[*]c1ccc(O)cc1"
+      },
+      "end2": {
+       "presetId": "EG01",
+       "smiles": "[*][H]"
+      }
+     },
+     "mnInput": 3000
+    }
+   },
+   "output": {
+    "ends": [
+     {
+      "mEnd": 93.10499999999998,
+      "smiles": "[*]c1ccc(O)cc1"
+     },
+     {
+      "mEnd": 1.008,
+      "smiles": "[*][H]"
+     }
+    ],
+    "filled": [
+     true,
+     true
+    ],
+    "mEnds": 94.11299999999997,
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroups/test/end1-not-an-end",
+   "input": {
+    "kind": "endGroups",
+    "spec": {
+     "endGroups": {
+      "end1": {
+       "smiles": "CCO"
+      }
+     }
+    }
+   },
+   "output": {
+    "message": "端基 1：端基需要恰好一個連接點（*），目前有 0 個。",
+    "ok": false
+   }
+  },
+  {
+   "id": "endGroups/test/end2-bad-after-end1-ok",
+   "input": {
+    "kind": "endGroups",
+    "spec": {
+     "endGroups": {
+      "end1": {
+       "presetId": "EG04",
+       "smiles": "[*]CCCC"
+      },
+      "end2": {
+       "smiles": "CCO"
+      }
+     }
+    }
+   },
+   "output": {
+    "message": "端基 2：端基需要恰好一個連接點（*），目前有 0 個。",
+    "ok": false
+   }
+  },
+  {
+   "id": "endGroups/test/custom",
+   "input": {
+    "kind": "endGroups",
+    "spec": {
+     "endGroups": {
+      "end1": {
+       "presetId": "EG04",
+       "smiles": "[*]CCCC"
+      },
+      "end2": {
+       "smiles": "[*]CC(C)O"
+      }
+     },
+     "mwInput": 6000,
+     "pdiInput": 1.8
+    }
+   },
+   "output": {
+    "ends": [
+     {
+      "mEnd": 57.116,
+      "smiles": "[*]CCCC"
+     },
+     {
+      "mEnd": 59.088,
+      "smiles": "[*]CC(C)O"
+     }
+    ],
+    "filled": [
+     true,
+     true
+    ],
+    "mEnds": 116.20400000000001,
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroups/BT/BT01",
+   "input": {
+    "kind": "endGroups",
+    "spec": {
+     "endGroups": {
+      "end1": {
+       "presetId": "EG12",
+       "smiles": "[*]c1ccccc1O"
+      },
+      "end2": {
+       "presetId": "EG01",
+       "smiles": "[*][H]"
+      }
+     }
+    }
+   },
+   "output": {
+    "ends": [
+     {
+      "mEnd": 93.10499999999999,
+      "smiles": "[*]c1ccccc1O"
+     },
+     {
+      "mEnd": 1.008,
+      "smiles": "[*][H]"
+     }
+    ],
+    "filled": [
+     true,
+     true
+    ],
+    "mEnds": 94.11299999999999,
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroups/BT/BT02",
+   "input": {
+    "kind": "endGroups",
+    "spec": {
+     "endGroups": {
+      "end1": {
+       "smiles": "[*]c1cccc(C)c1O"
+      },
+      "end2": {
+       "presetId": "EG01",
+       "smiles": "[*][H]"
+      }
+     }
+    }
+   },
+   "output": {
+    "ends": [
+     {
+      "mEnd": 107.13199999999999,
+      "smiles": "[*]c1cccc(C)c1O"
+     },
+     {
+      "mEnd": 1.008,
+      "smiles": "[*][H]"
+     }
+    ],
+    "filled": [
+     true,
+     true
+    ],
+    "mEnds": 108.13999999999999,
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroups/BT/BT03",
+   "input": {
+    "kind": "endGroups",
+    "spec": {
+     "endGroups": {
+      "end1": {
+       "smiles": "[*]c1ccccc1OCC1CO1"
+      },
+      "end2": {
+       "presetId": "EG01",
+       "smiles": "[*][H]"
+      }
+     }
+    }
+   },
+   "output": {
+    "ends": [
+     {
+      "mEnd": 149.16899999999998,
+      "smiles": "[*]c1ccccc1OCC1CO1"
+     },
+     {
+      "mEnd": 1.008,
+      "smiles": "[*][H]"
+     }
+    ],
+    "filled": [
+     true,
+     true
+    ],
+    "mEnds": 150.177,
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroups/BT/BT04",
+   "input": {
+    "kind": "endGroups",
+    "spec": {
+     "endGroups": {
+      "end1": {
+       "smiles": "[*]c1cccc(C)c1OCC1CO1"
+      },
+      "end2": {
+       "presetId": "EG01",
+       "smiles": "[*][H]"
+      }
+     }
+    }
+   },
+   "output": {
+    "ends": [
+     {
+      "mEnd": 163.196,
+      "smiles": "[*]c1cccc(C)c1OCC1CO1"
+     },
+     {
+      "mEnd": 1.008,
+      "smiles": "[*][H]"
+     }
+    ],
+    "filled": [
+     true,
+     true
+    ],
+    "mEnds": 164.204,
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroups/BT/BT05",
+   "input": {
+    "kind": "endGroups",
+    "spec": {
+     "endGroups": {
+      "end1": {
+       "presetId": "EG09",
+       "smiles": "[*]CC1CO1"
+      },
+      "end2": {
+       "smiles": "[*]Oc1ccc(cc1)C(C)(C)c1ccc(cc1)OCC1CO1"
+      }
+     }
+    }
+   },
+   "output": {
+    "ends": [
+     {
+      "mEnd": 57.071999999999996,
+      "smiles": "[*]CC1CO1"
+     },
+     {
+      "mEnd": 283.34700000000004,
+      "smiles": "[*]Oc1ccc(cc1)C(C)(C)c1ccc(cc1)OCC1CO1"
+     }
+    ],
+    "filled": [
+     true,
+     true
+    ],
+    "mEnds": 340.41900000000004,
+    "ok": true
+   }
+  },
+  {
+   "id": "endGroups/BT/BT06",
+   "input": {
+    "kind": "endGroups",
+    "spec": {
+     "endGroups": {
+      "end1": {
+       "presetId": "EG09",
+       "smiles": "[*]CC1CO1"
+      },
+      "end2": {
+       "smiles": "[*]Oc1ccc(cc1)C1(c2ccccc2-c2ccccc21)c1ccc(cc1)OCC1CO1"
+      }
+     }
+    }
+   },
+   "output": {
+    "ends": [
+     {
+      "mEnd": 57.071999999999996,
+      "smiles": "[*]CC1CO1"
+     },
+     {
+      "mEnd": 405.47300000000024,
+      "smiles": "[*]Oc1ccc(cc1)C1(c2ccccc2-c2ccccc21)c1ccc(cc1)OCC1CO1"
+     }
+    ],
+    "filled": [
+     true,
+     true
+    ],
+    "mEnds": 462.54500000000024,
+    "ok": true
+   }
+  },
+  {
+   "id": "note/true-true",
+   "input": {
+    "filled": [
+     true,
+     true
+    ],
+    "kind": "note"
+   },
+   "output": ""
+  },
+  {
+   "id": "note/false-false",
+   "input": {
+    "filled": [
+     false,
+     false
+    ],
+    "kind": "note"
+   },
+   "output": "未計入端基"
+  },
+  {
+   "id": "note/true-false",
+   "input": {
+    "filled": [
+     true,
+     false
+    ],
+    "kind": "note"
+   },
+   "output": "端基 2 未填，未計入"
+  },
+  {
+   "id": "note/false-true",
+   "input": {
+    "filled": [
+     false,
+     true
+    ],
+    "kind": "note"
+   },
+   "output": "端基 1 未填，未計入"
+  }
+ ],
+ "commit": "090a89afb660164623de86cd78c23237af099227",
+ "module": "polymer-endGroups",
+ "rdkitjs": "2026.09.1",
+ "tolerance": {
+  "exact": "strings, integers, booleans, null, arrays and object keys must be identical",
+  "float": "shortest round-trip string must be identical; otherwise relative error <= relFallback is accepted and the case is recorded in tolerance_cases",
+  "relFallback": 1e-12
+ }
+}

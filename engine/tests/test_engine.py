@@ -248,6 +248,47 @@ class EngineProcessTest(unittest.TestCase):
         for path in ("/vm", "/cte"):
             self.assertEqual(self.request("POST", path, {"smiles": "*CC*"}, headers={"Authorization": "Bearer wrong"})[0], 401)
 
+    def test_polymer_endpoints(self) -> None:
+        """任務 M04：聚合物基礎五個端點（value/unit/source/status；輸入無效回 400）。"""
+        status, body = self.request("POST", "/polymer/repeat-unit", {"smiles": "*CC*"})
+        self.assertEqual(status, 200)
+        q = body["quantity"]
+        self.assertEqual(set(q), {"value", "unit", "source", "status"})
+        self.assertEqual((q["unit"], q["status"], body["formula"]), ("g/mol", "predicted", "C2H4"))
+        self.assertAlmostEqual(q["value"], 2 * 12.011 + 4 * 1.008, places=2)
+        for bad in ({"smiles": "CCO"}, {"smiles": "*CC"}, {"smiles": "[*:1]CC[*:3]"}, {"smiles": "[*+]CC*"}, {"smiles": ""}, {}, {"smiles": 1}):
+            with self.subTest(bad=str(bad)):
+                status, body = self.request("POST", "/polymer/repeat-unit", bad)
+                self.assertEqual((status, body["ok"]), (400, False))
+        status, body = self.request("POST", "/polymer/end-groups", {"endGroups": {"end1": {"smiles": "[*]CCCC"}, "end2": {"smiles": "[*][H]"}}})
+        self.assertEqual(status, 200)
+        self.assertAlmostEqual(body["quantity"]["value"], 58.124, places=3)
+        self.assertEqual((body["filled"], body["note"]), ([True, True], ""))
+        status, body = self.request("POST", "/polymer/end-groups", {"endGroups": {"end1": {"smiles": "CCO"}}})
+        self.assertEqual((status, body["errors"]), (400, ["端基 1：端基需要恰好一個連接點（*），目前有 0 個。"]))
+        status, body = self.request("POST", "/polymer/copolymer", {"smiles": "*CC*", "units": [{"smiles": "*CC*", "fraction": 50}, {"smiles": "*CC(*)C", "fraction": 50}]})
+        self.assertEqual(status, 200)
+        self.assertEqual(body["note"], "共聚物以平均組成計算，未考慮鏈間組成分布")
+        self.assertAlmostEqual(sum(u["molFraction"] for u in body["units"]), 1.0, places=12)
+        status, body = self.request("POST", "/polymer/copolymer", {"smiles": "*CC*", "units": [{"smiles": "*CC*", "fraction": 60}, {"smiles": "*CC(*)C", "fraction": 30}]})
+        self.assertEqual((status, body["code"]), (400, "BAD_FRACTION"))
+        status, body = self.request("POST", "/polymer/convert", {"polymer": {"mwInput": 6000, "pdiInput": 1.8}, "mUnit": 200})
+        self.assertEqual(status, 200)
+        self.assertAlmostEqual(body["quantities"]["mn"]["value"], 6000 / 1.8, places=9)
+        self.assertAlmostEqual(body["quantities"]["dpW"]["value"], 30, places=9)
+        for bad in ({"polymer": {"mwInput": 6000, "mnInput": 3000}, "mUnit": 200}, {"polymer": {"mwInput": 6000, "pdiInput": 0.5}, "mUnit": 200}, {"polymer": {"mwInput": 6000}}, {}):
+            with self.subTest(bad=str(bad)):
+                self.assertEqual(self.request("POST", "/polymer/convert", bad)[0], 400)
+        status, body = self.request("POST", "/polymer/distribution", {"mw": 6000, "mn": 6000 / 1.8})
+        self.assertEqual((status, body["lowMw"], len(body["species"])), (200, False, 2))
+        status, body = self.request("POST", "/polymer/distribution", {"mw": 1000, "mn": 500, "mEnds": 340.41})
+        self.assertEqual((status, body["lowMw"]), (200, True))
+        for bad in ({"mw": 1000, "mn": 500, "mEnds": 600}, {"mw": -1, "mn": 5}, {"mw": "x", "mn": 5}):
+            with self.subTest(bad=str(bad)):
+                self.assertEqual(self.request("POST", "/polymer/distribution", bad)[0], 400)
+        for path in ("/polymer/repeat-unit", "/polymer/end-groups", "/polymer/copolymer", "/polymer/convert", "/polymer/distribution"):
+            self.assertEqual(self.request("POST", path, {"smiles": "*CC*"}, headers={"Authorization": "Bearer wrong"})[0], 401)
+
     def test_exits_when_stdin_closes(self) -> None:
         assert self.proc.stdin
         self.proc.stdin.close()

@@ -1,0 +1,2431 @@
+{
+ "cases": [
+  {
+   "id": "analyze/test/mol-66.67-33.33",
+   "input": {
+    "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "kind": "analyze",
+    "spec": {
+     "fractionBasis": "mol",
+     "units": [
+      {
+       "fraction": 66.67,
+       "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+      },
+      {
+       "fraction": 33.33,
+       "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+      }
+     ]
+    }
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "endsFilled": [
+     false,
+     false
+    ],
+    "formula": "C25H16O2",
+    "mEnds": 0,
+    "mUnit": 279.00260720000006,
+    "ok": true,
+    "units": [
+     {
+      "mUnit": 348.40100000000007,
+      "molFraction": 0.6667000000000001,
+      "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+     },
+     {
+      "mUnit": 140.18499999999997,
+      "molFraction": 0.3333,
+      "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyze/test/mol-66.67-33.34-in-tolerance",
+   "input": {
+    "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "kind": "analyze",
+    "spec": {
+     "fractionBasis": "mol",
+     "units": [
+      {
+       "fraction": 66.67,
+       "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+      },
+      {
+       "fraction": 33.34,
+       "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+      }
+     ]
+    }
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "endsFilled": [
+     false,
+     false
+    ],
+    "formula": "C25H16O2",
+    "mEnds": 0,
+    "mUnit": 278.9887268273173,
+    "ok": true,
+    "units": [
+     {
+      "mUnit": 348.40100000000007,
+      "molFraction": 0.6666333366663334,
+      "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+     },
+     {
+      "mUnit": 140.18499999999997,
+      "molFraction": 0.33336666333366666,
+      "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyze/test/mol-60-30-bad",
+   "input": {
+    "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "kind": "analyze",
+    "spec": {
+     "fractionBasis": "mol",
+     "units": [
+      {
+       "fraction": 60,
+       "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+      },
+      {
+       "fraction": 30,
+       "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+      }
+     ]
+    }
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "BAD_FRACTION",
+     "message": "各單元的 mol% 合計為 90，應為 100（容差 ±0.01）。"
+    }
+   }
+  },
+  {
+   "id": "analyze/test/wt-60-50-bad",
+   "input": {
+    "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "kind": "analyze",
+    "spec": {
+     "fractionBasis": "wt",
+     "units": [
+      {
+       "fraction": 60,
+       "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+      },
+      {
+       "fraction": 50,
+       "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+      }
+     ]
+    }
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "BAD_FRACTION",
+     "message": "各單元的 wt% 合計為 110，應為 100（容差 ±0.01）。"
+    }
+   }
+  },
+  {
+   "id": "analyze/test/negative-fraction",
+   "input": {
+    "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "kind": "analyze",
+    "spec": {
+     "units": [
+      {
+       "fraction": 110,
+       "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+      },
+      {
+       "fraction": -10,
+       "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+      }
+     ]
+    }
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "BAD_FRACTION",
+     "message": "單元 2 的比例必須是大於 0 的數字。"
+    }
+   }
+  },
+  {
+   "id": "analyze/test/unit-2-not-polymer",
+   "input": {
+    "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "kind": "analyze",
+    "spec": {
+     "units": [
+      {
+       "fraction": 50,
+       "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+      },
+      {
+       "fraction": 50,
+       "smiles": "CCO"
+      }
+     ]
+    }
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "NO_ATTACHMENT",
+     "message": "單元 2：重複單元需要恰好兩個連接點（*），目前沒有連接點。請用 [*:1]、[*:2] 標出鏈的兩端。"
+    }
+   }
+  },
+  {
+   "id": "analyze/test/wt-70-30",
+   "input": {
+    "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "kind": "analyze",
+    "spec": {
+     "fractionBasis": "wt",
+     "units": [
+      {
+       "fraction": 70,
+       "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+      },
+      {
+       "fraction": 30,
+       "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+      }
+     ]
+    }
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "endsFilled": [
+     false,
+     false
+    ],
+    "formula": "C25H16O2",
+    "mEnds": 0,
+    "mUnit": 241.00983166526686,
+    "ok": true,
+    "units": [
+     {
+      "mUnit": 348.40100000000007,
+      "molFraction": 0.48423191140578464,
+      "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+     },
+     {
+      "mUnit": 140.18499999999997,
+      "molFraction": 0.5157680885942153,
+      "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyze/test/exact-2-to-1",
+   "input": {
+    "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "kind": "analyze",
+    "spec": {
+     "fractionBasis": "mol",
+     "units": [
+      {
+       "fraction": 66.66666666666667,
+       "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+      },
+      {
+       "fraction": 33.333333333333336,
+       "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+      }
+     ]
+    }
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "endsFilled": [
+     false,
+     false
+    ],
+    "formula": "C25H16O2",
+    "mEnds": 0,
+    "mUnit": 278.99566666666675,
+    "ok": true,
+    "units": [
+     {
+      "mUnit": 348.40100000000007,
+      "molFraction": 0.6666666666666667,
+      "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+     },
+     {
+      "mUnit": 140.18499999999997,
+      "molFraction": 0.33333333333333337,
+      "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyze/test/single-unit",
+   "input": {
+    "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc(C([*:2])c4ccc5ccccc5c4)c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "kind": "analyze",
+    "spec": {
+     "units": [
+      {
+       "fraction": 100,
+       "smiles": "[*:1]c1ccc(C2(c3ccc(C([*:2])c4ccc5ccccc5c4)c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+      }
+     ]
+    }
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "endsFilled": [
+     false,
+     false
+    ],
+    "formula": "C36H24O2",
+    "mEnds": 0,
+    "mUnit": 488.5860000000002,
+    "ok": true,
+    "units": [
+     {
+      "mUnit": 488.5860000000002,
+      "molFraction": 1,
+      "smiles": "[*:1]c1ccc(C2(c3ccc(C([*:2])c4ccc5ccccc5c4)c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyze/test/single-unit-wt",
+   "input": {
+    "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc(C([*:2])c4ccc5ccccc5c4)c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "kind": "analyze",
+    "spec": {
+     "fractionBasis": "wt",
+     "units": [
+      {
+       "fraction": 100,
+       "smiles": "[*:1]c1ccc(C2(c3ccc(C([*:2])c4ccc5ccccc5c4)c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+      }
+     ]
+    }
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "endsFilled": [
+     false,
+     false
+    ],
+    "formula": "C36H24O2",
+    "mEnds": 0,
+    "mUnit": 488.5860000000002,
+    "ok": true,
+    "units": [
+     {
+      "mUnit": 488.5860000000002,
+      "molFraction": 1,
+      "smiles": "[*:1]c1ccc(C2(c3ccc(C([*:2])c4ccc5ccccc5c4)c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyze/test/homopolymer-no-spec",
+   "input": {
+    "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc(C([*:2])c4ccc5ccccc5c4)c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "kind": "analyze"
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "endsFilled": [
+     false,
+     false
+    ],
+    "formula": "C36H24O2",
+    "mEnds": 0,
+    "mUnit": 488.5860000000002,
+    "ok": true,
+    "units": [
+     {
+      "mUnit": 488.5860000000002,
+      "molFraction": 1,
+      "smiles": "[*:1]c1ccc(C2(c3ccc(C([*:2])c4ccc5ccccc5c4)c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyze/test/homopolymer-E",
+   "input": {
+    "canonicalSmiles": "[*:1]CC([*:2])(C)C(=O)OCC1CO1",
+    "kind": "analyze",
+    "spec": {
+     "mwInput": 4500
+    }
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "endsFilled": [
+     false,
+     false
+    ],
+    "formula": "C7H10O3",
+    "mEnds": 0,
+    "mUnit": 142.15399999999997,
+    "ok": true,
+    "units": [
+     {
+      "mUnit": 142.15399999999997,
+      "molFraction": 1,
+      "smiles": "[*:1]CC([*:2])(C)C(=O)OCC1CO1"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyze/test/end-1-not-an-end",
+   "input": {
+    "canonicalSmiles": "[*:1]CC[*:2]",
+    "kind": "analyze",
+    "spec": {
+     "endGroups": {
+      "end1": {
+       "smiles": "CCO"
+      }
+     }
+    }
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "BAD_END_GROUP",
+     "message": "端基 1：端基需要恰好一個連接點（*），目前有 0 個。"
+    }
+   }
+  },
+  {
+   "id": "analyze/test/end-butyl-hydrogen",
+   "input": {
+    "canonicalSmiles": "[*:1]CC([*:2])c1ccc(O)cc1",
+    "kind": "analyze",
+    "spec": {
+     "endGroups": {
+      "end1": {
+       "presetId": "EG04",
+       "smiles": "[*]CCCC"
+      },
+      "end2": {
+       "presetId": "EG01",
+       "smiles": "[*][H]"
+      }
+     }
+    }
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "endsFilled": [
+     true,
+     true
+    ],
+    "formula": "C8H8O",
+    "mEnds": 58.124,
+    "mUnit": 120.15099999999997,
+    "ok": true,
+    "units": [
+     {
+      "mUnit": 120.15099999999997,
+      "molFraction": 1,
+      "smiles": "[*:1]CC([*:2])c1ccc(O)cc1"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyze/test/end-butyl-only",
+   "input": {
+    "canonicalSmiles": "[*:1]CC([*:2])c1ccc(O)cc1",
+    "kind": "analyze",
+    "spec": {
+     "endGroups": {
+      "end1": {
+       "presetId": "EG04",
+       "smiles": "[*]CCCC"
+      }
+     }
+    }
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "endsFilled": [
+     true,
+     false
+    ],
+    "formula": "C8H8O",
+    "mEnds": 57.116,
+    "mUnit": 120.15099999999997,
+    "ok": true,
+    "units": [
+     {
+      "mUnit": 120.15099999999997,
+      "molFraction": 1,
+      "smiles": "[*:1]CC([*:2])c1ccc(O)cc1"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyze/test/end-glycidyl-both",
+   "input": {
+    "canonicalSmiles": "[*:1]CC[*:2]",
+    "kind": "analyze",
+    "spec": {
+     "endGroups": {
+      "end1": {
+       "presetId": "EG08",
+       "smiles": "[*]OCC1CO1"
+      },
+      "end2": {
+       "presetId": "EG08",
+       "smiles": "[*]OCC1CO1"
+      }
+     },
+     "mwInput": 6000,
+     "pdiInput": 2
+    }
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "endsFilled": [
+     true,
+     true
+    ],
+    "formula": "C2H4",
+    "mEnds": 146.142,
+    "mUnit": 28.053999999999995,
+    "ok": true,
+    "units": [
+     {
+      "mUnit": 28.053999999999995,
+      "molFraction": 1,
+      "smiles": "[*:1]CC[*:2]"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyze/test/copolymer-with-ends",
+   "input": {
+    "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "kind": "analyze",
+    "spec": {
+     "endGroups": {
+      "end1": {
+       "presetId": "EG04",
+       "smiles": "[*]CCCC"
+      },
+      "end2": {
+       "presetId": "EG01",
+       "smiles": "[*][H]"
+      }
+     },
+     "units": [
+      {
+       "fraction": 66.67,
+       "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+      },
+      {
+       "fraction": 33.33,
+       "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+      }
+     ]
+    }
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "endsFilled": [
+     true,
+     true
+    ],
+    "formula": "C25H16O2",
+    "mEnds": 58.124,
+    "mUnit": 279.00260720000006,
+    "ok": true,
+    "units": [
+     {
+      "mUnit": 348.40100000000007,
+      "molFraction": 0.6667000000000001,
+      "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+     },
+     {
+      "mUnit": 140.18499999999997,
+      "molFraction": 0.3333,
+      "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyze/BT/BT01",
+   "input": {
+    "canonicalSmiles": "[*:1]Cc1cc([*:2])ccc1O",
+    "kind": "analyze",
+    "spec": {
+     "mnInput": 3000
+    }
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "endsFilled": [
+     false,
+     false
+    ],
+    "formula": "C7H6O",
+    "mEnds": 0,
+    "mUnit": 106.12399999999997,
+    "ok": true,
+    "units": [
+     {
+      "mUnit": 106.12399999999997,
+      "molFraction": 1,
+      "smiles": "[*:1]Cc1cc([*:2])ccc1O"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyze/BT/BT02",
+   "input": {
+    "canonicalSmiles": "[*:1]Cc1cc([*:2])cc(C)c1O",
+    "kind": "analyze",
+    "spec": {
+     "mnInput": 3000
+    }
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "endsFilled": [
+     false,
+     false
+    ],
+    "formula": "C8H8O",
+    "mEnds": 0,
+    "mUnit": 120.15099999999997,
+    "ok": true,
+    "units": [
+     {
+      "mUnit": 120.15099999999997,
+      "molFraction": 1,
+      "smiles": "[*:1]Cc1cc([*:2])cc(C)c1O"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyze/BT/BT03",
+   "input": {
+    "canonicalSmiles": "[*:1]Cc1cc([*:2])ccc1OCC2CO2",
+    "kind": "analyze",
+    "spec": {
+     "mnInput": 3000
+    }
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "endsFilled": [
+     false,
+     false
+    ],
+    "formula": "C10H10O2",
+    "mEnds": 0,
+    "mUnit": 162.18799999999996,
+    "ok": true,
+    "units": [
+     {
+      "mUnit": 162.18799999999996,
+      "molFraction": 1,
+      "smiles": "[*:1]Cc1cc([*:2])ccc1OCC2CO2"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyze/BT/BT04",
+   "input": {
+    "canonicalSmiles": "[*:1]Cc1cc([*:2])cc(C)c1OCC2CO2",
+    "kind": "analyze",
+    "spec": {
+     "mnInput": 3000
+    }
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "endsFilled": [
+     false,
+     false
+    ],
+    "formula": "C11H12O2",
+    "mEnds": 0,
+    "mUnit": 176.21499999999995,
+    "ok": true,
+    "units": [
+     {
+      "mUnit": 176.21499999999995,
+      "molFraction": 1,
+      "smiles": "[*:1]Cc1cc([*:2])cc(C)c1OCC2CO2"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyze/BT/BT05",
+   "input": {
+    "canonicalSmiles": "[*:1]Oc1ccc(cc1)C(C)(C)c1ccc(cc1)OCC(O)C[*:2]",
+    "kind": "analyze",
+    "spec": {
+     "mnInput": 3000
+    }
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "endsFilled": [
+     false,
+     false
+    ],
+    "formula": "C18H20O3",
+    "mEnds": 0,
+    "mUnit": 284.355,
+    "ok": true,
+    "units": [
+     {
+      "mUnit": 284.355,
+      "molFraction": 1,
+      "smiles": "[*:1]Oc1ccc(cc1)C(C)(C)c1ccc(cc1)OCC(O)C[*:2]"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyze/BT/BT06",
+   "input": {
+    "canonicalSmiles": "[*:1]Oc1ccc(cc1)C1(c2ccccc2-c2ccccc21)c1ccc(cc1)OCC(O)C[*:2]",
+    "kind": "analyze",
+    "spec": {
+     "mnInput": 3000
+    }
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "endsFilled": [
+     false,
+     false
+    ],
+    "formula": "C28H22O3",
+    "mEnds": 0,
+    "mUnit": 406.4810000000002,
+    "ok": true,
+    "units": [
+     {
+      "mUnit": 406.4810000000002,
+      "molFraction": 1,
+      "smiles": "[*:1]Oc1ccc(cc1)C1(c2ccccc2-c2ccccc21)c1ccc(cc1)OCC(O)C[*:2]"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyze/boundary/zero-first/mol",
+   "input": {
+    "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "kind": "analyze",
+    "spec": {
+     "fractionBasis": "mol",
+     "units": [
+      {
+       "fraction": 0,
+       "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+      },
+      {
+       "fraction": 100,
+       "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+      }
+     ]
+    }
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "BAD_FRACTION",
+     "message": "單元 1 的比例必須是大於 0 的數字。"
+    }
+   }
+  },
+  {
+   "id": "analyze/boundary/zero-first/wt",
+   "input": {
+    "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "kind": "analyze",
+    "spec": {
+     "fractionBasis": "wt",
+     "units": [
+      {
+       "fraction": 0,
+       "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+      },
+      {
+       "fraction": 100,
+       "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+      }
+     ]
+    }
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "BAD_FRACTION",
+     "message": "單元 1 的比例必須是大於 0 的數字。"
+    }
+   }
+  },
+  {
+   "id": "analyze/boundary/one-99/mol",
+   "input": {
+    "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "kind": "analyze",
+    "spec": {
+     "fractionBasis": "mol",
+     "units": [
+      {
+       "fraction": 1,
+       "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+      },
+      {
+       "fraction": 99,
+       "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+      }
+     ]
+    }
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "endsFilled": [
+     false,
+     false
+    ],
+    "formula": "C25H16O2",
+    "mEnds": 0,
+    "mUnit": 142.26716,
+    "ok": true,
+    "units": [
+     {
+      "mUnit": 348.40100000000007,
+      "molFraction": 0.01,
+      "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+     },
+     {
+      "mUnit": 140.18499999999997,
+      "molFraction": 0.99,
+      "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyze/boundary/one-99/wt",
+   "input": {
+    "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "kind": "analyze",
+    "spec": {
+     "fractionBasis": "wt",
+     "units": [
+      {
+       "fraction": 1,
+       "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+      },
+      {
+       "fraction": 99,
+       "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+      }
+     ]
+    }
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "endsFilled": [
+     false,
+     false
+    ],
+    "formula": "C25H16O2",
+    "mEnds": 0,
+    "mUnit": 141.02782910973022,
+    "ok": true,
+    "units": [
+     {
+      "mUnit": 348.40100000000007,
+      "molFraction": 0.004047859481164812,
+      "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+     },
+     {
+      "mUnit": 140.18499999999997,
+      "molFraction": 0.9959521405188353,
+      "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyze/boundary/tiny-1e-12/mol",
+   "input": {
+    "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "kind": "analyze",
+    "spec": {
+     "fractionBasis": "mol",
+     "units": [
+      {
+       "fraction": 1e-12,
+       "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+      },
+      {
+       "fraction": 99.999999999999,
+       "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+      }
+     ]
+    }
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "endsFilled": [
+     false,
+     false
+    ],
+    "formula": "C25H16O2",
+    "mEnds": 0,
+    "mUnit": 140.18500000000208,
+    "ok": true,
+    "units": [
+     {
+      "mUnit": 348.40100000000007,
+      "molFraction": 1e-14,
+      "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+     },
+     {
+      "mUnit": 140.18499999999997,
+      "molFraction": 0.99999999999999,
+      "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyze/boundary/tiny-1e-12/wt",
+   "input": {
+    "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "kind": "analyze",
+    "spec": {
+     "fractionBasis": "wt",
+     "units": [
+      {
+       "fraction": 1e-12,
+       "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+      },
+      {
+       "fraction": 99.999999999999,
+       "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+      }
+     ]
+    }
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "endsFilled": [
+     false,
+     false
+    ],
+    "formula": "C25H16O2",
+    "mEnds": 0,
+    "mUnit": 140.1850000000008,
+    "ok": true,
+    "units": [
+     {
+      "mUnit": 348.40100000000007,
+      "molFraction": 4.0236681295404086e-15,
+      "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+     },
+     {
+      "mUnit": 140.18499999999997,
+      "molFraction": 0.999999999999996,
+      "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyze/boundary/tiny-1e-300/mol",
+   "input": {
+    "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "kind": "analyze",
+    "spec": {
+     "fractionBasis": "mol",
+     "units": [
+      {
+       "fraction": 1e-300,
+       "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+      },
+      {
+       "fraction": 100,
+       "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+      }
+     ]
+    }
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "endsFilled": [
+     false,
+     false
+    ],
+    "formula": "C25H16O2",
+    "mEnds": 0,
+    "mUnit": 140.18499999999997,
+    "ok": true,
+    "units": [
+     {
+      "mUnit": 348.40100000000007,
+      "molFraction": 1e-302,
+      "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+     },
+     {
+      "mUnit": 140.18499999999997,
+      "molFraction": 1,
+      "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyze/boundary/tiny-1e-300/wt",
+   "input": {
+    "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "kind": "analyze",
+    "spec": {
+     "fractionBasis": "wt",
+     "units": [
+      {
+       "fraction": 1e-300,
+       "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+      },
+      {
+       "fraction": 100,
+       "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+      }
+     ]
+    }
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "endsFilled": [
+     false,
+     false
+    ],
+    "formula": "C25H16O2",
+    "mEnds": 0,
+    "mUnit": 140.18499999999997,
+    "ok": true,
+    "units": [
+     {
+      "mUnit": 348.40100000000007,
+      "molFraction": 4.0236681295403847e-303,
+      "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+     },
+     {
+      "mUnit": 140.18499999999997,
+      "molFraction": 1,
+      "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyze/boundary/sum-100.01/mol",
+   "input": {
+    "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "kind": "analyze",
+    "spec": {
+     "fractionBasis": "mol",
+     "units": [
+      {
+       "fraction": 50,
+       "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+      },
+      {
+       "fraction": 50.01,
+       "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+      }
+     ]
+    }
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "endsFilled": [
+     false,
+     false
+    ],
+    "formula": "C25H16O2",
+    "mEnds": 0,
+    "mUnit": 244.28259024097594,
+    "ok": true,
+    "units": [
+     {
+      "mUnit": 348.40100000000007,
+      "molFraction": 0.4999500049995001,
+      "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+     },
+     {
+      "mUnit": 140.18499999999997,
+      "molFraction": 0.5000499950005,
+      "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyze/boundary/sum-100.01/wt",
+   "input": {
+    "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "kind": "analyze",
+    "spec": {
+     "fractionBasis": "wt",
+     "units": [
+      {
+       "fraction": 50,
+       "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+      },
+      {
+       "fraction": 50.01,
+       "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+      }
+     ]
+    }
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "endsFilled": [
+     false,
+     false
+    ],
+    "formula": "C25H16O2",
+    "mEnds": 0,
+    "mUnit": 199.9177753318112,
+    "ok": true,
+    "units": [
+     {
+      "mUnit": 348.40100000000007,
+      "molFraction": 0.2868788917845469,
+      "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+     },
+     {
+      "mUnit": 140.18499999999997,
+      "molFraction": 0.713121108215453,
+      "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyze/boundary/sum-99.99/mol",
+   "input": {
+    "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "kind": "analyze",
+    "spec": {
+     "fractionBasis": "mol",
+     "units": [
+      {
+       "fraction": 50,
+       "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+      },
+      {
+       "fraction": 49.99,
+       "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+      }
+     ]
+    }
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "endsFilled": [
+     false,
+     false
+    ],
+    "formula": "C25H16O2",
+    "mEnds": 0,
+    "mUnit": 244.30341184118413,
+    "ok": true,
+    "units": [
+     {
+      "mUnit": 348.40100000000007,
+      "molFraction": 0.5000500050005,
+      "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+     },
+     {
+      "mUnit": 140.18499999999997,
+      "molFraction": 0.49994999499949994,
+      "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyze/boundary/sum-99.99/wt",
+   "input": {
+    "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "kind": "analyze",
+    "spec": {
+     "fractionBasis": "wt",
+     "units": [
+      {
+       "fraction": 50,
+       "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+      },
+      {
+       "fraction": 49.99,
+       "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+      }
+     ]
+    }
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "endsFilled": [
+     false,
+     false
+    ],
+    "formula": "C25H16O2",
+    "mEnds": 0,
+    "mUnit": 199.9348154656327,
+    "ok": true,
+    "units": [
+     {
+      "mUnit": 348.40100000000007,
+      "molFraction": 0.2869607305184648,
+      "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+     },
+     {
+      "mUnit": 140.18499999999997,
+      "molFraction": 0.7130392694815353,
+      "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyze/boundary/sum-100.02/mol",
+   "input": {
+    "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "kind": "analyze",
+    "spec": {
+     "fractionBasis": "mol",
+     "units": [
+      {
+       "fraction": 50,
+       "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+      },
+      {
+       "fraction": 50.02,
+       "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+      }
+     ]
+    }
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "BAD_FRACTION",
+     "message": "各單元的 mol% 合計為 100.02，應為 100（容差 ±0.01）。"
+    }
+   }
+  },
+  {
+   "id": "analyze/boundary/sum-100.02/wt",
+   "input": {
+    "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "kind": "analyze",
+    "spec": {
+     "fractionBasis": "wt",
+     "units": [
+      {
+       "fraction": 50,
+       "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+      },
+      {
+       "fraction": 50.02,
+       "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+      }
+     ]
+    }
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "BAD_FRACTION",
+     "message": "各單元的 wt% 合計為 100.02，應為 100（容差 ±0.01）。"
+    }
+   }
+  },
+  {
+   "id": "analyze/boundary/tol-upper/mol",
+   "input": {
+    "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "kind": "analyze",
+    "spec": {
+     "fractionBasis": "mol",
+     "units": [
+      {
+       "fraction": 50,
+       "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+      },
+      {
+       "fraction": 50.010000000999995,
+       "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+      }
+     ]
+    }
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "endsFilled": [
+     false,
+     false
+    ],
+    "formula": "C25H16O2",
+    "mEnds": 0,
+    "mUnit": 244.28259023993508,
+    "ok": true,
+    "units": [
+     {
+      "mUnit": 348.40100000000007,
+      "molFraction": 0.4999500049945011,
+      "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+     },
+     {
+      "mUnit": 140.18499999999997,
+      "molFraction": 0.500049995005499,
+      "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyze/boundary/tol-upper/wt",
+   "input": {
+    "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "kind": "analyze",
+    "spec": {
+     "fractionBasis": "wt",
+     "units": [
+      {
+       "fraction": 50,
+       "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+      },
+      {
+       "fraction": 50.010000000999995,
+       "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+      }
+     ]
+    }
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "endsFilled": [
+     false,
+     false
+    ],
+    "formula": "C25H16O2",
+    "mEnds": 0,
+    "mUnit": 199.91777533095944,
+    "ok": true,
+    "units": [
+     {
+      "mUnit": 348.40100000000007,
+      "molFraction": 0.2868788917804561,
+      "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+     },
+     {
+      "mUnit": 140.18499999999997,
+      "molFraction": 0.7131211082195438,
+      "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyze/boundary/tol-upper-up/mol",
+   "input": {
+    "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "kind": "analyze",
+    "spec": {
+     "fractionBasis": "mol",
+     "units": [
+      {
+       "fraction": 50,
+       "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+      },
+      {
+       "fraction": 50.010000001,
+       "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+      }
+     ]
+    }
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "BAD_FRACTION",
+     "message": "各單元的 mol% 合計為 100.01，應為 100（容差 ±0.01）。"
+    }
+   }
+  },
+  {
+   "id": "analyze/boundary/tol-upper-up/wt",
+   "input": {
+    "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "kind": "analyze",
+    "spec": {
+     "fractionBasis": "wt",
+     "units": [
+      {
+       "fraction": 50,
+       "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+      },
+      {
+       "fraction": 50.010000001,
+       "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+      }
+     ]
+    }
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "BAD_FRACTION",
+     "message": "各單元的 wt% 合計為 100.01，應為 100（容差 ±0.01）。"
+    }
+   }
+  },
+  {
+   "id": "analyze/boundary/tol-upper-down/mol",
+   "input": {
+    "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "kind": "analyze",
+    "spec": {
+     "fractionBasis": "mol",
+     "units": [
+      {
+       "fraction": 50,
+       "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+      },
+      {
+       "fraction": 50.01000000099999,
+       "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+      }
+     ]
+    }
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "endsFilled": [
+     false,
+     false
+    ],
+    "formula": "C25H16O2",
+    "mEnds": 0,
+    "mUnit": 244.2825902399351,
+    "ok": true,
+    "units": [
+     {
+      "mUnit": 348.40100000000007,
+      "molFraction": 0.49995000499450115,
+      "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+     },
+     {
+      "mUnit": 140.18499999999997,
+      "molFraction": 0.500049995005499,
+      "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyze/boundary/tol-upper-down/wt",
+   "input": {
+    "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "kind": "analyze",
+    "spec": {
+     "fractionBasis": "wt",
+     "units": [
+      {
+       "fraction": 50,
+       "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+      },
+      {
+       "fraction": 50.01000000099999,
+       "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+      }
+     ]
+    }
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "endsFilled": [
+     false,
+     false
+    ],
+    "formula": "C25H16O2",
+    "mEnds": 0,
+    "mUnit": 199.91777533095944,
+    "ok": true,
+    "units": [
+     {
+      "mUnit": 348.40100000000007,
+      "molFraction": 0.2868788917804561,
+      "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+     },
+     {
+      "mUnit": 140.18499999999997,
+      "molFraction": 0.7131211082195438,
+      "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyze/boundary/tol-lower/mol",
+   "input": {
+    "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "kind": "analyze",
+    "spec": {
+     "fractionBasis": "mol",
+     "units": [
+      {
+       "fraction": 50,
+       "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+      },
+      {
+       "fraction": 49.989999999000005,
+       "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+      }
+     ]
+    }
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "endsFilled": [
+     false,
+     false
+    ],
+    "formula": "C25H16O2",
+    "mEnds": 0,
+    "mUnit": 244.30341184222542,
+    "ok": true,
+    "units": [
+     {
+      "mUnit": 348.40100000000007,
+      "molFraction": 0.500050005005501,
+      "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+     },
+     {
+      "mUnit": 140.18499999999997,
+      "molFraction": 0.499949994994499,
+      "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyze/boundary/tol-lower/wt",
+   "input": {
+    "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "kind": "analyze",
+    "spec": {
+     "fractionBasis": "wt",
+     "units": [
+      {
+       "fraction": 50,
+       "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+      },
+      {
+       "fraction": 49.989999999000005,
+       "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+      }
+     ]
+    }
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "endsFilled": [
+     false,
+     false
+    ],
+    "formula": "C25H16O2",
+    "mEnds": 0,
+    "mUnit": 199.9348154664849,
+    "ok": true,
+    "units": [
+     {
+      "mUnit": 348.40100000000007,
+      "molFraction": 0.2869607305225579,
+      "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+     },
+     {
+      "mUnit": 140.18499999999997,
+      "molFraction": 0.7130392694774422,
+      "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyze/boundary/tol-lower-down/mol",
+   "input": {
+    "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "kind": "analyze",
+    "spec": {
+     "fractionBasis": "mol",
+     "units": [
+      {
+       "fraction": 50,
+       "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+      },
+      {
+       "fraction": 49.989999999,
+       "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+      }
+     ]
+    }
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "BAD_FRACTION",
+     "message": "各單元的 mol% 合計為 99.99，應為 100（容差 ±0.01）。"
+    }
+   }
+  },
+  {
+   "id": "analyze/boundary/tol-lower-down/wt",
+   "input": {
+    "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "kind": "analyze",
+    "spec": {
+     "fractionBasis": "wt",
+     "units": [
+      {
+       "fraction": 50,
+       "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+      },
+      {
+       "fraction": 49.989999999,
+       "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+      }
+     ]
+    }
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "BAD_FRACTION",
+     "message": "各單元的 wt% 合計為 99.99，應為 100（容差 ±0.01）。"
+    }
+   }
+  },
+  {
+   "id": "analyze/boundary/non-finite-inf/mol",
+   "input": {
+    "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "kind": "analyze",
+    "spec": {
+     "fractionBasis": "mol",
+     "units": [
+      {
+       "fraction": {
+        "$nonfinite": "Infinity"
+       },
+       "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+      },
+      {
+       "fraction": 100,
+       "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+      }
+     ]
+    }
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "BAD_FRACTION",
+     "message": "單元 1 的比例必須是大於 0 的數字。"
+    }
+   }
+  },
+  {
+   "id": "analyze/boundary/non-finite-inf/wt",
+   "input": {
+    "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "kind": "analyze",
+    "spec": {
+     "fractionBasis": "wt",
+     "units": [
+      {
+       "fraction": {
+        "$nonfinite": "Infinity"
+       },
+       "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+      },
+      {
+       "fraction": 100,
+       "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+      }
+     ]
+    }
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "BAD_FRACTION",
+     "message": "單元 1 的比例必須是大於 0 的數字。"
+    }
+   }
+  },
+  {
+   "id": "analyze/roundhalf/90+1/128/mol",
+   "input": {
+    "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "kind": "analyze",
+    "spec": {
+     "fractionBasis": "mol",
+     "units": [
+      {
+       "fraction": 45.00390625,
+       "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+      },
+      {
+       "fraction": 45.00390625,
+       "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+      }
+     ]
+    }
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "BAD_FRACTION",
+     "message": "各單元的 mol% 合計為 90.007813，應為 100（容差 ±0.01）。"
+    }
+   }
+  },
+  {
+   "id": "analyze/roundhalf/90+1/128/wt",
+   "input": {
+    "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "kind": "analyze",
+    "spec": {
+     "fractionBasis": "wt",
+     "units": [
+      {
+       "fraction": 45.00390625,
+       "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+      },
+      {
+       "fraction": 45.00390625,
+       "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+      }
+     ]
+    }
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "BAD_FRACTION",
+     "message": "各單元的 wt% 合計為 90.007813，應為 100（容差 ±0.01）。"
+    }
+   }
+  },
+  {
+   "id": "analyze/roundhalf/90+5/128/mol",
+   "input": {
+    "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "kind": "analyze",
+    "spec": {
+     "fractionBasis": "mol",
+     "units": [
+      {
+       "fraction": 45.01953125,
+       "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+      },
+      {
+       "fraction": 45.01953125,
+       "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+      }
+     ]
+    }
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "BAD_FRACTION",
+     "message": "各單元的 mol% 合計為 90.039063，應為 100（容差 ±0.01）。"
+    }
+   }
+  },
+  {
+   "id": "analyze/roundhalf/90+5/128/wt",
+   "input": {
+    "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "kind": "analyze",
+    "spec": {
+     "fractionBasis": "wt",
+     "units": [
+      {
+       "fraction": 45.01953125,
+       "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+      },
+      {
+       "fraction": 45.01953125,
+       "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+      }
+     ]
+    }
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "BAD_FRACTION",
+     "message": "各單元的 wt% 合計為 90.039063，應為 100（容差 ±0.01）。"
+    }
+   }
+  },
+  {
+   "id": "analyze/roundhalf/90+9/128/mol",
+   "input": {
+    "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "kind": "analyze",
+    "spec": {
+     "fractionBasis": "mol",
+     "units": [
+      {
+       "fraction": 45.03515625,
+       "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+      },
+      {
+       "fraction": 45.03515625,
+       "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+      }
+     ]
+    }
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "BAD_FRACTION",
+     "message": "各單元的 mol% 合計為 90.070313，應為 100（容差 ±0.01）。"
+    }
+   }
+  },
+  {
+   "id": "analyze/roundhalf/90+9/128/wt",
+   "input": {
+    "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "kind": "analyze",
+    "spec": {
+     "fractionBasis": "wt",
+     "units": [
+      {
+       "fraction": 45.03515625,
+       "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+      },
+      {
+       "fraction": 45.03515625,
+       "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+      }
+     ]
+    }
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "BAD_FRACTION",
+     "message": "各單元的 wt% 合計為 90.070313，應為 100（容差 ±0.01）。"
+    }
+   }
+  },
+  {
+   "id": "analyze/roundhalf/99+1/128/mol",
+   "input": {
+    "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "kind": "analyze",
+    "spec": {
+     "fractionBasis": "mol",
+     "units": [
+      {
+       "fraction": 49.50390625,
+       "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+      },
+      {
+       "fraction": 49.50390625,
+       "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+      }
+     ]
+    }
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "BAD_FRACTION",
+     "message": "各單元的 mol% 合計為 99.007813，應為 100（容差 ±0.01）。"
+    }
+   }
+  },
+  {
+   "id": "analyze/roundhalf/99+1/128/wt",
+   "input": {
+    "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "kind": "analyze",
+    "spec": {
+     "fractionBasis": "wt",
+     "units": [
+      {
+       "fraction": 49.50390625,
+       "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+      },
+      {
+       "fraction": 49.50390625,
+       "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+      }
+     ]
+    }
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "BAD_FRACTION",
+     "message": "各單元的 wt% 合計為 99.007813，應為 100（容差 ±0.01）。"
+    }
+   }
+  },
+  {
+   "id": "analyze/roundhalf/90+3/128-banker-agrees/mol",
+   "input": {
+    "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "kind": "analyze",
+    "spec": {
+     "fractionBasis": "mol",
+     "units": [
+      {
+       "fraction": 45.01171875,
+       "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+      },
+      {
+       "fraction": 45.01171875,
+       "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+      }
+     ]
+    }
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "BAD_FRACTION",
+     "message": "各單元的 mol% 合計為 90.023438，應為 100（容差 ±0.01）。"
+    }
+   }
+  },
+  {
+   "id": "analyze/roundhalf/90+3/128-banker-agrees/wt",
+   "input": {
+    "canonicalSmiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O",
+    "kind": "analyze",
+    "spec": {
+     "fractionBasis": "wt",
+     "units": [
+      {
+       "fraction": 45.01171875,
+       "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+      },
+      {
+       "fraction": 45.01171875,
+       "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+      }
+     ]
+    }
+   },
+   "output": {
+    "ok": false,
+    "problem": {
+     "code": "BAD_FRACTION",
+     "message": "各單元的 wt% 合計為 90.023438，應為 100（容差 ±0.01）。"
+    }
+   }
+  },
+  {
+   "id": "units/spec-undefined",
+   "input": {
+    "canonicalSmiles": "[*:1]CC([*:2])(C)C(=O)OCC1CO1",
+    "kind": "units"
+   },
+   "output": [
+    {
+     "fraction": 100,
+     "smiles": "[*:1]CC([*:2])(C)C(=O)OCC1CO1"
+    }
+   ]
+  },
+  {
+   "id": "units/spec-empty",
+   "input": {
+    "canonicalSmiles": "[*:1]CC([*:2])(C)C(=O)OCC1CO1",
+    "kind": "units",
+    "spec": {}
+   },
+   "output": [
+    {
+     "fraction": 100,
+     "smiles": "[*:1]CC([*:2])(C)C(=O)OCC1CO1"
+    }
+   ]
+  },
+  {
+   "id": "units/units-null",
+   "input": {
+    "canonicalSmiles": "[*:1]CC([*:2])(C)C(=O)OCC1CO1",
+    "kind": "units",
+    "spec": {
+     "units": null
+    }
+   },
+   "output": [
+    {
+     "fraction": 100,
+     "smiles": "[*:1]CC([*:2])(C)C(=O)OCC1CO1"
+    }
+   ]
+  },
+  {
+   "id": "units/units-empty",
+   "input": {
+    "canonicalSmiles": "[*:1]CC([*:2])(C)C(=O)OCC1CO1",
+    "kind": "units",
+    "spec": {
+     "units": []
+    }
+   },
+   "output": [
+    {
+     "fraction": 100,
+     "smiles": "[*:1]CC([*:2])(C)C(=O)OCC1CO1"
+    }
+   ]
+  },
+  {
+   "id": "units/units-two",
+   "input": {
+    "canonicalSmiles": "[*:1]CC([*:2])(C)C(=O)OCC1CO1",
+    "kind": "units",
+    "spec": {
+     "units": [
+      {
+       "fraction": 60,
+       "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+      },
+      {
+       "fraction": 40,
+       "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+      }
+     ]
+    }
+   },
+   "output": [
+    {
+     "fraction": 60,
+     "smiles": "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
+    },
+    {
+     "fraction": 40,
+     "smiles": "[*:1]C([*:2])c1ccc2ccccc2c1"
+    }
+   ]
+  },
+  {
+   "id": "analyze/boundary/units-empty-array",
+   "input": {
+    "canonicalSmiles": "[*:1]CC([*:2])(C)C(=O)OCC1CO1",
+    "kind": "analyze",
+    "spec": {
+     "units": []
+    }
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "endsFilled": [
+     false,
+     false
+    ],
+    "formula": "C7H10O3",
+    "mEnds": 0,
+    "mUnit": 142.15399999999997,
+    "ok": true,
+    "units": [
+     {
+      "mUnit": 142.15399999999997,
+      "molFraction": 1,
+      "smiles": "[*:1]CC([*:2])(C)C(=O)OCC1CO1"
+     }
+    ]
+   }
+  },
+  {
+   "id": "analyze/boundary/units-null",
+   "input": {
+    "canonicalSmiles": "[*:1]CC([*:2])(C)C(=O)OCC1CO1",
+    "kind": "analyze",
+    "spec": {
+     "units": null
+    }
+   },
+   "output": {
+    "attachmentCount": 2,
+    "attachmentOrder": [
+     1,
+     2
+    ],
+    "endsFilled": [
+     false,
+     false
+    ],
+    "formula": "C7H10O3",
+    "mEnds": 0,
+    "mUnit": 142.15399999999997,
+    "ok": true,
+    "units": [
+     {
+      "mUnit": 142.15399999999997,
+      "molFraction": 1,
+      "smiles": "[*:1]CC([*:2])(C)C(=O)OCC1CO1"
+     }
+    ]
+   }
+  },
+  {
+   "id": "drawn/structure-null",
+   "input": {
+    "analysis": null,
+    "kind": "drawn",
+    "structure": null,
+    "unitNumber": 1
+   },
+   "output": {
+    "message": "單元 1：畫布上還沒有可用的結構。",
+    "ok": false
+   }
+  },
+  {
+   "id": "drawn/structure-invalid",
+   "input": {
+    "analysis": {
+     "attachmentCount": 2,
+     "attachmentOrder": [
+      1,
+      2
+     ],
+     "formula": "C2H4",
+     "mUnit": 28.053999999999995,
+     "ok": true
+    },
+    "kind": "drawn",
+    "structure": {
+     "canonicalSmiles": "*CC*",
+     "valid": false
+    },
+    "unitNumber": 2
+   },
+   "output": {
+    "message": "單元 2：畫布上還沒有可用的結構。",
+    "ok": false
+   }
+  },
+  {
+   "id": "drawn/structure-empty",
+   "input": {
+    "analysis": {
+     "attachmentCount": 2,
+     "attachmentOrder": [
+      1,
+      2
+     ],
+     "formula": "C2H4",
+     "mUnit": 28.053999999999995,
+     "ok": true
+    },
+    "kind": "drawn",
+    "structure": {
+     "canonicalSmiles": "  ",
+     "valid": true
+    },
+    "unitNumber": 1
+   },
+   "output": {
+    "message": "單元 1：畫布上還沒有可用的結構。",
+    "ok": false
+   }
+  },
+  {
+   "id": "drawn/no-star",
+   "input": {
+    "analysis": {
+     "attachmentCount": 2,
+     "attachmentOrder": [
+      1,
+      2
+     ],
+     "formula": "C2H4",
+     "mUnit": 28.053999999999995,
+     "ok": true
+    },
+    "kind": "drawn",
+    "structure": {
+     "canonicalSmiles": "CCO",
+     "valid": true
+    },
+    "unitNumber": 2
+   },
+   "output": {
+    "message": "單元 2：重複單元需要恰好兩個連接點（*），目前沒有連接點。",
+    "ok": false
+   }
+  },
+  {
+   "id": "drawn/analysis-null",
+   "input": {
+    "analysis": null,
+    "kind": "drawn",
+    "structure": {
+     "canonicalSmiles": "*CC*",
+     "valid": true
+    },
+    "unitNumber": 1
+   },
+   "output": {
+    "message": "單元 1：正在檢查連接點，請稍後再試。",
+    "ok": false
+   }
+  },
+  {
+   "id": "drawn/analysis-failed",
+   "input": {
+    "analysis": {
+     "ok": false,
+     "problem": {
+      "code": "TOO_FEW_ATTACHMENTS",
+      "message": "重複單元需要恰好兩個連接點（*），目前只有 1 個。"
+     }
+    },
+    "kind": "drawn",
+    "structure": {
+     "canonicalSmiles": "*CC",
+     "valid": true
+    },
+    "unitNumber": 2
+   },
+   "output": {
+    "message": "單元 2：重複單元需要恰好兩個連接點（*），目前只有 1 個。",
+    "ok": false
+   }
+  },
+  {
+   "id": "drawn/ok",
+   "input": {
+    "analysis": {
+     "attachmentCount": 2,
+     "attachmentOrder": [
+      1,
+      2
+     ],
+     "formula": "C2H4",
+     "mUnit": 28.053999999999995,
+     "ok": true
+    },
+    "kind": "drawn",
+    "structure": {
+     "canonicalSmiles": "*CC*",
+     "valid": true
+    },
+    "unitNumber": 1
+   },
+   "output": {
+    "ok": true,
+    "smiles": "*CC*"
+   }
+  }
+ ],
+ "commit": "090a89afb660164623de86cd78c23237af099227",
+ "module": "polymer-copolymer",
+ "rdkitjs": "2026.09.1",
+ "tolerance": {
+  "exact": "strings, integers, booleans, null, arrays and object keys must be identical",
+  "float": "shortest round-trip string must be identical; otherwise relative error <= relFallback is accepted and the case is recorded in tolerance_cases",
+  "relFallback": 1e-12
+ }
+}
