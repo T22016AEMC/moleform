@@ -11,7 +11,8 @@
     "selftest:persist": "node run.cjs --selftest=persist",
     "selftest:engine": "node run.cjs --selftest=engine",
     "assemble-engine": "node ../scripts/assemble-engine.mjs",
-    "dist": "npm run assemble-engine && electron-builder --win portable"
+    "dist": "npm run assemble-engine && electron-builder --win nsis",
+    "dist:portable": "npm run assemble-engine && electron-builder --win portable"
   },
   "devDependencies": {
     "electron": "45.3.1",
@@ -52,9 +53,19 @@
     },
     "win": {
       "target": [
-        "portable"
+        "nsis"
       ],
       "signAndEditExecutable": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowElevation": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "deleteAppDataOnUninstall": false,
+      "artifactName": "MoleForm-Setup-${version}.exe"
     },
     "portable": {
       "artifactName": "MoleForm-${version}-portable.exe"
