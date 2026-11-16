@@ -28,4 +28,4 @@
 
 ## CI
 
-（push 後補記）
+commit a438232，run 43833372114（GitHub 公開 API 查詢一次）：success。
