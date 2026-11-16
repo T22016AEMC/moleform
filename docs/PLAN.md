@@ -146,7 +146,7 @@ U02 已由 D46 決定（任務 019）。
 開工前需要使用者決定：基團參數的資料來源（使用者提供的書，或成熟套件，D18）、~~S08（是否用 Joback）~~ 已定 D52
 
 註（2026-11-13，D62；2026-11-16 依 D64 重排）：剩餘工作一律直接寫在 Python 引擎，合併為三張卡，暫列、待使用者逐張確認開工：
-- P6-A：6.7 剩餘（混合密度、混合介電常數、共聚比例影響）
+- P6-A：6.7 剩餘（混合密度、混合介電常數、共聚比例影響）（已完成，任務 P6A）
 - P6-B：6.4 的 Tm、Td（預留任務 040）與 6.5（彈性模數、吸濕性；Tm 對不可結晶聚合物標「不適用」）。開工前需要使用者決定各方法的資料來源（書或文獻）
 - P6-C：6.8 每個公式的自動測試（沿用黃金比對）與 6.9 使用者驗證清單文件
 順序：Phase 6A（M04、M05）→ P6-A → P6-B → P6-C
@@ -157,7 +157,8 @@ U02 已由 D46 決定（任務 019）。
 - [ ] 6.4 Van Krevelen 類：莫耳體積／密度、自由體積分率、極化率、Tg、Tm、Td、CTE、介電常數（Tg 部分完成（任務 026）：`src/core/properties/tgGroupContribution.ts`、輸出 `docs/verification/phase6-Tg-輸出.md`；聚合物莫耳體積與密度完成（任務 029）：`src/data/molar_volume_polymer_groups.csv` 15 列「待使用者審」、`src/core/properties/molarVolumeDensity.ts`、輸出 `docs/verification/phase6-Vm-密度-輸出.md`，小分子液體待 Fedors 1974（與 8.3 合併）；**缺基團診斷完成（任務 030），結果見 `docs/reports/030-結果.md`，待使用者決定**；補收書中現成基團（任務 031）：Yg、VW、Va／Vc 補收，結果見 `docs/reports/031-結果.md`（不勾選 6.4）；；介電常數與折射率（極化率）完成（任務 032）：`src/data/polarization_groups.csv` 20 列、`src/data/molar_refraction_groups.csv` 47 列（皆「待使用者審」）、`src/core/properties/dielectricRefraction.ts`（ε 用式 11.7 搭配 Va 與式 11.8；ΣR 與 α；不做折射率 n，D07），輸出 `docs/verification/phase6-介電-極化率-輸出.md`，結果見 `docs/reports/032-結果.md`，6.4 不勾選；其餘未做）；Tg 校準基團（D54，任務 033）：酚羥基與 9,9-雙(4-伸苯基)茀骨架已收錄為校準值（非書中值，待使用者審），SBI 骨架檢驗未通過不收錄；`src/data/yg_calibrated_groups.csv`、報告 `docs/reports/033-結果.md`）
 - [ ] 6.5 參考趨勢類：彈性模數、吸濕性；Tm 對不可結晶聚合物標為「不適用」
 - [x] 6.6 小分子沸點、熔點（Joback，已定 D52）（Joback Tb、Tf（D52，任務 027）：`src/data/joback_groups.csv` 41 列「待使用者審」、`src/core/properties/jobackTbTf.ts`、輸出 `docs/verification/phase6-TbTf-輸出.md`；聚合物單元不適用）
-- [ ] 6.7 混合配方：混合密度、Fox／Gordon–Taylor Tg、混合介電常數、共聚比例影響
+- [x] 6.7 混合配方：混合密度、Fox／Gordon–Taylor Tg、混合介電常數、共聚比例影響
+  - 補註（任務 P6A，2026-11-16）：混合密度、混合介電常數、共聚比例影響已直接寫在 Python 引擎（D62，無 TS 版、不接介面）：`engine/moleform_core/mixing.py`、`POST /mixture-density`、`/mixture-dielectric`、`/copolymer-scan`，公式與出處（待使用者審）見 `docs/MODELS.md`，結果見 `docs/reports/P6A-結果.md`；Fox 混合式、相對 Tg 先前已完成（Gordon–Taylor 因 k 需實驗值不做）。依此 6.7 勾選；以下各條補註為歷史紀錄
   - 補註：成分 Tg 與混合未固化 Tg（任務 034）已做：Fox–Flory（K 只收酚醛一般型，低可信度，待使用者審；DGEBA 類缺 K）、小分子不計 Tg 只給 Tm、不參與混合（D56）、Fox 混合式（Gordon–Taylor 因 k 需實驗值不做）；`src/core/properties/tgMixing.ts`、輸出 `docs/verification/phase6-Tg-混合-輸出.md`。混合密度、混合介電常數、共聚比例影響未做，6.7 不勾選
   - 補註（任務 036）：6.4 的 CTE 完成：`src/core/properties/cte.ts`（van Krevelen 4.4 節 MTE 模型，E_l = 1.00×10⁻³·VW、E_g = 0.45×10⁻³·VW，α、β；只依 VW 與 Tg）、輸出 `docs/verification/phase6-自由體積-CTE-輸出.md`；自由體積分率：書中沒有由結構計算的方法，不做（使用者 2026-11-06 決定，見 `docs/reports/036-結果.md`）。6.4 不勾選
   - 補註（任務 036a）：6.4 的自由體積（使用者定義經驗係數法，D57，任務 036a）完成：Vf = Vω × 經驗係數（`src/data/free_volume_groups.csv` 19 列、`src/data/free_volume_coefficients.csv` 5 列，皆「待使用者審」；`src/core/properties/freeVolume.ts`），共聚物按莫耳分率加權，輸出 `docs/verification/phase6-自由體積-經驗係數-輸出.md`，結果見 `docs/reports/036a-結果.md`。這是使用者定義的經驗法，不是書中的自由體積分率，不用於 CTE。6.4 不勾選

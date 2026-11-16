@@ -998,7 +998,95 @@ def handle_crosslink_prepare(request: object) -> tuple[int, dict]:
     return 200, {"ok": True, "supported": True, **{k: prep[k] for k in ("setup", "ruleId", "solidUnit", "items", "masses")}}
 
 
+def _mixing_envelope(result: dict, model: str, note: str, quantities: dict) -> tuple[int, dict]:
+    """混合端點共用的回應：統一備註＋各端點備註；缺值時 quantities 內各值為 missing。"""
+    from moleform_core.tg_mixing import UNIFIED_NOTE
+
+    body = {k: v for k, v in result.items() if k not in ("model", "note")}
+    return 200, {"ok": True, "quantities": quantities, **body, "model": model, "note": note, "disclaimer": UNIFIED_NOTE}
+
+
+def handle_mixture_density(request: object) -> tuple[int, dict]:
+    """混合密度（任務 P6A）：理想體積加成 1/ρ_mix = Σ(w_i/ρ_i)。請求 {"components": [{"name"?, "w": 質量分率, "density"?: g/cm³, "smiles"?: 含 * 的單元}]}。
+    任一成分缺密度 → HTTP 200、status = "missing"、列出 missing，不猜值。格式不合：400。尚未接到介面。"""
+    if not isinstance(request, dict) or not isinstance(request.get("components"), list):
+        return 400, {"ok": False, "errors": ["請求需要陣列欄位 components"]}
+    mods, err = _import_core("mixing")
+    if err is not None:
+        return err
+    (mx,) = mods
+    try:
+        result = mx.compute_mixture_density(request["components"])
+    except Exception as e:  # noqa: BLE001
+        return _computation_error(e)
+    if not _json_safe(result):
+        return 400, {"ok": False, "errors": ["結果不是有限數字"]}
+    quantities = {"density": _q(result.get("density"), DENSITY_UNIT, mx.DENSITY_MODEL)}
+    return _mixing_envelope(result, mx.DENSITY_MODEL, mx.DENSITY_NOTE, quantities)
+
+
+def handle_mixture_dielectric(request: object) -> tuple[int, dict]:
+    """混合介電常數（任務 P6A）：Wiener 上界／下界與 Lichtenecker 估計值。請求 {"basis"?: "volume"|"mass", "components": [{"name"?, "phi"|"w", "epsilon"?, "smiles"?, "density"?}]}。
+    缺任一成分的 ε（mass 時含密度）→ HTTP 200、status = "missing"、列出 missing。格式不合：400。尚未接到介面。"""
+    if not isinstance(request, dict) or not isinstance(request.get("components"), list):
+        return 400, {"ok": False, "errors": ["請求需要陣列欄位 components"]}
+    mods, err = _import_core("mixing")
+    if err is not None:
+        return err
+    (mx,) = mods
+    try:
+        result = mx.compute_mixture_dielectric(request["components"], request.get("basis", "volume"))
+    except Exception as e:  # noqa: BLE001
+        return _computation_error(e)
+    if not _json_safe(result):
+        return 400, {"ok": False, "errors": ["結果不是有限數字"]}
+    quantities = {
+        "wienerUpper": _q(result.get("wienerUpper"), "", mx.DIELECTRIC_MODEL),
+        "wienerLower": _q(result.get("wienerLower"), "", mx.DIELECTRIC_MODEL),
+        "lichtenecker": _q(result.get("lichtenecker"), "", mx.DIELECTRIC_MODEL),
+    }
+    return _mixing_envelope(result, mx.DIELECTRIC_MODEL, mx.DIELECTRIC_NOTE, quantities)
+
+
+def handle_copolymer_scan(request: object) -> tuple[int, dict]:
+    """共聚比例掃描（任務 P6A）。請求 {"unitA": "<含 * 的重複單元>", "unitB": "...", "grid"?: [單元 A 的莫耳分率 0–1]}（預設 0 到 1 每 0.1）。
+    每列 {x, tg, density, epsilon, freeVolume}，每格為「值、單位、來源、狀態」；缺基團的格子 status = "missing"（附 reason），其餘照出。單元結構不合：400。尚未接到介面。"""
+    if not isinstance(request, dict) or not isinstance(request.get("unitA"), str) or not isinstance(request.get("unitB"), str):
+        return 400, {"ok": False, "errors": ["請求需要字串欄位 unitA、unitB"]}
+    if len(request["unitA"]) > MAX_SMILES_CHARS or len(request["unitB"]) > MAX_SMILES_CHARS:
+        return 400, {"ok": False, "errors": [f"smiles 太長（上限 {MAX_SMILES_CHARS} 字元）"]}
+    mods, err = _import_core("mixing", "tg", "vm", "dielectric", "free_volume")
+    if err is not None:
+        return err
+    mx, tg, vm, de, fv = mods
+    try:
+        result = mx.compute_copolymer_scan(request["unitA"], request["unitB"], request.get("grid"))
+    except Exception as e:  # noqa: BLE001
+        return _computation_error(e)
+    if not _json_safe(result):
+        return 400, {"ok": False, "errors": ["結果不是有限數字"]}
+    cols = {
+        "tg": (TG_UNIT, mx.SCAN_MODEL),
+        "density": (DENSITY_UNIT, vm.MOLAR_VOLUME_MODEL),
+        "epsilon": ("", de.DIELECTRIC_MODEL),
+        "freeVolume": (FV_UNIT, fv.FREE_VOLUME_MODEL),
+    }
+    rows = []
+    for r in result["rows"]:
+        row: dict = {"x": r["x"]}
+        for name, (unit, source) in cols.items():
+            cell = r[name]
+            row[name] = {**_q(cell["value"], unit, source), "reason": cell["reason"]}
+        rows.append(row)
+    from moleform_core.tg_mixing import UNIFIED_NOTE
+
+    return 200, {"ok": True, "unitA": result["unitA"], "unitB": result["unitB"], "rows": rows, "model": mx.SCAN_MODEL, "note": mx.SCAN_NOTE, "disclaimer": UNIFIED_NOTE}
+
+
 POST_ROUTES = {
+    "/mixture-density": handle_mixture_density,
+    "/mixture-dielectric": handle_mixture_dielectric,
+    "/copolymer-scan": handle_copolymer_scan,
     "/free-volume": handle_free_volume,
     "/relative-tg": handle_relative_tg,
     "/joback": handle_joback,
