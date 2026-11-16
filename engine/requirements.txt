@@ -1,8 +1,19 @@
 # MoleForm Python engine dependencies (task M00, D63: pinned so output can be compared verbatim with TypeScript).
 # RDKit is aligned with @rdkit/rdkit 2026.9.1 in package.json. Versions taken from engine/.venv (pip freeze, 2026-11-13).
+# Task I02: hashes added (sha256 of the wheels actually downloaded with pip download, 2026-11-16).
+# Two hashes per package: win_amd64 wheel (embedded Python build) and manylinux x86_64 wheel (CI, ubuntu).
+# Install with: pip install --require-hashes -r requirements.txt
 # Keep this file ASCII-only: pip on Windows decodes it with the locale code page.
 # Any change requires regenerating tests/golden and passing the comparison.
-numpy==2.5.4
-pillow==13.0.0
-rdkit==2026.9.1
-scipy==1.18.1
+numpy==2.5.4 \
+    --hash=sha256:a7b1b6353e36a7e50de2973a38d705c88ee93adcf120673cee7f45a4a3fa223a \
+    --hash=sha256:fbde6962867ee75b48b0ee29b2b9372ec5d617799dbaf38e82dc0596f2f7738a
+pillow==13.0.0 \
+    --hash=sha256:ff3fe9eb621fbb9db4c4be33ab946f6bac5f98ab50ca8d3260503653656c961b \
+    --hash=sha256:42d63be3af4f9b951b199b0a9d23365d37ab14687e6d77b74940432c8515c4ca
+rdkit==2026.9.1 \
+    --hash=sha256:fa4f8bed07bd6a49f71f49a579b99dc07cd45b9c66af8d5f133adb0a0876361e \
+    --hash=sha256:c700cb37954d84bb864d8e02a55cff8b0f5ee6daff6d79a53a1cfe12459fa8c0
+scipy==1.18.1 \
+    --hash=sha256:5e4d44984abc0020154ea81b247adeddcc3ac5527b975ff798bd1ba0adc513c2 \
+    --hash=sha256:f55fa87b6c612ecd6b058f167c53231b1d14e412efe361d3d6e38b3631c73218

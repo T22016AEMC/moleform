@@ -31,3 +31,7 @@ docs/references/
 desktop/release/
 engine/.venv/
 engine/.reports/
+
+# 任務 I02：內嵌 Python 組裝輸出與下載快取（大型二進位檔不提交）
+desktop/engine-runtime/
+desktop/engine-runtime-cache/

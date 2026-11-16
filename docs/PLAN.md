@@ -138,6 +138,7 @@ U02 已由 D46 決定（任務 019）。
   - [x] M04 聚合物基礎（repeatUnit、endGroups、copolymer、convert、distribution）（報告 `docs/reports/M04-結果.md`）
   - [x] M05 其餘計算模組一次搬完（自由體積、相對 Tg、Joback、成分 Tg、介電、TPSA／LogP、交聯第 0、1 層），全部完成後驗證一次（報告 `docs/reports/M05-結果.md`）
 - 補註（任務 I01，2026-11-16）：介面接引擎完成。桌面版啟動／關閉引擎（`engine/.venv`）、preload 受限橋接（路徑白名單、權杖不暴露）、工作台右欄最小「物性（Python 引擎）」面板（單一單元／小分子與配方混合，value／unit／source／status，缺值顯示 missing 與原因）；TypeScript 物性計算維持黃金標準、介面不呼叫。內嵌 Python 打包（D63）、共聚掃描、相對 Tg、交聯新入口、介面美化（D45）尚未做；見 `docs/reports/I01-結果.md`
+- 補註（任務 I02，2026-11-16）：內嵌 Python 打包完成（D63）。官方 Windows 內嵌式 Python 3.12.7（與 `engine/.venv` 同版，sha256 固定於 `scripts/embed-python.lock.json`）＋ `pip --target` 安裝帶 hash 的 `engine/requirements.txt`（`--require-hashes`）；`moleform_core`、`moleform_engine.py` 與 15 張資料表（打包時從 `src/data` 複製）隨附；`npm run desktop:build` 先跑 `scripts/assemble-engine.mjs`（可重跑、結果一致）；授權聲明 `THIRD-PARTY-LICENSES-ENGINE.txt` 在資源 `engine/` 內。實測見 `docs/reports/I02-結果.md`
 - 補註：介面與桌面外殼維持 TypeScript，計算最終在 Python。**6A.2 完成後，新的計算模組一律直接寫在 Python，不先寫 TypeScript**。任務 038 已定稿且依賴 TypeScript 函式，仍以 TypeScript 完成，之後隨 6A.4 搬遷。即時輸入回饋類的小計算可留在 TypeScript，由 6A.3 逐項決定
 
 ## Phase 6：單一化合物、聚合物與混合配方物性

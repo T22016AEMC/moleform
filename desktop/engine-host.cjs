@@ -12,9 +12,11 @@ const path = require('node:path');
 const START_TIMEOUT_MS = 20000;
 const STOP_GRACE_MS = 3000;
 
-/** Python 執行檔：MOLEFORM_PYTHON ＞ engine/.venv（開發時）＞ PATH 上的 python */
+/** Python 執行檔：MOLEFORM_PYTHON ＞ 打包版資源內的內嵌 Python（任務 I02）＞ engine/.venv（開發時）＞ PATH 上的 python */
 function findPython(engineDir) {
   if (process.env.MOLEFORM_PYTHON) return process.env.MOLEFORM_PYTHON;
+  const embedded = path.join(engineDir, 'python', 'python.exe');
+  if (fs.existsSync(embedded)) return embedded;
   const venv = path.join(engineDir, '.venv', 'Scripts', 'python.exe');
   if (fs.existsSync(venv)) return venv;
   return 'python';
@@ -60,7 +62,11 @@ function startEngine(engineDir) {
   const script = path.join(engineDir, 'moleform_engine.py');
   const token = crypto.randomBytes(32).toString('hex');
   const t0 = Date.now();
-  const child = spawn(python, ['-I', '-u', script], { stdio: ['pipe', 'pipe', 'pipe'], windowsHide: true });
+  // 打包版：資料表用資源內的複本（打包時從 src/data 複製）；開發環境沒有 engine/data，維持讀 src/data
+  const dataDir = path.join(engineDir, 'data');
+  const packaged = fs.existsSync(dataDir) && fs.existsSync(path.join(engineDir, 'python', 'python.exe'));
+  const env = packaged ? { ...process.env, MOLEFORM_DATA_DIR: dataDir } : process.env;
+  const child = spawn(python, ['-I', '-u', script], { stdio: ['pipe', 'pipe', 'pipe'], windowsHide: true, env });
   const engine = { child, token, host: '127.0.0.1', port: 0, python, pid: child.pid, startMs: 0, stderr: '' };
   child.stderr.on('data', (d) => {
     engine.stderr = (engine.stderr + d.toString('utf8')).slice(-4000);

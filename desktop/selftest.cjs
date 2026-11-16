@@ -297,6 +297,42 @@ async function engineMode(ctx, out) {
   out.afterStop = { portClosed: await portClosed(port), launcherPidAlive: pidAlive(pid), pidsStillAlive: descendantsAlive(pid) };
 }
 
+// ---- sample 模式（任務 I02）：啟動引擎後經橋接送固定的 5 個請求（與 scripts/engine-sample.py 相同），結果存檔供與開發環境逐字比對 ----
+const SAMPLE_PMMA = '[*:1]CC([*:2])(C)C(=O)OC';
+const SAMPLE_NOV = '[*:1]Cc1cc([*:2])ccc1O';
+const SAMPLE_ORTHO = '[*:1]Cc1cc([*:2])cc(C)c1O';
+const SAMPLE_PS = '[*:1]CC([*:2])c1ccccc1';
+const SAMPLE_CALLS = {
+  tg: ['/tg', { smiles: SAMPLE_PMMA }],
+  vm: ['/vm', { smiles: SAMPLE_PMMA }],
+  tgNovolac: ['/tg', { smiles: SAMPLE_NOV }],
+  mixTg: ['/tg/mixing', {
+    components: [
+      { id: 'a', name: 'Cresol', category: 'resin', canonicalSmiles: SAMPLE_ORTHO },
+      { id: 'b', name: 'Novolac', category: 'resin', canonicalSmiles: SAMPLE_NOV },
+    ],
+    wtPct: { a: 60.0, b: 40.0 },
+    mn: { a: 1000, b: 1000 },
+  }],
+  mixDensity: ['/mixture-density', { components: [{ name: 'PMMA', w: 0.6, smiles: SAMPLE_PMMA }, { name: 'PS', w: 0.4, smiles: SAMPLE_PS }] }],
+};
+
+async function sampleMode(ctx, out) {
+  const t0 = Date.now();
+  const info = await ctx.launchEngine();
+  out.engine = { state: info.state, pid: info.pid, port: info.port, python: info.python, startMs: info.startMs, error: info.error, stderr: info.stderr };
+  if (info.state !== 'ready') throw new Error(`engine not ready: ${info.error}`);
+  const win = ctx.createWindow({ show: false });
+  await win.loadURL(START_URL);
+  const calls = JSON.stringify(SAMPLE_CALLS);
+  out.results = await runIn(win, `(async () => { const c = ${calls}; const r = {}; for (const [k, [p, b]] of Object.entries(c)) { const x = await window.moleformEngine.call(p, b); r[k] = x.body; } return r; })()`);
+  out.coldToResultsMs = Date.now() - t0;
+  const { port, pid } = info;
+  out.descendantsBefore = descendantsAlive(pid);
+  await ctx.stopEngine();
+  out.afterStop = { portClosed: await portClosed(port), launcherPidAlive: pidAlive(pid), pidsStillAlive: descendantsAlive(pid) };
+}
+
 async function persist(ctx, out) {
   const win = ctx.createWindow({ show: false });
   await win.loadURL(START_URL);
@@ -310,6 +346,7 @@ async function runSelftest(ctx) {
     if (ctx.mode === 'compare') await compare(ctx, out);
     else if (ctx.mode === 'persist') await persist(ctx, out);
     else if (ctx.mode === 'engine') await engineMode(ctx, out);
+    else if (ctx.mode === 'sample') await sampleMode(ctx, out);
     else throw new Error(`unknown selftest mode: ${ctx.mode}`);
   } catch (err) {
     out.error = String(err && err.stack ? err.stack : err);

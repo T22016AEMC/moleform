@@ -10,7 +10,8 @@
     "selftest": "node run.cjs --selftest=compare",
     "selftest:persist": "node run.cjs --selftest=persist",
     "selftest:engine": "node run.cjs --selftest=engine",
-    "dist": "electron-builder --win portable"
+    "assemble-engine": "node ../scripts/assemble-engine.mjs",
+    "dist": "npm run assemble-engine && electron-builder --win portable"
   },
   "devDependencies": {
     "electron": "45.3.1",
@@ -37,11 +38,8 @@
         "to": "app-dist"
       },
       {
-        "from": "../engine",
-        "to": "engine",
-        "filter": [
-          "moleform_engine.py"
-        ]
+        "from": "engine-runtime",
+        "to": "engine"
       }
     ],
     "electronFuses": {
