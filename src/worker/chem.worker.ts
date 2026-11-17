@@ -1,5 +1,6 @@
 import wasmUrl from '@rdkit/rdkit/RDKit_minimal.wasm?url';
 import { getRDKit } from '../core/rdkit/loader';
+import { mapAtomsBetween } from '../core/crosslink/atomMap';
 import { drawMarkedStructure, reactiveAtomsOf } from '../core/crosslink/draw';
 import { bundledTexts, loadTables } from '../core/data/load';
 import { averageMolecularWeight } from '../core/formulation/molecularWeight';
@@ -53,7 +54,12 @@ async function handle(request: ChemRequest): Promise<ChemResponse> {
       for (const analysis of result.components) {
         const marked = result.markedAtoms[analysis.id];
         if (!marked) continue; // 不參與反應的成分不畫
-        const svg = drawMarkedStructure(rdkit, analysis.source, marked, { color: request.color });
+        // 小分子有使用者畫的 Molfile 時改畫 Molfile，並把引擎的 SMILES 原子編號換成 Molfile 的編號（與分子工具 3D 畫面一致）；對應不到就畫 SMILES
+        const display = analysis.isPolymer ? undefined : request.displaySources?.[analysis.id];
+        const displayMarked = display ? mapAtomsBetween(rdkit, analysis.source, display, marked) : null;
+        const svg = display && displayMarked
+          ? drawMarkedStructure(rdkit, display, displayMarked, { color: request.color })
+          : drawMarkedStructure(rdkit, analysis.source, marked, { color: request.color });
         if (svg) svgs[analysis.id] = svg;
         // 共聚物：第二種以後的單元各畫一張，鍵為「成分編號#單元序號」（序號從 1 起算，第 0 種用成分編號）
         // 聚合物端基（任務 022）：有反應原子的端基各畫一張，鍵為「成分編號@end1／@end2」
@@ -89,7 +95,7 @@ async function handle(request: ChemRequest): Promise<ChemResponse> {
       let marked: number[] = [];
       if (request.mark) {
         const t = tables();
-        marked = reactiveAtomsOf(rdkit, request.source, t.functionalGroups, t.reactionRules, request.polymer);
+        marked = reactiveAtomsOf(rdkit, request.source, t.functionalGroups, t.reactionRules, request.polymer, request.groupIds ? new Set(request.groupIds) : null);
       }
       const svg = drawMarkedStructure(rdkit, request.source, marked, { color: request.color, width: request.width, height: request.height });
       return { type: 'draw', id: request.id, ok: true, svg, marked: marked.length };
@@ -104,7 +110,7 @@ async function handle(request: ChemRequest): Promise<ChemResponse> {
       if (!capped.ok) return { type: 'unitFragment', id: request.id, ok: true, fragment: null, message: capped.message, reactiveAtoms: [] };
       const t = tables();
       // 反應原子以原單元計算並排除連接點，與 2D 單元圖相同；封端不改變原子順序，所以編號直接適用於 3D
-      const reactiveAtoms = reactiveAtomsOf(rdkit, request.smiles, t.functionalGroups, t.reactionRules, true);
+      const reactiveAtoms = reactiveAtomsOf(rdkit, request.smiles, t.functionalGroups, t.reactionRules, true, request.groupIds ? new Set(request.groupIds) : null);
       return { type: 'unitFragment', id: request.id, ok: true, fragment: capped.fragment, message: '', reactiveAtoms };
     } catch (e) {
       return { type: 'unitFragment', id: request.id, ok: false, error: message(e) };
@@ -114,7 +120,7 @@ async function handle(request: ChemRequest): Promise<ChemResponse> {
     try {
       const rdkit = await loadRDKit();
       const t = tables();
-      return { type: 'reactiveAtoms', id: request.id, ok: true, atoms: reactiveAtomsOf(rdkit, request.source, t.functionalGroups, t.reactionRules) };
+      return { type: 'reactiveAtoms', id: request.id, ok: true, atoms: reactiveAtomsOf(rdkit, request.source, t.functionalGroups, t.reactionRules, false, request.groupIds ? new Set(request.groupIds) : null) };
     } catch (e) {
       return { type: 'reactiveAtoms', id: request.id, ok: false, error: message(e) };
     }

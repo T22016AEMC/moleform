@@ -1742,6 +1742,14 @@
       ],
       "groups": [
        {
+        "groupId": "hydroxyl.alcohol",
+        "sites": [
+         [
+          20
+         ]
+        ]
+       },
+       {
         "groupId": "ether.epoxide",
         "sites": []
        }
@@ -1752,10 +1760,21 @@
       "name": "P",
       "problem": null,
       "source": "[*:1]Oc1ccc(cc1)C(C)(C)c1ccc(cc1)OCC(O)C[*:2]",
-      "unitGroupCounts": {},
+      "unitGroupCounts": {
+       "hydroxyl.alcohol": 1
+      },
       "units": [
        {
-        "groups": [],
+        "groups": [
+         {
+          "groupId": "hydroxyl.alcohol",
+          "sites": [
+           [
+            20
+           ]
+          ]
+         }
+        ],
         "molFraction": 1,
         "smiles": "[*:1]Oc1ccc(cc1)C(C)(C)c1ccc(cc1)OCC(O)C[*:2]"
        }
@@ -2152,6 +2171,14 @@
       ],
       "groups": [
        {
+        "groupId": "hydroxyl.alcohol",
+        "sites": [
+         [
+          20
+         ]
+        ]
+       },
+       {
         "groupId": "ether.epoxide",
         "sites": []
        }
@@ -2162,10 +2189,21 @@
       "name": "P",
       "problem": null,
       "source": "[*:1]Oc1ccc(cc1)C(C)(C)c1ccc(cc1)OCC(O)C[*:2]",
-      "unitGroupCounts": {},
+      "unitGroupCounts": {
+       "hydroxyl.alcohol": 1
+      },
       "units": [
        {
-        "groups": [],
+        "groups": [
+         {
+          "groupId": "hydroxyl.alcohol",
+          "sites": [
+           [
+            20
+           ]
+          ]
+         }
+        ],
         "molFraction": 1,
         "smiles": "[*:1]Oc1ccc(cc1)C(C)(C)c1ccc(cc1)OCC(O)C[*:2]"
        }
@@ -3254,17 +3292,37 @@
     "dp": 21.100385082027746,
     "endGroupCounts": {},
     "ends": null,
-    "groups": [],
+    "groups": [
+     {
+      "groupId": "hydroxyl.alcohol",
+      "sites": [
+       [
+        20
+       ]
+      ]
+     }
+    ],
     "id": "m",
     "isPolymer": true,
     "molarMass": 6000,
     "name": "m",
     "problem": null,
     "source": "[*:1]Oc1ccc(cc1)C(C)(C)c1ccc(cc1)OCC(O)C[*:2]",
-    "unitGroupCounts": {},
+    "unitGroupCounts": {
+     "hydroxyl.alcohol": 1
+    },
     "units": [
      {
-      "groups": [],
+      "groups": [
+       {
+        "groupId": "hydroxyl.alcohol",
+        "sites": [
+         [
+          20
+         ]
+        ]
+       }
+      ],
       "molFraction": 1,
       "smiles": "[*:1]Oc1ccc(cc1)C(C)(C)c1ccc(cc1)OCC(O)C[*:2]"
      }
@@ -3297,17 +3355,37 @@
     "dp": 14.76083752992144,
     "endGroupCounts": {},
     "ends": null,
-    "groups": [],
+    "groups": [
+     {
+      "groupId": "hydroxyl.alcohol",
+      "sites": [
+       [
+        30
+       ]
+      ]
+     }
+    ],
     "id": "m",
     "isPolymer": true,
     "molarMass": 6000,
     "name": "m",
     "problem": null,
     "source": "[*:1]Oc1ccc(cc1)C1(c2ccccc2-c2ccccc21)c1ccc(cc1)OCC(O)C[*:2]",
-    "unitGroupCounts": {},
+    "unitGroupCounts": {
+     "hydroxyl.alcohol": 1
+    },
     "units": [
      {
-      "groups": [],
+      "groups": [
+       {
+        "groupId": "hydroxyl.alcohol",
+        "sites": [
+         [
+          30
+         ]
+        ]
+       }
+      ],
       "molFraction": 1,
       "smiles": "[*:1]Oc1ccc(cc1)C1(c2ccccc2-c2ccccc21)c1ccc(cc1)OCC(O)C[*:2]"
      }
@@ -3729,17 +3807,37 @@
     "dp": 84.41311779850588,
     "endGroupCounts": {},
     "ends": null,
-    "groups": [],
+    "groups": [
+     {
+      "groupId": "amide.nh",
+      "sites": [
+       [
+        6
+       ]
+      ]
+     }
+    ],
     "id": "m",
     "isPolymer": true,
     "molarMass": 6000,
     "name": "m",
     "problem": null,
     "source": "[*:1]CC([*:2])C(=O)N",
-    "unitGroupCounts": {},
+    "unitGroupCounts": {
+     "amide.nh": 1
+    },
     "units": [
      {
-      "groups": [],
+      "groups": [
+       {
+        "groupId": "amide.nh",
+        "sites": [
+         [
+          6
+         ]
+        ]
+       }
+      ],
       "molFraction": 1,
       "smiles": "[*:1]CC([*:2])C(=O)N"
      }
@@ -3971,7 +4069,16 @@
     "dp": null,
     "endGroupCounts": {},
     "ends": null,
-    "groups": [],
+    "groups": [
+     {
+      "groupId": "hydroxyl.alcohol",
+      "sites": [
+       [
+        3
+       ]
+      ]
+     }
+    ],
     "id": "m",
     "isPolymer": true,
     "molarMass": null,
@@ -5245,17 +5352,37 @@
     "dp": 84.41311779850588,
     "endGroupCounts": {},
     "ends": null,
-    "groups": [],
+    "groups": [
+     {
+      "groupId": "amide.nh",
+      "sites": [
+       [
+        3
+       ]
+      ]
+     }
+    ],
     "id": "m",
     "isPolymer": true,
     "molarMass": 6000,
     "name": "m",
     "problem": null,
     "source": "[*:1]C(=O)NCC[*:2]",
-    "unitGroupCounts": {},
+    "unitGroupCounts": {
+     "amide.nh": 1
+    },
     "units": [
      {
-      "groups": [],
+      "groups": [
+       {
+        "groupId": "amide.nh",
+        "sites": [
+         [
+          3
+         ]
+        ]
+       }
+      ],
       "molFraction": 1,
       "smiles": "[*:1]C(=O)NCC[*:2]"
      }
@@ -5406,17 +5533,43 @@
     "dp": 26.511134676564165,
     "endGroupCounts": {},
     "ends": null,
-    "groups": [],
+    "groups": [
+     {
+      "groupId": "amide.nh",
+      "sites": [
+       [
+        1
+       ],
+       [
+        10
+       ]
+      ]
+     }
+    ],
     "id": "m",
     "isPolymer": true,
     "molarMass": 6000,
     "name": "m",
     "problem": null,
     "source": "[*:1]NC(=O)CCCCC(=O)NCCCCCC[*:2]",
-    "unitGroupCounts": {},
+    "unitGroupCounts": {
+     "amide.nh": 2
+    },
     "units": [
      {
-      "groups": [],
+      "groups": [
+       {
+        "groupId": "amide.nh",
+        "sites": [
+         [
+          1
+         ],
+         [
+          10
+         ]
+        ]
+       }
+      ],
       "molFraction": 1,
       "smiles": "[*:1]NC(=O)CCCCC(=O)NCCCCCC[*:2]"
      }
@@ -7193,17 +7346,37 @@
     "dp": 53.02226935312831,
     "endGroupCounts": {},
     "ends": null,
-    "groups": [],
+    "groups": [
+     {
+      "groupId": "amide.nh",
+      "sites": [
+       [
+        3
+       ]
+      ]
+     }
+    ],
     "id": "m",
     "isPolymer": true,
     "molarMass": 6000,
     "name": "m",
     "problem": null,
     "source": "[*:1]C(=O)NCCCCC[*:2]",
-    "unitGroupCounts": {},
+    "unitGroupCounts": {
+     "amide.nh": 1
+    },
     "units": [
      {
-      "groups": [],
+      "groups": [
+       {
+        "groupId": "amide.nh",
+        "sites": [
+         [
+          3
+         ]
+        ]
+       }
+      ],
       "molFraction": 1,
       "smiles": "[*:1]C(=O)NCCCCC[*:2]"
      }
@@ -7279,17 +7452,37 @@
     "dp": 53.02226935312831,
     "endGroupCounts": {},
     "ends": null,
-    "groups": [],
+    "groups": [
+     {
+      "groupId": "amide.nh",
+      "sites": [
+       [
+        1
+       ]
+      ]
+     }
+    ],
     "id": "m",
     "isPolymer": true,
     "molarMass": 6000,
     "name": "m",
     "problem": null,
     "source": "[*:1]NC(=O)CCCCC[*:2]",
-    "unitGroupCounts": {},
+    "unitGroupCounts": {
+     "amide.nh": 1
+    },
     "units": [
      {
-      "groups": [],
+      "groups": [
+       {
+        "groupId": "amide.nh",
+        "sites": [
+         [
+          1
+         ]
+        ]
+       }
+      ],
       "molFraction": 1,
       "smiles": "[*:1]NC(=O)CCCCC[*:2]"
      }
@@ -7476,7 +7669,16 @@
     "dp": null,
     "endGroupCounts": {},
     "ends": null,
-    "groups": [],
+    "groups": [
+     {
+      "groupId": "hydroxyl.alcohol",
+      "sites": [
+       [
+        2
+       ]
+      ]
+     }
+    ],
     "id": "m",
     "isPolymer": false,
     "molarMass": 46.069,
@@ -7506,7 +7708,16 @@
     "dp": null,
     "endGroupCounts": {},
     "ends": null,
-    "groups": [],
+    "groups": [
+     {
+      "groupId": "hydroxyl.alcohol",
+      "sites": [
+       [
+        3
+       ]
+      ]
+     }
+    ],
     "id": "m",
     "isPolymer": false,
     "molarMass": 60.096000000000004,
@@ -7536,7 +7747,16 @@
     "dp": null,
     "endGroupCounts": {},
     "ends": null,
-    "groups": [],
+    "groups": [
+     {
+      "groupId": "hydroxyl.alcohol",
+      "sites": [
+       [
+        4
+       ]
+      ]
+     }
+    ],
     "id": "m",
     "isPolymer": false,
     "molarMass": 74.12299999999999,
@@ -7979,7 +8199,16 @@
     "dp": null,
     "endGroupCounts": {},
     "ends": null,
-    "groups": [],
+    "groups": [
+     {
+      "groupId": "amide.nh",
+      "sites": [
+       [
+        3
+       ]
+      ]
+     }
+    ],
     "id": "m",
     "isPolymer": false,
     "molarMass": 59.068,
@@ -8440,7 +8669,21 @@
     "dp": null,
     "endGroupCounts": {},
     "ends": null,
-    "groups": [],
+    "groups": [
+     {
+      "groupId": "alkene.terminal",
+      "sites": [
+       [
+        0,
+        1
+       ],
+       [
+        3,
+        2
+       ]
+      ]
+     }
+    ],
     "id": "m",
     "isPolymer": false,
     "molarMass": 54.09199999999999,
@@ -8989,7 +9232,17 @@
     "dp": null,
     "endGroupCounts": {},
     "ends": null,
-    "groups": [],
+    "groups": [
+     {
+      "groupId": "alkene.terminal",
+      "sites": [
+       [
+        0,
+        1
+       ]
+      ]
+     }
+    ],
     "id": "m",
     "isPolymer": false,
     "molarMass": 42.080999999999996,
@@ -9702,7 +9955,16 @@
     "dp": null,
     "endGroupCounts": {},
     "ends": null,
-    "groups": [],
+    "groups": [
+     {
+      "groupId": "hydroxyl.alcohol",
+      "sites": [
+       [
+        1
+       ]
+      ]
+     }
+    ],
     "id": "m",
     "isPolymer": false,
     "molarMass": 32.042,
@@ -9732,7 +9994,16 @@
     "dp": null,
     "endGroupCounts": {},
     "ends": null,
-    "groups": [],
+    "groups": [
+     {
+      "groupId": "hydroxyl.alcohol",
+      "sites": [
+       [
+        0
+       ]
+      ]
+     }
+    ],
     "id": "m",
     "isPolymer": false,
     "molarMass": 100.161,
@@ -10131,9 +10402,202 @@
     9,
     10
    ]
+  },
+  {
+   "id": "queryAtomMaps/[$(N-!@[#6]):1](=!@[C:2]=!@[O:3])",
+   "input": {
+    "kind": "queryAtomMaps",
+    "smarts": "[$(N-!@[#6]):1](=!@[C:2]=!@[O:3])"
+   },
+   "output": [
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "id": "queryAtomMaps/[O;H1;$(O-!@[C;!$(C=!@[O,N,S])]):1]",
+   "input": {
+    "kind": "queryAtomMaps",
+    "smarts": "[O;H1;$(O-!@[C;!$(C=!@[O,N,S])]):1]"
+   },
+   "output": [
+    1
+   ]
+  },
+  {
+   "id": "queryAtomMaps/[NX3;H1,H2;$(N-[CX3]=[OX1]);!$(N-C(=O)-[N,O]);!$(N-c):1]",
+   "input": {
+    "kind": "queryAtomMaps",
+    "smarts": "[NX3;H1,H2;$(N-[CX3]=[OX1]);!$(N-C(=O)-[N,O]);!$(N-c):1]"
+   },
+   "output": [
+    1
+   ]
+  },
+  {
+   "id": "queryAtomMaps/[OX2H:3][CH2X4:2][NX3:1]-[c;$(c1ncncn1)]",
+   "input": {
+    "kind": "queryAtomMaps",
+    "smarts": "[OX2H:3][CH2X4:2][NX3:1]-[c;$(c1ncncn1)]"
+   },
+   "output": [
+    3,
+    2,
+    1,
+    0
+   ]
+  },
+  {
+   "id": "queryAtomMaps/[CX4:4][OX2:3][CH2X4:2][NX3:1]-[c;$(c1ncncn1)]",
+   "input": {
+    "kind": "queryAtomMaps",
+    "smarts": "[CX4:4][OX2:3][CH2X4:2][NX3:1]-[c;$(c1ncncn1)]"
+   },
+   "output": [
+    4,
+    3,
+    2,
+    1,
+    0
+   ]
+  },
+  {
+   "id": "queryAtomMaps/[SiX4:1]-[OX2:2]-[CX4:3]",
+   "input": {
+    "kind": "queryAtomMaps",
+    "smarts": "[SiX4:1]-[OX2:2]-[CX4:3]"
+   },
+   "output": [
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "id": "queryAtomMaps/[SiX4:1]-[OX2H:2]",
+   "input": {
+    "kind": "queryAtomMaps",
+    "smarts": "[SiX4:1]-[OX2H:2]"
+   },
+   "output": [
+    1,
+    2
+   ]
+  },
+  {
+   "id": "queryAtomMaps/[OX2H2+0:1]",
+   "input": {
+    "kind": "queryAtomMaps",
+    "smarts": "[OX2H2+0:1]"
+   },
+   "output": [
+    1
+   ]
+  },
+  {
+   "id": "queryAtomMaps/[SiX4;H1:1]",
+   "input": {
+    "kind": "queryAtomMaps",
+    "smarts": "[SiX4;H1:1]"
+   },
+   "output": [
+    1
+   ]
+  },
+  {
+   "id": "queryAtomMaps/[CH2:1]=[CH1:2]-[#6,#14;!$([#6]=[O,N,S])]",
+   "input": {
+    "kind": "queryAtomMaps",
+    "smarts": "[CH2:1]=[CH1:2]-[#6,#14;!$([#6]=[O,N,S])]"
+   },
+   "output": [
+    1,
+    2,
+    0
+   ]
+  },
+  {
+   "id": "queryAtomMaps/[CH2:1]=[CH1:2]-[CH2X4:3]",
+   "input": {
+    "kind": "queryAtomMaps",
+    "smarts": "[CH2:1]=[CH1:2]-[CH2X4:3]"
+   },
+   "output": [
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "id": "queryAtomMaps/[#6:5]-[N:4]1-[C:6](=O)-[CH:2]=[CH:3]-[C:7]1=O",
+   "input": {
+    "kind": "queryAtomMaps",
+    "smarts": "[#6:5]-[N:4]1-[C:6](=O)-[CH:2]=[CH:3]-[C:7]1=O"
+   },
+   "output": [
+    5,
+    4,
+    6,
+    0,
+    2,
+    3,
+    7,
+    0
+   ]
+  },
+  {
+   "id": "queryAtomMaps/[O:1]1[CH2:2][N:3]([#6:4])[CH2:5][c:6]:[c:7]1",
+   "input": {
+    "kind": "queryAtomMaps",
+    "smarts": "[O:1]1[CH2:2][N:3]([#6:4])[CH2:5][c:6]:[c:7]1"
+   },
+   "output": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+   ]
+  },
+  {
+   "id": "queryAtomMaps/[OX2H:4][CX3:2](=[O:3])[c:1]:[c:5][CX3:6](=[O:7])[NX3H1:8]-[#6]",
+   "input": {
+    "kind": "queryAtomMaps",
+    "smarts": "[OX2H:4][CX3:2](=[O:3])[c:1]:[c:5][CX3:6](=[O:7])[NX3H1:8]-[#6]"
+   },
+   "output": [
+    4,
+    2,
+    3,
+    1,
+    5,
+    6,
+    7,
+    8,
+    0
+   ]
+  },
+  {
+   "id": "queryAtomMaps/[OX2H:1][c:5]:[c:6][NX3H1:2][CX3:3](=[O:4])[#6]",
+   "input": {
+    "kind": "queryAtomMaps",
+    "smarts": "[OX2H:1][c:5]:[c:6][NX3H1:2][CX3:3](=[O:4])[#6]"
+   },
+   "output": [
+    1,
+    5,
+    6,
+    2,
+    3,
+    4,
+    0
+   ]
   }
  ],
- "commit": "dfa27f60817c75a9c9def57f9f3aecb5329f2d9e+dirty-src",
+ "commit": "9f2dbc8fcfe894f1ff350ec37514f0e789877560+dirty-src",
  "module": "crosslink",
  "rdkitjs": "2026.09.1",
  "tolerance": {

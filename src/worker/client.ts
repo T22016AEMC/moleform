@@ -90,8 +90,8 @@ export async function validateInput(input: string): Promise<ValidateOutcome> {
 export type CrosslinkDrawOutcome = { ok: true; svgs: Record<string, string> } | { ok: false; error: string };
 
 /** 請 Worker 依引擎回傳的交聯第 0 層結果畫出反應原子標記圖（任務 016；I05 起計算在引擎，這裡只繪圖） */
-export async function drawCrosslinkInWorker(result: CrosslinkResult, color: string): Promise<CrosslinkDrawOutcome> {
-  const response = await request((id) => ({ type: 'crosslinkDraw', id, result, color }));
+export async function drawCrosslinkInWorker(result: CrosslinkResult, color: string, displaySources?: Record<string, string>): Promise<CrosslinkDrawOutcome> {
+  const response = await request((id) => ({ type: 'crosslinkDraw', id, result, color, ...(displaySources && Object.keys(displaySources).length > 0 ? { displaySources } : {}) }));
   if (response.type === 'crosslinkDraw') return response.ok ? { ok: true, svgs: response.svgs } : { ok: false, error: response.error };
   return { ok: false, error: response.type === 'status' && !response.ready ? response.error : '收到非預期的回應' };
 }
@@ -111,22 +111,25 @@ export async function drawStructureInWorker(options: {
   color: string;
   mark: boolean;
   polymer: boolean;
+  /** 標記時只標這些官能基（目前配方中配到對的）；沒給時標所有已登錄的官能基 */
+  groupIds?: readonly string[];
 }): Promise<DrawnStructure | null> {
-  const response = await request((id) => ({ type: 'draw', id, ...options }));
+  const { groupIds, ...rest } = options;
+  const response = await request((id) => ({ type: 'draw', id, ...rest, ...(groupIds ? { groupIds: [...groupIds] } : {}) }));
   return response.type === 'draw' && response.ok ? { svg: response.svg, marked: response.marked } : null;
 }
 
 export type UnitFragmentOutcome = { ok: true; fragment: UnitFragment; reactiveAtoms: number[] } | { ok: false; message: string };
 
 /** 重複單元的 3D 片段（連接點改成甲基）與反應原子（任務 024）；Worker 失敗時回傳 null */
-export async function unitFragmentInWorker(smiles: string): Promise<UnitFragmentOutcome | null> {
-  const response = await request((id) => ({ type: 'unitFragment', id, smiles }));
+export async function unitFragmentInWorker(smiles: string, groupIds?: readonly string[]): Promise<UnitFragmentOutcome | null> {
+  const response = await request((id) => ({ type: 'unitFragment', id, smiles, ...(groupIds ? { groupIds: [...groupIds] } : {}) }));
   if (response.type !== 'unitFragment' || !response.ok) return null;
   return response.fragment ? { ok: true, fragment: response.fragment, reactiveAtoms: response.reactiveAtoms } : { ok: false, message: response.message };
 }
 
-/** 結構上已登錄反應官能基的反應原子（0 起算）；Worker 失敗時回傳 null */
-export async function reactiveAtomsInWorker(source: string): Promise<number[] | null> {
-  const response = await request((id) => ({ type: 'reactiveAtoms', id, source }));
+/** 結構上反應官能基的反應原子（0 起算，編號是 source 自己的原子順序）；groupIds：只標這些官能基；Worker 失敗時回傳 null */
+export async function reactiveAtomsInWorker(source: string, groupIds?: readonly string[]): Promise<number[] | null> {
+  const response = await request((id) => ({ type: 'reactiveAtoms', id, source, ...(groupIds ? { groupIds: [...groupIds] } : {}) }));
   return response.type === 'reactiveAtoms' && response.ok ? response.atoms : null;
 }

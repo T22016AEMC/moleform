@@ -23,12 +23,14 @@ export interface DrawOptions {
   mark?: boolean;
   /** 聚合物的重複單元 */
   polymer?: boolean;
+  /** 標記時只標這些官能基（目前配方中配到對的，P7-1B 修正 2）；沒給時標所有已登錄的官能基 */
+  groupIds?: readonly string[];
 }
 
 type DrawState = { kind: 'loading' } | { kind: 'failed' } | { kind: 'done'; drawn: DrawnStructure };
 
-export function useStructureDrawing({ source, width, height, mark = false, polymer = false }: DrawOptions): DrawState {
-  const key = JSON.stringify([source, width, height, mark, polymer]);
+export function useStructureDrawing({ source, width, height, mark = false, polymer = false, groupIds }: DrawOptions): DrawState {
+  const key = JSON.stringify([source, width, height, mark, polymer, groupIds ?? null]);
   const [state, setState] = useState<{ key: string; value: DrawState } | null>(null);
 
   useEffect(() => {
@@ -42,7 +44,7 @@ export function useStructureDrawing({ source, width, height, mark = false, polym
       return;
     }
     let cancelled = false;
-    void drawStructureInWorker({ source, width, height, color: accentColor(), mark, polymer }).then((drawn) => {
+    void drawStructureInWorker({ source, width, height, color: accentColor(), mark, polymer, ...(groupIds ? { groupIds } : {}) }).then((drawn) => {
       if (cancelled) return;
       if (drawn?.svg) {
         cache.set(key, drawn);
@@ -54,6 +56,8 @@ export function useStructureDrawing({ source, width, height, mark = false, polym
     return () => {
       cancelled = true;
     };
+    // groupIds 的內容已在 key 裡
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key, source, width, height, mark, polymer]);
 
   return state?.key === key ? state.value : { kind: 'loading' };

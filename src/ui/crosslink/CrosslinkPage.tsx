@@ -16,6 +16,7 @@ import { analyzeCrosslinkViaEngine } from '../engine/crosslinkEngine';
 import { UnifiedNote } from '../components/UnifiedNote';
 import { ResultBlock } from '../workbench/ResultBlock';
 import { Layer1Section } from './Layer1Cards';
+import { setLatestCrosslinkResult } from './latestCrosslink';
 import './crosslink.css';
 
 const RECALC_DELAY_MS = 300;
@@ -76,6 +77,11 @@ export function CrosslinkPage({ formulation }: { formulation: Formulation | null
     // components 由 key 決定內容；key 不變時不重算
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key]);
+
+  // 分子工具與成分詳細彈窗的反應原子標記只標配到對的官能基（P7-1B 修正 2）
+  useEffect(() => {
+    setLatestCrosslinkResult(state.kind === 'done' ? state.result : null);
+  }, [state]);
 
   return (
     <div className="crosslink-page">

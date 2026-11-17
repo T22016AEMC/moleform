@@ -121,7 +121,10 @@ export async function analyzeCrosslinkViaEngine(components: readonly CrosslinkCo
   if (!reply.ok) return { ok: false, error: reply.error };
   const { ok: _ok, ...rest } = reply.body;
   const result = rest as unknown as CrosslinkResult;
-  const drawn = await drawCrosslinkInWorker(result, color);
+  // 小分子有使用者畫的 Molfile 時，標記圖用 Molfile 畫、編號換成 Molfile 的編號（與分子工具 3D 一致，P7-1B 修正 2）
+  const displaySources: Record<string, string> = {};
+  for (const c of components) if (c.molfile && !c.canonicalSmiles.includes('*')) displaySources[c.id] = c.molfile;
+  const drawn = await drawCrosslinkInWorker(result, color, displaySources);
   if (!drawn.ok) return { ok: false, error: drawn.error };
   return { ok: true, value: { result, svgs: drawn.svgs } };
 }

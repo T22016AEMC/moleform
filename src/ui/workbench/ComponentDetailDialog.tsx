@@ -17,6 +17,7 @@ import { KetcherPane } from './KetcherPane';
 import { Modal } from './Modal';
 import { applyStructureToRow, candidateFromValidation, isPolymerSmiles, libraryInputFromRow } from './model';
 import { StructureImage, useStructureDrawing } from './StructureImage';
+import { usePairedGroups } from '../crosslink/latestCrosslink';
 
 interface Props {
   row: Row;
@@ -61,7 +62,9 @@ export function ComponentDetailDialog({ row, area, onChange, onClose }: Props) {
   };
   const molblock = useMolblock(row);
   const source = polymer ? row.canonicalSmiles : molblock || row.canonicalSmiles;
-  const drawing = useStructureDrawing({ source, width: 440, height: 300, mark: true, polymer });
+  // 只標這個成分在目前配方中配到對的官能基（P7-1B 修正 2）；編號是 source（Molfile）的原子順序，與下方 3D 畫面相同
+  const pairedGroups = usePairedGroups(row.id);
+  const drawing = useStructureDrawing({ source, width: 440, height: 300, mark: true, polymer, groupIds: pairedGroups });
 
   // 共聚物：所有單元並排顯示（第一種單元是成分本身的結構）
   const extraUnits = polymer ? (row.polymerEdit?.extraUnits ?? []) : [];
@@ -203,10 +206,10 @@ export function ComponentDetailDialog({ row, area, onChange, onClose }: Props) {
             />
           )}
           <UnitDrawPanel draw={draw} edit={row.polymerEdit ?? emptyPolymerEdit()} onEditChange={(polymerEdit) => onChange((r) => ({ ...r, polymerEdit }))} />
-          <UnitFragment3D units={fragmentUnits} />
+          <UnitFragment3D units={fragmentUnits} componentId={row.id} />
         </div>
       ) : (
-        <Conformer3DCard structure={molblock ? { valid: true, molblock, canonicalSmiles: row.canonicalSmiles } : null} />
+        <Conformer3DCard structure={molblock ? { valid: true, molblock, canonicalSmiles: row.canonicalSmiles } : null} componentId={row.id} />
       )}
 
       <div className="modal-section">

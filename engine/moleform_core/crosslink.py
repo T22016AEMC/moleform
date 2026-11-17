@@ -38,6 +38,7 @@ VERDICT_LABEL = {
     "chain": "具鏈延長的結構條件",
     "capping": "具封端／接枝的結構條件",
     "undetermined": "無法判定（聚合物缺少分子量）",
+    "catalyst": "催化劑觸發的反應（催化劑不計當量，不判定網路）",
     "none": "無反應",
 }
 PAIR_KIND_LABEL = {
@@ -46,7 +47,11 @@ PAIR_KIND_LABEL = {
     "capping": "具封端的結構條件",
     "graft": "具接枝的結構條件",
     "undetermined": "無法判定",
+    "catalyst": "催化劑配對（不計當量）",
 }
+# P7-1B 修正（使用者 2026-11-17）：這些官能基是催化劑（光酸產生劑不被消耗），含它們的規則配對不用 f 計數判定
+# （否則 f = 1 會被誤判成「具封端」）；配對顯示「催化劑配對（不計當量）」，第 1 層仍由 UNSUPPORTED_RULES 回報不支援。
+CATALYST_GROUPS = frozenset({"pag.onium"})
 
 EPS = 1e-9
 
@@ -203,6 +208,8 @@ def judge_formulation(kinds: Sequence[str]) -> str:
         return "capping"
     if "undetermined" in kinds:
         return "undetermined"
+    if "catalyst" in kinds:
+        return "catalyst"
     return "none"
 
 
@@ -426,7 +433,12 @@ def analyze_crosslink(
                 else:
                     gb = group_name.get(rule["group_b"])
                     name_b = gb["name_zh"] if gb is not None else rule["group_b"]
-                kind = judge_pair(end_a["f"], end_a["f"], A["isPolymer"], A["isPolymer"]) if self_rule else judge_pair(end_a["f"], end_b["f"], A["isPolymer"], B["isPolymer"])
+                if rule["group_a"] in CATALYST_GROUPS or rule["group_b"] in CATALYST_GROUPS:
+                    kind = "catalyst"
+                elif self_rule:
+                    kind = judge_pair(end_a["f"], end_a["f"], A["isPolymer"], A["isPolymer"])
+                else:
+                    kind = judge_pair(end_a["f"], end_b["f"], A["isPolymer"], B["isPolymer"])
                 pairs.append(
                     {
                         "ruleId": rule["id"],

@@ -66,7 +66,8 @@ export interface ComponentAnalysis {
   problem: string | null;
 }
 
-export type PairKind = 'network' | 'chain' | 'capping' | 'graft' | 'undetermined';
+/** 'catalyst'：配對的一邊是催化劑（光酸產生劑，不被消耗）；P7-1B 修正，只由 Python 引擎產生，不用 f 計數判定 */
+export type PairKind = 'network' | 'chain' | 'capping' | 'graft' | 'undetermined' | 'catalyst';
 
 export interface PairEnd {
   componentId: string;
@@ -103,7 +104,7 @@ export interface PairResult {
   temperature: string;
 }
 
-export type Verdict = 'network' | 'chain' | 'capping' | 'undetermined' | 'none';
+export type Verdict = 'network' | 'chain' | 'capping' | 'undetermined' | 'catalyst' | 'none';
 
 export interface CrosslinkResult {
   modelName: string;
@@ -129,6 +130,7 @@ export const VERDICT_LABEL: Record<Verdict, string> = {
   chain: '具鏈延長的結構條件',
   capping: '具封端／接枝的結構條件',
   undetermined: '無法判定（聚合物缺少分子量）',
+  catalyst: '催化劑觸發的反應（催化劑不計當量，不判定網路）',
   none: '無反應',
 };
 
@@ -138,4 +140,5 @@ export const PAIR_KIND_LABEL: Record<PairKind, string> = {
   capping: '具封端的結構條件',
   graft: '具接枝的結構條件',
   undetermined: '無法判定',
+  catalyst: '催化劑配對（不計當量）',
 };

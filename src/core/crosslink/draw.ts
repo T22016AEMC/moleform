@@ -53,8 +53,10 @@ export function drawMarkedStructure(RDKit: RDKitModule, source: string, marked: 
 }
 
 /**
- * 結構上所有「已登錄在反應規則裡的官能基」的反應原子（0 起算，排序去重）。
- * 用於「分子工具」分頁的 3D 標記：與配方無關，只看這個結構本身有沒有可反應的官能基。
+ * 結構上「已登錄在反應規則裡的官能基」的反應原子（0 起算，排序去重）。
+ * 用於「分子工具」分頁與成分詳細彈窗的 2D／3D 標記。
+ * onlyGroups（P7-1B 修正 2）：只標這些官能基（目前配方中確實配到對的官能基，見 pairedGroups.ts）；沒給時標所有已登錄的官能基（舊行為，供不看配方的呼叫端與測試）。
+ * 編號是傳入結構（source）自己的原子順序，與畫面顯示的編號相同。
  */
 export function reactiveAtomsOf(
   RDKit: RDKitModule,
@@ -63,6 +65,7 @@ export function reactiveAtomsOf(
   rules: readonly ReactionRuleRow[],
   /** 聚合物的重複單元要排除連接點（任務 018 的成分詳細彈窗）；預設 false，3D 的用法不變 */
   excludeAttachments = false,
+  onlyGroups?: ReadonlySet<string> | null,
 ): number[] {
   const inRules = new Set(rules.flatMap((r) => [r.group_a, r.group_b]).filter((id) => id !== ''));
   const mol = parseStructure(RDKit, source);
@@ -71,7 +74,7 @@ export function reactiveAtomsOf(
     const found = findGroupSites(
       RDKit,
       mol,
-      groups.filter((g) => inRules.has(g.id)),
+      groups.filter((g) => inRules.has(g.id) && (!onlyGroups || onlyGroups.has(g.id))),
       excludeAttachments, // 3D 只用於小分子（D05），預設不需排除連接點
     );
     return [...new Set(found.flatMap((g) => g.sites.flat()))].sort((a, b) => a - b);

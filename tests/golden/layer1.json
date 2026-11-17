@@ -2324,6 +2324,14 @@
        ],
        "groups": [
         {
+         "groupId": "hydroxyl.alcohol",
+         "sites": [
+          [
+           20
+          ]
+         ]
+        },
+        {
          "groupId": "ether.epoxide",
          "sites": []
         }
@@ -2334,10 +2342,21 @@
        "name": "P",
        "problem": null,
        "source": "[*:1]Oc1ccc(cc1)C(C)(C)c1ccc(cc1)OCC(O)C[*:2]",
-       "unitGroupCounts": {},
+       "unitGroupCounts": {
+        "hydroxyl.alcohol": 1
+       },
        "units": [
         {
-         "groups": [],
+         "groups": [
+          {
+           "groupId": "hydroxyl.alcohol",
+           "sites": [
+            [
+             20
+            ]
+           ]
+          }
+         ],
          "molFraction": 1,
          "smiles": "[*:1]Oc1ccc(cc1)C(C)(C)c1ccc(cc1)OCC(O)C[*:2]"
         }
@@ -2851,6 +2870,14 @@
        ],
        "groups": [
         {
+         "groupId": "hydroxyl.alcohol",
+         "sites": [
+          [
+           20
+          ]
+         ]
+        },
+        {
          "groupId": "ether.epoxide",
          "sites": []
         }
@@ -2861,10 +2888,21 @@
        "name": "P",
        "problem": null,
        "source": "[*:1]Oc1ccc(cc1)C(C)(C)c1ccc(cc1)OCC(O)C[*:2]",
-       "unitGroupCounts": {},
+       "unitGroupCounts": {
+        "hydroxyl.alcohol": 1
+       },
        "units": [
         {
-         "groups": [],
+         "groups": [
+          {
+           "groupId": "hydroxyl.alcohol",
+           "sites": [
+            [
+             20
+            ]
+           ]
+          }
+         ],
          "molFraction": 1,
          "smiles": "[*:1]Oc1ccc(cc1)C(C)(C)c1ccc(cc1)OCC(O)C[*:2]"
         }
@@ -28940,7 +28978,7 @@
    "output": 0.00009999999999999991
   }
  ],
- "commit": "dfa27f60817c75a9c9def57f9f3aecb5329f2d9e+dirty-src",
+ "commit": "9f2dbc8fcfe894f1ff350ec37514f0e789877560+dirty-src",
  "module": "layer1",
  "rdkitjs": "2026.09.1",
  "tolerance": {

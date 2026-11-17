@@ -192,9 +192,10 @@ describe('催化劑檢查（D26）：以假想需要催化劑的規則測試程�
 });
 
 describe('反應原子標記', () => {
-  it('3D 用的反應原子：BADGE 的環上 6 個原子；乙醇沒有', () => {
+  it('3D 用的反應原子：BADGE 的環上 6 個原子；乙醇只有醇羥基的 O（P7-1B 起已登錄）；丁烷沒有', () => {
     expect(reactiveAtomsOf(RDKit, 'CC(C)(c1ccc(OCC2CO2)cc1)c1ccc(OCC2CO2)cc1', groups, rules)).toHaveLength(6);
-    expect(reactiveAtomsOf(RDKit, 'CCO', groups, rules)).toEqual([]);
+    expect(reactiveAtomsOf(RDKit, 'CCO', groups, rules)).toEqual([2]); // P7-1B：hydroxyl.alcohol 已登錄，乙醇的 OH 會標出（原斷言為 []）
+    expect(reactiveAtomsOf(RDKit, "CCCC", groups, rules)).toEqual([]);
   });
 
   it('2D 圖：產生 SVG，標記的原子帶編號（1 起算）', () => {

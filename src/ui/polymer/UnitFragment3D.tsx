@@ -4,6 +4,7 @@
 import { useEffect, useState } from 'react';
 import type { UnitFragment } from '../../core/polymer/unitFragment';
 import { unitFragmentInWorker } from '../../worker/client';
+import { usePairedGroups } from '../crosslink/latestCrosslink';
 import { Conformer3DCard } from '../structure/Conformer3DCard';
 
 type Loaded = { smiles: string; state: { kind: 'ready'; fragment: UnitFragment; reactiveAtoms: number[] } | { kind: 'error'; message: string } };
@@ -11,9 +12,13 @@ type Loaded = { smiles: string; state: { kind: 'ready'; fragment: UnitFragment; 
 interface Props {
   /** 全部單元的 SMILES（依單元清單順序，第一種是成分本身的結構）；一種時不顯示選擇 */
   units: readonly string[];
+  /** 成分詳細彈窗的成分 id：反應原子只標該成分配到對的官能基；沒給時取整個配方（分子工具） */
+  componentId?: string;
 }
 
-export function UnitFragment3D({ units }: Props) {
+export function UnitFragment3D({ units, componentId }: Props) {
+  const pairedGroups = usePairedGroups(componentId);
+  const pairedKey = pairedGroups.join(',');
   const [picked, setPicked] = useState(0);
   const index = Math.min(picked, Math.max(units.length - 1, 0));
   const smiles = units[index] ?? '';
@@ -22,7 +27,7 @@ export function UnitFragment3D({ units }: Props) {
   useEffect(() => {
     if (smiles.trim() === '' || !smiles.includes('*')) return;
     let cancelled = false;
-    void unitFragmentInWorker(smiles).then((outcome) => {
+    void unitFragmentInWorker(smiles, pairedGroups).then((outcome) => {
       if (cancelled) return;
       if (!outcome) setLoaded({ smiles, state: { kind: 'error', message: '無法啟動結構計算，請稍後再試。' } });
       else if (!outcome.ok) setLoaded({ smiles, state: { kind: 'error', message: outcome.message } });
@@ -31,7 +36,9 @@ export function UnitFragment3D({ units }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [smiles]);
+    // pairedGroups 的內容由 pairedKey 決定
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [smiles, pairedKey]);
 
   const current = loaded?.smiles === smiles ? loaded.state : null;
   return (

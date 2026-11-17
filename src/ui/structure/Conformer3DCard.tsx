@@ -9,6 +9,7 @@ import {
 import { conformersToSdf } from '../../core/conformer/export';
 import type { ConformerBatch } from '../../core/conformer/types';
 import { reactiveAtomsInWorker } from '../../worker/client';
+import { usePairedGroups } from '../crosslink/latestCrosslink';
 import { generateConformers, type GenerateHandle } from '../../worker/conformerClient';
 import { downloadText } from '../download';
 import { ResultValue } from '../components/ResultValue';
@@ -59,7 +60,7 @@ export interface UnitFragmentInfo {
 
 export const UNIT_THEORY_NOTE = '重複單元片段的理論構型：連接處以甲基代替，依 MMFF94 力場估算，不代表聚合物鏈構象，非實測結構。';
 
-export function Conformer3DCard({ structure, unit }: { structure: StructureForCard | null; unit?: UnitFragmentInfo }) {
+export function Conformer3DCard({ structure, unit, componentId }: { structure: StructureForCard | null; unit?: UnitFragmentInfo; componentId?: string }) {
   const molblock = structure?.valid ? structure.molblock : '';
   const support = useMemo(() => checkConformerSupport(molblock), [molblock]);
   const [phase, setPhase] = useState<Phase>({ kind: 'idle' });
@@ -68,6 +69,9 @@ export function Conformer3DCard({ structure, unit }: { structure: StructureForCa
   // 標記反應原子（任務 016）：null 表示尚未查詢或查詢失敗
   const [reactiveAtoms, setReactiveAtoms] = useState<number[] | null>(null);
   const [markReactive, setMarkReactive] = useState(false);
+  // 只標目前配方中確實配到對的官能基（P7-1B 修正 2）；componentId 是成分詳細彈窗的成分，只取該成分用到的官能基
+  const pairedGroups = usePairedGroups(componentId);
+  const pairedKey = pairedGroups.join(',');
   const handle = useRef<GenerateHandle | null>(null);
   // 結構身分用 canonical SMILES 判斷：Ketcher 重新排版 2D 座標時 Molfile 會變，但不是不同的分子
   const identity = structure?.valid ? structure.canonicalSmiles : '';
@@ -87,7 +91,7 @@ export function Conformer3DCard({ structure, unit }: { structure: StructureForCa
 
   useEffect(() => () => handle.current?.cancel(), []);
 
-  // 結構上已登錄反應官能基的反應原子（與配方無關；用同一份 Molfile，原子編號才會與 3D 畫面一致）
+  // 結構上配到對的反應官能基的反應原子（用同一份 Molfile 計算，原子編號與 3D 畫面一致）
   useEffect(() => {
     setReactiveAtoms(null);
     if (unit) {
@@ -96,7 +100,7 @@ export function Conformer3DCard({ structure, unit }: { structure: StructureForCa
     }
     if (!molblock || !support.supported) return;
     let cancelled = false;
-    void reactiveAtomsInWorker(molblock).then((atoms) => {
+    void reactiveAtomsInWorker(molblock, pairedGroups).then((atoms) => {
       if (!cancelled) setReactiveAtoms(atoms);
     });
     return () => {
@@ -104,7 +108,7 @@ export function Conformer3DCard({ structure, unit }: { structure: StructureForCa
     };
     // unit 的內容由 identity 決定
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [molblock, support.supported, unit?.reactiveAtoms.join(',')]);
+  }, [molblock, support.supported, unit?.reactiveAtoms.join(','), pairedKey]);
 
   function start(target: number, more: boolean) {
     const startedFor = identity;
@@ -254,7 +258,7 @@ export function Conformer3DCard({ structure, unit }: { structure: StructureForCa
                 />
                 標記反應原子
               </label>
-              {reactiveAtoms && reactiveAtoms.length === 0 && <small>這個結構沒有已登錄的反應官能基。</small>}
+              {reactiveAtoms && reactiveAtoms.length === 0 && <small>目前配方中沒有與這個結構配對的反應官能基。</small>}
             </div>
             <Viewer3D molfile={current.molfile} optimized={batch.optimized} markedAtoms={markReactive && reactiveAtoms ? reactiveAtoms : []} cappedAtoms={unit?.cappedAtoms} />
           </Suspense>

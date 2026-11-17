@@ -45,13 +45,19 @@ export interface CrosslinkDrawRequest {
   result: CrosslinkResult;
   /** 標記用的強調色（#rrggbb，來自 theme.css） */
   color: string;
+  /**
+   * 成分 id → 顯示用結構（使用者畫的 Molfile）。有給且與引擎用的 SMILES 是同一個分子時，改畫這個結構，
+   * 引擎的 SMILES 原子編號換成這個結構的編號（與「分子工具」3D 畫面一致）；對應不到時照舊畫 SMILES（P7-1B 修正 2）
+   */
+  displaySources?: Record<string, string>;
 }
 
-/** 結構（Molfile 或 SMILES）上已登錄反應官能基的反應原子，供 3D 標記（任務 016） */
+/** 結構（Molfile 或 SMILES）上反應官能基的反應原子，供 3D 標記（任務 016）；groupIds：只標這些官能基（目前配方中配到對的，P7-1B 修正 2） */
 export interface ReactiveAtomsRequest {
   type: 'reactiveAtoms';
   id: number;
   source: string;
+  groupIds?: string[];
 }
 
 /** 畫出結構的 2D 圖（SVG）；mark 為 true 時標出反應原子（成分縮圖與詳細彈窗，任務 018） */
@@ -66,6 +72,8 @@ export interface DrawRequest {
   mark: boolean;
   /** 聚合物的重複單元：標記時排除連接點 */
   polymer: boolean;
+  /** 標記時只標這些官能基（目前配方中配到對的）；沒給時標所有已登錄的官能基 */
+  groupIds?: string[];
 }
 
 /** 重複單元的 3D 片段（任務 024）：連接點改成甲基；同時回傳反應原子（以原單元計算，排除連接點，編號與 2D 單元圖相同） */
@@ -73,6 +81,8 @@ export interface UnitFragmentRequest {
   type: 'unitFragment';
   id: number;
   smiles: string;
+  /** 反應原子只標這些官能基（目前配方中配到對的）；沒給時標所有已登錄的官能基 */
+  groupIds?: string[];
 }
 
 export type ChemRequest = StatusRequest | ValidateRequest | WeightRequest | RepeatUnitRequest | CrosslinkDrawRequest | ReactiveAtomsRequest | DrawRequest | UnitFragmentRequest;
@@ -95,6 +105,8 @@ export type ChemResponse =
   | { type: 'validate'; id: number; ok: true; result: StructureValidation }
   | { type: 'validate'; id: number; ok: false; error: string };
 
+const optionalStrings = (v: unknown) => v === undefined || (Array.isArray(v) && v.every((x) => typeof x === 'string'));
+
 export function isChemRequest(value: unknown): value is ChemRequest {
   if (!value || typeof value !== 'object') return false;
   const request = value as Record<string, unknown>;
@@ -105,11 +117,12 @@ export function isChemRequest(value: unknown): value is ChemRequest {
     const result = request.result as { components?: unknown } | null;
     return !!result && typeof result === 'object' && Array.isArray(result.components) && typeof request.color === 'string';
   }
-  if (request.type === 'reactiveAtoms') return typeof request.source === 'string';
-  if (request.type === 'unitFragment') return typeof request.smiles === 'string';
+  if (request.type === 'reactiveAtoms') return typeof request.source === 'string' && optionalStrings(request.groupIds);
+  if (request.type === 'unitFragment') return typeof request.smiles === 'string' && optionalStrings(request.groupIds);
   if (request.type === 'draw') {
     return typeof request.source === 'string' && typeof request.width === 'number' && typeof request.height === 'number'
-      && typeof request.color === 'string' && typeof request.mark === 'boolean' && typeof request.polymer === 'boolean';
+      && typeof request.color === 'string' && typeof request.mark === 'boolean' && typeof request.polymer === 'boolean'
+      && optionalStrings(request.groupIds);
   }
   return request.type === 'validate' && typeof request.input === 'string';
 }
