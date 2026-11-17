@@ -31,4 +31,4 @@
 2. 要不要之後收錄 Table 14.4 等，做 K／E。
 
 ## CI
-（待補）
+commit dcdc6e4，run 44028606288（GitHub 公開 API 查一次）：build 通過、engine 通過、golden-fresh 通過、deploy 略過（D62）。
