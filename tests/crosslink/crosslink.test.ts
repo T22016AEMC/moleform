@@ -40,9 +40,10 @@ function counts(c: CrosslinkComponent): Record<string, number> {
 
 describe('官能基計數', () => {
   it('苯酚 1、雙酚 A 2、S 2：酚羥基不重複計數', () => {
-    expect(counts(comp('1', '苯酚', 'Oc1ccccc1', 'Small Molecule'))).toEqual({ 'hydroxyl.phenolic': 1 });
-    expect(counts(comp('2', '雙酚 A', 'CC(C)(c1ccc(O)cc1)c1ccc(O)cc1', 'Small Molecule'))).toEqual({ 'hydroxyl.phenolic': 2 });
-    expect(counts(comp('3', 'S', S, 'Small Molecule'))).toEqual({ 'hydroxyl.phenolic': 2 });
+    // P7-1A：酚也會命中新增的「酚環鄰／對位空位」官能基，這裡只檢查酚羥基的計數
+    expect(counts(comp('1', '苯酚', 'Oc1ccccc1', 'Small Molecule'))).toMatchObject({ 'hydroxyl.phenolic': 1 });
+    expect(counts(comp('2', '雙酚 A', 'CC(C)(c1ccc(O)cc1)c1ccc(O)cc1', 'Small Molecule'))).toMatchObject({ 'hydroxyl.phenolic': 2 });
+    expect(counts(comp('3', 'S', S, 'Small Molecule'))).toMatchObject({ 'hydroxyl.phenolic': 2 });
   });
 
   it('BADGE 的環氧基 2；PGMEA 0', () => {
@@ -51,7 +52,7 @@ describe('官能基計數', () => {
   });
 
   it('聚合物：P 重複單元酚羥基 2、E 重複單元環氧基 1（排除連接點 *）', () => {
-    expect(counts(comp('p', 'P', P, 'Resin'))).toEqual({ 'hydroxyl.phenolic': 2 });
+    expect(counts(comp('p', 'P', P, 'Resin'))).toMatchObject({ 'hydroxyl.phenolic': 2 });
     expect(counts(comp('e', 'E', E, 'Resin'))).toEqual({ 'ether.epoxide': 1 });
   });
 

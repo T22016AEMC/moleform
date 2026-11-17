@@ -1143,7 +1143,7 @@
    "id": "parseCsv/data:functional_groups.csv",
    "input": {
     "fn": "parseCsv",
-    "text": "﻿id,name_zh,smarts,reactive_atom_maps,should_match,should_not_match,source_type,source,source_detail,source_original,review_status,notes\r\nhydroxyl.phenolic,酚羥基,[OX2H:1][cX3]:[c],1,Oc1ccccc1|CC(C)(c1ccc(O)cc1)c1ccc(O)cc1|OC(=CC=C1C2(C)C)C=C1C(C2)(CC1(C)C)C(=CC(O)=C2)C1=C2,CCO|OC(=O)c1ccccc1|COc1ccccc1|COCC(C)OC(C)=O,paper,SMARTS Examples（Daylight Chemical Information Systems）,\"https://daylight.com/dayhtml_tutorials/languages/smarts/smarts_examples.html；Functional Groups by Element → O → hydroxyl (includes alcohol, phenol) → Phenol\",[OX2H][cX3]:[c],approved,僅加入原子映射編號，匹配條件與原文相同。原文：[OX2H][cX3]:[c]。原文會因酚羥基碳的兩個鄰位碳而對同一個 OH 匹配兩次，計數以不同的 O 原子為準（映射 1）；使用者審核通過（2026-10-29）；限制見備註\r\nether.epoxide,環氧基,[O:1]1[C:2][C:3]1,1|2|3,CC1CO1|CC(C)(c1ccc(OCC2CO2)cc1)c1ccc(OCC2CO2)cc1|CC(=C)C(=O)OCC1CO1,C1COC1|C1CCOC1|OCCO|COCC(C)OC(C)=O|C1CN1,package,RDKit,RDKit 2026.09.1（Release_2026_09_1）Data/FragmentDescriptors.csv，Code 欄 fr_epoxide，SMARTS 欄,RDKit 內建定義，未引用文獻,approved,僅加入原子映射編號，匹配條件與原文相同。原文：O1CC1。映射 1 為環上的 O，2、3 為環上的兩個 C；計數以不同的三原子集合為準；使用者審核通過（2026-10-29）；限制見備註\r\n"
+    "text": "﻿id,name_zh,smarts,reactive_atom_maps,should_match,should_not_match,source_type,source,source_detail,source_original,review_status,notes\r\nhydroxyl.phenolic,酚羥基,[OX2H:1][cX3]:[c],1,Oc1ccccc1|CC(C)(c1ccc(O)cc1)c1ccc(O)cc1|OC(=CC=C1C2(C)C)C=C1C(C2)(CC1(C)C)C(=CC(O)=C2)C1=C2,CCO|OC(=O)c1ccccc1|COc1ccccc1|COCC(C)OC(C)=O,paper,SMARTS Examples（Daylight Chemical Information Systems）,\"https://daylight.com/dayhtml_tutorials/languages/smarts/smarts_examples.html；Functional Groups by Element → O → hydroxyl (includes alcohol, phenol) → Phenol\",[OX2H][cX3]:[c],approved,僅加入原子映射編號，匹配條件與原文相同。原文：[OX2H][cX3]:[c]。原文會因酚羥基碳的兩個鄰位碳而對同一個 OH 匹配兩次，計數以不同的 O 原子為準（映射 1）；使用者審核通過（2026-10-29）；限制見備註\r\nether.epoxide,環氧基,[O:1]1[C:2][C:3]1,1|2|3,CC1CO1|CC(C)(c1ccc(OCC2CO2)cc1)c1ccc(OCC2CO2)cc1|CC(=C)C(=O)OCC1CO1,C1COC1|C1CCOC1|OCCO|COCC(C)OC(C)=O|C1CN1,package,RDKit,RDKit 2026.09.1（Release_2026_09_1）Data/FragmentDescriptors.csv，Code 欄 fr_epoxide，SMARTS 欄,RDKit 內建定義，未引用文獻,approved,僅加入原子映射編號，匹配條件與原文相同。原文：O1CC1。映射 1 為環上的 O，2、3 為環上的兩個 C；計數以不同的三原子集合為準；使用者審核通過（2026-10-29）；限制見備註\r\namine.primary.aliphatic,一級脂肪胺,\"[N;H2;D1;$(N-!@C);!$(N-C=[O,N,S]):1]\",1,CCN|NCCN|NCCNCCN|NC1CCCCC1,Nc1ccccc1|CNC|CN(C)C|CC(N)=O|NC(=O)N|C1CCNCC1|OCCO,package,RDKit,RDKit 2026.09.1（Release_2026_09_1）Data/Functional_Group_Hierarchy.txt，Amine.Primary.Aliphatic,\"RDKit 內建定義（Greg Landrum, 2006），未引用文獻\",pending,\"僅加入原子映射編號，匹配條件與原文相同。原文：[N;H2;D1;$(N-!@C);!$(N-C=[O,N,S])]。映射 1 為胺基 N，每個 N 計一個位點（一級胺的兩個 N–H 以反應規則的 functionality 表示）；醯胺 N、脲 N、芳香環內 N（咪唑、吡咯）與三級胺不命中。review_status 為 pending，待使用者審核（D17、D22）\"\r\namine.primary.aromatic,一級芳香胺,\"[N;H2;D1;$(N-!@c);!$(N-C=[O,N,S]):1]\",1,Nc1ccccc1|Nc1ccc(Cc2ccc(N)cc2)cc1|Nc1ccc(cc1)S(=O)(=O)c1ccc(N)cc1,CCN|CNc1ccccc1|Cc1ccccc1|NC(=O)c1ccccc1|CC(=O)Nc1ccccc1|c1ccncc1,package,RDKit,RDKit 2026.09.1（Release_2026_09_1）Data/Functional_Group_Hierarchy.txt，Amine.Primary.Aromatic,\"RDKit 內建定義（Greg Landrum, 2006），未引用文獻\",pending,\"僅加入原子映射編號，匹配條件與原文相同。原文：[N;H2;D1;$(N-!@c);!$(N-C=[O,N,S])]。映射 1 為胺基 N，每個 N 計一個位點（一級胺的兩個 N–H 以反應規則的 functionality 表示）；醯胺 N、脲 N、芳香環內 N（咪唑、吡咯）與三級胺不命中。review_status 為 pending，待使用者審核（D17、D22）\"\r\namine.secondary.aliphatic,二級脂肪胺,\"[N;H1;D2;$(N(-C)-C);!$(N-C=[O,N,S]):1]\",1,CNC|C1CCNCC1|C1CNCCN1|NCCNCCN,CN(C)C|CCN|CNc1ccccc1|CC(=O)NC|c1ccc2[nH]ccc2c1,package,RDKit,RDKit 2026.09.1（Release_2026_09_1）Data/Functional_Group_Hierarchy.txt，Amine.Secondary.Aliphatic,\"RDKit 內建定義（Greg Landrum, 2006），未引用文獻\",pending,\"僅加入原子映射編號，匹配條件與原文相同。原文：[N;H1;D2;$(N(-C)-C);!$(N-C=[O,N,S])]。映射 1 為胺基 N，每個 N 計一個位點（一級胺的兩個 N–H 以反應規則的 functionality 表示）；醯胺 N、脲 N、芳香環內 N（咪唑、吡咯）與三級胺不命中。review_status 為 pending，待使用者審核（D17、D22）\"\r\namine.secondary.aromatic,二級芳香胺,\"[N;H1;D2;$(N(-[c])-[#6]);!$(N-C=[O,N,S]):1]\",1,CNc1ccccc1|c1ccccc1Nc1ccccc1,Nc1ccccc1|CNC|CN(C)c1ccccc1|CC(=O)Nc1ccccc1,package,RDKit,RDKit 2026.09.1（Release_2026_09_1）Data/Functional_Group_Hierarchy.txt，Amine.Secondary.Aromatic,\"RDKit 內建定義（Greg Landrum, 2006），未引用文獻\",pending,\"僅加入原子映射編號，匹配條件與原文相同。原文：[N;H1;D2;$(N(-[c])-[#6]);!$(N-C=[O,N,S])]。映射 1 為胺基 N，每個 N 計一個位點（一級胺的兩個 N–H 以反應規則的 functionality 表示）；醯胺 N、脲 N、芳香環內 N（咪唑、吡咯）與三級胺不命中。review_status 為 pending，待使用者審核（D17、D22）\"\r\nanhydride,酸酐,[C:1](=O)[O:2][C:3]=O,1|2|3,CC(=O)OC(C)=O|O=C1OC(=O)c2ccccc12|O=C1OC(=O)C=C1|CC1CCC2C(C1)C(=O)OC2=O|O=C1CCC(=O)O1,CC(=O)OC|CC(=O)O|COC(=O)OC|O=C1NC(=O)c2ccccc12|CC(=O)Cl,package,RDKit,RDKit 2026.09.1（Release_2026_09_1）Data/SmartsLib/RLewis_smarts.txt，條目 Acid_anhydrides,RDKit SmartsLib 的 RLewis_smarts.txt（Richard Lewis 貢獻之 SMARTS 篩選集），未引用文獻,pending,僅加入原子映射編號，匹配條件與原文相同。原文：C(=O)OC(=O)（Daylight SMARTS Examples 另有寫法 [CX3](=[OX1])[OX2][CX3](=[OX1])，等價）。映射 1、2、3 為兩個羰基碳與中間的 O，一個酸酐基計一個位點（對稱的兩種原子順序以原子集合去重）；環狀（鄰苯二甲酸酐、馬來酸酐、MHHPA）與鏈狀都命中，酯、羧酸、碳酸酯、醯亞胺、醯氯不命中。review_status 為 pending，待使用者審核（D17、D22）\r\ncyanate.ester,氰酸酯基,[#6]-[O:1]-[C:2]#[N:3],1|2|3,N#COc1ccccc1|CC(C)(c1ccc(OC#N)cc1)c1ccc(OC#N)cc1|N#COc1ccc(cc1)Cc1ccc(OC#N)cc1,O=C=Nc1ccccc1|N#Cc1ccccc1|N#CSc1ccccc1|Oc1ccccc1|CN(C)C#N|c1(Oc2ccccc2)nc(Oc2ccccc2)nc(Oc2ccccc2)n1,self,自行撰寫,\"SMARTS 結構依據 Li et al., Polymer 195 (2020) 122454 Fig. 1（氰酸酯單體 –O–C≡N）\",,pending,自行撰寫（D22）：RDKit 2026.09.1 的 FragmentDescriptors.csv、Functional_Group_Hierarchy.txt、SmartsLib 與 Daylight SMARTS Examples 均無氰酸酯定義（Daylight 只有 Cyanamide [NX3][CX2]#[NX1]）。匹配 [#6]–O–C≡N；映射 1、2、3 為 O、C、N，每個氰酸酯基計一個位點；異氰酸酯、腈、硫氰酸酯、氰胺與三聚後的三嗪環（Ar–O 接在環碳上）不命中。review_status 為 pending，待使用者審核（D17、D22）\r\nether.oxetane,氧雜環丁烷,\"[O;R1:1]1[C;!$(C=[O,N,S]):2][C:3][C;!$(C=[O,N,S]):4]1\",1|2|3|4,C1COC1|CCC1(CO)COC1|C1(COC1)COCC1COC1,C1CCOC1|C1CO1|O=C1CCO1|COCC(C)OC(C)=O|C1CC1,self,自行撰寫,SMARTS 結構為四員環含一個 O,,pending,自行撰寫（D22）：RDKit 2026.09.1 內建檔與 Daylight SMARTS Examples 均無氧雜環丁烷定義（Daylight 只有一般 Ether）。匹配含一個 O 的四員環，環上與 O 相連的兩個碳不得是羰基／亞胺碳（排除 β-內酯）；映射 1 為環 O，2、3、4 為環上三個 C；計數以不同的四原子集合為準。review_status 為 pending，待使用者審核（D17、D22）\r\npag.onium,光酸產生劑（鎓鹽陽離子）,\"[$([S+X3](c)(c)c),$([I+X2](c)c):1]\",1,c1ccc([S+](c2ccccc2)c2ccccc2)cc1.F[Sb-](F)(F)(F)(F)F|c1ccc([S+](c2ccccc2)c2ccccc2)cc1.[O-]S(=O)(=O)C(F)(F)F|c1ccc([I+]c2ccccc2)cc1.[O-]S(=O)(=O)C(F)(F)F,C[N+](C)(C)C|C[S+](C)C|c1ccc(Sc2ccccc2)cc1|c1ccc(I)cc1|c1ccc(P(c2ccccc2)c2ccccc2)cc1|c1ccc([P+](c2ccccc2)(c2ccccc2)c2ccccc2)cc1,self,自行撰寫,SMARTS 結構為三芳基鋶與二芳基錪陽離子（D26 的光酸產生劑類成分）,,pending,自行撰寫（D22）：本機文獻與 RDKit、Daylight 均無光酸產生劑定義。只涵蓋離子型鎓鹽陽離子（三芳基鋶 [S+](c)(c)c、二芳基錪 [I+](c)c），抗衡陰離子不參與匹配；非離子型 PAG（磺酸酯、肟磺酸酯、萘二甲醯亞胺磺酸酯等）與烷基鋶不命中，使用者之後可補。映射 1 為 S+ 或 I+。review_status 為 pending，待使用者審核（D17、D22）\r\naromatic.ch.phenol.ortho_para,酚環鄰／對位空位（芳香 C–H）,\"[cH;$([cH]:c-[OX2H]),$([cH]1:c:c:c(-[OX2H]):c:c:1):1]\",1,Oc1ccccc1|Cc1ccccc1O|Cc1cccc(O)c1|Cc1ccc(O)cc1|CC(C)(c1ccc(O)cc1)c1ccc(O)cc1|Oc1ccc(Cc2ccc(O)c(Cc3ccccc3O)c2)cc1|Oc1ccc(Cc2ccc(cc2)-c2ccc(Cc3ccccc3O)cc2)cc1|Oc1ccc(cc1)C1CC2C3CC=CC3C2C1|OCc1ccccc1O,Cc1cc(C)c(O)c(C)c1|Oc1c(C)c(C)c(C)c(C)c1C|Oc1c(CO)cc(C)cc1CO|Cc1ccccc1|COc1ccccc1|OC1CCCCC1|c1ccccc1,self,自行撰寫,\"SMARTS 結構依據 Pilato (ed.), Phenolic Resins: A Century of Progress, Springer 2010 (DOI 10.1007/978-3-642-04714-5) 第 4 章 p.53–54（甲醛與酚環的鄰位與對位反應，式 4.6）\",,pending,\"自行撰寫（D22）：RDKit 與 Daylight 均無此定義。匹配與酚羥基（–OH，OX2H）在鄰位或對位、且帶氫的芳香碳 [cH]；映射 1 為該環碳，每個空位計一個位點（苯酚 3 個、鄰或間或對甲酚 2 個、4,4'-雙酚 A 每環 2 個共 4 個）。酚羥基以外的取代基、間位的 C–H 不計；2,4,6 三位全被取代的酚不命中。羥基須為 OH（醚、酯不算）。review_status 為 pending，待使用者審核（D17、D22）\"\r\nhydroxymethyl.phenolic,酚環羥甲基（–CH2OH）,\"[OX2H:2][CH2X4:1][c;$(c:c-[OX2H]),$(c1:c:c:c(-[OX2H]):c:c:1)]\",1|2,OCc1ccccc1O|OCc1ccc(O)cc1|Oc1c(CO)cc(CO)cc1CO|OCc1cc(C)ccc1O,OCc1ccccc1|OCc1cccc(O)c1|Oc1ccccc1|CCO|COCc1ccccc1O|OCCc1ccccc1O,self,自行撰寫,\"SMARTS 結構依據 Pilato (ed.), Phenolic Resins: A Century of Progress, Springer 2010 (DOI 10.1007/978-3-642-04714-5) §4.2 p.45–47（羥甲基酚 2-HMP、4-HMP、2,4-DHMP、2,4,6-THMP，Fig. 4.1）\",,pending,自行撰寫（D22）：RDKit 與 Daylight 均無此定義。匹配接在酚環上的 –CH2–OH，且該環碳與酚羥基在鄰位或對位（可溶酚醛的羥甲基酚）；映射 1 為 CH2、2 為羥基 O，環碳不計為反應原子。苄醇（無酚羥基）、間位羥甲基、羥乙基、羥甲基的醚不命中。review_status 為 pending，待使用者審核（D17、D22）\r\nhmta,六亞甲基四胺（HMTA 籠）,[CH2:1]1[N:2]2[CH2:3][N:4]3[CH2:5][N:6]1[CH2:7][N:8]([CH2:9]2)[CH2:10]3,1|2|3|4|5|6|7|8|9|10,C1N2CN3CN1CN(C2)C3,C1CN2CCN1CC2|C1NCNCN1|CN(C)C|C1C2CC3CC1CC(C2)C3,self,自行撰寫,\"結構依據 Pilato (ed.), Phenolic Resins: A Century of Progress, Springer 2010 (DOI 10.1007/978-3-642-04714-5) 式 3.10 與 Table 3.5 p.38（HMTA = (CH2)6N4，MW 140.2）\",,pending,自行撰寫（D22）：RDKit 與 Daylight 均無 HMTA 定義。匹配整個籠狀結構（六個 CH2、四個 N），映射 1 至 10 為全部十個重原子，因此一個 HMTA 分子只計一個位點（對稱性造成的多重匹配以原子集合去重）；DABCO、三嗪烷、金剛烷不命中。review_status 為 pending，待使用者審核（D17、D22）\r\n"
    },
    "output": {
     "value": [
@@ -1188,6 +1188,160 @@
       "RDKit 內建定義，未引用文獻",
       "approved",
       "僅加入原子映射編號，匹配條件與原文相同。原文：O1CC1。映射 1 為環上的 O，2、3 為環上的兩個 C；計數以不同的三原子集合為準；使用者審核通過（2026-10-29）；限制見備註"
+     ],
+     [
+      "amine.primary.aliphatic",
+      "一級脂肪胺",
+      "[N;H2;D1;$(N-!@C);!$(N-C=[O,N,S]):1]",
+      "1",
+      "CCN|NCCN|NCCNCCN|NC1CCCCC1",
+      "Nc1ccccc1|CNC|CN(C)C|CC(N)=O|NC(=O)N|C1CCNCC1|OCCO",
+      "package",
+      "RDKit",
+      "RDKit 2026.09.1（Release_2026_09_1）Data/Functional_Group_Hierarchy.txt，Amine.Primary.Aliphatic",
+      "RDKit 內建定義（Greg Landrum, 2006），未引用文獻",
+      "pending",
+      "僅加入原子映射編號，匹配條件與原文相同。原文：[N;H2;D1;$(N-!@C);!$(N-C=[O,N,S])]。映射 1 為胺基 N，每個 N 計一個位點（一級胺的兩個 N–H 以反應規則的 functionality 表示）；醯胺 N、脲 N、芳香環內 N（咪唑、吡咯）與三級胺不命中。review_status 為 pending，待使用者審核（D17、D22）"
+     ],
+     [
+      "amine.primary.aromatic",
+      "一級芳香胺",
+      "[N;H2;D1;$(N-!@c);!$(N-C=[O,N,S]):1]",
+      "1",
+      "Nc1ccccc1|Nc1ccc(Cc2ccc(N)cc2)cc1|Nc1ccc(cc1)S(=O)(=O)c1ccc(N)cc1",
+      "CCN|CNc1ccccc1|Cc1ccccc1|NC(=O)c1ccccc1|CC(=O)Nc1ccccc1|c1ccncc1",
+      "package",
+      "RDKit",
+      "RDKit 2026.09.1（Release_2026_09_1）Data/Functional_Group_Hierarchy.txt，Amine.Primary.Aromatic",
+      "RDKit 內建定義（Greg Landrum, 2006），未引用文獻",
+      "pending",
+      "僅加入原子映射編號，匹配條件與原文相同。原文：[N;H2;D1;$(N-!@c);!$(N-C=[O,N,S])]。映射 1 為胺基 N，每個 N 計一個位點（一級胺的兩個 N–H 以反應規則的 functionality 表示）；醯胺 N、脲 N、芳香環內 N（咪唑、吡咯）與三級胺不命中。review_status 為 pending，待使用者審核（D17、D22）"
+     ],
+     [
+      "amine.secondary.aliphatic",
+      "二級脂肪胺",
+      "[N;H1;D2;$(N(-C)-C);!$(N-C=[O,N,S]):1]",
+      "1",
+      "CNC|C1CCNCC1|C1CNCCN1|NCCNCCN",
+      "CN(C)C|CCN|CNc1ccccc1|CC(=O)NC|c1ccc2[nH]ccc2c1",
+      "package",
+      "RDKit",
+      "RDKit 2026.09.1（Release_2026_09_1）Data/Functional_Group_Hierarchy.txt，Amine.Secondary.Aliphatic",
+      "RDKit 內建定義（Greg Landrum, 2006），未引用文獻",
+      "pending",
+      "僅加入原子映射編號，匹配條件與原文相同。原文：[N;H1;D2;$(N(-C)-C);!$(N-C=[O,N,S])]。映射 1 為胺基 N，每個 N 計一個位點（一級胺的兩個 N–H 以反應規則的 functionality 表示）；醯胺 N、脲 N、芳香環內 N（咪唑、吡咯）與三級胺不命中。review_status 為 pending，待使用者審核（D17、D22）"
+     ],
+     [
+      "amine.secondary.aromatic",
+      "二級芳香胺",
+      "[N;H1;D2;$(N(-[c])-[#6]);!$(N-C=[O,N,S]):1]",
+      "1",
+      "CNc1ccccc1|c1ccccc1Nc1ccccc1",
+      "Nc1ccccc1|CNC|CN(C)c1ccccc1|CC(=O)Nc1ccccc1",
+      "package",
+      "RDKit",
+      "RDKit 2026.09.1（Release_2026_09_1）Data/Functional_Group_Hierarchy.txt，Amine.Secondary.Aromatic",
+      "RDKit 內建定義（Greg Landrum, 2006），未引用文獻",
+      "pending",
+      "僅加入原子映射編號，匹配條件與原文相同。原文：[N;H1;D2;$(N(-[c])-[#6]);!$(N-C=[O,N,S])]。映射 1 為胺基 N，每個 N 計一個位點（一級胺的兩個 N–H 以反應規則的 functionality 表示）；醯胺 N、脲 N、芳香環內 N（咪唑、吡咯）與三級胺不命中。review_status 為 pending，待使用者審核（D17、D22）"
+     ],
+     [
+      "anhydride",
+      "酸酐",
+      "[C:1](=O)[O:2][C:3]=O",
+      "1|2|3",
+      "CC(=O)OC(C)=O|O=C1OC(=O)c2ccccc12|O=C1OC(=O)C=C1|CC1CCC2C(C1)C(=O)OC2=O|O=C1CCC(=O)O1",
+      "CC(=O)OC|CC(=O)O|COC(=O)OC|O=C1NC(=O)c2ccccc12|CC(=O)Cl",
+      "package",
+      "RDKit",
+      "RDKit 2026.09.1（Release_2026_09_1）Data/SmartsLib/RLewis_smarts.txt，條目 Acid_anhydrides",
+      "RDKit SmartsLib 的 RLewis_smarts.txt（Richard Lewis 貢獻之 SMARTS 篩選集），未引用文獻",
+      "pending",
+      "僅加入原子映射編號，匹配條件與原文相同。原文：C(=O)OC(=O)（Daylight SMARTS Examples 另有寫法 [CX3](=[OX1])[OX2][CX3](=[OX1])，等價）。映射 1、2、3 為兩個羰基碳與中間的 O，一個酸酐基計一個位點（對稱的兩種原子順序以原子集合去重）；環狀（鄰苯二甲酸酐、馬來酸酐、MHHPA）與鏈狀都命中，酯、羧酸、碳酸酯、醯亞胺、醯氯不命中。review_status 為 pending，待使用者審核（D17、D22）"
+     ],
+     [
+      "cyanate.ester",
+      "氰酸酯基",
+      "[#6]-[O:1]-[C:2]#[N:3]",
+      "1|2|3",
+      "N#COc1ccccc1|CC(C)(c1ccc(OC#N)cc1)c1ccc(OC#N)cc1|N#COc1ccc(cc1)Cc1ccc(OC#N)cc1",
+      "O=C=Nc1ccccc1|N#Cc1ccccc1|N#CSc1ccccc1|Oc1ccccc1|CN(C)C#N|c1(Oc2ccccc2)nc(Oc2ccccc2)nc(Oc2ccccc2)n1",
+      "self",
+      "自行撰寫",
+      "SMARTS 結構依據 Li et al., Polymer 195 (2020) 122454 Fig. 1（氰酸酯單體 –O–C≡N）",
+      "",
+      "pending",
+      "自行撰寫（D22）：RDKit 2026.09.1 的 FragmentDescriptors.csv、Functional_Group_Hierarchy.txt、SmartsLib 與 Daylight SMARTS Examples 均無氰酸酯定義（Daylight 只有 Cyanamide [NX3][CX2]#[NX1]）。匹配 [#6]–O–C≡N；映射 1、2、3 為 O、C、N，每個氰酸酯基計一個位點；異氰酸酯、腈、硫氰酸酯、氰胺與三聚後的三嗪環（Ar–O 接在環碳上）不命中。review_status 為 pending，待使用者審核（D17、D22）"
+     ],
+     [
+      "ether.oxetane",
+      "氧雜環丁烷",
+      "[O;R1:1]1[C;!$(C=[O,N,S]):2][C:3][C;!$(C=[O,N,S]):4]1",
+      "1|2|3|4",
+      "C1COC1|CCC1(CO)COC1|C1(COC1)COCC1COC1",
+      "C1CCOC1|C1CO1|O=C1CCO1|COCC(C)OC(C)=O|C1CC1",
+      "self",
+      "自行撰寫",
+      "SMARTS 結構為四員環含一個 O",
+      "",
+      "pending",
+      "自行撰寫（D22）：RDKit 2026.09.1 內建檔與 Daylight SMARTS Examples 均無氧雜環丁烷定義（Daylight 只有一般 Ether）。匹配含一個 O 的四員環，環上與 O 相連的兩個碳不得是羰基／亞胺碳（排除 β-內酯）；映射 1 為環 O，2、3、4 為環上三個 C；計數以不同的四原子集合為準。review_status 為 pending，待使用者審核（D17、D22）"
+     ],
+     [
+      "pag.onium",
+      "光酸產生劑（鎓鹽陽離子）",
+      "[$([S+X3](c)(c)c),$([I+X2](c)c):1]",
+      "1",
+      "c1ccc([S+](c2ccccc2)c2ccccc2)cc1.F[Sb-](F)(F)(F)(F)F|c1ccc([S+](c2ccccc2)c2ccccc2)cc1.[O-]S(=O)(=O)C(F)(F)F|c1ccc([I+]c2ccccc2)cc1.[O-]S(=O)(=O)C(F)(F)F",
+      "C[N+](C)(C)C|C[S+](C)C|c1ccc(Sc2ccccc2)cc1|c1ccc(I)cc1|c1ccc(P(c2ccccc2)c2ccccc2)cc1|c1ccc([P+](c2ccccc2)(c2ccccc2)c2ccccc2)cc1",
+      "self",
+      "自行撰寫",
+      "SMARTS 結構為三芳基鋶與二芳基錪陽離子（D26 的光酸產生劑類成分）",
+      "",
+      "pending",
+      "自行撰寫（D22）：本機文獻與 RDKit、Daylight 均無光酸產生劑定義。只涵蓋離子型鎓鹽陽離子（三芳基鋶 [S+](c)(c)c、二芳基錪 [I+](c)c），抗衡陰離子不參與匹配；非離子型 PAG（磺酸酯、肟磺酸酯、萘二甲醯亞胺磺酸酯等）與烷基鋶不命中，使用者之後可補。映射 1 為 S+ 或 I+。review_status 為 pending，待使用者審核（D17、D22）"
+     ],
+     [
+      "aromatic.ch.phenol.ortho_para",
+      "酚環鄰／對位空位（芳香 C–H）",
+      "[cH;$([cH]:c-[OX2H]),$([cH]1:c:c:c(-[OX2H]):c:c:1):1]",
+      "1",
+      "Oc1ccccc1|Cc1ccccc1O|Cc1cccc(O)c1|Cc1ccc(O)cc1|CC(C)(c1ccc(O)cc1)c1ccc(O)cc1|Oc1ccc(Cc2ccc(O)c(Cc3ccccc3O)c2)cc1|Oc1ccc(Cc2ccc(cc2)-c2ccc(Cc3ccccc3O)cc2)cc1|Oc1ccc(cc1)C1CC2C3CC=CC3C2C1|OCc1ccccc1O",
+      "Cc1cc(C)c(O)c(C)c1|Oc1c(C)c(C)c(C)c(C)c1C|Oc1c(CO)cc(C)cc1CO|Cc1ccccc1|COc1ccccc1|OC1CCCCC1|c1ccccc1",
+      "self",
+      "自行撰寫",
+      "SMARTS 結構依據 Pilato (ed.), Phenolic Resins: A Century of Progress, Springer 2010 (DOI 10.1007/978-3-642-04714-5) 第 4 章 p.53–54（甲醛與酚環的鄰位與對位反應，式 4.6）",
+      "",
+      "pending",
+      "自行撰寫（D22）：RDKit 與 Daylight 均無此定義。匹配與酚羥基（–OH，OX2H）在鄰位或對位、且帶氫的芳香碳 [cH]；映射 1 為該環碳，每個空位計一個位點（苯酚 3 個、鄰或間或對甲酚 2 個、4,4'-雙酚 A 每環 2 個共 4 個）。酚羥基以外的取代基、間位的 C–H 不計；2,4,6 三位全被取代的酚不命中。羥基須為 OH（醚、酯不算）。review_status 為 pending，待使用者審核（D17、D22）"
+     ],
+     [
+      "hydroxymethyl.phenolic",
+      "酚環羥甲基（–CH2OH）",
+      "[OX2H:2][CH2X4:1][c;$(c:c-[OX2H]),$(c1:c:c:c(-[OX2H]):c:c:1)]",
+      "1|2",
+      "OCc1ccccc1O|OCc1ccc(O)cc1|Oc1c(CO)cc(CO)cc1CO|OCc1cc(C)ccc1O",
+      "OCc1ccccc1|OCc1cccc(O)c1|Oc1ccccc1|CCO|COCc1ccccc1O|OCCc1ccccc1O",
+      "self",
+      "自行撰寫",
+      "SMARTS 結構依據 Pilato (ed.), Phenolic Resins: A Century of Progress, Springer 2010 (DOI 10.1007/978-3-642-04714-5) §4.2 p.45–47（羥甲基酚 2-HMP、4-HMP、2,4-DHMP、2,4,6-THMP，Fig. 4.1）",
+      "",
+      "pending",
+      "自行撰寫（D22）：RDKit 與 Daylight 均無此定義。匹配接在酚環上的 –CH2–OH，且該環碳與酚羥基在鄰位或對位（可溶酚醛的羥甲基酚）；映射 1 為 CH2、2 為羥基 O，環碳不計為反應原子。苄醇（無酚羥基）、間位羥甲基、羥乙基、羥甲基的醚不命中。review_status 為 pending，待使用者審核（D17、D22）"
+     ],
+     [
+      "hmta",
+      "六亞甲基四胺（HMTA 籠）",
+      "[CH2:1]1[N:2]2[CH2:3][N:4]3[CH2:5][N:6]1[CH2:7][N:8]([CH2:9]2)[CH2:10]3",
+      "1|2|3|4|5|6|7|8|9|10",
+      "C1N2CN3CN1CN(C2)C3",
+      "C1CN2CCN1CC2|C1NCNCN1|CN(C)C|C1C2CC3CC1CC(C2)C3",
+      "self",
+      "自行撰寫",
+      "結構依據 Pilato (ed.), Phenolic Resins: A Century of Progress, Springer 2010 (DOI 10.1007/978-3-642-04714-5) 式 3.10 與 Table 3.5 p.38（HMTA = (CH2)6N4，MW 140.2）",
+      "",
+      "pending",
+      "自行撰寫（D22）：RDKit 與 Daylight 均無 HMTA 定義。匹配整個籠狀結構（六個 CH2、四個 N），映射 1 至 10 為全部十個重原子，因此一個 HMTA 分子只計一個位點（對稱性造成的多重匹配以原子集合去重）；DABCO、三嗪烷、金剛烷不命中。review_status 為 pending，待使用者審核（D17、D22）"
      ]
     ]
    }
@@ -4128,7 +4282,7 @@
    "id": "parseCsv/data:reaction_rules.csv",
    "input": {
     "fn": "parseCsv",
-    "text": "﻿id,reaction_type,group_a,group_b,reaction_smarts,catalyst_required,temp_min_c,temp_max_c,functionality_a,functionality_b,byproduct,bond_volume_change,bond_volume_change_unit,should_react,should_not_react,source_type,source,source_detail,source_original,review_status,notes\r\nepoxy+phenol,開環加成,ether.epoxide,hydroxyl.phenolic,[OX2H:1][cX3:4]:[c:5].[O:2]1[C:3][C:6]1>>[c:5]:[c:4][O:1][C:3][C:6][O:2],none,,,1,1,,,,CC1CO1+Oc1ccccc1|CC(C)(c1ccc(OCC2CO2)cc1)c1ccc(OCC2CO2)cc1+CC(C)(c1ccc(O)cc1)c1ccc(O)cc1,CC1CO1+CCO|COCC(C)OC(C)=O+Oc1ccccc1,self,自行撰寫,反應 SMARTS 以 ether.epoxide 與 hydroxyl.phenolic 的匹配條件為基礎撰寫,,approved,反應 SMARTS 為自行撰寫（D22）；酚羥基的 O 與環氧環上一個碳成鍵、該碳與環上 O 的鍵斷開，環上 O 成為羥基；開環位置未區分，僅用於配對、計量與標記；催化劑欄依使用者提供：純加熱、不需催化劑（2026-10-29）；未包含環氧自聚、二級羥基醚化等副反應；使用者審核通過（2026-10-29）；限制見備註\r\n"
+    "text": "﻿id,reaction_type,group_a,group_b,reaction_smarts,catalyst_required,temp_min_c,temp_max_c,functionality_a,functionality_b,byproduct,bond_volume_change,bond_volume_change_unit,should_react,should_not_react,source_type,source,source_detail,source_original,review_status,notes\r\nepoxy+phenol,開環加成,ether.epoxide,hydroxyl.phenolic,[OX2H:1][cX3:4]:[c:5].[O:2]1[C:3][C:6]1>>[c:5]:[c:4][O:1][C:3][C:6][O:2],none,,,1,1,,,,CC1CO1+Oc1ccccc1|CC(C)(c1ccc(OCC2CO2)cc1)c1ccc(OCC2CO2)cc1+CC(C)(c1ccc(O)cc1)c1ccc(O)cc1,CC1CO1+CCO|COCC(C)OC(C)=O+Oc1ccccc1,self,自行撰寫,反應 SMARTS 以 ether.epoxide 與 hydroxyl.phenolic 的匹配條件為基礎撰寫,,approved,反應 SMARTS 為自行撰寫（D22）；酚羥基的 O 與環氧環上一個碳成鍵、該碳與環上 O 的鍵斷開，環上 O 成為羥基；開環位置未區分，僅用於配對、計量與標記；催化劑欄依使用者提供：純加熱、不需催化劑（2026-10-29）；未包含環氧自聚、二級羥基醚化等副反應；使用者審核通過（2026-10-29）；限制見備註\r\nepoxy+amine.primary.aliphatic,開環加成,ether.epoxide,amine.primary.aliphatic,[N;H2;D1;$(N-!@C):1].[O:2]1[C:3][C:4]1>>[N:1][C:3][C:4][O:2],none,,,1,2,,,,CC1CO1+CCN|CC(C)(c1ccc(OCC2CO2)cc1)c1ccc(OCC2CO2)cc1+NCCN|CC1CO1+NC1CCCCC1,CC1CO1+CCO|CC1CO1+Oc1ccccc1|CC1CO1+Nc1ccccc1|CC1CO1+CNC|CCN+CCO,self,自行撰寫,\"反應 SMARTS 以 ether.epoxide 與 amine.primary.aliphatic 的匹配條件為基礎撰寫；反應類型與官能度依據 Gavrielides et al., Int. J. Polym. Sci. 2019, 9604714 p.2（EDA 有四個反應位點、兩個一級胺基，胺的 H 與環氧反應）\",,pending,\"反應 SMARTS 為自行撰寫（D22）；N 與環氧環上一個碳成鍵、該碳與環上 O 的鍵斷開，環上 O 成為羥基；開環位置未區分，僅用於配對、計量與標記。functionality_b = 2：一級胺 N 有兩個 N–H，各可開一個環氧（Gavrielides et al., Int. J. Polym. Sci. 2019, 9604714 p.2，DGEBA : EDA = 2 : 1）；一級與二級胺氫的活性不同（Pascault & Williams, J. Polym. Sci. B 28 (1990) 85-95 p.92），第 1 層的等活性假設不計此差異。催化劑欄 none：Gavrielides et al., Int. J. Polym. Sci. 2019, 9604714 p.2 的 DGEBA–EDA 在室溫聚合 48 h、未見催化劑。溫度：該文只有固化程序（室溫 48 h，再 413 K 後固化 2 h），不是典型範圍，未找到可引用數值，留空。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。未包含環氧自聚、羥基醚化等副反應。review_status 為 pending，待使用者審核（D17、D22）\"\r\nepoxy+amine.primary.aromatic,開環加成,ether.epoxide,amine.primary.aromatic,[N;H2;D1;$(N-!@c):1].[O:2]1[C:3][C:4]1>>[N:1][C:3][C:4][O:2],none,,,1,2,,,,CC1CO1+Nc1ccccc1|CC(C)(c1ccc(OCC2CO2)cc1)c1ccc(OCC2CO2)cc1+Nc1ccc(Cc2ccc(N)cc2)cc1,CC1CO1+CCN|CC1CO1+Oc1ccccc1|CC1CO1+CNc1ccccc1|Nc1ccccc1+CCO,self,自行撰寫,\"反應 SMARTS 以 ether.epoxide 與 amine.primary.aromatic 的匹配條件為基礎撰寫；反應類型與官能度依據 Gavrielides et al., Int. J. Polym. Sci. 2019, 9604714 p.2（一級胺有兩個可反應的 N–H）\",,pending,反應 SMARTS 為自行撰寫（D22），寫法同 epoxy+amine.primary.aliphatic，僅胺的條件改為接在芳香碳上。functionality_b = 2（兩個 N–H，同脂肪一級胺）。芳香與脂肪胺的反應活性差異未建模；催化劑欄 none 為沿用脂肪胺的文獻情況，芳香胺未找到本機文獻可引用，待使用者確認。溫度未找到可引用數值，留空。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。review_status 為 pending，待使用者審核（D17、D22）\r\nepoxy+amine.secondary.aliphatic,開環加成,ether.epoxide,amine.secondary.aliphatic,[N;H1;D2;$(N(-C)-C):1].[O:2]1[C:3][C:4]1>>[N:1][C:3][C:4][O:2],none,,,1,1,,,,CC1CO1+CNC|CC1CO1+C1CCNCC1,CC1CO1+CCN|CC1CO1+CN(C)C|CC1CO1+CNc1ccccc1|CNC+CCO,self,自行撰寫,\"反應 SMARTS 以 ether.epoxide 與 amine.secondary.aliphatic 的匹配條件為基礎撰寫；一級與二級胺氫的區分依據 Pascault & Williams, J. Polym. Sci. B 28 (1990) 85-95 p.92\",,pending,反應 SMARTS 為自行撰寫（D22）；二級胺 N 只有一個 N–H，functionality_b = 1，反應後成為三級胺。含一級與二級胺的分子（如 DETA）會同時命中兩條胺規則，第 1 層因此回報「目前只支援單一反應規則」。溫度未找到可引用數值，留空。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。review_status 為 pending，待使用者審核（D17、D22）\r\nepoxy+amine.secondary.aromatic,開環加成,ether.epoxide,amine.secondary.aromatic,[N;H1;D2;$(N(-[c])-[#6]):1].[O:2]1[C:3][C:4]1>>[N:1][C:3][C:4][O:2],none,,,1,1,,,,CC1CO1+CNc1ccccc1|CC1CO1+c1ccccc1Nc1ccccc1,CC1CO1+Nc1ccccc1|CC1CO1+CNC|CC1CO1+CN(C)c1ccccc1|CNc1ccccc1+CCO,self,自行撰寫,\"反應 SMARTS 以 ether.epoxide 與 amine.secondary.aromatic 的匹配條件為基礎撰寫；一級與二級胺氫的區分依據 Pascault & Williams, J. Polym. Sci. B 28 (1990) 85-95 p.92\",,pending,反應 SMARTS 為自行撰寫（D22）；二級胺 N 只有一個 N–H，functionality_b = 1。溫度未找到可引用數值，留空。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。review_status 為 pending，待使用者審核（D17、D22）\r\nepoxy+anhydride,開環共聚（交替）,ether.epoxide,anhydride,[C:1](=[O:7])[O:2][C:3]=[O:8].[O:4]1[C:5][C:6]1>>[C:1](=[O:7])[O:2][C:5][C:6][O:4][C:3]=[O:8],三級胺或咪唑,,,2,2,,,,CC1CO1+CC(=O)OC(C)=O|CC(C)(c1ccc(OCC2CO2)cc1)c1ccc(OCC2CO2)cc1+O=C1OC(=O)c2ccccc12|CC1CO1+CC1CCC2C(C1)C(=O)OC2=O,CC1CO1+CC(=O)OC|CC(=O)OC(C)=O+Oc1ccccc1|CC1CO1+CC(=O)O|CC1CO1+CCN,self,自行撰寫,反應 SMARTS 以 ether.epoxide 與 anhydride 的匹配條件為基礎撰寫；反應機構與催化劑欄依任務卡 P7-1A（2026-11-17）所述，本機文獻未找到可引用段落,,pending,反應 SMARTS 為自行撰寫（D22），表示總反應（環氧插入酸酐 C–O 鍵，生成兩個酯鍵的交替共聚）；實際機構為酸酐＋羥基成單酯酸、酸再開環環氧並產生新羥基（任務卡所述，本機文獻未找到可引用段落，催化劑「三級胺或咪唑」同），故起始需要羥基或催化劑。functionality 2／2 為自行由機構推得（每次反應形成兩個酯鍵，一個酸酐基與一個環氧基計量為 1 : 1），不是文獻值，待使用者決定。第 1 層：多步、鏈增長，不適用 Miller–Macosko，回報「尚未支援」。溫度未找到可引用數值，留空。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。review_status 為 pending，待使用者審核（D17、D22）\r\nepoxy+cyanate,共反應（噁唑烷酮）,ether.epoxide,cyanate.ester,[#6:7][O:1][C:2]#[N:3].[O:4]1[C:5][C:6]1>>[O:1]=[C:2]1[N:3]([#6:7])[C:6][C:5][O:4]1,金屬離子（Cu(II) acac）加共催化劑壬基酚,,,1,1,,,,CC1CO1+N#COc1ccccc1|CC(C)(c1ccc(OC#N)cc1)c1ccc(OC#N)cc1+CC(C)(c1ccc(OCC2CO2)cc1)c1ccc(OCC2CO2)cc1,N#COc1ccccc1+Oc1ccccc1|N#Cc1ccccc1+CC1CO1|N#COc1ccccc1+CCO,self,自行撰寫,\"反應式依據 Li et al., Polymer 195 (2020) 122454 Fig. 3（Shimp 提出的 CE/EP 共聚反應，p.3）與 §3（p.6）；SMARTS 自行撰寫；催化劑依該文 §2（p.5）\",,pending,\"反應 SMARTS 為自行撰寫（D22），以最終產物 N-芳基噁唑烷酮表示（Li et al., Polymer 195 (2020) 122454 p.6：三嗪環、環氧插入、異氰脲酸酯重整、再與環氧生成噁唑烷酮）；芳基由 O 移到 N 是由異氰脲酸酯（N-芳基）路徑推得，非文獻直接寫出的結構。任務卡另提的噁唑啉路徑未收錄，待使用者決定。計量 1 : 1 為簡化，文獻的多步路徑計量隨配比與條件而異。催化劑欄為該文使用的 Cu(II) acac（360 ppm Cu）加壬基酚 3 phr（p.5），是否「必要」未確認。溫度：該文 p.6 觀察氰酸酯三聚放熱峰約 150 °C、環氧共聚合在 200 °C 以上，皆為峰值或觀察，不是範圍，留空。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。第 1 層：多步多路徑，回報「尚未支援」。review_status 為 pending，待使用者審核（D17、D22）\"\r\ncyanate.trimerization,環三聚（三嗪環）,cyanate.ester,,([#6:1][O:2][C:3]#[N:4].[#6:5][O:6][C:7]#[N:8]).[#6:9][O:10][C:11]#[N:12]>>[#6:1][O:2][c:3]1[n:4][c:7]([O:6][#6:5])[n:8][c:11]([O:10][#6:9])[n:12]1,金屬離子（Cu(II) acac）加共催化劑壬基酚,,,1,,,,,CC(C)(c1ccc(OC#N)cc1)c1ccc(OC#N)cc1+N#COc1ccccc1|N#COc1ccc(cc1)Cc1ccc(OC#N)cc1+N#COc1ccc(C)cc1,N#COc1ccccc1+Oc1ccccc1|Oc1ccccc1+Oc1ccccc1|N#Cc1ccccc1+N#Cc1ccccc1,self,自行撰寫,\"反應式依據 Li et al., Polymer 195 (2020) 122454 p.2（多官能氰酸酯單體經氰酸酯基三聚成 s-三嗪環而交聯）與 Fig. 3（p.3）；SMARTS 自行撰寫\",,pending,\"反應 SMARTS 為自行撰寫（D22）。三聚是三個氰酸酯基合成一個三嗪環；資料表測試機制只接受兩個反應物，故以括號分組「第一個反應物含兩個 –OCN」加「第二個反應物一個 –OCN」的寫法，只用來測試 SMARTS 語法與原子映射，不代表只有這種組合會反應（測試組合因此是二氰酸酯＋單氰酸酯）。functionality_a = 1（每個氰酸酯基消耗一次）。第 0 層以官能度計數判定，雙官能氰酸酯 f = 2 會判為「鏈延長」，但三嗪環是三度交聯點，實際成網；此為引擎限制，未修改。催化劑欄同 epoxy+cyanate（該文體系）。溫度：放熱峰約 150 °C（Li et al., Polymer 195 (2020) 122454 p.6）為峰值，不是範圍，留空。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。第 1 層：自反應與三聚，回報「尚未支援」。review_status 為 pending，待使用者審核（D17、D22）\"\r\nnovolac+hmta,縮合（亞甲基橋、苄胺橋）,aromatic.ch.phenol.ortho_para,hmta,\"[cH;$([cH]:c-[OX2H]),$([cH]1:c:c:c(-[OX2H]):c:c:1):1].[CH2:2]1[N:3]2[CH2:4][N:5]3[CH2:6][N:7]1[CH2:8][N:9]([CH2:10]2)[CH2:11]3>>[c:1][CH2:2][N:3]2[CH2:4][N:5]3[CH2:6][N:7][CH2:8][N:9]([CH2:10]2)[CH2:11]3\",none,,,1,6,N,,,Oc1ccccc1+C1N2CN3CN1CN(C2)C3|Cc1ccc(O)cc1+C1N2CN3CN1CN(C2)C3|Oc1ccc(Cc2ccccc2O)cc1+C1N2CN3CN1CN(C2)C3,Oc1ccccc1+C1CN2CCN1CC2|Oc1c(C)c(C)c(C)c(C)c1C+C1N2CN3CN1CN(C2)C3|Cc1ccccc1+C1N2CN3CN1CN(C2)C3|CCO+C1N2CN3CN1CN(C2)C3|Oc1ccccc1+Oc1ccccc1,self,自行撰寫,\"Pilato (ed.), Phenolic Resins: A Century of Progress, Springer 2010 (DOI 10.1007/978-3-642-04714-5) 式 3.10 與 Table 3.5 p.38（HMTA = (CH2)6N4）；§4.9.1 p.76（酚醛清漆硬化經苯并㗁嗪中間體轉成苄胺等結構）；pp.78–79（HMTA 硬化 150 °C 6 h；DSC 放熱峰 143–170 °C）；氨放出 p.84、p.455；SMARTS 自行撰寫\",,pending,\"反應 SMARTS 為自行撰寫（D22），只表示第一步：酚環鄰／對位空位的 C–H 與 HMTA 的一個亞甲基成苄胺鍵、籠狀結構開環一個 C–N 鍵。整體硬化會形成亞甲基橋與苄胺橋並放出氨（Pilato (ed.), Phenolic Resins: A Century of Progress, Springer 2010 (DOI 10.1007/978-3-642-04714-5) p.84、p.455），故 byproduct 填氨（N），但本 SMARTS 的產物不含氨。functionality_b = 6 是 HMTA 的亞甲基數（式 3.10，p.38）；書未給出等效反應位點數，一個亞甲基橋連接兩個環位點、部分亞甲基以苄胺橋留在網路，因此 6 只是結構計數，待使用者決定。催化劑 none（熱硬化）。溫度：p.78–79 只有 150 °C 6 h 的硬化條件與 4 個樣品的 DSC 放熱峰 143–170 °C（10 °C/min，樹脂／HMTA = 100/17.5），不是範圍，留空。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。第 1 層：HMTA 需先分解、等效位點不確定，回報「尚未支援」。review_status 為 pending，待使用者審核（D17、D22）\"\r\nresol.methylol+phenol_ring,縮合（亞甲基橋）,hydroxymethyl.phenolic,aromatic.ch.phenol.ortho_para,\"[CH2:1]([OX2H:2])[c;$(c:c-[OX2H]),$(c1:c:c:c(-[OX2H]):c:c:1):3].[cH;$([cH]:c-[OX2H]),$([cH]1:c:c:c(-[OX2H]):c:c:1):4]>>[c:3][CH2:1][c:4].[OH2:2]\",none,60,100,1,1,O,,,OCc1ccccc1O+Oc1ccccc1|OCc1ccc(O)cc1+Cc1ccc(O)cc1|OCc1cc(C)ccc1O+Oc1ccc(Cc2ccccc2O)cc1,OCc1ccccc1+Oc1ccccc1|OCc1ccccc1O+Cc1ccccc1|Oc1ccccc1+Oc1ccccc1|OCc1ccccc1O+CCO,self,自行撰寫,\"Pilato (ed.), Phenolic Resins: A Century of Progress, Springer 2010 (DOI 10.1007/978-3-642-04714-5) §4.2.2 p.47（Table 4.2、式 4.3、4.4：縮合 60–100 °C，羥甲基酚與酚縮合成亞甲基橋並放出水）；SMARTS 自行撰寫\",,pending,\"反應 SMARTS 為自行撰寫（D22）：羥甲基與酚環鄰／對位空位的 C–H 縮合成亞甲基橋，放出水。溫度 60–100 °C 取自 Pilato Table 4.2 的縮合階段（可溶酚醛製備條件），不是完整硬化溫度，使用時留意。催化劑 none：Pilato (ed.), Phenolic Resins: A Century of Progress, Springer 2010 (DOI 10.1007/978-3-642-04714-5) p.80 §4.9.2 指出可溶酚醛可由酸、鹼或加熱硬化，鹼是合成時的催化劑；是否需要鹼待使用者確認。同一分子同時含羥甲基與酚環空位時，第 0 層會產生同成分配對（對照 resol.methylol-ether）。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。第 1 層：同分子同時含兩類官能基且羥甲基自縮合，回報「尚未支援」。review_status 為 pending，待使用者審核（D17、D22）\"\r\nresol.methylol-ether,縮合（二亞甲基醚橋）,hydroxymethyl.phenolic,,\"[CH2:1]([OX2H:2])[c;$(c:c-[OX2H]),$(c1:c:c:c(-[OX2H]):c:c:1):3].[CH2:4]([OX2H:5])[c;$(c:c-[OX2H]),$(c1:c:c:c(-[OX2H]):c:c:1):6]>>[c:3][CH2:1][O:5][CH2:4][c:6].[OH2:2]\",none,,,1,,O,,,OCc1ccccc1O+OCc1ccccc1O|OCc1ccc(O)cc1+OCc1ccc(O)cc1|OCc1ccccc1O+OCc1ccc(O)cc1,OCc1ccccc1+OCc1ccccc1|Oc1ccccc1+Oc1ccccc1|OCc1ccccc1O+Oc1ccccc1,self,自行撰寫,\"Pilato (ed.), Phenolic Resins: A Century of Progress, Springer 2010 (DOI 10.1007/978-3-642-04714-5) §4.2 p.46（Christjanson 等：2-HMP、4-HMP 在 120 °C 熔融縮合，無 NaOH 時生成鄰／對位亞甲基醚）；SMARTS 自行撰寫\",,pending,\"反應 SMARTS 為自行撰寫（D22）：兩個羥甲基酚縮合成二亞甲基醚橋（–CH2–O–CH2–），放出水。依 Pilato (ed.), Phenolic Resins: A Century of Progress, Springer 2010 (DOI 10.1007/978-3-642-04714-5) p.46，無 NaOH 時 HMP 轉為 o,o' 或 p,p' 亞甲基醚（120 °C 熔融縮合）；120 °C 是單一試驗條件，不是範圍，溫度留空。自反應規則：group_b 空白。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。第 1 層：自反應，回報「尚未支援」。review_status 為 pending，待使用者審核（D17、D22）\"\r\nresol.methylol-methylene,縮合（亞甲基橋，放出甲醛）,hydroxymethyl.phenolic,,\"[CH2:1]([OX2H:2])[c;$(c:c-[OX2H]),$(c1:c:c:c(-[OX2H]):c:c:1):3].[CH2:4]([OX2H:5])[c;$(c:c-[OX2H]),$(c1:c:c:c(-[OX2H]):c:c:1):6]>>[c:3][CH2:1][c:6].[CH2:4]=[O:5].[OH2:2]\",鹼（NaOH）,,,1,,C=O.O,,,OCc1ccccc1O+OCc1ccc(O)cc1|OCc1ccc(O)cc1+OCc1ccc(O)cc1|OCc1ccccc1O+OCc1ccccc1O,OCc1ccccc1+OCc1ccccc1|Oc1ccccc1+Oc1ccccc1|OCc1ccccc1O+Oc1ccccc1,self,自行撰寫,\"Pilato (ed.), Phenolic Resins: A Century of Progress, Springer 2010 (DOI 10.1007/978-3-642-04714-5) §4.2 p.46（Christjanson 等：加催化量 NaOH 時只得 o,p' 與 p,p' 二羥基二苯甲烷，預期放出甲醛）；SMARTS 自行撰寫\",,pending,\"反應 SMARTS 為自行撰寫（D22）：兩個羥甲基酚縮合成亞甲基橋，放出甲醛與水（C14H16O4 → C13H12O2 + CH2O + H2O 原子平衡）。橋接位置取在失去 CH2OH 的環碳，文獻未給原子對應，為自行判斷，待使用者審。催化劑「鹼（NaOH）」依 Pilato (ed.), Phenolic Resins: A Century of Progress, Springer 2010 (DOI 10.1007/978-3-642-04714-5) p.46；溫度未找到可引用範圍（p.46 的 120 °C 為單一試驗條件），留空。自反應規則：group_b 空白。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。第 1 層：自反應，回報「尚未支援」。review_status 為 pending，待使用者審核（D17、D22）\"\r\nepoxy+pag.cationic,陽離子開環聚合（光酸觸發）,ether.epoxide,pag.onium,[O:1]1[C:2][C:3]1.[OX2H:4][CX4:5]>>[O:1][C:3][C:2][O:4][C:5],光酸（需光酸產生劑與照光）,,,2,1,,,,CC1CO1+CCO|CC(C)(c1ccc(OCC2CO2)cc1)c1ccc(OCC2CO2)cc1+OCC(O)C,CC1CO1+Oc1ccccc1|CC1CO1+CCN|C1COC1+CCO,self,自行撰寫,依任務卡 P7-1A 與 D65、D26；本機文獻未找到可引用的反應式或定義，SMARTS 自行撰寫,,pending,反應 SMARTS 為自行撰寫（D22），表示光酸活化後的鏈增長一步（活化單體機制：環氧被羥基開環、生成新羥基），因此測試組合是環氧加醇；group_b 的 PAG 官能基只作為觸發條件，使配對僅在配方含 PAG 時出現，不影響其他環氧配方（使用者 2026-11-17 決定）。觸發條件是光，不是溫度，溫度欄留空。PAG 不被消耗，functionality_b = 1 沒有化學計量意義；第 0 層以官能度計數判定，PAG 的 f = 1 會使判定顯示「具封端的結構條件」，此判定對陽離子鏈增長不適用。非離子型 PAG 不會配對（見 pag.onium）。本機文獻未找到可引用的反應式。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。第 1 層：鏈增長聚合，回報「尚未支援」。review_status 為 pending，待使用者審核（D17、D22）\r\noxetane+pag.cationic,陽離子開環聚合（光酸觸發）,ether.oxetane,pag.onium,[O:1]1[C:2][C:3][C:4]1.[OX2H:5][CX4:6]>>[O:1][C:4][C:3][C:2][O:5][C:6],光酸（需光酸產生劑與照光）,,,2,1,,,,C1COC1+CCO|CCC1(CO)COC1+CCO,CC1CO1+CCO|C1CCOC1+CCO|C1COC1+Oc1ccccc1,self,自行撰寫,依任務卡 P7-1A 與 D65、D26；本機文獻未找到可引用的反應式或定義，SMARTS 自行撰寫,,pending,反應 SMARTS 為自行撰寫（D22），表示光酸活化後的鏈增長一步（活化單體機制：氧雜環丁烷被羥基開環、生成新羥基），因此測試組合是氧雜環丁烷加醇；group_b 的 PAG 官能基只作為觸發條件，使配對僅在配方含 PAG 時出現，不影響其他氧雜環丁烷配方（使用者 2026-11-17 決定）。觸發條件是光，不是溫度，溫度欄留空。PAG 不被消耗，functionality_b = 1 沒有化學計量意義；第 0 層以官能度計數判定，PAG 的 f = 1 會使判定顯示「具封端的結構條件」，此判定對陽離子鏈增長不適用。非離子型 PAG 不會配對（見 pag.onium）。本機文獻未找到可引用的反應式。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。第 1 層：鏈增長聚合，回報「尚未支援」。review_status 為 pending，待使用者審核（D17、D22）環氧與氧雜環丁烷的共聚在同時含兩者與 PAG 的配方中由兩條規則各自配對表示，未另設環氧＋氧雜環丁烷規則。\r\n"
    },
    "output": {
     "value": [
@@ -4177,6 +4331,305 @@
       "",
       "approved",
       "反應 SMARTS 為自行撰寫（D22）；酚羥基的 O 與環氧環上一個碳成鍵、該碳與環上 O 的鍵斷開，環上 O 成為羥基；開環位置未區分，僅用於配對、計量與標記；催化劑欄依使用者提供：純加熱、不需催化劑（2026-10-29）；未包含環氧自聚、二級羥基醚化等副反應；使用者審核通過（2026-10-29）；限制見備註"
+     ],
+     [
+      "epoxy+amine.primary.aliphatic",
+      "開環加成",
+      "ether.epoxide",
+      "amine.primary.aliphatic",
+      "[N;H2;D1;$(N-!@C):1].[O:2]1[C:3][C:4]1>>[N:1][C:3][C:4][O:2]",
+      "none",
+      "",
+      "",
+      "1",
+      "2",
+      "",
+      "",
+      "",
+      "CC1CO1+CCN|CC(C)(c1ccc(OCC2CO2)cc1)c1ccc(OCC2CO2)cc1+NCCN|CC1CO1+NC1CCCCC1",
+      "CC1CO1+CCO|CC1CO1+Oc1ccccc1|CC1CO1+Nc1ccccc1|CC1CO1+CNC|CCN+CCO",
+      "self",
+      "自行撰寫",
+      "反應 SMARTS 以 ether.epoxide 與 amine.primary.aliphatic 的匹配條件為基礎撰寫；反應類型與官能度依據 Gavrielides et al., Int. J. Polym. Sci. 2019, 9604714 p.2（EDA 有四個反應位點、兩個一級胺基，胺的 H 與環氧反應）",
+      "",
+      "pending",
+      "反應 SMARTS 為自行撰寫（D22）；N 與環氧環上一個碳成鍵、該碳與環上 O 的鍵斷開，環上 O 成為羥基；開環位置未區分，僅用於配對、計量與標記。functionality_b = 2：一級胺 N 有兩個 N–H，各可開一個環氧（Gavrielides et al., Int. J. Polym. Sci. 2019, 9604714 p.2，DGEBA : EDA = 2 : 1）；一級與二級胺氫的活性不同（Pascault & Williams, J. Polym. Sci. B 28 (1990) 85-95 p.92），第 1 層的等活性假設不計此差異。催化劑欄 none：Gavrielides et al., Int. J. Polym. Sci. 2019, 9604714 p.2 的 DGEBA–EDA 在室溫聚合 48 h、未見催化劑。溫度：該文只有固化程序（室溫 48 h，再 413 K 後固化 2 h），不是典型範圍，未找到可引用數值，留空。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。未包含環氧自聚、羥基醚化等副反應。review_status 為 pending，待使用者審核（D17、D22）"
+     ],
+     [
+      "epoxy+amine.primary.aromatic",
+      "開環加成",
+      "ether.epoxide",
+      "amine.primary.aromatic",
+      "[N;H2;D1;$(N-!@c):1].[O:2]1[C:3][C:4]1>>[N:1][C:3][C:4][O:2]",
+      "none",
+      "",
+      "",
+      "1",
+      "2",
+      "",
+      "",
+      "",
+      "CC1CO1+Nc1ccccc1|CC(C)(c1ccc(OCC2CO2)cc1)c1ccc(OCC2CO2)cc1+Nc1ccc(Cc2ccc(N)cc2)cc1",
+      "CC1CO1+CCN|CC1CO1+Oc1ccccc1|CC1CO1+CNc1ccccc1|Nc1ccccc1+CCO",
+      "self",
+      "自行撰寫",
+      "反應 SMARTS 以 ether.epoxide 與 amine.primary.aromatic 的匹配條件為基礎撰寫；反應類型與官能度依據 Gavrielides et al., Int. J. Polym. Sci. 2019, 9604714 p.2（一級胺有兩個可反應的 N–H）",
+      "",
+      "pending",
+      "反應 SMARTS 為自行撰寫（D22），寫法同 epoxy+amine.primary.aliphatic，僅胺的條件改為接在芳香碳上。functionality_b = 2（兩個 N–H，同脂肪一級胺）。芳香與脂肪胺的反應活性差異未建模；催化劑欄 none 為沿用脂肪胺的文獻情況，芳香胺未找到本機文獻可引用，待使用者確認。溫度未找到可引用數值，留空。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。review_status 為 pending，待使用者審核（D17、D22）"
+     ],
+     [
+      "epoxy+amine.secondary.aliphatic",
+      "開環加成",
+      "ether.epoxide",
+      "amine.secondary.aliphatic",
+      "[N;H1;D2;$(N(-C)-C):1].[O:2]1[C:3][C:4]1>>[N:1][C:3][C:4][O:2]",
+      "none",
+      "",
+      "",
+      "1",
+      "1",
+      "",
+      "",
+      "",
+      "CC1CO1+CNC|CC1CO1+C1CCNCC1",
+      "CC1CO1+CCN|CC1CO1+CN(C)C|CC1CO1+CNc1ccccc1|CNC+CCO",
+      "self",
+      "自行撰寫",
+      "反應 SMARTS 以 ether.epoxide 與 amine.secondary.aliphatic 的匹配條件為基礎撰寫；一級與二級胺氫的區分依據 Pascault & Williams, J. Polym. Sci. B 28 (1990) 85-95 p.92",
+      "",
+      "pending",
+      "反應 SMARTS 為自行撰寫（D22）；二級胺 N 只有一個 N–H，functionality_b = 1，反應後成為三級胺。含一級與二級胺的分子（如 DETA）會同時命中兩條胺規則，第 1 層因此回報「目前只支援單一反應規則」。溫度未找到可引用數值，留空。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。review_status 為 pending，待使用者審核（D17、D22）"
+     ],
+     [
+      "epoxy+amine.secondary.aromatic",
+      "開環加成",
+      "ether.epoxide",
+      "amine.secondary.aromatic",
+      "[N;H1;D2;$(N(-[c])-[#6]):1].[O:2]1[C:3][C:4]1>>[N:1][C:3][C:4][O:2]",
+      "none",
+      "",
+      "",
+      "1",
+      "1",
+      "",
+      "",
+      "",
+      "CC1CO1+CNc1ccccc1|CC1CO1+c1ccccc1Nc1ccccc1",
+      "CC1CO1+Nc1ccccc1|CC1CO1+CNC|CC1CO1+CN(C)c1ccccc1|CNc1ccccc1+CCO",
+      "self",
+      "自行撰寫",
+      "反應 SMARTS 以 ether.epoxide 與 amine.secondary.aromatic 的匹配條件為基礎撰寫；一級與二級胺氫的區分依據 Pascault & Williams, J. Polym. Sci. B 28 (1990) 85-95 p.92",
+      "",
+      "pending",
+      "反應 SMARTS 為自行撰寫（D22）；二級胺 N 只有一個 N–H，functionality_b = 1。溫度未找到可引用數值，留空。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。review_status 為 pending，待使用者審核（D17、D22）"
+     ],
+     [
+      "epoxy+anhydride",
+      "開環共聚（交替）",
+      "ether.epoxide",
+      "anhydride",
+      "[C:1](=[O:7])[O:2][C:3]=[O:8].[O:4]1[C:5][C:6]1>>[C:1](=[O:7])[O:2][C:5][C:6][O:4][C:3]=[O:8]",
+      "三級胺或咪唑",
+      "",
+      "",
+      "2",
+      "2",
+      "",
+      "",
+      "",
+      "CC1CO1+CC(=O)OC(C)=O|CC(C)(c1ccc(OCC2CO2)cc1)c1ccc(OCC2CO2)cc1+O=C1OC(=O)c2ccccc12|CC1CO1+CC1CCC2C(C1)C(=O)OC2=O",
+      "CC1CO1+CC(=O)OC|CC(=O)OC(C)=O+Oc1ccccc1|CC1CO1+CC(=O)O|CC1CO1+CCN",
+      "self",
+      "自行撰寫",
+      "反應 SMARTS 以 ether.epoxide 與 anhydride 的匹配條件為基礎撰寫；反應機構與催化劑欄依任務卡 P7-1A（2026-11-17）所述，本機文獻未找到可引用段落",
+      "",
+      "pending",
+      "反應 SMARTS 為自行撰寫（D22），表示總反應（環氧插入酸酐 C–O 鍵，生成兩個酯鍵的交替共聚）；實際機構為酸酐＋羥基成單酯酸、酸再開環環氧並產生新羥基（任務卡所述，本機文獻未找到可引用段落，催化劑「三級胺或咪唑」同），故起始需要羥基或催化劑。functionality 2／2 為自行由機構推得（每次反應形成兩個酯鍵，一個酸酐基與一個環氧基計量為 1 : 1），不是文獻值，待使用者決定。第 1 層：多步、鏈增長，不適用 Miller–Macosko，回報「尚未支援」。溫度未找到可引用數值，留空。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。review_status 為 pending，待使用者審核（D17、D22）"
+     ],
+     [
+      "epoxy+cyanate",
+      "共反應（噁唑烷酮）",
+      "ether.epoxide",
+      "cyanate.ester",
+      "[#6:7][O:1][C:2]#[N:3].[O:4]1[C:5][C:6]1>>[O:1]=[C:2]1[N:3]([#6:7])[C:6][C:5][O:4]1",
+      "金屬離子（Cu(II) acac）加共催化劑壬基酚",
+      "",
+      "",
+      "1",
+      "1",
+      "",
+      "",
+      "",
+      "CC1CO1+N#COc1ccccc1|CC(C)(c1ccc(OC#N)cc1)c1ccc(OC#N)cc1+CC(C)(c1ccc(OCC2CO2)cc1)c1ccc(OCC2CO2)cc1",
+      "N#COc1ccccc1+Oc1ccccc1|N#Cc1ccccc1+CC1CO1|N#COc1ccccc1+CCO",
+      "self",
+      "自行撰寫",
+      "反應式依據 Li et al., Polymer 195 (2020) 122454 Fig. 3（Shimp 提出的 CE/EP 共聚反應，p.3）與 §3（p.6）；SMARTS 自行撰寫；催化劑依該文 §2（p.5）",
+      "",
+      "pending",
+      "反應 SMARTS 為自行撰寫（D22），以最終產物 N-芳基噁唑烷酮表示（Li et al., Polymer 195 (2020) 122454 p.6：三嗪環、環氧插入、異氰脲酸酯重整、再與環氧生成噁唑烷酮）；芳基由 O 移到 N 是由異氰脲酸酯（N-芳基）路徑推得，非文獻直接寫出的結構。任務卡另提的噁唑啉路徑未收錄，待使用者決定。計量 1 : 1 為簡化，文獻的多步路徑計量隨配比與條件而異。催化劑欄為該文使用的 Cu(II) acac（360 ppm Cu）加壬基酚 3 phr（p.5），是否「必要」未確認。溫度：該文 p.6 觀察氰酸酯三聚放熱峰約 150 °C、環氧共聚合在 200 °C 以上，皆為峰值或觀察，不是範圍，留空。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。第 1 層：多步多路徑，回報「尚未支援」。review_status 為 pending，待使用者審核（D17、D22）"
+     ],
+     [
+      "cyanate.trimerization",
+      "環三聚（三嗪環）",
+      "cyanate.ester",
+      "",
+      "([#6:1][O:2][C:3]#[N:4].[#6:5][O:6][C:7]#[N:8]).[#6:9][O:10][C:11]#[N:12]>>[#6:1][O:2][c:3]1[n:4][c:7]([O:6][#6:5])[n:8][c:11]([O:10][#6:9])[n:12]1",
+      "金屬離子（Cu(II) acac）加共催化劑壬基酚",
+      "",
+      "",
+      "1",
+      "",
+      "",
+      "",
+      "",
+      "CC(C)(c1ccc(OC#N)cc1)c1ccc(OC#N)cc1+N#COc1ccccc1|N#COc1ccc(cc1)Cc1ccc(OC#N)cc1+N#COc1ccc(C)cc1",
+      "N#COc1ccccc1+Oc1ccccc1|Oc1ccccc1+Oc1ccccc1|N#Cc1ccccc1+N#Cc1ccccc1",
+      "self",
+      "自行撰寫",
+      "反應式依據 Li et al., Polymer 195 (2020) 122454 p.2（多官能氰酸酯單體經氰酸酯基三聚成 s-三嗪環而交聯）與 Fig. 3（p.3）；SMARTS 自行撰寫",
+      "",
+      "pending",
+      "反應 SMARTS 為自行撰寫（D22）。三聚是三個氰酸酯基合成一個三嗪環；資料表測試機制只接受兩個反應物，故以括號分組「第一個反應物含兩個 –OCN」加「第二個反應物一個 –OCN」的寫法，只用來測試 SMARTS 語法與原子映射，不代表只有這種組合會反應（測試組合因此是二氰酸酯＋單氰酸酯）。functionality_a = 1（每個氰酸酯基消耗一次）。第 0 層以官能度計數判定，雙官能氰酸酯 f = 2 會判為「鏈延長」，但三嗪環是三度交聯點，實際成網；此為引擎限制，未修改。催化劑欄同 epoxy+cyanate（該文體系）。溫度：放熱峰約 150 °C（Li et al., Polymer 195 (2020) 122454 p.6）為峰值，不是範圍，留空。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。第 1 層：自反應與三聚，回報「尚未支援」。review_status 為 pending，待使用者審核（D17、D22）"
+     ],
+     [
+      "novolac+hmta",
+      "縮合（亞甲基橋、苄胺橋）",
+      "aromatic.ch.phenol.ortho_para",
+      "hmta",
+      "[cH;$([cH]:c-[OX2H]),$([cH]1:c:c:c(-[OX2H]):c:c:1):1].[CH2:2]1[N:3]2[CH2:4][N:5]3[CH2:6][N:7]1[CH2:8][N:9]([CH2:10]2)[CH2:11]3>>[c:1][CH2:2][N:3]2[CH2:4][N:5]3[CH2:6][N:7][CH2:8][N:9]([CH2:10]2)[CH2:11]3",
+      "none",
+      "",
+      "",
+      "1",
+      "6",
+      "N",
+      "",
+      "",
+      "Oc1ccccc1+C1N2CN3CN1CN(C2)C3|Cc1ccc(O)cc1+C1N2CN3CN1CN(C2)C3|Oc1ccc(Cc2ccccc2O)cc1+C1N2CN3CN1CN(C2)C3",
+      "Oc1ccccc1+C1CN2CCN1CC2|Oc1c(C)c(C)c(C)c(C)c1C+C1N2CN3CN1CN(C2)C3|Cc1ccccc1+C1N2CN3CN1CN(C2)C3|CCO+C1N2CN3CN1CN(C2)C3|Oc1ccccc1+Oc1ccccc1",
+      "self",
+      "自行撰寫",
+      "Pilato (ed.), Phenolic Resins: A Century of Progress, Springer 2010 (DOI 10.1007/978-3-642-04714-5) 式 3.10 與 Table 3.5 p.38（HMTA = (CH2)6N4）；§4.9.1 p.76（酚醛清漆硬化經苯并㗁嗪中間體轉成苄胺等結構）；pp.78–79（HMTA 硬化 150 °C 6 h；DSC 放熱峰 143–170 °C）；氨放出 p.84、p.455；SMARTS 自行撰寫",
+      "",
+      "pending",
+      "反應 SMARTS 為自行撰寫（D22），只表示第一步：酚環鄰／對位空位的 C–H 與 HMTA 的一個亞甲基成苄胺鍵、籠狀結構開環一個 C–N 鍵。整體硬化會形成亞甲基橋與苄胺橋並放出氨（Pilato (ed.), Phenolic Resins: A Century of Progress, Springer 2010 (DOI 10.1007/978-3-642-04714-5) p.84、p.455），故 byproduct 填氨（N），但本 SMARTS 的產物不含氨。functionality_b = 6 是 HMTA 的亞甲基數（式 3.10，p.38）；書未給出等效反應位點數，一個亞甲基橋連接兩個環位點、部分亞甲基以苄胺橋留在網路，因此 6 只是結構計數，待使用者決定。催化劑 none（熱硬化）。溫度：p.78–79 只有 150 °C 6 h 的硬化條件與 4 個樣品的 DSC 放熱峰 143–170 °C（10 °C/min，樹脂／HMTA = 100/17.5），不是範圍，留空。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。第 1 層：HMTA 需先分解、等效位點不確定，回報「尚未支援」。review_status 為 pending，待使用者審核（D17、D22）"
+     ],
+     [
+      "resol.methylol+phenol_ring",
+      "縮合（亞甲基橋）",
+      "hydroxymethyl.phenolic",
+      "aromatic.ch.phenol.ortho_para",
+      "[CH2:1]([OX2H:2])[c;$(c:c-[OX2H]),$(c1:c:c:c(-[OX2H]):c:c:1):3].[cH;$([cH]:c-[OX2H]),$([cH]1:c:c:c(-[OX2H]):c:c:1):4]>>[c:3][CH2:1][c:4].[OH2:2]",
+      "none",
+      "60",
+      "100",
+      "1",
+      "1",
+      "O",
+      "",
+      "",
+      "OCc1ccccc1O+Oc1ccccc1|OCc1ccc(O)cc1+Cc1ccc(O)cc1|OCc1cc(C)ccc1O+Oc1ccc(Cc2ccccc2O)cc1",
+      "OCc1ccccc1+Oc1ccccc1|OCc1ccccc1O+Cc1ccccc1|Oc1ccccc1+Oc1ccccc1|OCc1ccccc1O+CCO",
+      "self",
+      "自行撰寫",
+      "Pilato (ed.), Phenolic Resins: A Century of Progress, Springer 2010 (DOI 10.1007/978-3-642-04714-5) §4.2.2 p.47（Table 4.2、式 4.3、4.4：縮合 60–100 °C，羥甲基酚與酚縮合成亞甲基橋並放出水）；SMARTS 自行撰寫",
+      "",
+      "pending",
+      "反應 SMARTS 為自行撰寫（D22）：羥甲基與酚環鄰／對位空位的 C–H 縮合成亞甲基橋，放出水。溫度 60–100 °C 取自 Pilato Table 4.2 的縮合階段（可溶酚醛製備條件），不是完整硬化溫度，使用時留意。催化劑 none：Pilato (ed.), Phenolic Resins: A Century of Progress, Springer 2010 (DOI 10.1007/978-3-642-04714-5) p.80 §4.9.2 指出可溶酚醛可由酸、鹼或加熱硬化，鹼是合成時的催化劑；是否需要鹼待使用者確認。同一分子同時含羥甲基與酚環空位時，第 0 層會產生同成分配對（對照 resol.methylol-ether）。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。第 1 層：同分子同時含兩類官能基且羥甲基自縮合，回報「尚未支援」。review_status 為 pending，待使用者審核（D17、D22）"
+     ],
+     [
+      "resol.methylol-ether",
+      "縮合（二亞甲基醚橋）",
+      "hydroxymethyl.phenolic",
+      "",
+      "[CH2:1]([OX2H:2])[c;$(c:c-[OX2H]),$(c1:c:c:c(-[OX2H]):c:c:1):3].[CH2:4]([OX2H:5])[c;$(c:c-[OX2H]),$(c1:c:c:c(-[OX2H]):c:c:1):6]>>[c:3][CH2:1][O:5][CH2:4][c:6].[OH2:2]",
+      "none",
+      "",
+      "",
+      "1",
+      "",
+      "O",
+      "",
+      "",
+      "OCc1ccccc1O+OCc1ccccc1O|OCc1ccc(O)cc1+OCc1ccc(O)cc1|OCc1ccccc1O+OCc1ccc(O)cc1",
+      "OCc1ccccc1+OCc1ccccc1|Oc1ccccc1+Oc1ccccc1|OCc1ccccc1O+Oc1ccccc1",
+      "self",
+      "自行撰寫",
+      "Pilato (ed.), Phenolic Resins: A Century of Progress, Springer 2010 (DOI 10.1007/978-3-642-04714-5) §4.2 p.46（Christjanson 等：2-HMP、4-HMP 在 120 °C 熔融縮合，無 NaOH 時生成鄰／對位亞甲基醚）；SMARTS 自行撰寫",
+      "",
+      "pending",
+      "反應 SMARTS 為自行撰寫（D22）：兩個羥甲基酚縮合成二亞甲基醚橋（–CH2–O–CH2–），放出水。依 Pilato (ed.), Phenolic Resins: A Century of Progress, Springer 2010 (DOI 10.1007/978-3-642-04714-5) p.46，無 NaOH 時 HMP 轉為 o,o' 或 p,p' 亞甲基醚（120 °C 熔融縮合）；120 °C 是單一試驗條件，不是範圍，溫度留空。自反應規則：group_b 空白。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。第 1 層：自反應，回報「尚未支援」。review_status 為 pending，待使用者審核（D17、D22）"
+     ],
+     [
+      "resol.methylol-methylene",
+      "縮合（亞甲基橋，放出甲醛）",
+      "hydroxymethyl.phenolic",
+      "",
+      "[CH2:1]([OX2H:2])[c;$(c:c-[OX2H]),$(c1:c:c:c(-[OX2H]):c:c:1):3].[CH2:4]([OX2H:5])[c;$(c:c-[OX2H]),$(c1:c:c:c(-[OX2H]):c:c:1):6]>>[c:3][CH2:1][c:6].[CH2:4]=[O:5].[OH2:2]",
+      "鹼（NaOH）",
+      "",
+      "",
+      "1",
+      "",
+      "C=O.O",
+      "",
+      "",
+      "OCc1ccccc1O+OCc1ccc(O)cc1|OCc1ccc(O)cc1+OCc1ccc(O)cc1|OCc1ccccc1O+OCc1ccccc1O",
+      "OCc1ccccc1+OCc1ccccc1|Oc1ccccc1+Oc1ccccc1|OCc1ccccc1O+Oc1ccccc1",
+      "self",
+      "自行撰寫",
+      "Pilato (ed.), Phenolic Resins: A Century of Progress, Springer 2010 (DOI 10.1007/978-3-642-04714-5) §4.2 p.46（Christjanson 等：加催化量 NaOH 時只得 o,p' 與 p,p' 二羥基二苯甲烷，預期放出甲醛）；SMARTS 自行撰寫",
+      "",
+      "pending",
+      "反應 SMARTS 為自行撰寫（D22）：兩個羥甲基酚縮合成亞甲基橋，放出甲醛與水（C14H16O4 → C13H12O2 + CH2O + H2O 原子平衡）。橋接位置取在失去 CH2OH 的環碳，文獻未給原子對應，為自行判斷，待使用者審。催化劑「鹼（NaOH）」依 Pilato (ed.), Phenolic Resins: A Century of Progress, Springer 2010 (DOI 10.1007/978-3-642-04714-5) p.46；溫度未找到可引用範圍（p.46 的 120 °C 為單一試驗條件），留空。自反應規則：group_b 空白。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。第 1 層：自反應，回報「尚未支援」。review_status 為 pending，待使用者審核（D17、D22）"
+     ],
+     [
+      "epoxy+pag.cationic",
+      "陽離子開環聚合（光酸觸發）",
+      "ether.epoxide",
+      "pag.onium",
+      "[O:1]1[C:2][C:3]1.[OX2H:4][CX4:5]>>[O:1][C:3][C:2][O:4][C:5]",
+      "光酸（需光酸產生劑與照光）",
+      "",
+      "",
+      "2",
+      "1",
+      "",
+      "",
+      "",
+      "CC1CO1+CCO|CC(C)(c1ccc(OCC2CO2)cc1)c1ccc(OCC2CO2)cc1+OCC(O)C",
+      "CC1CO1+Oc1ccccc1|CC1CO1+CCN|C1COC1+CCO",
+      "self",
+      "自行撰寫",
+      "依任務卡 P7-1A 與 D65、D26；本機文獻未找到可引用的反應式或定義，SMARTS 自行撰寫",
+      "",
+      "pending",
+      "反應 SMARTS 為自行撰寫（D22），表示光酸活化後的鏈增長一步（活化單體機制：環氧被羥基開環、生成新羥基），因此測試組合是環氧加醇；group_b 的 PAG 官能基只作為觸發條件，使配對僅在配方含 PAG 時出現，不影響其他環氧配方（使用者 2026-11-17 決定）。觸發條件是光，不是溫度，溫度欄留空。PAG 不被消耗，functionality_b = 1 沒有化學計量意義；第 0 層以官能度計數判定，PAG 的 f = 1 會使判定顯示「具封端的結構條件」，此判定對陽離子鏈增長不適用。非離子型 PAG 不會配對（見 pag.onium）。本機文獻未找到可引用的反應式。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。第 1 層：鏈增長聚合，回報「尚未支援」。review_status 為 pending，待使用者審核（D17、D22）"
+     ],
+     [
+      "oxetane+pag.cationic",
+      "陽離子開環聚合（光酸觸發）",
+      "ether.oxetane",
+      "pag.onium",
+      "[O:1]1[C:2][C:3][C:4]1.[OX2H:5][CX4:6]>>[O:1][C:4][C:3][C:2][O:5][C:6]",
+      "光酸（需光酸產生劑與照光）",
+      "",
+      "",
+      "2",
+      "1",
+      "",
+      "",
+      "",
+      "C1COC1+CCO|CCC1(CO)COC1+CCO",
+      "CC1CO1+CCO|C1CCOC1+CCO|C1COC1+Oc1ccccc1",
+      "self",
+      "自行撰寫",
+      "依任務卡 P7-1A 與 D65、D26；本機文獻未找到可引用的反應式或定義，SMARTS 自行撰寫",
+      "",
+      "pending",
+      "反應 SMARTS 為自行撰寫（D22），表示光酸活化後的鏈增長一步（活化單體機制：氧雜環丁烷被羥基開環、生成新羥基），因此測試組合是氧雜環丁烷加醇；group_b 的 PAG 官能基只作為觸發條件，使配對僅在配方含 PAG 時出現，不影響其他氧雜環丁烷配方（使用者 2026-11-17 決定）。觸發條件是光，不是溫度，溫度欄留空。PAG 不被消耗，functionality_b = 1 沒有化學計量意義；第 0 層以官能度計數判定，PAG 的 f = 1 會使判定顯示「具封端的結構條件」，此判定對陽離子鏈增長不適用。非離子型 PAG 不會配對（見 pag.onium）。本機文獻未找到可引用的反應式。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。第 1 層：鏈增長聚合，回報「尚未支援」。review_status 為 pending，待使用者審核（D17、D22）環氧與氧雜環丁烷的共聚在同時含兩者與 PAG 的配方中由兩條規則各自配對表示，未另設環氧＋氧雜環丁烷規則。"
      ]
     ]
    }
@@ -10088,14 +10541,25 @@
      ],
      "file": "functional_groups.csv"
     },
-    "text": "﻿id,name_zh,smarts,reactive_atom_maps,should_match,should_not_match,source_type,source,source_detail,source_original,review_status,notes\r\nhydroxyl.phenolic,酚羥基,[OX2H:1][cX3]:[c],1,Oc1ccccc1|CC(C)(c1ccc(O)cc1)c1ccc(O)cc1|OC(=CC=C1C2(C)C)C=C1C(C2)(CC1(C)C)C(=CC(O)=C2)C1=C2,CCO|OC(=O)c1ccccc1|COc1ccccc1|COCC(C)OC(C)=O,paper,SMARTS Examples（Daylight Chemical Information Systems）,\"https://daylight.com/dayhtml_tutorials/languages/smarts/smarts_examples.html；Functional Groups by Element → O → hydroxyl (includes alcohol, phenol) → Phenol\",[OX2H][cX3]:[c],approved,僅加入原子映射編號，匹配條件與原文相同。原文：[OX2H][cX3]:[c]。原文會因酚羥基碳的兩個鄰位碳而對同一個 OH 匹配兩次，計數以不同的 O 原子為準（映射 1）；使用者審核通過（2026-10-29）；限制見備註\r\nether.epoxide,環氧基,[O:1]1[C:2][C:3]1,1|2|3,CC1CO1|CC(C)(c1ccc(OCC2CO2)cc1)c1ccc(OCC2CO2)cc1|CC(=C)C(=O)OCC1CO1,C1COC1|C1CCOC1|OCCO|COCC(C)OC(C)=O|C1CN1,package,RDKit,RDKit 2026.09.1（Release_2026_09_1）Data/FragmentDescriptors.csv，Code 欄 fr_epoxide，SMARTS 欄,RDKit 內建定義，未引用文獻,approved,僅加入原子映射編號，匹配條件與原文相同。原文：O1CC1。映射 1 為環上的 O，2、3 為環上的兩個 C；計數以不同的三原子集合為準；使用者審核通過（2026-10-29）；限制見備註\r\n"
+    "text": "﻿id,name_zh,smarts,reactive_atom_maps,should_match,should_not_match,source_type,source,source_detail,source_original,review_status,notes\r\nhydroxyl.phenolic,酚羥基,[OX2H:1][cX3]:[c],1,Oc1ccccc1|CC(C)(c1ccc(O)cc1)c1ccc(O)cc1|OC(=CC=C1C2(C)C)C=C1C(C2)(CC1(C)C)C(=CC(O)=C2)C1=C2,CCO|OC(=O)c1ccccc1|COc1ccccc1|COCC(C)OC(C)=O,paper,SMARTS Examples（Daylight Chemical Information Systems）,\"https://daylight.com/dayhtml_tutorials/languages/smarts/smarts_examples.html；Functional Groups by Element → O → hydroxyl (includes alcohol, phenol) → Phenol\",[OX2H][cX3]:[c],approved,僅加入原子映射編號，匹配條件與原文相同。原文：[OX2H][cX3]:[c]。原文會因酚羥基碳的兩個鄰位碳而對同一個 OH 匹配兩次，計數以不同的 O 原子為準（映射 1）；使用者審核通過（2026-10-29）；限制見備註\r\nether.epoxide,環氧基,[O:1]1[C:2][C:3]1,1|2|3,CC1CO1|CC(C)(c1ccc(OCC2CO2)cc1)c1ccc(OCC2CO2)cc1|CC(=C)C(=O)OCC1CO1,C1COC1|C1CCOC1|OCCO|COCC(C)OC(C)=O|C1CN1,package,RDKit,RDKit 2026.09.1（Release_2026_09_1）Data/FragmentDescriptors.csv，Code 欄 fr_epoxide，SMARTS 欄,RDKit 內建定義，未引用文獻,approved,僅加入原子映射編號，匹配條件與原文相同。原文：O1CC1。映射 1 為環上的 O，2、3 為環上的兩個 C；計數以不同的三原子集合為準；使用者審核通過（2026-10-29）；限制見備註\r\namine.primary.aliphatic,一級脂肪胺,\"[N;H2;D1;$(N-!@C);!$(N-C=[O,N,S]):1]\",1,CCN|NCCN|NCCNCCN|NC1CCCCC1,Nc1ccccc1|CNC|CN(C)C|CC(N)=O|NC(=O)N|C1CCNCC1|OCCO,package,RDKit,RDKit 2026.09.1（Release_2026_09_1）Data/Functional_Group_Hierarchy.txt，Amine.Primary.Aliphatic,\"RDKit 內建定義（Greg Landrum, 2006），未引用文獻\",pending,\"僅加入原子映射編號，匹配條件與原文相同。原文：[N;H2;D1;$(N-!@C);!$(N-C=[O,N,S])]。映射 1 為胺基 N，每個 N 計一個位點（一級胺的兩個 N–H 以反應規則的 functionality 表示）；醯胺 N、脲 N、芳香環內 N（咪唑、吡咯）與三級胺不命中。review_status 為 pending，待使用者審核（D17、D22）\"\r\namine.primary.aromatic,一級芳香胺,\"[N;H2;D1;$(N-!@c);!$(N-C=[O,N,S]):1]\",1,Nc1ccccc1|Nc1ccc(Cc2ccc(N)cc2)cc1|Nc1ccc(cc1)S(=O)(=O)c1ccc(N)cc1,CCN|CNc1ccccc1|Cc1ccccc1|NC(=O)c1ccccc1|CC(=O)Nc1ccccc1|c1ccncc1,package,RDKit,RDKit 2026.09.1（Release_2026_09_1）Data/Functional_Group_Hierarchy.txt，Amine.Primary.Aromatic,\"RDKit 內建定義（Greg Landrum, 2006），未引用文獻\",pending,\"僅加入原子映射編號，匹配條件與原文相同。原文：[N;H2;D1;$(N-!@c);!$(N-C=[O,N,S])]。映射 1 為胺基 N，每個 N 計一個位點（一級胺的兩個 N–H 以反應規則的 functionality 表示）；醯胺 N、脲 N、芳香環內 N（咪唑、吡咯）與三級胺不命中。review_status 為 pending，待使用者審核（D17、D22）\"\r\namine.secondary.aliphatic,二級脂肪胺,\"[N;H1;D2;$(N(-C)-C);!$(N-C=[O,N,S]):1]\",1,CNC|C1CCNCC1|C1CNCCN1|NCCNCCN,CN(C)C|CCN|CNc1ccccc1|CC(=O)NC|c1ccc2[nH]ccc2c1,package,RDKit,RDKit 2026.09.1（Release_2026_09_1）Data/Functional_Group_Hierarchy.txt，Amine.Secondary.Aliphatic,\"RDKit 內建定義（Greg Landrum, 2006），未引用文獻\",pending,\"僅加入原子映射編號，匹配條件與原文相同。原文：[N;H1;D2;$(N(-C)-C);!$(N-C=[O,N,S])]。映射 1 為胺基 N，每個 N 計一個位點（一級胺的兩個 N–H 以反應規則的 functionality 表示）；醯胺 N、脲 N、芳香環內 N（咪唑、吡咯）與三級胺不命中。review_status 為 pending，待使用者審核（D17、D22）\"\r\namine.secondary.aromatic,二級芳香胺,\"[N;H1;D2;$(N(-[c])-[#6]);!$(N-C=[O,N,S]):1]\",1,CNc1ccccc1|c1ccccc1Nc1ccccc1,Nc1ccccc1|CNC|CN(C)c1ccccc1|CC(=O)Nc1ccccc1,package,RDKit,RDKit 2026.09.1（Release_2026_09_1）Data/Functional_Group_Hierarchy.txt，Amine.Secondary.Aromatic,\"RDKit 內建定義（Greg Landrum, 2006），未引用文獻\",pending,\"僅加入原子映射編號，匹配條件與原文相同。原文：[N;H1;D2;$(N(-[c])-[#6]);!$(N-C=[O,N,S])]。映射 1 為胺基 N，每個 N 計一個位點（一級胺的兩個 N–H 以反應規則的 functionality 表示）；醯胺 N、脲 N、芳香環內 N（咪唑、吡咯）與三級胺不命中。review_status 為 pending，待使用者審核（D17、D22）\"\r\nanhydride,酸酐,[C:1](=O)[O:2][C:3]=O,1|2|3,CC(=O)OC(C)=O|O=C1OC(=O)c2ccccc12|O=C1OC(=O)C=C1|CC1CCC2C(C1)C(=O)OC2=O|O=C1CCC(=O)O1,CC(=O)OC|CC(=O)O|COC(=O)OC|O=C1NC(=O)c2ccccc12|CC(=O)Cl,package,RDKit,RDKit 2026.09.1（Release_2026_09_1）Data/SmartsLib/RLewis_smarts.txt，條目 Acid_anhydrides,RDKit SmartsLib 的 RLewis_smarts.txt（Richard Lewis 貢獻之 SMARTS 篩選集），未引用文獻,pending,僅加入原子映射編號，匹配條件與原文相同。原文：C(=O)OC(=O)（Daylight SMARTS Examples 另有寫法 [CX3](=[OX1])[OX2][CX3](=[OX1])，等價）。映射 1、2、3 為兩個羰基碳與中間的 O，一個酸酐基計一個位點（對稱的兩種原子順序以原子集合去重）；環狀（鄰苯二甲酸酐、馬來酸酐、MHHPA）與鏈狀都命中，酯、羧酸、碳酸酯、醯亞胺、醯氯不命中。review_status 為 pending，待使用者審核（D17、D22）\r\ncyanate.ester,氰酸酯基,[#6]-[O:1]-[C:2]#[N:3],1|2|3,N#COc1ccccc1|CC(C)(c1ccc(OC#N)cc1)c1ccc(OC#N)cc1|N#COc1ccc(cc1)Cc1ccc(OC#N)cc1,O=C=Nc1ccccc1|N#Cc1ccccc1|N#CSc1ccccc1|Oc1ccccc1|CN(C)C#N|c1(Oc2ccccc2)nc(Oc2ccccc2)nc(Oc2ccccc2)n1,self,自行撰寫,\"SMARTS 結構依據 Li et al., Polymer 195 (2020) 122454 Fig. 1（氰酸酯單體 –O–C≡N）\",,pending,自行撰寫（D22）：RDKit 2026.09.1 的 FragmentDescriptors.csv、Functional_Group_Hierarchy.txt、SmartsLib 與 Daylight SMARTS Examples 均無氰酸酯定義（Daylight 只有 Cyanamide [NX3][CX2]#[NX1]）。匹配 [#6]–O–C≡N；映射 1、2、3 為 O、C、N，每個氰酸酯基計一個位點；異氰酸酯、腈、硫氰酸酯、氰胺與三聚後的三嗪環（Ar–O 接在環碳上）不命中。review_status 為 pending，待使用者審核（D17、D22）\r\nether.oxetane,氧雜環丁烷,\"[O;R1:1]1[C;!$(C=[O,N,S]):2][C:3][C;!$(C=[O,N,S]):4]1\",1|2|3|4,C1COC1|CCC1(CO)COC1|C1(COC1)COCC1COC1,C1CCOC1|C1CO1|O=C1CCO1|COCC(C)OC(C)=O|C1CC1,self,自行撰寫,SMARTS 結構為四員環含一個 O,,pending,自行撰寫（D22）：RDKit 2026.09.1 內建檔與 Daylight SMARTS Examples 均無氧雜環丁烷定義（Daylight 只有一般 Ether）。匹配含一個 O 的四員環，環上與 O 相連的兩個碳不得是羰基／亞胺碳（排除 β-內酯）；映射 1 為環 O，2、3、4 為環上三個 C；計數以不同的四原子集合為準。review_status 為 pending，待使用者審核（D17、D22）\r\npag.onium,光酸產生劑（鎓鹽陽離子）,\"[$([S+X3](c)(c)c),$([I+X2](c)c):1]\",1,c1ccc([S+](c2ccccc2)c2ccccc2)cc1.F[Sb-](F)(F)(F)(F)F|c1ccc([S+](c2ccccc2)c2ccccc2)cc1.[O-]S(=O)(=O)C(F)(F)F|c1ccc([I+]c2ccccc2)cc1.[O-]S(=O)(=O)C(F)(F)F,C[N+](C)(C)C|C[S+](C)C|c1ccc(Sc2ccccc2)cc1|c1ccc(I)cc1|c1ccc(P(c2ccccc2)c2ccccc2)cc1|c1ccc([P+](c2ccccc2)(c2ccccc2)c2ccccc2)cc1,self,自行撰寫,SMARTS 結構為三芳基鋶與二芳基錪陽離子（D26 的光酸產生劑類成分）,,pending,自行撰寫（D22）：本機文獻與 RDKit、Daylight 均無光酸產生劑定義。只涵蓋離子型鎓鹽陽離子（三芳基鋶 [S+](c)(c)c、二芳基錪 [I+](c)c），抗衡陰離子不參與匹配；非離子型 PAG（磺酸酯、肟磺酸酯、萘二甲醯亞胺磺酸酯等）與烷基鋶不命中，使用者之後可補。映射 1 為 S+ 或 I+。review_status 為 pending，待使用者審核（D17、D22）\r\naromatic.ch.phenol.ortho_para,酚環鄰／對位空位（芳香 C–H）,\"[cH;$([cH]:c-[OX2H]),$([cH]1:c:c:c(-[OX2H]):c:c:1):1]\",1,Oc1ccccc1|Cc1ccccc1O|Cc1cccc(O)c1|Cc1ccc(O)cc1|CC(C)(c1ccc(O)cc1)c1ccc(O)cc1|Oc1ccc(Cc2ccc(O)c(Cc3ccccc3O)c2)cc1|Oc1ccc(Cc2ccc(cc2)-c2ccc(Cc3ccccc3O)cc2)cc1|Oc1ccc(cc1)C1CC2C3CC=CC3C2C1|OCc1ccccc1O,Cc1cc(C)c(O)c(C)c1|Oc1c(C)c(C)c(C)c(C)c1C|Oc1c(CO)cc(C)cc1CO|Cc1ccccc1|COc1ccccc1|OC1CCCCC1|c1ccccc1,self,自行撰寫,\"SMARTS 結構依據 Pilato (ed.), Phenolic Resins: A Century of Progress, Springer 2010 (DOI 10.1007/978-3-642-04714-5) 第 4 章 p.53–54（甲醛與酚環的鄰位與對位反應，式 4.6）\",,pending,\"自行撰寫（D22）：RDKit 與 Daylight 均無此定義。匹配與酚羥基（–OH，OX2H）在鄰位或對位、且帶氫的芳香碳 [cH]；映射 1 為該環碳，每個空位計一個位點（苯酚 3 個、鄰或間或對甲酚 2 個、4,4'-雙酚 A 每環 2 個共 4 個）。酚羥基以外的取代基、間位的 C–H 不計；2,4,6 三位全被取代的酚不命中。羥基須為 OH（醚、酯不算）。review_status 為 pending，待使用者審核（D17、D22）\"\r\nhydroxymethyl.phenolic,酚環羥甲基（–CH2OH）,\"[OX2H:2][CH2X4:1][c;$(c:c-[OX2H]),$(c1:c:c:c(-[OX2H]):c:c:1)]\",1|2,OCc1ccccc1O|OCc1ccc(O)cc1|Oc1c(CO)cc(CO)cc1CO|OCc1cc(C)ccc1O,OCc1ccccc1|OCc1cccc(O)c1|Oc1ccccc1|CCO|COCc1ccccc1O|OCCc1ccccc1O,self,自行撰寫,\"SMARTS 結構依據 Pilato (ed.), Phenolic Resins: A Century of Progress, Springer 2010 (DOI 10.1007/978-3-642-04714-5) §4.2 p.45–47（羥甲基酚 2-HMP、4-HMP、2,4-DHMP、2,4,6-THMP，Fig. 4.1）\",,pending,自行撰寫（D22）：RDKit 與 Daylight 均無此定義。匹配接在酚環上的 –CH2–OH，且該環碳與酚羥基在鄰位或對位（可溶酚醛的羥甲基酚）；映射 1 為 CH2、2 為羥基 O，環碳不計為反應原子。苄醇（無酚羥基）、間位羥甲基、羥乙基、羥甲基的醚不命中。review_status 為 pending，待使用者審核（D17、D22）\r\nhmta,六亞甲基四胺（HMTA 籠）,[CH2:1]1[N:2]2[CH2:3][N:4]3[CH2:5][N:6]1[CH2:7][N:8]([CH2:9]2)[CH2:10]3,1|2|3|4|5|6|7|8|9|10,C1N2CN3CN1CN(C2)C3,C1CN2CCN1CC2|C1NCNCN1|CN(C)C|C1C2CC3CC1CC(C2)C3,self,自行撰寫,\"結構依據 Pilato (ed.), Phenolic Resins: A Century of Progress, Springer 2010 (DOI 10.1007/978-3-642-04714-5) 式 3.10 與 Table 3.5 p.38（HMTA = (CH2)6N4，MW 140.2）\",,pending,自行撰寫（D22）：RDKit 與 Daylight 均無 HMTA 定義。匹配整個籠狀結構（六個 CH2、四個 N），映射 1 至 10 為全部十個重原子，因此一個 HMTA 分子只計一個位點（對稱性造成的多重匹配以原子集合去重）；DABCO、三嗪烷、金剛烷不命中。review_status 為 pending，待使用者審核（D17、D22）\r\n"
    },
    "output": {
     "value": {
      "issues": [],
      "rowNumbers": [
       2,
-      3
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14
      ],
      "rows": [
       {
@@ -10150,6 +10614,323 @@
        "source_detail": "RDKit 2026.09.1（Release_2026_09_1）Data/FragmentDescriptors.csv，Code 欄 fr_epoxide，SMARTS 欄",
        "source_original": "RDKit 內建定義，未引用文獻",
        "source_type": "package"
+      },
+      {
+       "id": "amine.primary.aliphatic",
+       "name_zh": "一級脂肪胺",
+       "notes": "僅加入原子映射編號，匹配條件與原文相同。原文：[N;H2;D1;$(N-!@C);!$(N-C=[O,N,S])]。映射 1 為胺基 N，每個 N 計一個位點（一級胺的兩個 N–H 以反應規則的 functionality 表示）；醯胺 N、脲 N、芳香環內 N（咪唑、吡咯）與三級胺不命中。review_status 為 pending，待使用者審核（D17、D22）",
+       "reactive_atom_maps": [
+        1
+       ],
+       "review_status": "pending",
+       "should_match": [
+        "CCN",
+        "NCCN",
+        "NCCNCCN",
+        "NC1CCCCC1"
+       ],
+       "should_not_match": [
+        "Nc1ccccc1",
+        "CNC",
+        "CN(C)C",
+        "CC(N)=O",
+        "NC(=O)N",
+        "C1CCNCC1",
+        "OCCO"
+       ],
+       "smarts": "[N;H2;D1;$(N-!@C);!$(N-C=[O,N,S]):1]",
+       "source": "RDKit",
+       "source_detail": "RDKit 2026.09.1（Release_2026_09_1）Data/Functional_Group_Hierarchy.txt，Amine.Primary.Aliphatic",
+       "source_original": "RDKit 內建定義（Greg Landrum, 2006），未引用文獻",
+       "source_type": "package"
+      },
+      {
+       "id": "amine.primary.aromatic",
+       "name_zh": "一級芳香胺",
+       "notes": "僅加入原子映射編號，匹配條件與原文相同。原文：[N;H2;D1;$(N-!@c);!$(N-C=[O,N,S])]。映射 1 為胺基 N，每個 N 計一個位點（一級胺的兩個 N–H 以反應規則的 functionality 表示）；醯胺 N、脲 N、芳香環內 N（咪唑、吡咯）與三級胺不命中。review_status 為 pending，待使用者審核（D17、D22）",
+       "reactive_atom_maps": [
+        1
+       ],
+       "review_status": "pending",
+       "should_match": [
+        "Nc1ccccc1",
+        "Nc1ccc(Cc2ccc(N)cc2)cc1",
+        "Nc1ccc(cc1)S(=O)(=O)c1ccc(N)cc1"
+       ],
+       "should_not_match": [
+        "CCN",
+        "CNc1ccccc1",
+        "Cc1ccccc1",
+        "NC(=O)c1ccccc1",
+        "CC(=O)Nc1ccccc1",
+        "c1ccncc1"
+       ],
+       "smarts": "[N;H2;D1;$(N-!@c);!$(N-C=[O,N,S]):1]",
+       "source": "RDKit",
+       "source_detail": "RDKit 2026.09.1（Release_2026_09_1）Data/Functional_Group_Hierarchy.txt，Amine.Primary.Aromatic",
+       "source_original": "RDKit 內建定義（Greg Landrum, 2006），未引用文獻",
+       "source_type": "package"
+      },
+      {
+       "id": "amine.secondary.aliphatic",
+       "name_zh": "二級脂肪胺",
+       "notes": "僅加入原子映射編號，匹配條件與原文相同。原文：[N;H1;D2;$(N(-C)-C);!$(N-C=[O,N,S])]。映射 1 為胺基 N，每個 N 計一個位點（一級胺的兩個 N–H 以反應規則的 functionality 表示）；醯胺 N、脲 N、芳香環內 N（咪唑、吡咯）與三級胺不命中。review_status 為 pending，待使用者審核（D17、D22）",
+       "reactive_atom_maps": [
+        1
+       ],
+       "review_status": "pending",
+       "should_match": [
+        "CNC",
+        "C1CCNCC1",
+        "C1CNCCN1",
+        "NCCNCCN"
+       ],
+       "should_not_match": [
+        "CN(C)C",
+        "CCN",
+        "CNc1ccccc1",
+        "CC(=O)NC",
+        "c1ccc2[nH]ccc2c1"
+       ],
+       "smarts": "[N;H1;D2;$(N(-C)-C);!$(N-C=[O,N,S]):1]",
+       "source": "RDKit",
+       "source_detail": "RDKit 2026.09.1（Release_2026_09_1）Data/Functional_Group_Hierarchy.txt，Amine.Secondary.Aliphatic",
+       "source_original": "RDKit 內建定義（Greg Landrum, 2006），未引用文獻",
+       "source_type": "package"
+      },
+      {
+       "id": "amine.secondary.aromatic",
+       "name_zh": "二級芳香胺",
+       "notes": "僅加入原子映射編號，匹配條件與原文相同。原文：[N;H1;D2;$(N(-[c])-[#6]);!$(N-C=[O,N,S])]。映射 1 為胺基 N，每個 N 計一個位點（一級胺的兩個 N–H 以反應規則的 functionality 表示）；醯胺 N、脲 N、芳香環內 N（咪唑、吡咯）與三級胺不命中。review_status 為 pending，待使用者審核（D17、D22）",
+       "reactive_atom_maps": [
+        1
+       ],
+       "review_status": "pending",
+       "should_match": [
+        "CNc1ccccc1",
+        "c1ccccc1Nc1ccccc1"
+       ],
+       "should_not_match": [
+        "Nc1ccccc1",
+        "CNC",
+        "CN(C)c1ccccc1",
+        "CC(=O)Nc1ccccc1"
+       ],
+       "smarts": "[N;H1;D2;$(N(-[c])-[#6]);!$(N-C=[O,N,S]):1]",
+       "source": "RDKit",
+       "source_detail": "RDKit 2026.09.1（Release_2026_09_1）Data/Functional_Group_Hierarchy.txt，Amine.Secondary.Aromatic",
+       "source_original": "RDKit 內建定義（Greg Landrum, 2006），未引用文獻",
+       "source_type": "package"
+      },
+      {
+       "id": "anhydride",
+       "name_zh": "酸酐",
+       "notes": "僅加入原子映射編號，匹配條件與原文相同。原文：C(=O)OC(=O)（Daylight SMARTS Examples 另有寫法 [CX3](=[OX1])[OX2][CX3](=[OX1])，等價）。映射 1、2、3 為兩個羰基碳與中間的 O，一個酸酐基計一個位點（對稱的兩種原子順序以原子集合去重）；環狀（鄰苯二甲酸酐、馬來酸酐、MHHPA）與鏈狀都命中，酯、羧酸、碳酸酯、醯亞胺、醯氯不命中。review_status 為 pending，待使用者審核（D17、D22）",
+       "reactive_atom_maps": [
+        1,
+        2,
+        3
+       ],
+       "review_status": "pending",
+       "should_match": [
+        "CC(=O)OC(C)=O",
+        "O=C1OC(=O)c2ccccc12",
+        "O=C1OC(=O)C=C1",
+        "CC1CCC2C(C1)C(=O)OC2=O",
+        "O=C1CCC(=O)O1"
+       ],
+       "should_not_match": [
+        "CC(=O)OC",
+        "CC(=O)O",
+        "COC(=O)OC",
+        "O=C1NC(=O)c2ccccc12",
+        "CC(=O)Cl"
+       ],
+       "smarts": "[C:1](=O)[O:2][C:3]=O",
+       "source": "RDKit",
+       "source_detail": "RDKit 2026.09.1（Release_2026_09_1）Data/SmartsLib/RLewis_smarts.txt，條目 Acid_anhydrides",
+       "source_original": "RDKit SmartsLib 的 RLewis_smarts.txt（Richard Lewis 貢獻之 SMARTS 篩選集），未引用文獻",
+       "source_type": "package"
+      },
+      {
+       "id": "cyanate.ester",
+       "name_zh": "氰酸酯基",
+       "notes": "自行撰寫（D22）：RDKit 2026.09.1 的 FragmentDescriptors.csv、Functional_Group_Hierarchy.txt、SmartsLib 與 Daylight SMARTS Examples 均無氰酸酯定義（Daylight 只有 Cyanamide [NX3][CX2]#[NX1]）。匹配 [#6]–O–C≡N；映射 1、2、3 為 O、C、N，每個氰酸酯基計一個位點；異氰酸酯、腈、硫氰酸酯、氰胺與三聚後的三嗪環（Ar–O 接在環碳上）不命中。review_status 為 pending，待使用者審核（D17、D22）",
+       "reactive_atom_maps": [
+        1,
+        2,
+        3
+       ],
+       "review_status": "pending",
+       "should_match": [
+        "N#COc1ccccc1",
+        "CC(C)(c1ccc(OC#N)cc1)c1ccc(OC#N)cc1",
+        "N#COc1ccc(cc1)Cc1ccc(OC#N)cc1"
+       ],
+       "should_not_match": [
+        "O=C=Nc1ccccc1",
+        "N#Cc1ccccc1",
+        "N#CSc1ccccc1",
+        "Oc1ccccc1",
+        "CN(C)C#N",
+        "c1(Oc2ccccc2)nc(Oc2ccccc2)nc(Oc2ccccc2)n1"
+       ],
+       "smarts": "[#6]-[O:1]-[C:2]#[N:3]",
+       "source": "自行撰寫",
+       "source_detail": "SMARTS 結構依據 Li et al., Polymer 195 (2020) 122454 Fig. 1（氰酸酯單體 –O–C≡N）",
+       "source_original": "",
+       "source_type": "self"
+      },
+      {
+       "id": "ether.oxetane",
+       "name_zh": "氧雜環丁烷",
+       "notes": "自行撰寫（D22）：RDKit 2026.09.1 內建檔與 Daylight SMARTS Examples 均無氧雜環丁烷定義（Daylight 只有一般 Ether）。匹配含一個 O 的四員環，環上與 O 相連的兩個碳不得是羰基／亞胺碳（排除 β-內酯）；映射 1 為環 O，2、3、4 為環上三個 C；計數以不同的四原子集合為準。review_status 為 pending，待使用者審核（D17、D22）",
+       "reactive_atom_maps": [
+        1,
+        2,
+        3,
+        4
+       ],
+       "review_status": "pending",
+       "should_match": [
+        "C1COC1",
+        "CCC1(CO)COC1",
+        "C1(COC1)COCC1COC1"
+       ],
+       "should_not_match": [
+        "C1CCOC1",
+        "C1CO1",
+        "O=C1CCO1",
+        "COCC(C)OC(C)=O",
+        "C1CC1"
+       ],
+       "smarts": "[O;R1:1]1[C;!$(C=[O,N,S]):2][C:3][C;!$(C=[O,N,S]):4]1",
+       "source": "自行撰寫",
+       "source_detail": "SMARTS 結構為四員環含一個 O",
+       "source_original": "",
+       "source_type": "self"
+      },
+      {
+       "id": "pag.onium",
+       "name_zh": "光酸產生劑（鎓鹽陽離子）",
+       "notes": "自行撰寫（D22）：本機文獻與 RDKit、Daylight 均無光酸產生劑定義。只涵蓋離子型鎓鹽陽離子（三芳基鋶 [S+](c)(c)c、二芳基錪 [I+](c)c），抗衡陰離子不參與匹配；非離子型 PAG（磺酸酯、肟磺酸酯、萘二甲醯亞胺磺酸酯等）與烷基鋶不命中，使用者之後可補。映射 1 為 S+ 或 I+。review_status 為 pending，待使用者審核（D17、D22）",
+       "reactive_atom_maps": [
+        1
+       ],
+       "review_status": "pending",
+       "should_match": [
+        "c1ccc([S+](c2ccccc2)c2ccccc2)cc1.F[Sb-](F)(F)(F)(F)F",
+        "c1ccc([S+](c2ccccc2)c2ccccc2)cc1.[O-]S(=O)(=O)C(F)(F)F",
+        "c1ccc([I+]c2ccccc2)cc1.[O-]S(=O)(=O)C(F)(F)F"
+       ],
+       "should_not_match": [
+        "C[N+](C)(C)C",
+        "C[S+](C)C",
+        "c1ccc(Sc2ccccc2)cc1",
+        "c1ccc(I)cc1",
+        "c1ccc(P(c2ccccc2)c2ccccc2)cc1",
+        "c1ccc([P+](c2ccccc2)(c2ccccc2)c2ccccc2)cc1"
+       ],
+       "smarts": "[$([S+X3](c)(c)c),$([I+X2](c)c):1]",
+       "source": "自行撰寫",
+       "source_detail": "SMARTS 結構為三芳基鋶與二芳基錪陽離子（D26 的光酸產生劑類成分）",
+       "source_original": "",
+       "source_type": "self"
+      },
+      {
+       "id": "aromatic.ch.phenol.ortho_para",
+       "name_zh": "酚環鄰／對位空位（芳香 C–H）",
+       "notes": "自行撰寫（D22）：RDKit 與 Daylight 均無此定義。匹配與酚羥基（–OH，OX2H）在鄰位或對位、且帶氫的芳香碳 [cH]；映射 1 為該環碳，每個空位計一個位點（苯酚 3 個、鄰或間或對甲酚 2 個、4,4'-雙酚 A 每環 2 個共 4 個）。酚羥基以外的取代基、間位的 C–H 不計；2,4,6 三位全被取代的酚不命中。羥基須為 OH（醚、酯不算）。review_status 為 pending，待使用者審核（D17、D22）",
+       "reactive_atom_maps": [
+        1
+       ],
+       "review_status": "pending",
+       "should_match": [
+        "Oc1ccccc1",
+        "Cc1ccccc1O",
+        "Cc1cccc(O)c1",
+        "Cc1ccc(O)cc1",
+        "CC(C)(c1ccc(O)cc1)c1ccc(O)cc1",
+        "Oc1ccc(Cc2ccc(O)c(Cc3ccccc3O)c2)cc1",
+        "Oc1ccc(Cc2ccc(cc2)-c2ccc(Cc3ccccc3O)cc2)cc1",
+        "Oc1ccc(cc1)C1CC2C3CC=CC3C2C1",
+        "OCc1ccccc1O"
+       ],
+       "should_not_match": [
+        "Cc1cc(C)c(O)c(C)c1",
+        "Oc1c(C)c(C)c(C)c(C)c1C",
+        "Oc1c(CO)cc(C)cc1CO",
+        "Cc1ccccc1",
+        "COc1ccccc1",
+        "OC1CCCCC1",
+        "c1ccccc1"
+       ],
+       "smarts": "[cH;$([cH]:c-[OX2H]),$([cH]1:c:c:c(-[OX2H]):c:c:1):1]",
+       "source": "自行撰寫",
+       "source_detail": "SMARTS 結構依據 Pilato (ed.), Phenolic Resins: A Century of Progress, Springer 2010 (DOI 10.1007/978-3-642-04714-5) 第 4 章 p.53–54（甲醛與酚環的鄰位與對位反應，式 4.6）",
+       "source_original": "",
+       "source_type": "self"
+      },
+      {
+       "id": "hydroxymethyl.phenolic",
+       "name_zh": "酚環羥甲基（–CH2OH）",
+       "notes": "自行撰寫（D22）：RDKit 與 Daylight 均無此定義。匹配接在酚環上的 –CH2–OH，且該環碳與酚羥基在鄰位或對位（可溶酚醛的羥甲基酚）；映射 1 為 CH2、2 為羥基 O，環碳不計為反應原子。苄醇（無酚羥基）、間位羥甲基、羥乙基、羥甲基的醚不命中。review_status 為 pending，待使用者審核（D17、D22）",
+       "reactive_atom_maps": [
+        1,
+        2
+       ],
+       "review_status": "pending",
+       "should_match": [
+        "OCc1ccccc1O",
+        "OCc1ccc(O)cc1",
+        "Oc1c(CO)cc(CO)cc1CO",
+        "OCc1cc(C)ccc1O"
+       ],
+       "should_not_match": [
+        "OCc1ccccc1",
+        "OCc1cccc(O)c1",
+        "Oc1ccccc1",
+        "CCO",
+        "COCc1ccccc1O",
+        "OCCc1ccccc1O"
+       ],
+       "smarts": "[OX2H:2][CH2X4:1][c;$(c:c-[OX2H]),$(c1:c:c:c(-[OX2H]):c:c:1)]",
+       "source": "自行撰寫",
+       "source_detail": "SMARTS 結構依據 Pilato (ed.), Phenolic Resins: A Century of Progress, Springer 2010 (DOI 10.1007/978-3-642-04714-5) §4.2 p.45–47（羥甲基酚 2-HMP、4-HMP、2,4-DHMP、2,4,6-THMP，Fig. 4.1）",
+       "source_original": "",
+       "source_type": "self"
+      },
+      {
+       "id": "hmta",
+       "name_zh": "六亞甲基四胺（HMTA 籠）",
+       "notes": "自行撰寫（D22）：RDKit 與 Daylight 均無 HMTA 定義。匹配整個籠狀結構（六個 CH2、四個 N），映射 1 至 10 為全部十個重原子，因此一個 HMTA 分子只計一個位點（對稱性造成的多重匹配以原子集合去重）；DABCO、三嗪烷、金剛烷不命中。review_status 為 pending，待使用者審核（D17、D22）",
+       "reactive_atom_maps": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+       ],
+       "review_status": "pending",
+       "should_match": [
+        "C1N2CN3CN1CN(C2)C3"
+       ],
+       "should_not_match": [
+        "C1CN2CCN1CC2",
+        "C1NCNCN1",
+        "CN(C)C",
+        "C1C2CC3CC1CC(C2)C3"
+       ],
+       "smarts": "[CH2:1]1[N:2]2[CH2:3][N:4]3[CH2:5][N:6]1[CH2:7][N:8]([CH2:9]2)[CH2:10]3",
+       "source": "自行撰寫",
+       "source_detail": "結構依據 Pilato (ed.), Phenolic Resins: A Century of Progress, Springer 2010 (DOI 10.1007/978-3-642-04714-5) 式 3.10 與 Table 3.5 p.38（HMTA = (CH2)6N4，MW 140.2）",
+       "source_original": "",
+       "source_type": "self"
       }
      ]
     }
@@ -11473,13 +12254,26 @@
      ],
      "file": "reaction_rules.csv"
     },
-    "text": "﻿id,reaction_type,group_a,group_b,reaction_smarts,catalyst_required,temp_min_c,temp_max_c,functionality_a,functionality_b,byproduct,bond_volume_change,bond_volume_change_unit,should_react,should_not_react,source_type,source,source_detail,source_original,review_status,notes\r\nepoxy+phenol,開環加成,ether.epoxide,hydroxyl.phenolic,[OX2H:1][cX3:4]:[c:5].[O:2]1[C:3][C:6]1>>[c:5]:[c:4][O:1][C:3][C:6][O:2],none,,,1,1,,,,CC1CO1+Oc1ccccc1|CC(C)(c1ccc(OCC2CO2)cc1)c1ccc(OCC2CO2)cc1+CC(C)(c1ccc(O)cc1)c1ccc(O)cc1,CC1CO1+CCO|COCC(C)OC(C)=O+Oc1ccccc1,self,自行撰寫,反應 SMARTS 以 ether.epoxide 與 hydroxyl.phenolic 的匹配條件為基礎撰寫,,approved,反應 SMARTS 為自行撰寫（D22）；酚羥基的 O 與環氧環上一個碳成鍵、該碳與環上 O 的鍵斷開，環上 O 成為羥基；開環位置未區分，僅用於配對、計量與標記；催化劑欄依使用者提供：純加熱、不需催化劑（2026-10-29）；未包含環氧自聚、二級羥基醚化等副反應；使用者審核通過（2026-10-29）；限制見備註\r\n"
+    "text": "﻿id,reaction_type,group_a,group_b,reaction_smarts,catalyst_required,temp_min_c,temp_max_c,functionality_a,functionality_b,byproduct,bond_volume_change,bond_volume_change_unit,should_react,should_not_react,source_type,source,source_detail,source_original,review_status,notes\r\nepoxy+phenol,開環加成,ether.epoxide,hydroxyl.phenolic,[OX2H:1][cX3:4]:[c:5].[O:2]1[C:3][C:6]1>>[c:5]:[c:4][O:1][C:3][C:6][O:2],none,,,1,1,,,,CC1CO1+Oc1ccccc1|CC(C)(c1ccc(OCC2CO2)cc1)c1ccc(OCC2CO2)cc1+CC(C)(c1ccc(O)cc1)c1ccc(O)cc1,CC1CO1+CCO|COCC(C)OC(C)=O+Oc1ccccc1,self,自行撰寫,反應 SMARTS 以 ether.epoxide 與 hydroxyl.phenolic 的匹配條件為基礎撰寫,,approved,反應 SMARTS 為自行撰寫（D22）；酚羥基的 O 與環氧環上一個碳成鍵、該碳與環上 O 的鍵斷開，環上 O 成為羥基；開環位置未區分，僅用於配對、計量與標記；催化劑欄依使用者提供：純加熱、不需催化劑（2026-10-29）；未包含環氧自聚、二級羥基醚化等副反應；使用者審核通過（2026-10-29）；限制見備註\r\nepoxy+amine.primary.aliphatic,開環加成,ether.epoxide,amine.primary.aliphatic,[N;H2;D1;$(N-!@C):1].[O:2]1[C:3][C:4]1>>[N:1][C:3][C:4][O:2],none,,,1,2,,,,CC1CO1+CCN|CC(C)(c1ccc(OCC2CO2)cc1)c1ccc(OCC2CO2)cc1+NCCN|CC1CO1+NC1CCCCC1,CC1CO1+CCO|CC1CO1+Oc1ccccc1|CC1CO1+Nc1ccccc1|CC1CO1+CNC|CCN+CCO,self,自行撰寫,\"反應 SMARTS 以 ether.epoxide 與 amine.primary.aliphatic 的匹配條件為基礎撰寫；反應類型與官能度依據 Gavrielides et al., Int. J. Polym. Sci. 2019, 9604714 p.2（EDA 有四個反應位點、兩個一級胺基，胺的 H 與環氧反應）\",,pending,\"反應 SMARTS 為自行撰寫（D22）；N 與環氧環上一個碳成鍵、該碳與環上 O 的鍵斷開，環上 O 成為羥基；開環位置未區分，僅用於配對、計量與標記。functionality_b = 2：一級胺 N 有兩個 N–H，各可開一個環氧（Gavrielides et al., Int. J. Polym. Sci. 2019, 9604714 p.2，DGEBA : EDA = 2 : 1）；一級與二級胺氫的活性不同（Pascault & Williams, J. Polym. Sci. B 28 (1990) 85-95 p.92），第 1 層的等活性假設不計此差異。催化劑欄 none：Gavrielides et al., Int. J. Polym. Sci. 2019, 9604714 p.2 的 DGEBA–EDA 在室溫聚合 48 h、未見催化劑。溫度：該文只有固化程序（室溫 48 h，再 413 K 後固化 2 h），不是典型範圍，未找到可引用數值，留空。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。未包含環氧自聚、羥基醚化等副反應。review_status 為 pending，待使用者審核（D17、D22）\"\r\nepoxy+amine.primary.aromatic,開環加成,ether.epoxide,amine.primary.aromatic,[N;H2;D1;$(N-!@c):1].[O:2]1[C:3][C:4]1>>[N:1][C:3][C:4][O:2],none,,,1,2,,,,CC1CO1+Nc1ccccc1|CC(C)(c1ccc(OCC2CO2)cc1)c1ccc(OCC2CO2)cc1+Nc1ccc(Cc2ccc(N)cc2)cc1,CC1CO1+CCN|CC1CO1+Oc1ccccc1|CC1CO1+CNc1ccccc1|Nc1ccccc1+CCO,self,自行撰寫,\"反應 SMARTS 以 ether.epoxide 與 amine.primary.aromatic 的匹配條件為基礎撰寫；反應類型與官能度依據 Gavrielides et al., Int. J. Polym. Sci. 2019, 9604714 p.2（一級胺有兩個可反應的 N–H）\",,pending,反應 SMARTS 為自行撰寫（D22），寫法同 epoxy+amine.primary.aliphatic，僅胺的條件改為接在芳香碳上。functionality_b = 2（兩個 N–H，同脂肪一級胺）。芳香與脂肪胺的反應活性差異未建模；催化劑欄 none 為沿用脂肪胺的文獻情況，芳香胺未找到本機文獻可引用，待使用者確認。溫度未找到可引用數值，留空。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。review_status 為 pending，待使用者審核（D17、D22）\r\nepoxy+amine.secondary.aliphatic,開環加成,ether.epoxide,amine.secondary.aliphatic,[N;H1;D2;$(N(-C)-C):1].[O:2]1[C:3][C:4]1>>[N:1][C:3][C:4][O:2],none,,,1,1,,,,CC1CO1+CNC|CC1CO1+C1CCNCC1,CC1CO1+CCN|CC1CO1+CN(C)C|CC1CO1+CNc1ccccc1|CNC+CCO,self,自行撰寫,\"反應 SMARTS 以 ether.epoxide 與 amine.secondary.aliphatic 的匹配條件為基礎撰寫；一級與二級胺氫的區分依據 Pascault & Williams, J. Polym. Sci. B 28 (1990) 85-95 p.92\",,pending,反應 SMARTS 為自行撰寫（D22）；二級胺 N 只有一個 N–H，functionality_b = 1，反應後成為三級胺。含一級與二級胺的分子（如 DETA）會同時命中兩條胺規則，第 1 層因此回報「目前只支援單一反應規則」。溫度未找到可引用數值，留空。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。review_status 為 pending，待使用者審核（D17、D22）\r\nepoxy+amine.secondary.aromatic,開環加成,ether.epoxide,amine.secondary.aromatic,[N;H1;D2;$(N(-[c])-[#6]):1].[O:2]1[C:3][C:4]1>>[N:1][C:3][C:4][O:2],none,,,1,1,,,,CC1CO1+CNc1ccccc1|CC1CO1+c1ccccc1Nc1ccccc1,CC1CO1+Nc1ccccc1|CC1CO1+CNC|CC1CO1+CN(C)c1ccccc1|CNc1ccccc1+CCO,self,自行撰寫,\"反應 SMARTS 以 ether.epoxide 與 amine.secondary.aromatic 的匹配條件為基礎撰寫；一級與二級胺氫的區分依據 Pascault & Williams, J. Polym. Sci. B 28 (1990) 85-95 p.92\",,pending,反應 SMARTS 為自行撰寫（D22）；二級胺 N 只有一個 N–H，functionality_b = 1。溫度未找到可引用數值，留空。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。review_status 為 pending，待使用者審核（D17、D22）\r\nepoxy+anhydride,開環共聚（交替）,ether.epoxide,anhydride,[C:1](=[O:7])[O:2][C:3]=[O:8].[O:4]1[C:5][C:6]1>>[C:1](=[O:7])[O:2][C:5][C:6][O:4][C:3]=[O:8],三級胺或咪唑,,,2,2,,,,CC1CO1+CC(=O)OC(C)=O|CC(C)(c1ccc(OCC2CO2)cc1)c1ccc(OCC2CO2)cc1+O=C1OC(=O)c2ccccc12|CC1CO1+CC1CCC2C(C1)C(=O)OC2=O,CC1CO1+CC(=O)OC|CC(=O)OC(C)=O+Oc1ccccc1|CC1CO1+CC(=O)O|CC1CO1+CCN,self,自行撰寫,反應 SMARTS 以 ether.epoxide 與 anhydride 的匹配條件為基礎撰寫；反應機構與催化劑欄依任務卡 P7-1A（2026-11-17）所述，本機文獻未找到可引用段落,,pending,反應 SMARTS 為自行撰寫（D22），表示總反應（環氧插入酸酐 C–O 鍵，生成兩個酯鍵的交替共聚）；實際機構為酸酐＋羥基成單酯酸、酸再開環環氧並產生新羥基（任務卡所述，本機文獻未找到可引用段落，催化劑「三級胺或咪唑」同），故起始需要羥基或催化劑。functionality 2／2 為自行由機構推得（每次反應形成兩個酯鍵，一個酸酐基與一個環氧基計量為 1 : 1），不是文獻值，待使用者決定。第 1 層：多步、鏈增長，不適用 Miller–Macosko，回報「尚未支援」。溫度未找到可引用數值，留空。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。review_status 為 pending，待使用者審核（D17、D22）\r\nepoxy+cyanate,共反應（噁唑烷酮）,ether.epoxide,cyanate.ester,[#6:7][O:1][C:2]#[N:3].[O:4]1[C:5][C:6]1>>[O:1]=[C:2]1[N:3]([#6:7])[C:6][C:5][O:4]1,金屬離子（Cu(II) acac）加共催化劑壬基酚,,,1,1,,,,CC1CO1+N#COc1ccccc1|CC(C)(c1ccc(OC#N)cc1)c1ccc(OC#N)cc1+CC(C)(c1ccc(OCC2CO2)cc1)c1ccc(OCC2CO2)cc1,N#COc1ccccc1+Oc1ccccc1|N#Cc1ccccc1+CC1CO1|N#COc1ccccc1+CCO,self,自行撰寫,\"反應式依據 Li et al., Polymer 195 (2020) 122454 Fig. 3（Shimp 提出的 CE/EP 共聚反應，p.3）與 §3（p.6）；SMARTS 自行撰寫；催化劑依該文 §2（p.5）\",,pending,\"反應 SMARTS 為自行撰寫（D22），以最終產物 N-芳基噁唑烷酮表示（Li et al., Polymer 195 (2020) 122454 p.6：三嗪環、環氧插入、異氰脲酸酯重整、再與環氧生成噁唑烷酮）；芳基由 O 移到 N 是由異氰脲酸酯（N-芳基）路徑推得，非文獻直接寫出的結構。任務卡另提的噁唑啉路徑未收錄，待使用者決定。計量 1 : 1 為簡化，文獻的多步路徑計量隨配比與條件而異。催化劑欄為該文使用的 Cu(II) acac（360 ppm Cu）加壬基酚 3 phr（p.5），是否「必要」未確認。溫度：該文 p.6 觀察氰酸酯三聚放熱峰約 150 °C、環氧共聚合在 200 °C 以上，皆為峰值或觀察，不是範圍，留空。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。第 1 層：多步多路徑，回報「尚未支援」。review_status 為 pending，待使用者審核（D17、D22）\"\r\ncyanate.trimerization,環三聚（三嗪環）,cyanate.ester,,([#6:1][O:2][C:3]#[N:4].[#6:5][O:6][C:7]#[N:8]).[#6:9][O:10][C:11]#[N:12]>>[#6:1][O:2][c:3]1[n:4][c:7]([O:6][#6:5])[n:8][c:11]([O:10][#6:9])[n:12]1,金屬離子（Cu(II) acac）加共催化劑壬基酚,,,1,,,,,CC(C)(c1ccc(OC#N)cc1)c1ccc(OC#N)cc1+N#COc1ccccc1|N#COc1ccc(cc1)Cc1ccc(OC#N)cc1+N#COc1ccc(C)cc1,N#COc1ccccc1+Oc1ccccc1|Oc1ccccc1+Oc1ccccc1|N#Cc1ccccc1+N#Cc1ccccc1,self,自行撰寫,\"反應式依據 Li et al., Polymer 195 (2020) 122454 p.2（多官能氰酸酯單體經氰酸酯基三聚成 s-三嗪環而交聯）與 Fig. 3（p.3）；SMARTS 自行撰寫\",,pending,\"反應 SMARTS 為自行撰寫（D22）。三聚是三個氰酸酯基合成一個三嗪環；資料表測試機制只接受兩個反應物，故以括號分組「第一個反應物含兩個 –OCN」加「第二個反應物一個 –OCN」的寫法，只用來測試 SMARTS 語法與原子映射，不代表只有這種組合會反應（測試組合因此是二氰酸酯＋單氰酸酯）。functionality_a = 1（每個氰酸酯基消耗一次）。第 0 層以官能度計數判定，雙官能氰酸酯 f = 2 會判為「鏈延長」，但三嗪環是三度交聯點，實際成網；此為引擎限制，未修改。催化劑欄同 epoxy+cyanate（該文體系）。溫度：放熱峰約 150 °C（Li et al., Polymer 195 (2020) 122454 p.6）為峰值，不是範圍，留空。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。第 1 層：自反應與三聚，回報「尚未支援」。review_status 為 pending，待使用者審核（D17、D22）\"\r\nnovolac+hmta,縮合（亞甲基橋、苄胺橋）,aromatic.ch.phenol.ortho_para,hmta,\"[cH;$([cH]:c-[OX2H]),$([cH]1:c:c:c(-[OX2H]):c:c:1):1].[CH2:2]1[N:3]2[CH2:4][N:5]3[CH2:6][N:7]1[CH2:8][N:9]([CH2:10]2)[CH2:11]3>>[c:1][CH2:2][N:3]2[CH2:4][N:5]3[CH2:6][N:7][CH2:8][N:9]([CH2:10]2)[CH2:11]3\",none,,,1,6,N,,,Oc1ccccc1+C1N2CN3CN1CN(C2)C3|Cc1ccc(O)cc1+C1N2CN3CN1CN(C2)C3|Oc1ccc(Cc2ccccc2O)cc1+C1N2CN3CN1CN(C2)C3,Oc1ccccc1+C1CN2CCN1CC2|Oc1c(C)c(C)c(C)c(C)c1C+C1N2CN3CN1CN(C2)C3|Cc1ccccc1+C1N2CN3CN1CN(C2)C3|CCO+C1N2CN3CN1CN(C2)C3|Oc1ccccc1+Oc1ccccc1,self,自行撰寫,\"Pilato (ed.), Phenolic Resins: A Century of Progress, Springer 2010 (DOI 10.1007/978-3-642-04714-5) 式 3.10 與 Table 3.5 p.38（HMTA = (CH2)6N4）；§4.9.1 p.76（酚醛清漆硬化經苯并㗁嗪中間體轉成苄胺等結構）；pp.78–79（HMTA 硬化 150 °C 6 h；DSC 放熱峰 143–170 °C）；氨放出 p.84、p.455；SMARTS 自行撰寫\",,pending,\"反應 SMARTS 為自行撰寫（D22），只表示第一步：酚環鄰／對位空位的 C–H 與 HMTA 的一個亞甲基成苄胺鍵、籠狀結構開環一個 C–N 鍵。整體硬化會形成亞甲基橋與苄胺橋並放出氨（Pilato (ed.), Phenolic Resins: A Century of Progress, Springer 2010 (DOI 10.1007/978-3-642-04714-5) p.84、p.455），故 byproduct 填氨（N），但本 SMARTS 的產物不含氨。functionality_b = 6 是 HMTA 的亞甲基數（式 3.10，p.38）；書未給出等效反應位點數，一個亞甲基橋連接兩個環位點、部分亞甲基以苄胺橋留在網路，因此 6 只是結構計數，待使用者決定。催化劑 none（熱硬化）。溫度：p.78–79 只有 150 °C 6 h 的硬化條件與 4 個樣品的 DSC 放熱峰 143–170 °C（10 °C/min，樹脂／HMTA = 100/17.5），不是範圍，留空。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。第 1 層：HMTA 需先分解、等效位點不確定，回報「尚未支援」。review_status 為 pending，待使用者審核（D17、D22）\"\r\nresol.methylol+phenol_ring,縮合（亞甲基橋）,hydroxymethyl.phenolic,aromatic.ch.phenol.ortho_para,\"[CH2:1]([OX2H:2])[c;$(c:c-[OX2H]),$(c1:c:c:c(-[OX2H]):c:c:1):3].[cH;$([cH]:c-[OX2H]),$([cH]1:c:c:c(-[OX2H]):c:c:1):4]>>[c:3][CH2:1][c:4].[OH2:2]\",none,60,100,1,1,O,,,OCc1ccccc1O+Oc1ccccc1|OCc1ccc(O)cc1+Cc1ccc(O)cc1|OCc1cc(C)ccc1O+Oc1ccc(Cc2ccccc2O)cc1,OCc1ccccc1+Oc1ccccc1|OCc1ccccc1O+Cc1ccccc1|Oc1ccccc1+Oc1ccccc1|OCc1ccccc1O+CCO,self,自行撰寫,\"Pilato (ed.), Phenolic Resins: A Century of Progress, Springer 2010 (DOI 10.1007/978-3-642-04714-5) §4.2.2 p.47（Table 4.2、式 4.3、4.4：縮合 60–100 °C，羥甲基酚與酚縮合成亞甲基橋並放出水）；SMARTS 自行撰寫\",,pending,\"反應 SMARTS 為自行撰寫（D22）：羥甲基與酚環鄰／對位空位的 C–H 縮合成亞甲基橋，放出水。溫度 60–100 °C 取自 Pilato Table 4.2 的縮合階段（可溶酚醛製備條件），不是完整硬化溫度，使用時留意。催化劑 none：Pilato (ed.), Phenolic Resins: A Century of Progress, Springer 2010 (DOI 10.1007/978-3-642-04714-5) p.80 §4.9.2 指出可溶酚醛可由酸、鹼或加熱硬化，鹼是合成時的催化劑；是否需要鹼待使用者確認。同一分子同時含羥甲基與酚環空位時，第 0 層會產生同成分配對（對照 resol.methylol-ether）。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。第 1 層：同分子同時含兩類官能基且羥甲基自縮合，回報「尚未支援」。review_status 為 pending，待使用者審核（D17、D22）\"\r\nresol.methylol-ether,縮合（二亞甲基醚橋）,hydroxymethyl.phenolic,,\"[CH2:1]([OX2H:2])[c;$(c:c-[OX2H]),$(c1:c:c:c(-[OX2H]):c:c:1):3].[CH2:4]([OX2H:5])[c;$(c:c-[OX2H]),$(c1:c:c:c(-[OX2H]):c:c:1):6]>>[c:3][CH2:1][O:5][CH2:4][c:6].[OH2:2]\",none,,,1,,O,,,OCc1ccccc1O+OCc1ccccc1O|OCc1ccc(O)cc1+OCc1ccc(O)cc1|OCc1ccccc1O+OCc1ccc(O)cc1,OCc1ccccc1+OCc1ccccc1|Oc1ccccc1+Oc1ccccc1|OCc1ccccc1O+Oc1ccccc1,self,自行撰寫,\"Pilato (ed.), Phenolic Resins: A Century of Progress, Springer 2010 (DOI 10.1007/978-3-642-04714-5) §4.2 p.46（Christjanson 等：2-HMP、4-HMP 在 120 °C 熔融縮合，無 NaOH 時生成鄰／對位亞甲基醚）；SMARTS 自行撰寫\",,pending,\"反應 SMARTS 為自行撰寫（D22）：兩個羥甲基酚縮合成二亞甲基醚橋（–CH2–O–CH2–），放出水。依 Pilato (ed.), Phenolic Resins: A Century of Progress, Springer 2010 (DOI 10.1007/978-3-642-04714-5) p.46，無 NaOH 時 HMP 轉為 o,o' 或 p,p' 亞甲基醚（120 °C 熔融縮合）；120 °C 是單一試驗條件，不是範圍，溫度留空。自反應規則：group_b 空白。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。第 1 層：自反應，回報「尚未支援」。review_status 為 pending，待使用者審核（D17、D22）\"\r\nresol.methylol-methylene,縮合（亞甲基橋，放出甲醛）,hydroxymethyl.phenolic,,\"[CH2:1]([OX2H:2])[c;$(c:c-[OX2H]),$(c1:c:c:c(-[OX2H]):c:c:1):3].[CH2:4]([OX2H:5])[c;$(c:c-[OX2H]),$(c1:c:c:c(-[OX2H]):c:c:1):6]>>[c:3][CH2:1][c:6].[CH2:4]=[O:5].[OH2:2]\",鹼（NaOH）,,,1,,C=O.O,,,OCc1ccccc1O+OCc1ccc(O)cc1|OCc1ccc(O)cc1+OCc1ccc(O)cc1|OCc1ccccc1O+OCc1ccccc1O,OCc1ccccc1+OCc1ccccc1|Oc1ccccc1+Oc1ccccc1|OCc1ccccc1O+Oc1ccccc1,self,自行撰寫,\"Pilato (ed.), Phenolic Resins: A Century of Progress, Springer 2010 (DOI 10.1007/978-3-642-04714-5) §4.2 p.46（Christjanson 等：加催化量 NaOH 時只得 o,p' 與 p,p' 二羥基二苯甲烷，預期放出甲醛）；SMARTS 自行撰寫\",,pending,\"反應 SMARTS 為自行撰寫（D22）：兩個羥甲基酚縮合成亞甲基橋，放出甲醛與水（C14H16O4 → C13H12O2 + CH2O + H2O 原子平衡）。橋接位置取在失去 CH2OH 的環碳，文獻未給原子對應，為自行判斷，待使用者審。催化劑「鹼（NaOH）」依 Pilato (ed.), Phenolic Resins: A Century of Progress, Springer 2010 (DOI 10.1007/978-3-642-04714-5) p.46；溫度未找到可引用範圍（p.46 的 120 °C 為單一試驗條件），留空。自反應規則：group_b 空白。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。第 1 層：自反應，回報「尚未支援」。review_status 為 pending，待使用者審核（D17、D22）\"\r\nepoxy+pag.cationic,陽離子開環聚合（光酸觸發）,ether.epoxide,pag.onium,[O:1]1[C:2][C:3]1.[OX2H:4][CX4:5]>>[O:1][C:3][C:2][O:4][C:5],光酸（需光酸產生劑與照光）,,,2,1,,,,CC1CO1+CCO|CC(C)(c1ccc(OCC2CO2)cc1)c1ccc(OCC2CO2)cc1+OCC(O)C,CC1CO1+Oc1ccccc1|CC1CO1+CCN|C1COC1+CCO,self,自行撰寫,依任務卡 P7-1A 與 D65、D26；本機文獻未找到可引用的反應式或定義，SMARTS 自行撰寫,,pending,反應 SMARTS 為自行撰寫（D22），表示光酸活化後的鏈增長一步（活化單體機制：環氧被羥基開環、生成新羥基），因此測試組合是環氧加醇；group_b 的 PAG 官能基只作為觸發條件，使配對僅在配方含 PAG 時出現，不影響其他環氧配方（使用者 2026-11-17 決定）。觸發條件是光，不是溫度，溫度欄留空。PAG 不被消耗，functionality_b = 1 沒有化學計量意義；第 0 層以官能度計數判定，PAG 的 f = 1 會使判定顯示「具封端的結構條件」，此判定對陽離子鏈增長不適用。非離子型 PAG 不會配對（見 pag.onium）。本機文獻未找到可引用的反應式。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。第 1 層：鏈增長聚合，回報「尚未支援」。review_status 為 pending，待使用者審核（D17、D22）\r\noxetane+pag.cationic,陽離子開環聚合（光酸觸發）,ether.oxetane,pag.onium,[O:1]1[C:2][C:3][C:4]1.[OX2H:5][CX4:6]>>[O:1][C:4][C:3][C:2][O:5][C:6],光酸（需光酸產生劑與照光）,,,2,1,,,,C1COC1+CCO|CCC1(CO)COC1+CCO,CC1CO1+CCO|C1CCOC1+CCO|C1COC1+Oc1ccccc1,self,自行撰寫,依任務卡 P7-1A 與 D65、D26；本機文獻未找到可引用的反應式或定義，SMARTS 自行撰寫,,pending,反應 SMARTS 為自行撰寫（D22），表示光酸活化後的鏈增長一步（活化單體機制：氧雜環丁烷被羥基開環、生成新羥基），因此測試組合是氧雜環丁烷加醇；group_b 的 PAG 官能基只作為觸發條件，使配對僅在配方含 PAG 時出現，不影響其他氧雜環丁烷配方（使用者 2026-11-17 決定）。觸發條件是光，不是溫度，溫度欄留空。PAG 不被消耗，functionality_b = 1 沒有化學計量意義；第 0 層以官能度計數判定，PAG 的 f = 1 會使判定顯示「具封端的結構條件」，此判定對陽離子鏈增長不適用。非離子型 PAG 不會配對（見 pag.onium）。本機文獻未找到可引用的反應式。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。第 1 層：鏈增長聚合，回報「尚未支援」。review_status 為 pending，待使用者審核（D17、D22）環氧與氧雜環丁烷的共聚在同時含兩者與 PAG 的配方中由兩條規則各自配對表示，未另設環氧＋氧雜環丁烷規則。\r\n"
    },
    "output": {
     "value": {
      "issues": [],
      "rowNumbers": [
-      2
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
      ],
      "rows": [
       {
@@ -11506,6 +12300,411 @@
        ],
        "source": "自行撰寫",
        "source_detail": "反應 SMARTS 以 ether.epoxide 與 hydroxyl.phenolic 的匹配條件為基礎撰寫",
+       "source_original": "",
+       "source_type": "self",
+       "temp_max_c": null,
+       "temp_min_c": null
+      },
+      {
+       "bond_volume_change": null,
+       "bond_volume_change_unit": "",
+       "byproduct": "",
+       "catalyst_required": "none",
+       "functionality_a": 1,
+       "functionality_b": 2,
+       "group_a": "ether.epoxide",
+       "group_b": "amine.primary.aliphatic",
+       "id": "epoxy+amine.primary.aliphatic",
+       "notes": "反應 SMARTS 為自行撰寫（D22）；N 與環氧環上一個碳成鍵、該碳與環上 O 的鍵斷開，環上 O 成為羥基；開環位置未區分，僅用於配對、計量與標記。functionality_b = 2：一級胺 N 有兩個 N–H，各可開一個環氧（Gavrielides et al., Int. J. Polym. Sci. 2019, 9604714 p.2，DGEBA : EDA = 2 : 1）；一級與二級胺氫的活性不同（Pascault & Williams, J. Polym. Sci. B 28 (1990) 85-95 p.92），第 1 層的等活性假設不計此差異。催化劑欄 none：Gavrielides et al., Int. J. Polym. Sci. 2019, 9604714 p.2 的 DGEBA–EDA 在室溫聚合 48 h、未見催化劑。溫度：該文只有固化程序（室溫 48 h，再 413 K 後固化 2 h），不是典型範圍，未找到可引用數值，留空。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。未包含環氧自聚、羥基醚化等副反應。review_status 為 pending，待使用者審核（D17、D22）",
+       "reaction_smarts": "[N;H2;D1;$(N-!@C):1].[O:2]1[C:3][C:4]1>>[N:1][C:3][C:4][O:2]",
+       "reaction_type": "開環加成",
+       "review_status": "pending",
+       "should_not_react": [
+        "CC1CO1+CCO",
+        "CC1CO1+Oc1ccccc1",
+        "CC1CO1+Nc1ccccc1",
+        "CC1CO1+CNC",
+        "CCN+CCO"
+       ],
+       "should_react": [
+        "CC1CO1+CCN",
+        "CC(C)(c1ccc(OCC2CO2)cc1)c1ccc(OCC2CO2)cc1+NCCN",
+        "CC1CO1+NC1CCCCC1"
+       ],
+       "source": "自行撰寫",
+       "source_detail": "反應 SMARTS 以 ether.epoxide 與 amine.primary.aliphatic 的匹配條件為基礎撰寫；反應類型與官能度依據 Gavrielides et al., Int. J. Polym. Sci. 2019, 9604714 p.2（EDA 有四個反應位點、兩個一級胺基，胺的 H 與環氧反應）",
+       "source_original": "",
+       "source_type": "self",
+       "temp_max_c": null,
+       "temp_min_c": null
+      },
+      {
+       "bond_volume_change": null,
+       "bond_volume_change_unit": "",
+       "byproduct": "",
+       "catalyst_required": "none",
+       "functionality_a": 1,
+       "functionality_b": 2,
+       "group_a": "ether.epoxide",
+       "group_b": "amine.primary.aromatic",
+       "id": "epoxy+amine.primary.aromatic",
+       "notes": "反應 SMARTS 為自行撰寫（D22），寫法同 epoxy+amine.primary.aliphatic，僅胺的條件改為接在芳香碳上。functionality_b = 2（兩個 N–H，同脂肪一級胺）。芳香與脂肪胺的反應活性差異未建模；催化劑欄 none 為沿用脂肪胺的文獻情況，芳香胺未找到本機文獻可引用，待使用者確認。溫度未找到可引用數值，留空。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。review_status 為 pending，待使用者審核（D17、D22）",
+       "reaction_smarts": "[N;H2;D1;$(N-!@c):1].[O:2]1[C:3][C:4]1>>[N:1][C:3][C:4][O:2]",
+       "reaction_type": "開環加成",
+       "review_status": "pending",
+       "should_not_react": [
+        "CC1CO1+CCN",
+        "CC1CO1+Oc1ccccc1",
+        "CC1CO1+CNc1ccccc1",
+        "Nc1ccccc1+CCO"
+       ],
+       "should_react": [
+        "CC1CO1+Nc1ccccc1",
+        "CC(C)(c1ccc(OCC2CO2)cc1)c1ccc(OCC2CO2)cc1+Nc1ccc(Cc2ccc(N)cc2)cc1"
+       ],
+       "source": "自行撰寫",
+       "source_detail": "反應 SMARTS 以 ether.epoxide 與 amine.primary.aromatic 的匹配條件為基礎撰寫；反應類型與官能度依據 Gavrielides et al., Int. J. Polym. Sci. 2019, 9604714 p.2（一級胺有兩個可反應的 N–H）",
+       "source_original": "",
+       "source_type": "self",
+       "temp_max_c": null,
+       "temp_min_c": null
+      },
+      {
+       "bond_volume_change": null,
+       "bond_volume_change_unit": "",
+       "byproduct": "",
+       "catalyst_required": "none",
+       "functionality_a": 1,
+       "functionality_b": 1,
+       "group_a": "ether.epoxide",
+       "group_b": "amine.secondary.aliphatic",
+       "id": "epoxy+amine.secondary.aliphatic",
+       "notes": "反應 SMARTS 為自行撰寫（D22）；二級胺 N 只有一個 N–H，functionality_b = 1，反應後成為三級胺。含一級與二級胺的分子（如 DETA）會同時命中兩條胺規則，第 1 層因此回報「目前只支援單一反應規則」。溫度未找到可引用數值，留空。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。review_status 為 pending，待使用者審核（D17、D22）",
+       "reaction_smarts": "[N;H1;D2;$(N(-C)-C):1].[O:2]1[C:3][C:4]1>>[N:1][C:3][C:4][O:2]",
+       "reaction_type": "開環加成",
+       "review_status": "pending",
+       "should_not_react": [
+        "CC1CO1+CCN",
+        "CC1CO1+CN(C)C",
+        "CC1CO1+CNc1ccccc1",
+        "CNC+CCO"
+       ],
+       "should_react": [
+        "CC1CO1+CNC",
+        "CC1CO1+C1CCNCC1"
+       ],
+       "source": "自行撰寫",
+       "source_detail": "反應 SMARTS 以 ether.epoxide 與 amine.secondary.aliphatic 的匹配條件為基礎撰寫；一級與二級胺氫的區分依據 Pascault & Williams, J. Polym. Sci. B 28 (1990) 85-95 p.92",
+       "source_original": "",
+       "source_type": "self",
+       "temp_max_c": null,
+       "temp_min_c": null
+      },
+      {
+       "bond_volume_change": null,
+       "bond_volume_change_unit": "",
+       "byproduct": "",
+       "catalyst_required": "none",
+       "functionality_a": 1,
+       "functionality_b": 1,
+       "group_a": "ether.epoxide",
+       "group_b": "amine.secondary.aromatic",
+       "id": "epoxy+amine.secondary.aromatic",
+       "notes": "反應 SMARTS 為自行撰寫（D22）；二級胺 N 只有一個 N–H，functionality_b = 1。溫度未找到可引用數值，留空。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。review_status 為 pending，待使用者審核（D17、D22）",
+       "reaction_smarts": "[N;H1;D2;$(N(-[c])-[#6]):1].[O:2]1[C:3][C:4]1>>[N:1][C:3][C:4][O:2]",
+       "reaction_type": "開環加成",
+       "review_status": "pending",
+       "should_not_react": [
+        "CC1CO1+Nc1ccccc1",
+        "CC1CO1+CNC",
+        "CC1CO1+CN(C)c1ccccc1",
+        "CNc1ccccc1+CCO"
+       ],
+       "should_react": [
+        "CC1CO1+CNc1ccccc1",
+        "CC1CO1+c1ccccc1Nc1ccccc1"
+       ],
+       "source": "自行撰寫",
+       "source_detail": "反應 SMARTS 以 ether.epoxide 與 amine.secondary.aromatic 的匹配條件為基礎撰寫；一級與二級胺氫的區分依據 Pascault & Williams, J. Polym. Sci. B 28 (1990) 85-95 p.92",
+       "source_original": "",
+       "source_type": "self",
+       "temp_max_c": null,
+       "temp_min_c": null
+      },
+      {
+       "bond_volume_change": null,
+       "bond_volume_change_unit": "",
+       "byproduct": "",
+       "catalyst_required": "三級胺或咪唑",
+       "functionality_a": 2,
+       "functionality_b": 2,
+       "group_a": "ether.epoxide",
+       "group_b": "anhydride",
+       "id": "epoxy+anhydride",
+       "notes": "反應 SMARTS 為自行撰寫（D22），表示總反應（環氧插入酸酐 C–O 鍵，生成兩個酯鍵的交替共聚）；實際機構為酸酐＋羥基成單酯酸、酸再開環環氧並產生新羥基（任務卡所述，本機文獻未找到可引用段落，催化劑「三級胺或咪唑」同），故起始需要羥基或催化劑。functionality 2／2 為自行由機構推得（每次反應形成兩個酯鍵，一個酸酐基與一個環氧基計量為 1 : 1），不是文獻值，待使用者決定。第 1 層：多步、鏈增長，不適用 Miller–Macosko，回報「尚未支援」。溫度未找到可引用數值，留空。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。review_status 為 pending，待使用者審核（D17、D22）",
+       "reaction_smarts": "[C:1](=[O:7])[O:2][C:3]=[O:8].[O:4]1[C:5][C:6]1>>[C:1](=[O:7])[O:2][C:5][C:6][O:4][C:3]=[O:8]",
+       "reaction_type": "開環共聚（交替）",
+       "review_status": "pending",
+       "should_not_react": [
+        "CC1CO1+CC(=O)OC",
+        "CC(=O)OC(C)=O+Oc1ccccc1",
+        "CC1CO1+CC(=O)O",
+        "CC1CO1+CCN"
+       ],
+       "should_react": [
+        "CC1CO1+CC(=O)OC(C)=O",
+        "CC(C)(c1ccc(OCC2CO2)cc1)c1ccc(OCC2CO2)cc1+O=C1OC(=O)c2ccccc12",
+        "CC1CO1+CC1CCC2C(C1)C(=O)OC2=O"
+       ],
+       "source": "自行撰寫",
+       "source_detail": "反應 SMARTS 以 ether.epoxide 與 anhydride 的匹配條件為基礎撰寫；反應機構與催化劑欄依任務卡 P7-1A（2026-11-17）所述，本機文獻未找到可引用段落",
+       "source_original": "",
+       "source_type": "self",
+       "temp_max_c": null,
+       "temp_min_c": null
+      },
+      {
+       "bond_volume_change": null,
+       "bond_volume_change_unit": "",
+       "byproduct": "",
+       "catalyst_required": "金屬離子（Cu(II) acac）加共催化劑壬基酚",
+       "functionality_a": 1,
+       "functionality_b": 1,
+       "group_a": "ether.epoxide",
+       "group_b": "cyanate.ester",
+       "id": "epoxy+cyanate",
+       "notes": "反應 SMARTS 為自行撰寫（D22），以最終產物 N-芳基噁唑烷酮表示（Li et al., Polymer 195 (2020) 122454 p.6：三嗪環、環氧插入、異氰脲酸酯重整、再與環氧生成噁唑烷酮）；芳基由 O 移到 N 是由異氰脲酸酯（N-芳基）路徑推得，非文獻直接寫出的結構。任務卡另提的噁唑啉路徑未收錄，待使用者決定。計量 1 : 1 為簡化，文獻的多步路徑計量隨配比與條件而異。催化劑欄為該文使用的 Cu(II) acac（360 ppm Cu）加壬基酚 3 phr（p.5），是否「必要」未確認。溫度：該文 p.6 觀察氰酸酯三聚放熱峰約 150 °C、環氧共聚合在 200 °C 以上，皆為峰值或觀察，不是範圍，留空。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。第 1 層：多步多路徑，回報「尚未支援」。review_status 為 pending，待使用者審核（D17、D22）",
+       "reaction_smarts": "[#6:7][O:1][C:2]#[N:3].[O:4]1[C:5][C:6]1>>[O:1]=[C:2]1[N:3]([#6:7])[C:6][C:5][O:4]1",
+       "reaction_type": "共反應（噁唑烷酮）",
+       "review_status": "pending",
+       "should_not_react": [
+        "N#COc1ccccc1+Oc1ccccc1",
+        "N#Cc1ccccc1+CC1CO1",
+        "N#COc1ccccc1+CCO"
+       ],
+       "should_react": [
+        "CC1CO1+N#COc1ccccc1",
+        "CC(C)(c1ccc(OC#N)cc1)c1ccc(OC#N)cc1+CC(C)(c1ccc(OCC2CO2)cc1)c1ccc(OCC2CO2)cc1"
+       ],
+       "source": "自行撰寫",
+       "source_detail": "反應式依據 Li et al., Polymer 195 (2020) 122454 Fig. 3（Shimp 提出的 CE/EP 共聚反應，p.3）與 §3（p.6）；SMARTS 自行撰寫；催化劑依該文 §2（p.5）",
+       "source_original": "",
+       "source_type": "self",
+       "temp_max_c": null,
+       "temp_min_c": null
+      },
+      {
+       "bond_volume_change": null,
+       "bond_volume_change_unit": "",
+       "byproduct": "",
+       "catalyst_required": "金屬離子（Cu(II) acac）加共催化劑壬基酚",
+       "functionality_a": 1,
+       "functionality_b": null,
+       "group_a": "cyanate.ester",
+       "group_b": "",
+       "id": "cyanate.trimerization",
+       "notes": "反應 SMARTS 為自行撰寫（D22）。三聚是三個氰酸酯基合成一個三嗪環；資料表測試機制只接受兩個反應物，故以括號分組「第一個反應物含兩個 –OCN」加「第二個反應物一個 –OCN」的寫法，只用來測試 SMARTS 語法與原子映射，不代表只有這種組合會反應（測試組合因此是二氰酸酯＋單氰酸酯）。functionality_a = 1（每個氰酸酯基消耗一次）。第 0 層以官能度計數判定，雙官能氰酸酯 f = 2 會判為「鏈延長」，但三嗪環是三度交聯點，實際成網；此為引擎限制，未修改。催化劑欄同 epoxy+cyanate（該文體系）。溫度：放熱峰約 150 °C（Li et al., Polymer 195 (2020) 122454 p.6）為峰值，不是範圍，留空。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。第 1 層：自反應與三聚，回報「尚未支援」。review_status 為 pending，待使用者審核（D17、D22）",
+       "reaction_smarts": "([#6:1][O:2][C:3]#[N:4].[#6:5][O:6][C:7]#[N:8]).[#6:9][O:10][C:11]#[N:12]>>[#6:1][O:2][c:3]1[n:4][c:7]([O:6][#6:5])[n:8][c:11]([O:10][#6:9])[n:12]1",
+       "reaction_type": "環三聚（三嗪環）",
+       "review_status": "pending",
+       "should_not_react": [
+        "N#COc1ccccc1+Oc1ccccc1",
+        "Oc1ccccc1+Oc1ccccc1",
+        "N#Cc1ccccc1+N#Cc1ccccc1"
+       ],
+       "should_react": [
+        "CC(C)(c1ccc(OC#N)cc1)c1ccc(OC#N)cc1+N#COc1ccccc1",
+        "N#COc1ccc(cc1)Cc1ccc(OC#N)cc1+N#COc1ccc(C)cc1"
+       ],
+       "source": "自行撰寫",
+       "source_detail": "反應式依據 Li et al., Polymer 195 (2020) 122454 p.2（多官能氰酸酯單體經氰酸酯基三聚成 s-三嗪環而交聯）與 Fig. 3（p.3）；SMARTS 自行撰寫",
+       "source_original": "",
+       "source_type": "self",
+       "temp_max_c": null,
+       "temp_min_c": null
+      },
+      {
+       "bond_volume_change": null,
+       "bond_volume_change_unit": "",
+       "byproduct": "N",
+       "catalyst_required": "none",
+       "functionality_a": 1,
+       "functionality_b": 6,
+       "group_a": "aromatic.ch.phenol.ortho_para",
+       "group_b": "hmta",
+       "id": "novolac+hmta",
+       "notes": "反應 SMARTS 為自行撰寫（D22），只表示第一步：酚環鄰／對位空位的 C–H 與 HMTA 的一個亞甲基成苄胺鍵、籠狀結構開環一個 C–N 鍵。整體硬化會形成亞甲基橋與苄胺橋並放出氨（Pilato (ed.), Phenolic Resins: A Century of Progress, Springer 2010 (DOI 10.1007/978-3-642-04714-5) p.84、p.455），故 byproduct 填氨（N），但本 SMARTS 的產物不含氨。functionality_b = 6 是 HMTA 的亞甲基數（式 3.10，p.38）；書未給出等效反應位點數，一個亞甲基橋連接兩個環位點、部分亞甲基以苄胺橋留在網路，因此 6 只是結構計數，待使用者決定。催化劑 none（熱硬化）。溫度：p.78–79 只有 150 °C 6 h 的硬化條件與 4 個樣品的 DSC 放熱峰 143–170 °C（10 °C/min，樹脂／HMTA = 100/17.5），不是範圍，留空。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。第 1 層：HMTA 需先分解、等效位點不確定，回報「尚未支援」。review_status 為 pending，待使用者審核（D17、D22）",
+       "reaction_smarts": "[cH;$([cH]:c-[OX2H]),$([cH]1:c:c:c(-[OX2H]):c:c:1):1].[CH2:2]1[N:3]2[CH2:4][N:5]3[CH2:6][N:7]1[CH2:8][N:9]([CH2:10]2)[CH2:11]3>>[c:1][CH2:2][N:3]2[CH2:4][N:5]3[CH2:6][N:7][CH2:8][N:9]([CH2:10]2)[CH2:11]3",
+       "reaction_type": "縮合（亞甲基橋、苄胺橋）",
+       "review_status": "pending",
+       "should_not_react": [
+        "Oc1ccccc1+C1CN2CCN1CC2",
+        "Oc1c(C)c(C)c(C)c(C)c1C+C1N2CN3CN1CN(C2)C3",
+        "Cc1ccccc1+C1N2CN3CN1CN(C2)C3",
+        "CCO+C1N2CN3CN1CN(C2)C3",
+        "Oc1ccccc1+Oc1ccccc1"
+       ],
+       "should_react": [
+        "Oc1ccccc1+C1N2CN3CN1CN(C2)C3",
+        "Cc1ccc(O)cc1+C1N2CN3CN1CN(C2)C3",
+        "Oc1ccc(Cc2ccccc2O)cc1+C1N2CN3CN1CN(C2)C3"
+       ],
+       "source": "自行撰寫",
+       "source_detail": "Pilato (ed.), Phenolic Resins: A Century of Progress, Springer 2010 (DOI 10.1007/978-3-642-04714-5) 式 3.10 與 Table 3.5 p.38（HMTA = (CH2)6N4）；§4.9.1 p.76（酚醛清漆硬化經苯并㗁嗪中間體轉成苄胺等結構）；pp.78–79（HMTA 硬化 150 °C 6 h；DSC 放熱峰 143–170 °C）；氨放出 p.84、p.455；SMARTS 自行撰寫",
+       "source_original": "",
+       "source_type": "self",
+       "temp_max_c": null,
+       "temp_min_c": null
+      },
+      {
+       "bond_volume_change": null,
+       "bond_volume_change_unit": "",
+       "byproduct": "O",
+       "catalyst_required": "none",
+       "functionality_a": 1,
+       "functionality_b": 1,
+       "group_a": "hydroxymethyl.phenolic",
+       "group_b": "aromatic.ch.phenol.ortho_para",
+       "id": "resol.methylol+phenol_ring",
+       "notes": "反應 SMARTS 為自行撰寫（D22）：羥甲基與酚環鄰／對位空位的 C–H 縮合成亞甲基橋，放出水。溫度 60–100 °C 取自 Pilato Table 4.2 的縮合階段（可溶酚醛製備條件），不是完整硬化溫度，使用時留意。催化劑 none：Pilato (ed.), Phenolic Resins: A Century of Progress, Springer 2010 (DOI 10.1007/978-3-642-04714-5) p.80 §4.9.2 指出可溶酚醛可由酸、鹼或加熱硬化，鹼是合成時的催化劑；是否需要鹼待使用者確認。同一分子同時含羥甲基與酚環空位時，第 0 層會產生同成分配對（對照 resol.methylol-ether）。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。第 1 層：同分子同時含兩類官能基且羥甲基自縮合，回報「尚未支援」。review_status 為 pending，待使用者審核（D17、D22）",
+       "reaction_smarts": "[CH2:1]([OX2H:2])[c;$(c:c-[OX2H]),$(c1:c:c:c(-[OX2H]):c:c:1):3].[cH;$([cH]:c-[OX2H]),$([cH]1:c:c:c(-[OX2H]):c:c:1):4]>>[c:3][CH2:1][c:4].[OH2:2]",
+       "reaction_type": "縮合（亞甲基橋）",
+       "review_status": "pending",
+       "should_not_react": [
+        "OCc1ccccc1+Oc1ccccc1",
+        "OCc1ccccc1O+Cc1ccccc1",
+        "Oc1ccccc1+Oc1ccccc1",
+        "OCc1ccccc1O+CCO"
+       ],
+       "should_react": [
+        "OCc1ccccc1O+Oc1ccccc1",
+        "OCc1ccc(O)cc1+Cc1ccc(O)cc1",
+        "OCc1cc(C)ccc1O+Oc1ccc(Cc2ccccc2O)cc1"
+       ],
+       "source": "自行撰寫",
+       "source_detail": "Pilato (ed.), Phenolic Resins: A Century of Progress, Springer 2010 (DOI 10.1007/978-3-642-04714-5) §4.2.2 p.47（Table 4.2、式 4.3、4.4：縮合 60–100 °C，羥甲基酚與酚縮合成亞甲基橋並放出水）；SMARTS 自行撰寫",
+       "source_original": "",
+       "source_type": "self",
+       "temp_max_c": 100,
+       "temp_min_c": 60
+      },
+      {
+       "bond_volume_change": null,
+       "bond_volume_change_unit": "",
+       "byproduct": "O",
+       "catalyst_required": "none",
+       "functionality_a": 1,
+       "functionality_b": null,
+       "group_a": "hydroxymethyl.phenolic",
+       "group_b": "",
+       "id": "resol.methylol-ether",
+       "notes": "反應 SMARTS 為自行撰寫（D22）：兩個羥甲基酚縮合成二亞甲基醚橋（–CH2–O–CH2–），放出水。依 Pilato (ed.), Phenolic Resins: A Century of Progress, Springer 2010 (DOI 10.1007/978-3-642-04714-5) p.46，無 NaOH 時 HMP 轉為 o,o' 或 p,p' 亞甲基醚（120 °C 熔融縮合）；120 °C 是單一試驗條件，不是範圍，溫度留空。自反應規則：group_b 空白。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。第 1 層：自反應，回報「尚未支援」。review_status 為 pending，待使用者審核（D17、D22）",
+       "reaction_smarts": "[CH2:1]([OX2H:2])[c;$(c:c-[OX2H]),$(c1:c:c:c(-[OX2H]):c:c:1):3].[CH2:4]([OX2H:5])[c;$(c:c-[OX2H]),$(c1:c:c:c(-[OX2H]):c:c:1):6]>>[c:3][CH2:1][O:5][CH2:4][c:6].[OH2:2]",
+       "reaction_type": "縮合（二亞甲基醚橋）",
+       "review_status": "pending",
+       "should_not_react": [
+        "OCc1ccccc1+OCc1ccccc1",
+        "Oc1ccccc1+Oc1ccccc1",
+        "OCc1ccccc1O+Oc1ccccc1"
+       ],
+       "should_react": [
+        "OCc1ccccc1O+OCc1ccccc1O",
+        "OCc1ccc(O)cc1+OCc1ccc(O)cc1",
+        "OCc1ccccc1O+OCc1ccc(O)cc1"
+       ],
+       "source": "自行撰寫",
+       "source_detail": "Pilato (ed.), Phenolic Resins: A Century of Progress, Springer 2010 (DOI 10.1007/978-3-642-04714-5) §4.2 p.46（Christjanson 等：2-HMP、4-HMP 在 120 °C 熔融縮合，無 NaOH 時生成鄰／對位亞甲基醚）；SMARTS 自行撰寫",
+       "source_original": "",
+       "source_type": "self",
+       "temp_max_c": null,
+       "temp_min_c": null
+      },
+      {
+       "bond_volume_change": null,
+       "bond_volume_change_unit": "",
+       "byproduct": "C=O.O",
+       "catalyst_required": "鹼（NaOH）",
+       "functionality_a": 1,
+       "functionality_b": null,
+       "group_a": "hydroxymethyl.phenolic",
+       "group_b": "",
+       "id": "resol.methylol-methylene",
+       "notes": "反應 SMARTS 為自行撰寫（D22）：兩個羥甲基酚縮合成亞甲基橋，放出甲醛與水（C14H16O4 → C13H12O2 + CH2O + H2O 原子平衡）。橋接位置取在失去 CH2OH 的環碳，文獻未給原子對應，為自行判斷，待使用者審。催化劑「鹼（NaOH）」依 Pilato (ed.), Phenolic Resins: A Century of Progress, Springer 2010 (DOI 10.1007/978-3-642-04714-5) p.46；溫度未找到可引用範圍（p.46 的 120 °C 為單一試驗條件），留空。自反應規則：group_b 空白。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。第 1 層：自反應，回報「尚未支援」。review_status 為 pending，待使用者審核（D17、D22）",
+       "reaction_smarts": "[CH2:1]([OX2H:2])[c;$(c:c-[OX2H]),$(c1:c:c:c(-[OX2H]):c:c:1):3].[CH2:4]([OX2H:5])[c;$(c:c-[OX2H]),$(c1:c:c:c(-[OX2H]):c:c:1):6]>>[c:3][CH2:1][c:6].[CH2:4]=[O:5].[OH2:2]",
+       "reaction_type": "縮合（亞甲基橋，放出甲醛）",
+       "review_status": "pending",
+       "should_not_react": [
+        "OCc1ccccc1+OCc1ccccc1",
+        "Oc1ccccc1+Oc1ccccc1",
+        "OCc1ccccc1O+Oc1ccccc1"
+       ],
+       "should_react": [
+        "OCc1ccccc1O+OCc1ccc(O)cc1",
+        "OCc1ccc(O)cc1+OCc1ccc(O)cc1",
+        "OCc1ccccc1O+OCc1ccccc1O"
+       ],
+       "source": "自行撰寫",
+       "source_detail": "Pilato (ed.), Phenolic Resins: A Century of Progress, Springer 2010 (DOI 10.1007/978-3-642-04714-5) §4.2 p.46（Christjanson 等：加催化量 NaOH 時只得 o,p' 與 p,p' 二羥基二苯甲烷，預期放出甲醛）；SMARTS 自行撰寫",
+       "source_original": "",
+       "source_type": "self",
+       "temp_max_c": null,
+       "temp_min_c": null
+      },
+      {
+       "bond_volume_change": null,
+       "bond_volume_change_unit": "",
+       "byproduct": "",
+       "catalyst_required": "光酸（需光酸產生劑與照光）",
+       "functionality_a": 2,
+       "functionality_b": 1,
+       "group_a": "ether.epoxide",
+       "group_b": "pag.onium",
+       "id": "epoxy+pag.cationic",
+       "notes": "反應 SMARTS 為自行撰寫（D22），表示光酸活化後的鏈增長一步（活化單體機制：環氧被羥基開環、生成新羥基），因此測試組合是環氧加醇；group_b 的 PAG 官能基只作為觸發條件，使配對僅在配方含 PAG 時出現，不影響其他環氧配方（使用者 2026-11-17 決定）。觸發條件是光，不是溫度，溫度欄留空。PAG 不被消耗，functionality_b = 1 沒有化學計量意義；第 0 層以官能度計數判定，PAG 的 f = 1 會使判定顯示「具封端的結構條件」，此判定對陽離子鏈增長不適用。非離子型 PAG 不會配對（見 pag.onium）。本機文獻未找到可引用的反應式。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。第 1 層：鏈增長聚合，回報「尚未支援」。review_status 為 pending，待使用者審核（D17、D22）",
+       "reaction_smarts": "[O:1]1[C:2][C:3]1.[OX2H:4][CX4:5]>>[O:1][C:3][C:2][O:4][C:5]",
+       "reaction_type": "陽離子開環聚合（光酸觸發）",
+       "review_status": "pending",
+       "should_not_react": [
+        "CC1CO1+Oc1ccccc1",
+        "CC1CO1+CCN",
+        "C1COC1+CCO"
+       ],
+       "should_react": [
+        "CC1CO1+CCO",
+        "CC(C)(c1ccc(OCC2CO2)cc1)c1ccc(OCC2CO2)cc1+OCC(O)C"
+       ],
+       "source": "自行撰寫",
+       "source_detail": "依任務卡 P7-1A 與 D65、D26；本機文獻未找到可引用的反應式或定義，SMARTS 自行撰寫",
+       "source_original": "",
+       "source_type": "self",
+       "temp_max_c": null,
+       "temp_min_c": null
+      },
+      {
+       "bond_volume_change": null,
+       "bond_volume_change_unit": "",
+       "byproduct": "",
+       "catalyst_required": "光酸（需光酸產生劑與照光）",
+       "functionality_a": 2,
+       "functionality_b": 1,
+       "group_a": "ether.oxetane",
+       "group_b": "pag.onium",
+       "id": "oxetane+pag.cationic",
+       "notes": "反應 SMARTS 為自行撰寫（D22），表示光酸活化後的鏈增長一步（活化單體機制：氧雜環丁烷被羥基開環、生成新羥基），因此測試組合是氧雜環丁烷加醇；group_b 的 PAG 官能基只作為觸發條件，使配對僅在配方含 PAG 時出現，不影響其他氧雜環丁烷配方（使用者 2026-11-17 決定）。觸發條件是光，不是溫度，溫度欄留空。PAG 不被消耗，functionality_b = 1 沒有化學計量意義；第 0 層以官能度計數判定，PAG 的 f = 1 會使判定顯示「具封端的結構條件」，此判定對陽離子鏈增長不適用。非離子型 PAG 不會配對（見 pag.onium）。本機文獻未找到可引用的反應式。未找到可引用的單位鍵體積變化數值，bond_volume_change 留空。第 1 層：鏈增長聚合，回報「尚未支援」。review_status 為 pending，待使用者審核（D17、D22）環氧與氧雜環丁烷的共聚在同時含兩者與 PAG 的配方中由兩條規則各自配對表示，未另設環氧＋氧雜環丁烷規則。",
+       "reaction_smarts": "[O:1]1[C:2][C:3][C:4]1.[OX2H:5][CX4:6]>>[O:1][C:4][C:3][C:2][O:5][C:6]",
+       "reaction_type": "陽離子開環聚合（光酸觸發）",
+       "review_status": "pending",
+       "should_not_react": [
+        "CC1CO1+CCO",
+        "C1CCOC1+CCO",
+        "C1COC1+Oc1ccccc1"
+       ],
+       "should_react": [
+        "C1COC1+CCO",
+        "CCC1(CO)COC1+CCO"
+       ],
+       "source": "自行撰寫",
+       "source_detail": "依任務卡 P7-1A 與 D65、D26；本機文獻未找到可引用的反應式或定義，SMARTS 自行撰寫",
        "source_original": "",
        "source_type": "self",
        "temp_max_c": null,
@@ -20739,7 +21938,7 @@
    }
   }
  ],
- "commit": "56805fea9aef2d5a8dad8fa3428f6794b7355c18",
+ "commit": "dfa27f60817c75a9c9def57f9f3aecb5329f2d9e+dirty-src",
  "module": "csv",
  "rdkitjs": "2026.09.1",
  "tolerance": {

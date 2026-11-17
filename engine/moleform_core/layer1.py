@@ -33,6 +33,20 @@ NOTE_LOW_MW = "低分子量：以 n = 0 分子與較重成分兩成分近似"
 NOTE_MC_DEFINITION = "Mc 為依 Miller–Macosko 式 51 推導的質量基準定義（每克固體的有效網目鏈莫耳數的倒數），非論文原式"
 NOTE_M06 = "理想模型未考慮分子內環化、官能基活性差異與副反應；實際凝膠點通常比理論晚，實際交聯密度通常比理論低。"
 MESSAGE_MULTI_RULE = "目前只支援單一反應規則的第 1 層計算"
+MESSAGE_UNSUPPORTED_SYSTEM = "此體系的凝膠點與當量計算尚未支援"
+# P7-1A（D65）：Miller–Macosko 只適用「兩類官能基、單一步驟、等活性」的逐步加成；下列規則的體系不符合，第 1 層不給數值，只回報原因。
+# 規則 id → 原因。TypeScript 端 src/core/crosslink/layer1/prepare.ts 有同一份清單，兩邊須一致。
+UNSUPPORTED_RULES: dict[str, str] = {
+    "epoxy+anhydride": "多步反應（酸酐＋羥基成單酯酸、酸再開環環氧），需要起始羥基或催化劑，不是單一步驟的等活性逐步加成",
+    "epoxy+cyanate": "氰酸酯與環氧共反應有三嗪環、異氰脲酸酯、噁唑烷酮多條路徑，不是單一步驟的兩官能基配對",
+    "cyanate.trimerization": "三個氰酸酯基合成一個三嗪環（自反應的三聚），不是兩類官能基的配對",
+    "novolac+hmta": "HMTA 須先分解、一個分子提供多個等效亞甲基（等效位點數未定），並放出氨",
+    "resol.methylol+phenol_ring": "可溶酚醛的羥甲基與酚環空位在同一分子內，且羥甲基會自縮合（醚橋或放出甲醛）",
+    "resol.methylol-ether": "可溶酚醛的羥甲基自縮合（自反應）",
+    "resol.methylol-methylene": "可溶酚醛的羥甲基自縮合（自反應，放出甲醛）",
+    "epoxy+pag.cationic": "陽離子鏈增長聚合（光酸觸發），不是逐步聚合；光酸產生劑是催化劑，不被消耗",
+    "oxetane+pag.cationic": "陽離子鏈增長聚合（光酸觸發），不是逐步聚合；光酸產生劑是催化劑，不被消耗",
+}
 
 SCAN_DISCLAIMER = "未考慮副反應與反應不完全，實際最佳配比以實驗為準"
 SCAN_MODEL_NAME = "Miller–Macosko 比例掃描"
@@ -495,6 +509,9 @@ def prepare_layer1(
     if len(pairs) == 0:
         return {"ok": False, "reason": "配方中沒有反應配對"}
     rule_ids = {p["ruleId"] for p in pairs}
+    for p in pairs:
+        if p["ruleId"] in UNSUPPORTED_RULES:
+            return {"ok": False, "reason": f"{MESSAGE_UNSUPPORTED_SYSTEM}：{UNSUPPORTED_RULES[p['ruleId']]}（規則 {p['ruleId']}）"}
     if len(rule_ids) > 1:
         return {"ok": False, "reason": MESSAGE_MULTI_RULE}
     rule_id = pairs[0]["ruleId"]

@@ -101,7 +101,8 @@ describe('原子順序與編號不變', () => {
   });
 
   it('P 的單元 A 片段：反應原子（酚羥基）的編號與 2D 單元圖相同，且在 3D 檔案中仍是氧', () => {
-    const reactive2d = reactiveAtomsOf(RDKit, UNIT_A, groups, rules, true); // 2D 單元圖標記用（排除連接點）
+    // P7-1A：只取酚羥基（新增的「酚環鄰／對位空位」官能基會多標環上的碳）
+    const reactive2d = reactiveAtomsOf(RDKit, UNIT_A, groups.filter((g) => g.id === 'hydroxyl.phenolic'), rules, true); // 2D 單元圖標記用（排除連接點）
     expect(reactive2d.length).toBe(2); // 兩個酚羥基
     const f = cap(UNIT_A);
     const session = new ConformerSession(f.molblock);

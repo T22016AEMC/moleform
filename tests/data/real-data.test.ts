@@ -10,10 +10,15 @@ describe('src/data 實際資料表', () => {
     expect(describeIssues(checkAllTables(RDKit, bundledTexts))).toEqual([]);
   });
 
-  it('資料列數：官能基 2 列、反應規則 1 列（任務 016），其餘只有標題列', () => {
+  it('資料列數：官能基 13 列、反應規則 14 列（任務 016、P7-1A），其餘只有標題列', () => {
     const { tables } = loadTables(bundledTexts);
-    expect(tables.functionalGroups.rows.map((r) => r.id)).toEqual(['hydroxyl.phenolic', 'ether.epoxide']);
-    expect(tables.reactionRules.rows.map((r) => r.id)).toEqual(['epoxy+phenol']);
+    expect(tables.functionalGroups.rows).toHaveLength(13);
+    expect(tables.functionalGroups.rows.slice(0, 2).map((r) => r.id)).toEqual(['hydroxyl.phenolic', 'ether.epoxide']);
+    expect(tables.reactionRules.rows).toHaveLength(14);
+    expect(tables.reactionRules.rows[0].id).toBe('epoxy+phenol');
+    // P7-1A 新增列一律 pending（D17、D22）
+    expect(tables.functionalGroups.rows.slice(2).every((r) => r.review_status === 'pending')).toBe(true);
+    expect(tables.reactionRules.rows.slice(1).every((r) => r.review_status === 'pending')).toBe(true);
     expect(tables.groupContributions.rows).toHaveLength(0);
     expect(tables.solvents.rows).toHaveLength(0);
   });

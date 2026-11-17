@@ -104,8 +104,10 @@ describe('平均重複單元（P：雙酚茀 : 萘基次甲基 = 2 : 1）', () =
 
   it('單元 B 沒有酚羥基；官能基只在單元 A', () => {
     const a = analyzeComponent(RDKit, { id: 'P', name: 'P', canonicalSmiles: UNIT_A, category: 'Resin', polymer: EXACT }, T.functionalGroups);
-    expect(a.units![0].groups).toHaveLength(1);
-    expect(a.units![0].groups[0].sites).toHaveLength(2);
+    // P7-1A：單元 A 的酚也命中新增的「酚環鄰／對位空位」官能基，這裡只檢查酚羥基
+    const hydroxyl = a.units![0].groups.filter((g) => g.groupId === 'hydroxyl.phenolic');
+    expect(hydroxyl).toHaveLength(1);
+    expect(hydroxyl[0].sites).toHaveLength(2);
     expect(a.units![1].groups).toEqual([]);
     expect(a.groups.map((g) => g.groupId)).toEqual(a.units![0].groups.map((g) => g.groupId));
   });

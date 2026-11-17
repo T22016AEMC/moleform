@@ -7,6 +7,20 @@ import { expressAmounts, type AmountItem } from './stoich';
 import type { Layer1Component, Layer1Setup } from './layer1';
 
 export const MESSAGE_MULTI_RULE = '目前只支援單一反應規則的第 1 層計算';
+export const MESSAGE_UNSUPPORTED_SYSTEM = '此體系的凝膠點與當量計算尚未支援';
+// P7-1A（D65）：Miller–Macosko 只適用「兩類官能基、單一步驟、等活性」的逐步加成；下列規則的體系不符合，第 1 層不給數值，只回報原因。
+// 與 engine/moleform_core/layer1.py 的 UNSUPPORTED_RULES 為同一份清單，兩邊須一致。
+export const UNSUPPORTED_RULES: Record<string, string> = {
+  'epoxy+anhydride': '多步反應（酸酐＋羥基成單酯酸、酸再開環環氧），需要起始羥基或催化劑，不是單一步驟的等活性逐步加成',
+  'epoxy+cyanate': '氰酸酯與環氧共反應有三嗪環、異氰脲酸酯、噁唑烷酮多條路徑，不是單一步驟的兩官能基配對',
+  'cyanate.trimerization': '三個氰酸酯基合成一個三嗪環（自反應的三聚），不是兩類官能基的配對',
+  'novolac+hmta': 'HMTA 須先分解、一個分子提供多個等效亞甲基（等效位點數未定），並放出氨',
+  'resol.methylol+phenol_ring': '可溶酚醛的羥甲基與酚環空位在同一分子內，且羥甲基會自縮合（醚橋或放出甲醛）',
+  'resol.methylol-ether': '可溶酚醛的羥甲基自縮合（自反應）',
+  'resol.methylol-methylene': '可溶酚醛的羥甲基自縮合（自反應，放出甲醛）',
+  'epoxy+pag.cationic': '陽離子鏈增長聚合（光酸觸發），不是逐步聚合；光酸產生劑是催化劑，不被消耗',
+  'oxetane+pag.cationic': '陽離子鏈增長聚合（光酸觸發），不是逐步聚合；光酸產生劑是催化劑，不被消耗',
+};
 
 export type PrepareOutcome =
   | {
@@ -24,6 +38,10 @@ export type PrepareOutcome =
 export function prepareLayer1(result: CrosslinkResult, formulation: Formulation, outcome: FormulationOutcome | null): PrepareOutcome {
   if (result.pairs.length === 0) return { ok: false, reason: '配方中沒有反應配對' };
   const ruleIds = new Set(result.pairs.map((p) => p.ruleId));
+  for (const p of result.pairs) {
+    const why = UNSUPPORTED_RULES[p.ruleId];
+    if (why !== undefined) return { ok: false, reason: `${MESSAGE_UNSUPPORTED_SYSTEM}：${why}（規則 ${p.ruleId}）` };
+  }
   if (ruleIds.size > 1) return { ok: false, reason: MESSAGE_MULTI_RULE };
   const ruleId = result.pairs[0].ruleId;
   const first = result.pairs[0];

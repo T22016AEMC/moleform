@@ -27,6 +27,23 @@
            39
           ]
          ]
+        },
+        {
+         "groupId": "aromatic.ch.phenol.ortho_para",
+         "sites": [
+          [
+           3
+          ],
+          [
+           7
+          ],
+          [
+           24
+          ],
+          [
+           37
+          ]
+         ]
         }
        ],
        "id": "P",
@@ -36,6 +53,7 @@
        "problem": null,
        "source": "[*:1]c1ccc(C2(c3ccc(C([*:2])c4ccc5ccccc5c4)c(O)c3)c3ccccc3-c3ccccc32)cc1O",
        "unitGroupCounts": {
+        "aromatic.ch.phenol.ortho_para": 4,
         "hydroxyl.phenolic": 2
        },
        "units": [
@@ -49,6 +67,23 @@
             ],
             [
              39
+            ]
+           ]
+          },
+          {
+           "groupId": "aromatic.ch.phenol.ortho_para",
+           "sites": [
+            [
+             3
+            ],
+            [
+             7
+            ],
+            [
+             24
+            ],
+            [
+             37
             ]
            ]
           }
@@ -309,6 +344,23 @@
            39
           ]
          ]
+        },
+        {
+         "groupId": "aromatic.ch.phenol.ortho_para",
+         "sites": [
+          [
+           3
+          ],
+          [
+           7
+          ],
+          [
+           24
+          ],
+          [
+           37
+          ]
+         ]
         }
        ],
        "id": "P",
@@ -318,6 +370,7 @@
        "problem": null,
        "source": "[*:1]c1ccc(C2(c3ccc(C([*:2])c4ccc5ccccc5c4)c(O)c3)c3ccccc3-c3ccccc32)cc1O",
        "unitGroupCounts": {
+        "aromatic.ch.phenol.ortho_para": 4,
         "hydroxyl.phenolic": 2
        },
        "units": [
@@ -331,6 +384,23 @@
             ],
             [
              39
+            ]
+           ]
+          },
+          {
+           "groupId": "aromatic.ch.phenol.ortho_para",
+           "sites": [
+            [
+             3
+            ],
+            [
+             7
+            ],
+            [
+             24
+            ],
+            [
+             37
             ]
            ]
           }
@@ -404,6 +474,23 @@
           ],
           [
            19
+          ]
+         ]
+        },
+        {
+         "groupId": "aromatic.ch.phenol.ortho_para",
+         "sites": [
+          [
+           2
+          ],
+          [
+           8
+          ],
+          [
+           17
+          ],
+          [
+           20
           ]
          ]
         }
@@ -678,6 +765,23 @@
            39
           ]
          ]
+        },
+        {
+         "groupId": "aromatic.ch.phenol.ortho_para",
+         "sites": [
+          [
+           3
+          ],
+          [
+           7
+          ],
+          [
+           24
+          ],
+          [
+           37
+          ]
+         ]
         }
        ],
        "id": "P",
@@ -687,6 +791,7 @@
        "problem": null,
        "source": "[*:1]c1ccc(C2(c3ccc(C([*:2])c4ccc5ccccc5c4)c(O)c3)c3ccccc3-c3ccccc32)cc1O",
        "unitGroupCounts": {
+        "aromatic.ch.phenol.ortho_para": 4,
         "hydroxyl.phenolic": 2
        },
        "units": [
@@ -700,6 +805,23 @@
             ],
             [
              39
+            ]
+           ]
+          },
+          {
+           "groupId": "aromatic.ch.phenol.ortho_para",
+           "sites": [
+            [
+             3
+            ],
+            [
+             7
+            ],
+            [
+             24
+            ],
+            [
+             37
             ]
            ]
           }
@@ -960,6 +1082,23 @@
            39
           ]
          ]
+        },
+        {
+         "groupId": "aromatic.ch.phenol.ortho_para",
+         "sites": [
+          [
+           3
+          ],
+          [
+           7
+          ],
+          [
+           24
+          ],
+          [
+           37
+          ]
+         ]
         }
        ],
        "id": "P",
@@ -969,6 +1108,7 @@
        "problem": null,
        "source": "[*:1]c1ccc(C2(c3ccc(C([*:2])c4ccc5ccccc5c4)c(O)c3)c3ccccc3-c3ccccc32)cc1O",
        "unitGroupCounts": {
+        "aromatic.ch.phenol.ortho_para": 4,
         "hydroxyl.phenolic": 2
        },
        "units": [
@@ -982,6 +1122,23 @@
             ],
             [
              39
+            ]
+           ]
+          },
+          {
+           "groupId": "aromatic.ch.phenol.ortho_para",
+           "sites": [
+            [
+             3
+            ],
+            [
+             7
+            ],
+            [
+             24
+            ],
+            [
+             37
             ]
            ]
           }
@@ -1251,6 +1408,23 @@
            39
           ]
          ]
+        },
+        {
+         "groupId": "aromatic.ch.phenol.ortho_para",
+         "sites": [
+          [
+           3
+          ],
+          [
+           7
+          ],
+          [
+           24
+          ],
+          [
+           37
+          ]
+         ]
         }
        ],
        "id": "P",
@@ -1260,6 +1434,7 @@
        "problem": "聚合物需要填入 Mw（或 Mn、DP），才能判定",
        "source": "[*:1]c1ccc(C2(c3ccc(C([*:2])c4ccc5ccccc5c4)c(O)c3)c3ccccc3-c3ccccc32)cc1O",
        "unitGroupCounts": {
+        "aromatic.ch.phenol.ortho_para": 4,
         "hydroxyl.phenolic": 2
        },
        "units": [
@@ -1273,6 +1448,23 @@
             ],
             [
              39
+            ]
+           ]
+          },
+          {
+           "groupId": "aromatic.ch.phenol.ortho_para",
+           "sites": [
+            [
+             3
+            ],
+            [
+             7
+            ],
+            [
+             24
+            ],
+            [
+             37
             ]
            ]
           }
@@ -1470,6 +1662,23 @@
            39
           ]
          ]
+        },
+        {
+         "groupId": "aromatic.ch.phenol.ortho_para",
+         "sites": [
+          [
+           3
+          ],
+          [
+           7
+          ],
+          [
+           24
+          ],
+          [
+           37
+          ]
+         ]
         }
        ],
        "id": "P",
@@ -1479,6 +1688,7 @@
        "problem": null,
        "source": "[*:1]c1ccc(C2(c3ccc(C([*:2])c4ccc5ccccc5c4)c(O)c3)c3ccccc3-c3ccccc32)cc1O",
        "unitGroupCounts": {
+        "aromatic.ch.phenol.ortho_para": 4,
         "hydroxyl.phenolic": 2
        },
        "units": [
@@ -1492,6 +1702,23 @@
             ],
             [
              39
+            ]
+           ]
+          },
+          {
+           "groupId": "aromatic.ch.phenol.ortho_para",
+           "sites": [
+            [
+             3
+            ],
+            [
+             7
+            ],
+            [
+             24
+            ],
+            [
+             37
             ]
            ]
           }
@@ -1754,6 +1981,23 @@
            39
           ]
          ]
+        },
+        {
+         "groupId": "aromatic.ch.phenol.ortho_para",
+         "sites": [
+          [
+           3
+          ],
+          [
+           7
+          ],
+          [
+           24
+          ],
+          [
+           37
+          ]
+         ]
         }
        ],
        "id": "P",
@@ -1763,6 +2007,7 @@
        "problem": null,
        "source": "[*:1]c1ccc(C2(c3ccc(C([*:2])c4ccc5ccccc5c4)c(O)c3)c3ccccc3-c3ccccc32)cc1O",
        "unitGroupCounts": {
+        "aromatic.ch.phenol.ortho_para": 4,
         "hydroxyl.phenolic": 2
        },
        "units": [
@@ -1776,6 +2021,23 @@
             ],
             [
              39
+            ]
+           ]
+          },
+          {
+           "groupId": "aromatic.ch.phenol.ortho_para",
+           "sites": [
+            [
+             3
+            ],
+            [
+             7
+            ],
+            [
+             24
+            ],
+            [
+             37
             ]
            ]
           }
@@ -2097,6 +2359,23 @@
            19
           ]
          ]
+        },
+        {
+         "groupId": "aromatic.ch.phenol.ortho_para",
+         "sites": [
+          [
+           2
+          ],
+          [
+           8
+          ],
+          [
+           17
+          ],
+          [
+           20
+          ]
+         ]
         }
        ],
        "id": "S",
@@ -2305,6 +2584,7 @@
        },
        "dp": 1.9400606837284693,
        "endGroupCounts": {
+        "aromatic.ch.phenol.ortho_para": 2,
         "hydroxyl.phenolic": 1
        },
        "ends": [
@@ -2315,6 +2595,17 @@
            "sites": [
             [
              7
+            ]
+           ]
+          },
+          {
+           "groupId": "aromatic.ch.phenol.ortho_para",
+           "sites": [
+            [
+             3
+            ],
+            [
+             5
             ]
            ]
           }
@@ -2334,6 +2625,14 @@
            9
           ]
          ]
+        },
+        {
+         "groupId": "aromatic.ch.phenol.ortho_para",
+         "sites": [
+          [
+           7
+          ]
+         ]
         }
        ],
        "id": "P",
@@ -2343,6 +2642,7 @@
        "problem": null,
        "source": "[*:1]Cc1cc([*:2])ccc1O",
        "unitGroupCounts": {
+        "aromatic.ch.phenol.ortho_para": 1,
         "hydroxyl.phenolic": 1
        },
        "units": [
@@ -2353,6 +2653,14 @@
            "sites": [
             [
              9
+            ]
+           ]
+          },
+          {
+           "groupId": "aromatic.ch.phenol.ortho_para",
+           "sites": [
+            [
+             7
             ]
            ]
           }
@@ -2376,6 +2684,23 @@
           ],
           [
            19
+          ]
+         ]
+        },
+        {
+         "groupId": "aromatic.ch.phenol.ortho_para",
+         "sites": [
+          [
+           2
+          ],
+          [
+           8
+          ],
+          [
+           17
+          ],
+          [
+           20
           ]
          ]
         }
@@ -2559,6 +2884,23 @@
           ],
           [
            19
+          ]
+         ]
+        },
+        {
+         "groupId": "aromatic.ch.phenol.ortho_para",
+         "sites": [
+          [
+           2
+          ],
+          [
+           8
+          ],
+          [
+           17
+          ],
+          [
+           20
           ]
          ]
         }
@@ -28598,7 +28940,7 @@
    "output": 0.00009999999999999991
   }
  ],
- "commit": "2c2b860618c17a97dfeefcee4cf5ae68e9098abb",
+ "commit": "dfa27f60817c75a9c9def57f9f3aecb5329f2d9e+dirty-src",
  "module": "layer1",
  "rdkitjs": "2026.09.1",
  "tolerance": {
