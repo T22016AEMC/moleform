@@ -21,6 +21,7 @@
   "build": {
     "appId": "local.moleform.desktop",
     "productName": "MoleForm",
+    "icon": "../assets/icons/icon-512.png",
     "directories": {
       "output": "release"
     },
@@ -39,6 +40,10 @@
         "to": "app-dist"
       },
       {
+        "from": "../assets/icons/icon-512.png",
+        "to": "icon.png"
+      },
+      {
         "from": "engine-runtime",
         "to": "engine"
       }
@@ -55,7 +60,7 @@
       "target": [
         "nsis"
       ],
-      "signAndEditExecutable": false
+      "signAndEditExecutable": true
     },
     "nsis": {
       "oneClick": false,
@@ -65,6 +70,7 @@
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "deleteAppDataOnUninstall": false,
+      "shortcutName": "MoleForm",
       "artifactName": "MoleForm-Setup-${version}.exe"
     },
     "portable": {

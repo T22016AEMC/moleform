@@ -12,6 +12,7 @@ const { startEngine, stopEngine, handshake, request: engineRequest } = require('
 const { callEngine } = require('./bridge.cjs');
 
 const DIST_DIR = app.isPackaged ? path.join(process.resourcesPath, 'app-dist') : path.join(__dirname, '..', 'dist');
+const ICON_PATH = app.isPackaged ? path.join(process.resourcesPath, 'icon.png') : path.join(__dirname, '..', 'assets', 'icons', 'icon-512.png');
 const ENGINE_DIR = app.isPackaged ? path.join(process.resourcesPath, 'engine') : path.join(__dirname, '..', 'engine');
 
 // 自我檢查用：使用獨立的使用者資料夾，不動到正式資料（selftest.cjs）；未指定時用暫存資料夾
@@ -78,6 +79,7 @@ function createWindow({ show = true, partition, allowOrigin } = {}) {
     height: 1000,
     show,
     title: 'MoleForm',
+    icon: ICON_PATH,
     autoHideMenuBar: true,
     webPreferences: { ...WEB_PREFERENCES, ...(partition ? { partition } : {}) },
   });
