@@ -1,3 +1,5 @@
+// 【黃金基準，不供介面使用】任務 I05（PLAN 6A.3 第二步）：介面已改呼叫 Python 引擎（engine/moleform_core/tg_fit.py）。
+// 本檔只供黃金檔匯出（scripts/golden/export-*.ts）與測試，直到使用者決定凍結黃金檔；src/ui、src/worker 不得引用（tests/architecture.test.ts 檢查）。
 // Fox–Flory 的線性回歸（任務 035）：Tg = Tg∞ − K/Mn，即 y = a + b·x，x = 1/Mn，y = Tg（K），Tg∞ = a，K = −b。
 // 普通最小二乘，n 點 2 參數；標準誤差用 s² = SSE/(n−2)。只做計算，不判斷化學（D17）。
 export interface FloryFit {

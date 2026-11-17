@@ -1,3 +1,5 @@
+// 【黃金基準，不供介面使用】任務 I05（PLAN 6A.3 第二步）：介面已改呼叫 Python 引擎（engine/moleform_core/mol_graph.py）。
+// 本檔只供黃金檔匯出（scripts/golden/export-*.ts）與測試，直到使用者決定凍結黃金檔；src/ui、src/worker 不得引用（tests/architecture.test.ts 檢查）。
 // 把 RDKit 分子讀成簡單的圖（原子序、氫數、鄰居、芳香性），供基團切分使用。
 import type { JSMol } from '../rdkit/types';
 

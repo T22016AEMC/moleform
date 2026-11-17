@@ -315,6 +315,24 @@ const SAMPLE_CALLS = {
     mn: { a: 1000, b: 1000 },
   }],
   mixDensity: ['/mixture-density', { components: [{ name: 'PMMA', w: 0.6, smiles: SAMPLE_PMMA }, { name: 'PS', w: 0.4, smiles: SAMPLE_PS }] }],
+  // 任務 I05：交聯頁經橋接走引擎（第 0 層：F4A 的 P＋E；第 1 層：小分子環氧＋胺，含理論配比）
+  crosslink: ['/crosslink/analyze', {
+    components: [
+      { id: 'P', name: 'P', category: 'Resin', canonicalSmiles: SAMPLE.components[0].smiles, polymer: { mnInput: 6000 } },
+      { id: 'E', name: 'E', category: 'Resin', canonicalSmiles: SAMPLE.components[1].smiles, polymer: { dpInput: 21 } },
+    ],
+  }],
+  layer1: ['/crosslink/layer1', {
+    setup: {
+      nameA: 'A', nameB: 'B', totalMass: 100,
+      components: [
+        { id: 'a', name: 'a', side: 'A', isPolymer: false, mass: 70, molarMass: 340.4, groupsPerMolecule: 2 },
+        { id: 'b', name: 'b', side: 'B', isPolymer: false, mass: 30, molarMass: 60.1, groupsPerMolecule: 4 },
+      ],
+    },
+    conversion: 1,
+    stoichiometric: true,
+  }],
 };
 
 async function sampleMode(ctx, out) {

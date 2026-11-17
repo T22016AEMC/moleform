@@ -5,7 +5,7 @@
 - **[M76]** D. R. Miller, C. W. Macosko, "A New Derivation of Post Gel Properties of Network Polymers", *Macromolecules* **1976**, 9, 206–211（DOI 10.1021/ma60050a004）。主要來源。
 - **[T24]** I. C. Tsimouri et al., *Macromolecules* **2024**, 57, 4273–4284（CC-BY 4.0）。僅用來交叉核對。
 
-程式：`src/core/crosslink/layer1/millerMacosko.ts`（公式）、`layer1.ts`（第 1 層）、`stoich.ts`（理論配比與掃描）、`prepare.ts`（整理輸入）。測試：`tests/crosslink/layer1/`。
+程式（**介面使用的是 Python 引擎**，任務 I05）：`engine/moleform_core/layer1.py`（公式、第 1 層、理論配比與掃描、整理輸入）、`crosslink.py`（第 0 層）；介面經桌面橋接呼叫 `/crosslink/analyze`、`/crosslink/prepare`、`/crosslink/layer1`、`/crosslink/layer1/scan`。TypeScript 的 `src/core/crosslink/layer1/millerMacosko.ts`、`layer1.ts`、`stoich.ts`、`prepare.ts` 是「黃金基準，不供介面使用」（黃金檔 `tests/golden/layer1.json`、`crosslink.json` 由它們匯出，Python 逐字比對）；只有 B 類（文字標籤、掃描範圍預設值與即時檢查、用量換回使用者單位）仍被介面引用。測試：`tests/crosslink/layer1/`（TypeScript 基準）、`engine/tests/`（Python）。
 
 ## 交聯第 1 層：Miller–Macosko（D41）
 
@@ -107,7 +107,7 @@
 
 ## 第 1 層不支援的體系（任務 P7-1A，D65）
 
-Miller–Macosko 只適用「兩類官能基、單一步驟、等活性」的逐步加成。反應規則 A 批中下列規則的體系不符合，第 1 層（TypeScript `prepare.ts` 與 Python `layer1.py` 的 `UNSUPPORTED_RULES`，兩邊同一份清單）回報「此體系的凝膠點與當量計算尚未支援：原因」，不套用公式：`epoxy+anhydride`（多步）、`epoxy+cyanate`（多路徑）、`cyanate.trimerization`（三聚自反應）、`novolac+hmta`（HMTA 須先分解、等效位點未定）、`resol.methylol+phenol_ring`／`resol.methylol-ether`／`resol.methylol-methylene`（同分子兩類官能基、自縮合）、`epoxy+pag.cationic`／`oxetane+pag.cationic`（陽離子鏈增長）。`epoxy+amine.*` 四條照現有公式計算（一級胺 N 的 functionality = 2、二級胺 = 1；一級與二級胺氫的活性差異不計，" 等活性 " 假設）；配方同時含一級與二級胺（如二乙三胺）時有兩條規則，回報「目前只支援單一反應規則」。反應規則的 `functionality` 為「每個官能基形成的鍵數」，對催化劑類配對（PAG）無化學計量意義。
+Miller–Macosko 只適用「兩類官能基、單一步驟、等活性」的逐步加成。反應規則 A 批中下列規則的體系不符合，第 1 層（Python `layer1.py` 的 `UNSUPPORTED_RULES`；任務 I05 起 TypeScript `prepare.ts` 的同一份清單已退役）回報「此體系的凝膠點與當量計算尚未支援：原因」，不套用公式：`epoxy+anhydride`（多步）、`epoxy+cyanate`（多路徑）、`cyanate.trimerization`（三聚自反應）、`novolac+hmta`（HMTA 須先分解、等效位點未定）、`resol.methylol+phenol_ring`／`resol.methylol-ether`／`resol.methylol-methylene`（同分子兩類官能基、自縮合）、`epoxy+pag.cationic`／`oxetane+pag.cationic`（陽離子鏈增長）。`epoxy+amine.*` 四條照現有公式計算（一級胺 N 的 functionality = 2、二級胺 = 1；一級與二級胺氫的活性差異不計，" 等活性 " 假設）；配方同時含一級與二級胺（如二乙三胺）時有兩條規則，回報「目前只支援單一反應規則」。反應規則的 `functionality` 為「每個官能基形成的鍵數」，對催化劑類配對（PAG）無化學計量意義。
 
 ## 理論配比與比例掃描（D40）
 

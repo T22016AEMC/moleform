@@ -1,6 +1,9 @@
 // 配方工作台右欄的交聯第 1 層與理論配比區塊（任務 017，D11、D40、D41、D44；任務 018 改為可收合區塊）。
 // 依 D09，不顯示各成分的官能基數量、當量與分子量；網路計算結果（成鍵數、交聯密度、Mc 等）照常顯示（D44）。
-import { useMemo, useState } from 'react';
+// I05：第 1 層、理論配比與比例掃描的計算由 Python 引擎完成（經桌面橋接）；引擎不可用時顯示原因，不退回 TypeScript。
+// 仍在 TypeScript 的只有 B 類：配方換算（computeFormulation）、官能基總量（groupTotals，決定掃描範圍預設值）、
+// 掃描範圍輸入的即時檢查（checkScanSettings）與用量換回使用者單位（describeAmounts）。
+import { useEffect, useMemo, useState } from 'react';
 import {
   LAYER1_DIRECT_MODEL_NAME,
   LAYER1_MODEL_NAME,
@@ -13,18 +16,15 @@ import {
   NOTE_DISTRIBUTION,
   NOTE_LOW_MW,
   NOTE_NON_INTEGER,
-  computeLayer1,
+  groupTotals,
 } from '../../core/crosslink/layer1/layer1';
-import { groupTotals } from '../../core/crosslink/layer1/layer1';
-import { describeAmounts, prepareLayer1, type PrepareOutcome } from '../../core/crosslink/layer1/prepare';
+import { describeAmounts, type PrepareOutcome } from '../../core/crosslink/layer1/prepare';
 import {
   SCAN_DISCLAIMER,
   SCAN_MODEL_NAME,
   SCAN_OPTIONS,
   checkScanSettings,
   defaultScanSettings,
-  scanRatio,
-  stoichiometricSetup,
   type ScanResult,
 } from '../../core/crosslink/layer1/stoich';
 import type { CrosslinkResult } from '../../core/crosslink/types';
@@ -34,6 +34,7 @@ import { confidenceLabel, type CalcResult, type Confidence } from '../../core/re
 import { ResultValue } from '../components/ResultValue';
 import { UnifiedNote } from '../components/UnifiedNote';
 import { ResultBlock } from '../workbench/ResultBlock';
+import { computeLayer1ViaEngine, prepareBody, prepareLayer1ViaEngine, scanLayer1ViaEngine, type Layer1Computed } from '../engine/crosslinkEngine';
 
 const UNIT_LABEL: Record<string, string> = { g: 'g', parts: '重量份', wt: 'wt%', mol: 'mol%', phr: 'phr' };
 
@@ -43,9 +44,41 @@ function calc(value: number | null, unit: string, modelName: string, confidence:
   return { value: value === null ? null : round(value), unit, modelName, confidence, sources: [], ...(notApplicable ? { notApplicable } : {}) };
 }
 
-/** 讀取畫面上左欄的配方，整理第 1 層的輸入 */
-function usePrepared(result: CrosslinkResult, formulation: Formulation | null): PrepareOutcome | null {
-  return useMemo(() => {
+/** 引擎呼叫的狀態：計算中、失敗（附原因）、完成 */
+type Remote<T> = { kind: 'working' } | { kind: 'error'; message: string } | { kind: 'done'; value: T };
+
+/** 輸入連續改變（打字）時，等這麼久沒有新輸入才呼叫引擎 */
+const ENGINE_DEBOUNCE_MS = 200;
+
+/** 引擎請求的共用流程：key 不變不重算；重算期間保留上一次的結果（避免畫面閃爍）。key 為 null 表示不需要請求 */
+function useEngineCall<T>(key: string | null, run: () => Promise<{ ok: true; value: T } | { ok: false; error: string }>): Remote<T> | null {
+  const [state, setState] = useState<Remote<T> | null>(null);
+  useEffect(() => {
+    if (key === null) {
+      setState(null);
+      return;
+    }
+    let cancelled = false;
+    setState((s) => (s && s.kind === 'done' ? s : { kind: 'working' }));
+    const timer = setTimeout(() => {
+      void run().then((r) => {
+        if (!cancelled) setState(r.ok ? { kind: 'done', value: r.value } : { kind: 'error', message: r.error });
+      });
+    }, ENGINE_DEBOUNCE_MS);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+    // key 代表請求的全部內容
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key]);
+  return state;
+}
+
+/** 讀取畫面上左欄的配方，由引擎整理第 1 層的輸入；沒有配方時為 null */
+function usePrepared(result: CrosslinkResult, formulation: Formulation | null): Remote<PrepareOutcome> | null {
+  // 配方換算（B 類）沿用 TypeScript 的 computeFormulation；結果以質量百分比傳給引擎（D04）
+  const body = useMemo(() => {
     if (!formulation) return null;
     const mw: Record<string, number | undefined> = {};
     const unitWeights: Record<string, number | undefined> = {};
@@ -53,8 +86,10 @@ function usePrepared(result: CrosslinkResult, formulation: Formulation | null): 
       mw[c.id] = c.molarMass ?? undefined;
       if (c.distribution) unitWeights[c.id] = c.distribution.mUnit;
     }
-    return prepareLayer1(result, formulation, computeFormulation(formulation, mw, { unitWeights }));
+    return prepareBody(result, formulation, computeFormulation(formulation, mw, { unitWeights }));
   }, [result, formulation]);
+  const key = useMemo(() => (body === null ? null : JSON.stringify(body)), [body]);
+  return useEngineCall(key, () => prepareLayer1ViaEngine(body as Record<string, unknown>));
 }
 
 function parseNumber(text: string): number {
@@ -69,10 +104,15 @@ interface Props {
 
 /** 第 1 層與理論配比共用同一份轉化率輸入，所以由這個元件一併提供兩張卡片 */
 export function Layer1Section({ result, formulation }: Props) {
-  const prep = usePrepared(result, formulation);
+  const prepState = usePrepared(result, formulation);
   const [convText, setConvText] = useState('100');
   const conv = parseNumber(convText);
   const convValid = Number.isFinite(conv) && conv >= 0 && conv <= 100;
+  const prep = prepState !== null && prepState.kind === 'done' && prepState.value.ok ? prepState.value : null;
+  const layer1State = useEngineCall<Layer1Computed>(
+    prep !== null && convValid ? JSON.stringify([prep.setup, conv / 100]) : null,
+    () => computeLayer1ViaEngine((prep as Extract<PrepareOutcome, { ok: true }>).setup, conv / 100),
+  );
 
   return (
     <>
@@ -80,11 +120,17 @@ export function Layer1Section({ result, formulation }: Props) {
         <p>
           依目前配方的用量，算出反應官能基比、過量官能基、理論最大成鍵數，以及指定轉化率下的凝膠點、溶膠分率、交聯密度、網目分子量 Mc 與殘留官能基。
         </p>
-        {prep === null ? (
+        {prepState === null ? (
           <p className="structure-placeholder">配方裡還沒有成分。</p>
-        ) : !prep.ok ? (
+        ) : prepState.kind === 'working' ? (
+          <p role="status">引擎計算中…</p>
+        ) : prepState.kind === 'error' ? (
           <p className="structure-notice" role="status">
-            第 1 層無法計算：{prep.reason}
+            第 1 層無法計算：{prepState.message}
+          </p>
+        ) : !prepState.value.ok ? (
+          <p className="structure-notice" role="status">
+            第 1 層無法計算：{prepState.value.reason}
           </p>
         ) : (
           <>
@@ -108,18 +154,20 @@ export function Layer1Section({ result, formulation }: Props) {
                 <p>轉化率必須是 0–100 的數字。</p>
               </div>
             )}
-            {convValid && <Layer1Output prep={prep} conv={conv / 100} />}
+            {convValid && prep !== null && <Layer1Output prep={prep} conv={conv / 100} state={layer1State} />}
           </>
         )}
       </ResultBlock>
 
-      {prep !== null && prep.ok && convValid && <TheoryCard prep={prep} conv={conv / 100} />}
+      {prep !== null && convValid && <TheoryCard prep={prep} conv={conv / 100} layer1State={layer1State} />}
     </>
   );
 }
 
-function Layer1Output({ prep, conv }: { prep: Extract<PrepareOutcome, { ok: true }>; conv: number }) {
-  const r = computeLayer1(prep.setup, conv);
+function Layer1Output({ prep, conv, state }: { prep: Extract<PrepareOutcome, { ok: true }>; conv: number; state: Remote<Layer1Computed> | null }) {
+  if (state === null || state.kind === 'working') return <p role="status">引擎計算中…</p>;
+  if (state.kind === 'error') return <p className="structure-notice" role="status">第 1 層無法計算：{state.message}</p>;
+  const r = state.value.result;
   if (!r) return <p className="structure-notice">兩類官能基必須都有，才能計算。</p>;
   const { setup } = prep;
   const name = (side: 'A' | 'B' | null) => (side === 'A' ? setup.nameA : side === 'B' ? setup.nameB : '');
@@ -209,7 +257,7 @@ function Layer1Output({ prep, conv }: { prep: Extract<PrepareOutcome, { ok: true
 
 // ---------- 理論配比與比例掃描 ----------
 
-function TheoryCard({ prep, conv }: { prep: Extract<PrepareOutcome, { ok: true }>; conv: number }) {
+function TheoryCard({ prep, conv, layer1State }: { prep: Extract<PrepareOutcome, { ok: true }>; conv: number; layer1State: Remote<Layer1Computed> | null }) {
   const [optionIndex, setOptionIndex] = useState(0);
   // 預設範圍自動包含目前配方的當量比；使用者改過之後就保留使用者的值
   const totals = groupTotals(prep.setup);
@@ -224,16 +272,17 @@ function TheoryCard({ prep, conv }: { prep: Extract<PrepareOutcome, { ok: true }
   const settings = { min: parseNumber(minText), max: parseNumber(maxText), points: parseNumber(pointsText) };
   const settingsError = checkScanSettings(settings);
 
+  // 理論配比由引擎隨第 1 層一併算出；用量換回使用者單位（B 類）仍在 TypeScript
   const stoich = useMemo(() => {
-    const st = stoichiometricSetup(prep.setup);
-    return st ? describeAmounts(prep, st) : null;
-  }, [prep]);
-  const scan = useMemo<ScanResult | null>(
-    () => (settingsError === null ? scanRatio(prep.setup, conv, option, settings) : null),
-    // settings 由三個輸入文字決定
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [prep.setup, conv, option, settingsError, minText, maxText, pointsText],
+    const st = layer1State !== null && layer1State.kind === 'done' ? layer1State.value.stoichiometric : null;
+    return st ? describeAmounts(prep, st.setup) : null;
+  }, [prep, layer1State]);
+  // settings 由三個輸入文字決定
+  const scanState = useEngineCall<ScanResult | null>(
+    settingsError === null ? JSON.stringify([prep.setup, conv, option.property, option.direction, minText, maxText, pointsText]) : null,
+    () => scanLayer1ViaEngine(prep.setup, conv, option, settings),
   );
+  const scan = settingsError === null && scanState !== null && scanState.kind === 'done' ? scanState.value : null;
   const best = scan && scan.bestSetup ? describeAmounts(prep, scan.bestSetup) : null;
   const atBoundary = scan?.bestIndex != null && (scan.bestIndex === 0 || scan.bestIndex === scan.points.length - 1);
 
@@ -244,7 +293,15 @@ function TheoryCard({ prep, conv }: { prep: Extract<PrepareOutcome, { ok: true }
         保持「{prep.setup.nameA}」一側的用量不變，按比例調整「{prep.setup.nameB}」一側所有成分（成分之間的相對比例不變），使兩類官能基等量。
         <span className="confidence-tag confidence-direct">{confidenceLabel('direct')}</span>
       </p>
-      {stoich ? <AmountTable data={stoich} current={prep} /> : <p className="structure-placeholder">無法計算化學計量配比。</p>}
+      {layer1State === null || layer1State.kind === 'working' ? (
+        <p role="status">引擎計算中…</p>
+      ) : layer1State.kind === 'error' ? (
+        <p className="structure-notice" role="status">無法計算化學計量配比：{layer1State.message}</p>
+      ) : stoich ? (
+        <AmountTable data={stoich} current={prep} />
+      ) : (
+        <p className="structure-placeholder">無法計算化學計量配比。</p>
+      )}
 
       <h3>比例掃描</h3>
       <p>
@@ -276,6 +333,10 @@ function TheoryCard({ prep, conv }: { prep: Extract<PrepareOutcome, { ok: true }
         <div className="error" role="alert">
           <p>{settingsError}</p>
         </div>
+      )}
+      {settingsError === null && scanState !== null && scanState.kind === 'working' && <p role="status">引擎計算中…</p>}
+      {settingsError === null && scanState !== null && scanState.kind === 'error' && (
+        <p className="structure-notice" role="status">比例掃描無法計算：{scanState.message}</p>
       )}
       {scan && (
         <>

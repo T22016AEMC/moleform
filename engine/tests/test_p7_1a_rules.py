@@ -1,11 +1,8 @@
 """任務 P7-1A（D65）：反應規則 A 批的單元測試。每個新規則一個命中、一個不命中（第 0 層，用專案的真實資料表）；
-第 1 層遇到不支援的體系回報原因而不是數值；酚醛各類型的酚羥基與鄰／對位空位命中；TypeScript 與 Python 的不支援清單一致。
+第 1 層遇到不支援的體系回報原因而不是數值；酚醛各類型的酚羥基與鄰／對位空位命中；不支援清單的規則 id 都真實存在（I05 起清單只在 Python）。
 資料表本身的 should_react／should_not_react 由 TypeScript 的 tests/data 檢查（RDKit.js）。"""
 
 from __future__ import annotations
-
-import re
-from pathlib import Path
 
 import pytest
 
@@ -97,11 +94,8 @@ def test_layer1_reports_unsupported_system_instead_of_numbers() -> None:
     assert "setup" not in prep
 
 
-def test_unsupported_lists_match_typescript_and_cover_new_rules() -> None:
-    ts = (Path(__file__).resolve().parents[2] / "src" / "core" / "crosslink" / "layer1" / "prepare.ts").read_text(encoding="utf-8")
-    block = ts.split("export const UNSUPPORTED_RULES", 1)[1].split("};", 1)[0]
-    ts_map = dict(re.findall(r"'([^']+)':\s*'([^']+)'", block))
-    assert ts_map == layer1.UNSUPPORTED_RULES
+def test_unsupported_rules_are_real_rule_ids_and_exclude_epoxy_amine() -> None:
+    # I05：清單只在 Python（TypeScript 側的同一份清單已退役）
     rule_ids = {r["id"] for r in crosslink.load_reaction_rules()}
     assert set(layer1.UNSUPPORTED_RULES) <= rule_ids
     # 單一步驟兩類官能基配對的新規則（環氧＋胺）仍由第 1 層計算

@@ -1,3 +1,4 @@
+// 【部分為黃金基準】任務 I05：第 1 層的計算已改由 Python 引擎（engine/moleform_core/layer1.py）完成。常數、型別與 groupTotals 供介面使用（B 類：文字標籤與掃描範圍預設值）；computeLayer1、buildSystem 等計算只是黃金基準，不供介面使用（直到使用者決定凍結黃金檔，tests/architecture.test.ts 檢查介面的引用）。
 // 交聯第 1 層計算（任務 017，D11、D41、D42、D44）：官能基比、過量、理論最大成鍵數、凝膠點、溶膠分率、
 // 交聯密度、網目分子量 Mc、殘留官能基。純 TypeScript，不可引用 React。
 // 「直接計算」：官能基比、過量、理論最大成鍵數、殘留百分比；「理論估算」：凝膠點、溶膠分率、交聯密度、Mc（Miller–Macosko）。

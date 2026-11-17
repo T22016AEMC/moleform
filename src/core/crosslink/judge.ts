@@ -1,3 +1,5 @@
+// 【黃金基準，不供介面使用】任務 I05（PLAN 6A.3 第二步）：介面已改呼叫 Python 引擎（engine/moleform_core/crosslink.py）。
+// 本檔只供黃金檔匯出（scripts/golden/export-*.ts）與測試，直到使用者決定凍結黃金檔；src/ui、src/worker 不得引用（tests/architecture.test.ts 檢查）。
 // 網路判定（任務 016）：只依「每分子平均官能度 f」的計數判定，不判斷反應會不會實際發生（D17）。
 //   兩邊都 f ≥ 2，且至少一邊 f > 2 → 網路
 //   兩邊都 f = 2                 → 鏈延長（線性）

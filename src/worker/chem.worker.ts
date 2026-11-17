@@ -1,6 +1,5 @@
 import wasmUrl from '@rdkit/rdkit/RDKit_minimal.wasm?url';
 import { getRDKit } from '../core/rdkit/loader';
-import { analyzeCrosslink } from '../core/crosslink/analyze';
 import { drawMarkedStructure, reactiveAtomsOf } from '../core/crosslink/draw';
 import { bundledTexts, loadTables } from '../core/data/load';
 import { averageMolecularWeight } from '../core/formulation/molecularWeight';
@@ -46,10 +45,10 @@ async function handle(request: ChemRequest): Promise<ChemResponse> {
       return { type: 'repeatUnit', id: request.id, ok: false, error: message(e) };
     }
   }
-  if (request.type === 'crosslink') {
+  if (request.type === 'crosslinkDraw') {
     try {
       const rdkit = await loadRDKit();
-      const result = analyzeCrosslink(rdkit, request.components, tables());
+      const result = request.result;
       const svgs: Record<string, string> = {};
       for (const analysis of result.components) {
         const marked = result.markedAtoms[analysis.id];
@@ -79,9 +78,9 @@ async function handle(request: ChemRequest): Promise<ChemResponse> {
           }
         }
       }
-      return { type: 'crosslink', id: request.id, ok: true, result, svgs };
+      return { type: 'crosslinkDraw', id: request.id, ok: true, svgs };
     } catch (e) {
-      return { type: 'crosslink', id: request.id, ok: false, error: message(e) };
+      return { type: 'crosslinkDraw', id: request.id, ok: false, error: message(e) };
     }
   }
   if (request.type === 'draw') {

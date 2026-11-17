@@ -1,3 +1,5 @@
+// 【黃金基準，不供介面使用】任務 I05（PLAN 6A.3 第二步）：介面已改呼叫 Python 引擎（engine/moleform_core/layer1.py）。
+// 本檔只供黃金檔匯出（scripts/golden/export-*.ts）與測試，直到使用者決定凍結黃金檔；src/ui、src/worker 不得引用（tests/architecture.test.ts 檢查）。
 // Miller–Macosko 後凝膠性質（任務 017，D41、D42）。純 TypeScript，不可引用 React。
 // 公式只取自 docs/references/ 的論文：
 //   [M76] D. R. Miller, C. W. Macosko, Macromolecules 1976, 9, 206–211（DOI 10.1021/ma60050a004）

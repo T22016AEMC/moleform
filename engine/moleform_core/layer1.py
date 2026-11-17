@@ -35,7 +35,7 @@ NOTE_M06 = "理想模型未考慮分子內環化、官能基活性差異與副�
 MESSAGE_MULTI_RULE = "目前只支援單一反應規則的第 1 層計算"
 MESSAGE_UNSUPPORTED_SYSTEM = "此體系的凝膠點與當量計算尚未支援"
 # P7-1A（D65）：Miller–Macosko 只適用「兩類官能基、單一步驟、等活性」的逐步加成；下列規則的體系不符合，第 1 層不給數值，只回報原因。
-# 規則 id → 原因。TypeScript 端 src/core/crosslink/layer1/prepare.ts 有同一份清單，兩邊須一致。
+# 規則 id → 原因。I05 起只在 Python（TypeScript 側的同一份清單已退役）。
 UNSUPPORTED_RULES: dict[str, str] = {
     "epoxy+anhydride": "多步反應（酸酐＋羥基成單酯酸、酸再開環環氧），需要起始羥基或催化劑，不是單一步驟的等活性逐步加成",
     "epoxy+cyanate": "氰酸酯與環氧共反應有三嗪環、異氰脲酸酯、噁唑烷酮多條路徑，不是單一步驟的兩官能基配對",

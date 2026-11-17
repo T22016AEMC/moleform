@@ -1,3 +1,5 @@
+// 【黃金基準，不供介面使用】任務 I05（PLAN 6A.3 第二步）：介面已改呼叫 Python 引擎（engine/moleform_core/free_volume.py）。
+// 本檔只供黃金檔匯出（scripts/golden/export-*.ts）與測試，直到使用者決定凍結黃金檔；src/ui、src/worker 不得引用（tests/architecture.test.ts 檢查）。
 // 使用者定義的經驗自由體積法（任務 036a，D57）：Vf = Vω × 經驗係數。
 // **這不是 van Krevelen 書中的自由體積分率**（書中沒有由結構計算的方法，見報告 036），也不用於 CTE（任務 036 的 CTE 只用 VW 與 Tg）。
 // 方法來源：使用者 2026-11-06 依論文整理的 Excel 表（docs/references/自由體積算法_使用者表.xlsx；論文清單待補），未經獨立驗證，稽核狀態「待使用者審」。

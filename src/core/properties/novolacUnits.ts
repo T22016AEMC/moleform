@@ -1,3 +1,5 @@
+// 【黃金基準，不供介面使用】任務 I05（PLAN 6A.3 第二步）：介面已改呼叫 Python 引擎（engine/moleform_core/novolac_units.py）。
+// 本檔只供黃金檔匯出（scripts/golden/export-*.ts）與測試，直到使用者決定凍結黃金檔；src/ui、src/worker 不得引用（tests/architecture.test.ts 檢查）。
 // 甲酚酚醛重複單元的類別辨識（任務 035，D22）。
 // SMARTS 為自行撰寫（找不到已發表的寫法）：依 Lin-Gibson 2001 的鄰甲酚酚醛（2-甲基酚，亞甲基連在 4、6 位）
 // 與對甲酚酚醛（4-甲基酚，亞甲基連在 2、6 位）的重複單元結構。命中結果與正反例測試見 tests/properties/novolacUnits.test.ts，

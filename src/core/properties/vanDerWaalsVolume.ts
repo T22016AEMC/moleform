@@ -1,3 +1,5 @@
+// 【黃金基準，不供介面使用】任務 I05（PLAN 6A.3 第二步）：介面已改呼叫 Python 引擎（engine/moleform_core/vw.py）。
+// 本檔只供黃金檔匯出（scripts/golden/export-*.ts）與測試，直到使用者決定凍結黃金檔；src/ui、src/worker 不得引用（tests/architecture.test.ts 檢查）。
 // van der Waals 體積（任務 028；D08）：VW = ΣVW,i（van Krevelen & te Nijenhuis 2009，4.2.3 節；基團增量 Table 4.2，書頁 74–75；基團增量法源自 Bondi 1964）。
 // 單位 cm³/mol。小分子與聚合物重複單元（含 `*`）都能算：van Krevelen 以結構單元計算，`*` 只是連到相鄰單元的鍵，不是原子。
 //

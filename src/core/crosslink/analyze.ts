@@ -1,3 +1,5 @@
+// 【黃金基準，不供介面使用】任務 I05（PLAN 6A.3 第二步）：介面已改呼叫 Python 引擎（engine/moleform_core/crosslink.py）。
+// 本檔只供黃金檔匯出（scripts/golden/export-*.ts）與測試，直到使用者決定凍結黃金檔；src/ui、src/worker 不得引用（tests/architecture.test.ts 檢查）。
 // 交聯第 0 層（任務 016，D11）：官能基辨識、配對、網路判定、催化劑與溫度、審核狀態。
 // 只依結構與反應規則表做計數判定，不判斷反應會不會實際發生（D17）。可信度「直接計算」。
 import type { FunctionalGroupRow, ReactionRuleRow } from '../data/types';

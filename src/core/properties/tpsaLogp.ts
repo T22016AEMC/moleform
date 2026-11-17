@@ -1,3 +1,5 @@
+// 【黃金基準，不供介面使用】任務 I05（PLAN 6A.3 第二步）：介面已改呼叫 Python 引擎（engine/moleform_core/tpsa_logp.py）。
+// 本檔只供黃金檔匯出（scripts/golden/export-*.ts）與測試，直到使用者決定凍結黃金檔；src/ui、src/worker 不得引用（tests/architecture.test.ts 檢查）。
 // TPSA（拓撲極性表面積）與 Crippen LogP（任務 028）：直接呼叫專案已有的 RDKit.js 描述子，不自行實作。
 //  - TPSA：RDKit 的 `tpsa`，方法為 Ertl, Rohde & Selzer, J. Med. Chem. 43, 3714–3717 (2000)，單位 Å²。
 //    RDKit 的預設只計入 N、O 的極性片段（不含 S、P，tests/properties/tpsaLogp.test.ts 有驗證）。

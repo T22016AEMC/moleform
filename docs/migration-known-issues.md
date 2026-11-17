@@ -33,6 +33,7 @@ Vm／密度**不受** K01–K03 影響：TS 的 `judgeState` 以 `calibrated: fa
 | D03 | **結構輸入格式**：TS 的 `RDKit.get_mol` 也接受 Molfile 與 JSON 字串；Python 端只用 `Chem.MolFromSmiles`（M00 的決定），只接 SMILES。 | 把 Molfile 當重複單元或端基送進來時。 | 介面送進來的一律是 SMILES，沒有影響。 | M04 | 無（黃金案例都是 SMILES） |
 | D04 | **呼叫端傳入的輸入**：TS 的 `computeFormulationTg`、`prepareLayer1`、`analyzeComponent` 內部呼叫 `formulation/compute` 與 `averageMolecularWeight`（039a：不搬）；Python 版改由呼叫端傳入已算好的質量百分比（`wtPct`）、Mn（`mn`）、Solid 區成分與單位、小分子的每分子質量（`molarMass`）。TS 對小分子優先用 `molfile` 分析；Python 只用 `canonicalSmiles`（同 D03）。 | 使用 `/tg/mixing`、`/crosslink/prepare`、`/crosslink/analyze` 時。 | 黃金檔的 `input` 就是 Python 收到的輸入（由匯出程式用現有 TS 函式先算好），同輸入下兩邊逐字相同。用 molfile 畫的小分子，Python 的原子索引是 SMILES 的索引。 | M05 | 配方換算搬到 Python（若之後決定）時自然消失；`molfile` 的處理等 D63 打包時再定。 |
 | D05 | **`Math.exp`／`Math.log`／`**` 的最後一位**：V8 的實作與 Python（Windows 的 C 執行庫）在極少數輸入上差 1 個 ulp。只影響第 1 層的有效交聯點機率（`effectiveJunctionProbability` 的 `exp`／`log`）與其下游（交聯密度、Mc、比例掃描）。 | 凝膠後（`gelled`）的第 1 層結果。 | 相對誤差 ≤ 2.2e-15（小於 1e-12 容差），不影響任何顯示位數；黃金比對把這些點列入 `tolerance_cases`（32 個案例、166 個比對點）。 | M05 | 不需要修；Linux 上的 CI 結果以 `tolerance_cases` 的清單為準。 |
+| D06 | **第 1 層「不支援清單」只在 Python**（任務 I05）：P7-1A 的 `UNSUPPORTED_RULES`（環氧＋酸酐等 9 條規則）原在 TypeScript `prepare.ts` 與 Python `layer1.py` 各一份；TypeScript 退為黃金基準後，TypeScript 側的清單與守衛已刪除。 | 黃金檔的配方含清單內規則的體系時。 | TypeScript 基準會算出數值而 Python 回報「尚未支援」，黃金比對會不一致；目前黃金檔沒有這類案例（已檢查 `layer1.json`）。新增黃金配方時避開這類體系。 | I05 | 不需要修。 |
 
 ## C. 待使用者決定（不是錯誤，沒有照 TS 以外的做法）
 

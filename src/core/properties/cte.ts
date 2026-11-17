@@ -1,3 +1,5 @@
+// 【黃金基準，不供介面使用】任務 I05（PLAN 6A.3 第二步）：介面已改呼叫 Python 引擎（engine/moleform_core/cte.py）。
+// 本檔只供黃金檔匯出（scripts/golden/export-*.ts）與測試，直到使用者決定凍結黃金檔；src/ui、src/worker 不得引用（tests/architecture.test.ts 檢查）。
 // 聚合物（重複單元）的熱膨脹係數 CTE（任務 036；D08、D53；D02：不使用實驗值當輸入）。
 // 依 van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009)，第 4 章 4.4 節「熱膨脹」（書頁 89–101）：
 //  - 定義（書頁 89，式 4.9）：莫耳膨脹率 E = ∂V/∂T（cm³/mol/K）；比膨脹率 e = E/M（cm³/g/K）；體膨脹係數 α = E/V（K⁻¹）；線膨脹係數 β，α = 3β。

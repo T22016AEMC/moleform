@@ -22,6 +22,11 @@ const ALLOWED_PATHS = Object.freeze([
   '/tg/mixing',
   '/mixture-density',
   '/mixture-dielectric',
+  // I05：交聯第 0、1 層（交聯頁與第 1 層卡片）
+  '/crosslink/analyze',
+  '/crosslink/prepare',
+  '/crosslink/layer1',
+  '/crosslink/layer1/scan',
 ]);
 
 const LOOPBACK_HOST = '127.0.0.1';

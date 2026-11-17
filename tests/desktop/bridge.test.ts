@@ -16,7 +16,7 @@ describe("橋接白名單", () => {
   });
 
   it("非白名單路徑與任意網址被拒絕，不會送出請求", async () => {
-    const bad = ["/handshake", "/demo/quantity", "/crosslink/analyze", "/vw?x=1", "/vw/", "/../vw", "//evil.example/vw", "http://evil.example/vw", "http://127.0.0.1:1/vw", "", "vw"];
+    const bad = ["/handshake", "/demo/quantity", "/relative-tg", "/crosslink/analyze?x=1", "/crosslink/layer1/", "/vw?x=1", "/vw/", "/../vw", "//evil.example/vw", "http://evil.example/vw", "http://127.0.0.1:1/vw", "", "vw"];
     for (const p of bad) {
       expect(isAllowedPath(p)).toBe(false);
       const send = vi.fn();

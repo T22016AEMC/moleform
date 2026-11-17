@@ -131,8 +131,8 @@ U02 已由 D46 決定（任務 019）。
 - [x] 6A.0 盤點現有架構與離線障礙（任務 039 的 A；見 `docs/reports/039-結果.md`）
 - [x] 6A.1 Windows 桌面外殼（補註：I03 起預設打包為 NSIS 每使用者安裝版，可攜式為 dist:portable）：Electron 封裝現有網頁（任務 039 的 B-1 到 B-5；原型 `desktop/`，app:// 載入 dist，可攜式 exe）（補註：deploy 已暫停（任務 039b））
 - [x] 6A.2 Python 計算引擎原型：只監聽 127.0.0.1；資料格式含值、單位、來源、狀態（`measured / literature / fitted / predicted / assumed / missing`）（任務 039 的 B-6；原型 `engine/`，只握手、不含公式；Python 打包方式待使用者決定）
-- [x] 6A.3（完成：任務 039a，報告 `docs/reports/039a-結果.md`）搬遷盤點：列出每個現有計算模組、依賴與對應測試，訂搬遷順序（新模組要用到的核心鏈優先：VW、Va、莫耳體積與密度、Tg、CTE）。規則：以 TypeScript 輸出為黃金標準，Python 版逐字相同才停用 TypeScript 版；過渡期用開關切換，預設用 TypeScript
-- [x] 6A.4 計算模組搬遷（2026-11-16 依 D64 改為：相關模組合併成卡，驗證集中一次；原「每模組一張卡、逐一黃金比對」不再適用於後續卡）
+- [x] 6A.3（完成：任務 039a，報告 `docs/reports/039a-結果.md`）搬遷盤點：列出每個現有計算模組、依賴與對應測試，訂搬遷順序（新模組要用到的核心鏈優先：VW、Va、莫耳體積與密度、Tg、CTE）。規則：以 TypeScript 輸出為黃金標準，Python 版逐字相同才停用 TypeScript 版；過渡期用開關切換，預設用 TypeScript（補註：**第二步完成於 I05**〔2026-11-17，報告 `docs/reports/I05-結果.md`〕：交聯第 0、1 層與理論配比、比例掃描已由介面改呼叫 Python 引擎，不再有開關，引擎不可用時顯示原因、不退回 TypeScript；TypeScript 計算模組改為「黃金基準，不供介面使用」。**保留 TypeScript 的 B 類**〔即時輸入回饋，6A 補註允許〕：配方換算 `formulation/compute`、平均分子量 `molecularWeight`（Worker `weight`）、聚合物輸入 `polymer/convert`、`repeatUnit`、`endGroups`、`copolymer`、`unitFragment`、掃描範圍預設與檢查、用量換回使用者單位；繪圖與反應原子標記 `crosslink/draw`、`groups`（C 類：引擎沒有單一結構反應原子端點）；結構驗證 `structure/*`、3D `conformer/*`、化合物庫 `library/*` 依 039a 本來就留 TypeScript）
+- [x] 6A.4 計算模組搬遷（2026-11-16 依 D64 改為：相關模組合併成卡，驗證集中一次；原「每模組一張卡、逐一黃金比對」不再適用於後續卡）（補註：計算搬遷完成，切換與退役由 I05 完成）
   - [x] M00 共用層（atomicWeights、molGraph、CSV 讀取）、RDKit 版本對齊 2026.9.1、黃金比對框架；M00a CI 新增 Python 引擎測試與黃金檔過期檢查（報告 `docs/reports/M00-結果.md`、`M00a-結果.md`）
   - [x] M01 VW（793 案例逐字相符）、M02 Tg（2320 案例）、M03 Vm／密度與 CTE（2286 案例）：均已逐字比對通過；TS 既有特性見 `docs/migration-known-issues.md`
   - [x] M04 聚合物基礎（repeatUnit、endGroups、copolymer、convert、distribution）（報告 `docs/reports/M04-結果.md`）

@@ -1,5 +1,6 @@
 // 配方工作台右欄的交聯第 0 層（任務 016，D11；任務 018 改為右欄區塊）：讀取左欄目前的配方，顯示反應配對與判定。
 // 依 D09，畫面不顯示各成分的官能基數量、當量與分子量；判定只依結構與反應規則表的計數（D17）。
+// I05：計算由 Python 引擎完成（經桌面橋接）；引擎不可用時顯示原因，不退回 TypeScript。反應原子標記圖仍由 Worker 的 RDKit.js 繪製。
 import { useEffect, useMemo, useState } from 'react';
 import {
   MESSAGE_PENDING_REVIEW,
@@ -11,7 +12,7 @@ import {
 import { DEFAULT_MARK_COLOR } from '../../core/crosslink/draw';
 import type { Formulation } from '../../core/formulation/types';
 import { confidenceLabel } from '../../core/result';
-import { analyzeCrosslinkInWorker } from '../../worker/client';
+import { analyzeCrosslinkViaEngine } from '../engine/crosslinkEngine';
 import { UnifiedNote } from '../components/UnifiedNote';
 import { ResultBlock } from '../workbench/ResultBlock';
 import { Layer1Section } from './Layer1Cards';
@@ -63,9 +64,9 @@ export function CrosslinkPage({ formulation }: { formulation: Formulation | null
     let cancelled = false;
     setState((s) => (s.kind === 'done' ? s : { kind: 'working' }));
     const timer = setTimeout(() => {
-      void analyzeCrosslinkInWorker(components, accentColor()).then((outcome) => {
+      void analyzeCrosslinkViaEngine(components, accentColor()).then((outcome) => {
         if (cancelled) return;
-        setState(outcome.ok ? { kind: 'done', result: outcome.result, svgs: outcome.svgs } : { kind: 'error', message: outcome.error });
+        setState(outcome.ok ? { kind: 'done', result: outcome.value.result, svgs: outcome.value.svgs } : { kind: 'error', message: outcome.error });
       });
     }, RECALC_DELAY_MS);
     return () => {

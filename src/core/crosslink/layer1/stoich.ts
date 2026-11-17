@@ -1,3 +1,4 @@
+// 【部分為黃金基準】任務 I05：第 1 層的計算已改由 Python 引擎（engine/moleform_core/layer1.py）完成。SCAN_* 常數、型別、defaultScanSettings、checkScanSettings、expressAmounts 供介面使用（B 類：輸入欄位預設與即時檢查、用量換回使用者單位）；scanRatio、stoichiometricSetup 等計算只是黃金基準，不供介面使用（直到使用者決定凍結黃金檔，tests/architecture.test.ts 檢查介面的引用）。
 // 理論配比與比例掃描（任務 017，D40）。純 TypeScript，不可引用 React。
 //   化學計量配比：group_a 側用量不變，group_b 側所有成分等比例調整，使兩類官能基等量（可信度：直接計算）。
 //   比例掃描：在當量比（group_b／group_a）範圍內，依使用者選的物性畫出曲線並找模型最佳點（可信度：參考趨勢）。

@@ -1,3 +1,5 @@
+// 【黃金基準，不供介面使用】任務 I05（PLAN 6A.3 第二步）：介面已改呼叫 Python 引擎（engine/moleform_core/vm.py）。
+// 本檔只供黃金檔匯出（scripts/golden/export-*.ts）與測試，直到使用者決定凍結黃金檔；src/ui、src/worker 不得引用（tests/architecture.test.ts 檢查）。
 // 聚合物（重複單元）298 K 的莫耳體積與密度（任務 029；D08）。
 // 依 van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009)，第 4 章：
 //  - 4.3.7 節 式 (4.8)：Vr(298)／VW = 1.60 ＝ Vg(298)／VW ≈ 1.6 ＝ Va(298)／VW；Vc(298)／VW = 1.435。即玻璃態與橡膠態的莫耳體積相同（都是非晶態 Va），結晶態是 Vc。

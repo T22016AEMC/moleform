@@ -1,3 +1,5 @@
+// 【黃金基準，不供介面使用】任務 I05（PLAN 6A.3 第二步）：介面已改呼叫 Python 引擎（engine/moleform_core/relative_tg.py）。
+// 本檔只供黃金檔匯出（scripts/golden/export-*.ts）與測試，直到使用者決定凍結黃金檔；src/ui、src/worker 不得引用（tests/architecture.test.ts 檢查）。
 // 簡易的聚合物 Tg 相對估算（任務 038，D61）：已知 A 的 Tg，用 A、B 的自由體積差初步估計 B 的 Tg。
 // 這是使用者 2026-11-07 要求的簡易經驗功能，不是 WLF 完整模型，也不是通用預測模型；可信度「參考趨勢」。只有核心函式，不含畫面。
 //

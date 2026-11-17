@@ -1,3 +1,5 @@
+// 【黃金基準，不供介面使用】任務 I05（PLAN 6A.3 第二步）：介面已改呼叫 Python 引擎（engine/moleform_core/dielectric.py）。
+// 本檔只供黃金檔匯出（scripts/golden/export-*.ts）與測試，直到使用者決定凍結黃金檔；src/ui、src/worker 不得引用（tests/architecture.test.ts 檢查）。
 // 聚合物（重複單元）的介電常數 ε 與莫耳折射 ΣR、分子極化率 α（任務 032；D08、D53；折射率 n 依 D07 不做）。
 // 依 van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009)：
 //  - 第 11 章（書頁 320–321）式 (11.7)：P_LL = (ε − 1)/(ε + 2)·V，故 ε = (1 + 2x)/(1 − x)，x = ΣP_LL/V；

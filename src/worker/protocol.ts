@@ -1,5 +1,5 @@
 // 主執行緒與化學 Worker 之間的訊息格式。
-import type { CrosslinkComponent, CrosslinkResult } from '../core/crosslink/types';
+import type { CrosslinkResult } from '../core/crosslink/types';
 import type { UnitFragment } from '../core/polymer/unitFragment';
 import type { EndGroups, FractionBasis, PolymerUnit, RepeatUnitAnalysis } from '../core/polymer/types';
 import type { StructureValidation } from '../core/structure/validate';
@@ -35,11 +35,14 @@ export interface RepeatUnitRequest {
   endGroups?: EndGroups;
 }
 
-/** 交聯第 0 層：官能基辨識、配對、判定，並畫出參與反應成分的反應原子標記圖（任務 016） */
-export interface CrosslinkRequest {
-  type: 'crosslink';
+/**
+ * 畫出交聯第 0 層參與反應成分的反應原子標記圖（任務 016；I05 起第 0 層的計算由 Python 引擎完成，Worker 只負責繪圖）。
+ * result 是引擎回傳的第 0 層結果（只用到各成分的結構與 markedAtoms、markedUnitAtoms、markedEndAtoms）。
+ */
+export interface CrosslinkDrawRequest {
+  type: 'crosslinkDraw';
   id: number;
-  components: CrosslinkComponent[];
+  result: CrosslinkResult;
   /** 標記用的強調色（#rrggbb，來自 theme.css） */
   color: string;
 }
@@ -72,13 +75,13 @@ export interface UnitFragmentRequest {
   smiles: string;
 }
 
-export type ChemRequest = StatusRequest | ValidateRequest | WeightRequest | RepeatUnitRequest | CrosslinkRequest | ReactiveAtomsRequest | DrawRequest | UnitFragmentRequest;
+export type ChemRequest = StatusRequest | ValidateRequest | WeightRequest | RepeatUnitRequest | CrosslinkDrawRequest | ReactiveAtomsRequest | DrawRequest | UnitFragmentRequest;
 
 export type ChemResponse =
   | { type: 'unitFragment'; id: number; ok: true; fragment: UnitFragment | null; message: string; reactiveAtoms: number[] }
   | { type: 'unitFragment'; id: number; ok: false; error: string }
-  | { type: 'crosslink'; id: number; ok: true; result: CrosslinkResult; svgs: Record<string, string> }
-  | { type: 'crosslink'; id: number; ok: false; error: string }
+  | { type: 'crosslinkDraw'; id: number; ok: true; svgs: Record<string, string> }
+  | { type: 'crosslinkDraw'; id: number; ok: false; error: string }
   | { type: 'draw'; id: number; ok: true; svg: string | null; marked: number }
   | { type: 'draw'; id: number; ok: false; error: string }
   | { type: 'reactiveAtoms'; id: number; ok: true; atoms: number[] }
@@ -98,7 +101,10 @@ export function isChemRequest(value: unknown): value is ChemRequest {
   if (typeof request.id !== 'number' || !Number.isSafeInteger(request.id)) return false;
   if (request.type === 'status') return true;
   if (request.type === 'weight' || request.type === 'repeatUnit') return typeof request.smiles === 'string';
-  if (request.type === 'crosslink') return Array.isArray(request.components) && typeof request.color === 'string';
+  if (request.type === 'crosslinkDraw') {
+    const result = request.result as { components?: unknown } | null;
+    return !!result && typeof result === 'object' && Array.isArray(result.components) && typeof request.color === 'string';
+  }
   if (request.type === 'reactiveAtoms') return typeof request.source === 'string';
   if (request.type === 'unitFragment') return typeof request.smiles === 'string';
   if (request.type === 'draw') {

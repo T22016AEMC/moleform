@@ -1,3 +1,5 @@
+// 【黃金基準，不供介面使用】任務 I05（PLAN 6A.3 第二步）：介面已改呼叫 Python 引擎（engine/moleform_core/tg_mixing.py）。
+// 本檔只供黃金檔匯出（scripts/golden/export-*.ts）與測試，直到使用者決定凍結黃金檔；src/ui、src/worker 不得引用（tests/architecture.test.ts 檢查）。
 // 成分 Tg（Fox–Flory；小分子不計 Tg，只給 Tm，D56）與混合配方的未固化 Tg（Fox 式）（任務 034，Phase 6.7 的 Tg 部分）。
 // 只混聚合物與寡聚物的 Solid 成分，用質量分率；小分子（含 SBI 二酚）不參與混合、輸出列為「未計入」；Catalyst/Initiator（D26）與標記「揮發或分解」的成分不混；Liquid 區不混。
 // 任一參與混合的成分算不出 Tg（缺基團、缺 K、無 Tm、無 Mn）就回報「缺成分 Tg：名稱」，不猜值、不略過，

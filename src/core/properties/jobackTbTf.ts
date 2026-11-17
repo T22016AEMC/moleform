@@ -1,3 +1,5 @@
+// 【黃金基準，不供介面使用】任務 I05（PLAN 6A.3 第二步）：介面已改呼叫 Python 引擎（engine/moleform_core/joback.py）。
+// 本檔只供黃金檔匯出（scripts/golden/export-*.ts）與測試，直到使用者決定凍結黃金檔；src/ui、src/worker 不得引用（tests/architecture.test.ts 檢查）。
 // Joback 法的沸點與熔點（任務 027；D52）：Tb = 198.2 + ΣTbi（式 (2)）、Tf = 122.5 + ΣTfi（式 (3)），Tbi、Tfi 取自表 III（Joback & Reid 1987）。
 // 基團加成估算，只用於小分子；數值為估算，非實測。含連接點（`*`）的聚合物重複單元不適用，直接回報。
 //

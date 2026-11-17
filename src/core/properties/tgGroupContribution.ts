@@ -1,3 +1,5 @@
+// 【黃金基準，不供介面使用】任務 I05（PLAN 6A.3 第二步）：介面已改呼叫 Python 引擎（engine/moleform_core/tg.py）。
+// 本檔只供黃金檔匯出（scripts/golden/export-*.ts）與測試，直到使用者決定凍結黃金檔；src/ui、src/worker 不得引用（tests/architecture.test.ts 檢查）。
 // van Krevelen 的 Yg 基團切分與 Tg 計算（任務 026；D08）：Yg = ΣYgi = Tg·M（式 6.4），Tg = 1000·ΣYgi / M（Ygi 單位 K·kg/mol、M 單位 g/mol，式 6.5）。
 //
 // 切分規則（固定順序、可重現）：

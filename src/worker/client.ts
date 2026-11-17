@@ -1,4 +1,4 @@
-import type { CrosslinkComponent, CrosslinkResult } from '../core/crosslink/types';
+import type { CrosslinkResult } from '../core/crosslink/types';
 import type { PolymerSpec, RepeatUnitAnalysis } from '../core/polymer/types';
 import type { UnitFragment } from '../core/polymer/unitFragment';
 import type { StructureValidation } from '../core/structure/validate';
@@ -87,12 +87,12 @@ export async function validateInput(input: string): Promise<ValidateOutcome> {
   return { ok: false, error: response.type === 'status' && !response.ready ? response.error : '收到非預期的回應' };
 }
 
-export type CrosslinkOutcome = { ok: true; result: CrosslinkResult; svgs: Record<string, string> } | { ok: false; error: string };
+export type CrosslinkDrawOutcome = { ok: true; svgs: Record<string, string> } | { ok: false; error: string };
 
-/** 請 Worker 做交聯第 0 層分析並畫出反應原子標記圖（任務 016） */
-export async function analyzeCrosslinkInWorker(components: CrosslinkComponent[], color: string): Promise<CrosslinkOutcome> {
-  const response = await request((id) => ({ type: 'crosslink', id, components, color }));
-  if (response.type === 'crosslink') return response.ok ? { ok: true, result: response.result, svgs: response.svgs } : { ok: false, error: response.error };
+/** 請 Worker 依引擎回傳的交聯第 0 層結果畫出反應原子標記圖（任務 016；I05 起計算在引擎，這裡只繪圖） */
+export async function drawCrosslinkInWorker(result: CrosslinkResult, color: string): Promise<CrosslinkDrawOutcome> {
+  const response = await request((id) => ({ type: 'crosslinkDraw', id, result, color }));
+  if (response.type === 'crosslinkDraw') return response.ok ? { ok: true, svgs: response.svgs } : { ok: false, error: response.error };
   return { ok: false, error: response.type === 'status' && !response.ready ? response.error : '收到非預期的回應' };
 }
 
