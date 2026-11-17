@@ -174,6 +174,18 @@ MoleForm 的化學資料放在 `src/data/` 的四個 CSV。**目前只有任務 
 
 格式與 RDKit 檢查（`src/core/data/ygGroups.ts`，測試 `tests/properties/ygGroups.test.ts`）：缺出處、SMARTS 不合法、正例沒命中、反例命中、Mi 與 SMARTS 描述的基團質量差超過 0.1 g/mol 都報錯。切分與 Tg 計算在 `src/core/properties/tgGroupContribution.ts`（規則寫在檔頭），輸出文件見 `docs/verification/phase6-Tg-輸出.md`。
 
+## Ym、Yd,1/2 基團表 ym_groups.csv、yd_groups.csv 與 Tm 輔助表（任務 P6B，D08、D22）
+
+`src/data/ym_groups.csv`（UTF-8 BOM，98 列）：書 Table 6.8（書頁 154–155，A 非共軛、B 共軛）與 Table 6.14（書頁 163–164，組合基團）的 Ymi 與 Mi。`src/data/yd_groups.csv`（62 列；含 1 列詮釋列 B.CONH.eg = 32.5，依書 Table 21.3 算例，使用者 2026-11-17 決定，書的數字未改）：書 Table 21.2（書頁 768–769）的 Yd,1/2,i（書中沒有 Mi 欄）。欄位與 `yg_groups.csv` 相同（Ygi 換成 Ymi 或 Yd,1/2,i；Yd 表沒有 Mi）：`id` 以 `.n`／`.c`／`.cc`（共軛狀態）或 `.free`／`.s`／`.ss`／`.cis`／`.trans`／`.al`／`.ar`／`.v1`／`.v2`（條件）結尾，去掉後綴為家族；書中同一基團的多個數值全部收錄並以共軛狀態或條件區分（與 Yg 表相同）。括號數字是書中暫定值，稽核狀態註明「書中標為暫定」；書中無值的基團（Ymi 欄印「–」或空白）仍有一列、數值留空；沒有 SMARTS 的列只是謄錄（`備註` 寫明），引擎遇到這些基團回報缺基團。SMARTS：與 Yg 表同名家族的列直接沿用 Yg 表的 SMARTS（Appendix II：重疊基團沿用既有切分，測試核對相同）；Yg 表沒有的基團自行撰寫（D22，出處欄註明），每條都有正反例。書中 Mi 與結構式質量差超過 0.1 的兩列（Table 6.14 的 –C6H4–C(C6H5)2–C6H4– 316.4、–C6H4–C(CH3)2–C6H4–C(CH3)2–C6H4– 312.3）照書謄錄，備註說明。
+
+`src/data/ym_side_chain.csv`（5 列）：書 Table 6.9（書頁 157）的長側鏈基礎聚合物 Ymo、Ym5、Mo、M5，加「基礎單元 SMILES」供引擎判定系列。`src/data/ym_ch2_sequence.csv`（25 列）：書頁 157 的 Ym(CH2) 位置值（α、β、γ、δ、>δ）與 Table 6.10（書頁 159）的 20 列。測試以位置值重算 Table 6.10 逐列核對謄錄。Table 6.12（奇偶效應）與 Table 6.11（可由 Table 6.10 逐列相加得到）沒有收錄。
+
+格式與正反例檢查：`engine/moleform_core/y_tables.py`（缺出處、缺正反例、id 與狀態後綴不符、括號值缺註明一律拋出 `YTableError`），測試 `engine/tests/test_p6b_unit.py`。
+
+## 吸濕性基團表 water_groups.csv（任務 P6B，D08、D22）
+
+`src/data/water_groups.csv`（13 列）：書 Table 18.14（書頁 690，引 Barrie 1968）每結構基團的莫耳含水量，25 °C、非晶聚合物，相對濕度 0.3／0.5／0.7／0.9／1.0 五欄。儲存格寫書中的數字；括號數字是書中括號值（不確定）；空白是書中此格空白（–NH3⁺ 在 0.3、0.5、1.0，–COO⁻ 在 0.9、1.0）。「計數方式」欄說明每個基團怎麼數。SMARTS 自行撰寫（D22），每條有正反例；原書以 (1.5 × 10⁻⁵) 寫的值存為 (1.5e-5)。
+
 ## Joback 基團表 joback_groups.csv（任務 027，D08、D22、D52）
 
 `src/data/joback_groups.csv`（UTF-8 BOM，41 列）。Joback & Reid 1987, Chem. Eng. Commun. 57, 233–243 表 III 的 41 個基團，Tbi、Tfi 兩欄逐列看圖讀取（書頁 235–236）；SMARTS 取自 thermo 0.6.1（MIT，授權聲明見根目錄 `THIRD_PARTY_NOTICES.md`），與表 III 不一致處（J26 醛、J33 >N–）已修正。欄位：

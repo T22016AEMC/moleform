@@ -5,7 +5,7 @@ import type { Formulation, FormulationOutcome } from '../../core/formulation/typ
 import { UnifiedNote } from '../components/UnifiedNote';
 import { ResultBlock } from '../workbench/ResultBlock';
 import { getBridge, type EngineReply, type EngineStatus } from './engineClient';
-import { formulationRequests, isCopolymer, isPolymerSmiles, unitRequests, type EngineRequest } from './propertyRequests';
+import { DEFAULT_RH, MOISTURE_RH, formulationRequests, isCopolymer, isPolymerSmiles, thermalRequests, unitRequests, type EngineRequest } from './propertyRequests';
 import { formulationRows, unitRows, type PropertyRow } from './propertyRows';
 
 const FORMULATION = '__formulation__';
@@ -66,6 +66,7 @@ export function EnginePropertiesBlock({ formulation, outcome, mnById }: Props) {
   const [status, setStatus] = useState<EngineStatus | null>(null);
   const [target, setTarget] = useState<string>(FORMULATION);
   const [rows, setRows] = useState<PropertyRow[] | null>(null);
+  const [rh, setRh] = useState<number>(DEFAULT_RH);
 
   const components = useMemo(() => [...formulation.solid.components, ...formulation.liquid.components], [formulation]);
   const selected = components.find((c) => c.id === target) ?? null;
@@ -81,9 +82,9 @@ export function EnginePropertiesBlock({ formulation, outcome, mnById }: Props) {
 
   // 請求內容（含換算後的質量分率、Mn）改變才重算
   const plan = useMemo(() => {
-    if (selected) return { kind: 'unit' as const, requests: unitRequests(selected), polymer: isPolymerSmiles(selected.canonicalSmiles) };
+    if (selected) return { kind: 'unit' as const, requests: [...unitRequests(selected), ...thermalRequests(selected, rh)], polymer: isPolymerSmiles(selected.canonicalSmiles) };
     return { kind: 'formulation' as const, req: formulationRequests(formulation, outcome, mnById) };
-  }, [selected, formulation, outcome, mnById]);
+  }, [selected, formulation, outcome, mnById, rh]);
   const planKey = JSON.stringify(plan);
 
   const ready = status?.state === 'ready';
@@ -133,6 +134,18 @@ export function EnginePropertiesBlock({ formulation, outcome, mnById }: Props) {
             ))}
           </select>
         </div>
+        {selected && isPolymerSmiles(selected.canonicalSmiles) && (
+          <div className="form-row-inline">
+            <label htmlFor="engine-rh">吸濕性的相對濕度</label>
+            <select id="engine-rh" value={rh} onChange={(e) => setRh(Number(e.target.value))}>
+              {MOISTURE_RH.map((v) => (
+                <option key={v} value={v}>
+                  {v}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
         {selected && isCopolymer(selected) && <small>共聚物：除自由體積外，其餘單一對象物性以第一種單元計算（共聚物混合不處理）。</small>}
         {!selected && <small>配方混合只混 Solid 區成分（Catalyst/Initiator 與揮發／分解成分不混入）。</small>}
         {rows === null ? <p role="status">引擎計算中…</p> : <PropertyTable rows={rows} />}

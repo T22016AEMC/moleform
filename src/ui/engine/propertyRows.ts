@@ -82,6 +82,8 @@ export function unitRows(replies: UnitReplies, polymer: boolean): PropertyRow[] 
     });
   }
 
+  rows.push(...p6bRows(replies, polymer));
+
   const vm = of('/vm');
   rows.push(rowFrom('vm', 'Vm（莫耳體積，298 K）', vm.quantity, 'cm³/mol', get('/vm'), () => bodyReason(vm)));
   // 算不出時引擎只回 quantity（缺值）；密度沿用同一個原因
@@ -125,6 +127,63 @@ export function unitRows(replies: UnitReplies, polymer: boolean): PropertyRow[] 
   const capped = tl.capped === true && typeof tl.note === 'string' ? tl.note : undefined;
   const logp = rowFrom('logp', 'LogP（Crippen）', tq.logP, '', get('/tpsa-logp'), () => bodyReason(tl));
   rows.push(capped && !logp.reason ? { ...logp, reason: capped } : logp);
+  return rows;
+}
+
+const strings = (v: unknown): string[] => (Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string') : []);
+
+/** 有備註或警告時併入列的說明（不覆蓋原有的缺值原因） */
+function withNotes(row: PropertyRow, notes: string[]): PropertyRow {
+  const extra = notes.filter((n) => n !== '');
+  if (extra.length === 0) return row;
+  return { ...row, reason: [row.reason, ...extra].filter((x): x is string => typeof x === 'string' && x !== '').join('；') };
+}
+
+/** Tm、Td、吸濕性、體積／彈性模數（任務 P6B）。小分子顯示不適用與原因，不隱藏 */
+function p6bRows(replies: UnitReplies, polymer: boolean): PropertyRow[] {
+  if (!polymer) {
+    const na = (key: string, label: string, unit: string, reason: string): PropertyRow => ({
+      key,
+      label,
+      quantity: { value: null, unit, source: '—', status: 'missing' },
+      reason,
+    });
+    return [
+      na('tm', 'Tm（結晶熔點）', 'K', '不適用：小分子的熔點見 Tf（Joback，D56）'),
+      na('td', 'Td,1/2（半分解溫度）', 'K', '不適用：只針對聚合物重複單元（Yd,1/2 基團貢獻）'),
+      na('moisture', '吸濕量（25 °C）', 'g 水／100 g 聚合物', '不適用：只針對聚合物重複單元（Table 18.14 結構基團）'),
+      na('modulus', '體積模數 K／彈性模數 E', 'N/m²', '不適用：只針對聚合物重複單元'),
+    ];
+  }
+  const get = (path: string) => replies[path];
+  const of = (path: string) => bodyOf(get(path));
+  const rows: PropertyRow[] = [];
+
+  const tm = of('/tm');
+  rows.push(withNotes(rowFrom('tm', 'Tm（結晶熔點，Ym）', tm.quantity, 'K', get('/tm'), () => bodyReason(tm)), [...strings(tm.warnings), typeof tm.notes === 'string' ? tm.notes : '']));
+
+  const td = of('/td');
+  rows.push(withNotes(rowFrom('td', 'Td,1/2（半分解溫度，Yd,1/2）', td.quantity, 'K', get('/td'), () => bodyReason(td)), [...strings(td.warnings), typeof td.notes === 'string' ? td.notes : '']));
+
+  const mo = of('/moisture');
+  const rh = typeof mo.rh === 'number' ? mo.rh : undefined;
+  const moReason = () => {
+    const items = Array.isArray(mo.missingValues) ? mo.missingValues.filter(isObj).map((m) => String(m.reason ?? '')) : [];
+    return items.length ? items.join('；') : bodyReason(mo);
+  };
+  rows.push(
+    withNotes(rowFrom('moisture', `吸濕量（25 °C，RH ${rh ?? '—'}，非晶區）`, mo.quantity, 'g 水／100 g 聚合物', get('/moisture'), moReason), [
+      ...strings(mo.warnings),
+      typeof mo.notes === 'string' ? mo.notes : '',
+    ]),
+  );
+
+  const mod = of('/modulus');
+  rows.push(
+    withNotes(rowFrom('modulus', '體積模數 K／彈性模數 E', mod.quantity, 'N/m²', get('/modulus'), () => (typeof mod.summary === 'string' ? mod.summary : undefined)), [
+      typeof mod.notes === 'string' ? mod.notes : '',
+    ]),
+  );
   return rows;
 }
 

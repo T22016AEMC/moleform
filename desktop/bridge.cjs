@@ -9,6 +9,10 @@
 const ALLOWED_PATHS = Object.freeze([
   '/vw',
   '/tg',
+  '/tm',
+  '/td',
+  '/moisture',
+  '/modulus',
   '/vm',
   '/cte',
   '/free-volume',

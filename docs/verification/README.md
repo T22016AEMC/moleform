@@ -16,6 +16,7 @@
 | `phase6-Vm-密度-輸出.md` | Phase 6（任務 029）：聚合物重複單元、環氧單元與骨架範本 BT01–BT06 單元的莫耳體積與密度（Table 4.10 的 Va 與 Vc；玻璃態／橡膠態／結晶，298 K 狀態依 Tg 判斷，Tg 算不出來標「狀態未定」），缺基團者列出原子位置與原因，括號值標示；小分子標「液體法未實作」（待 Fedors 1974）；另列 11 個書中聚合物。重新產生：`npm run verify:phase6-vm` |
 | `phase6-介電-極化率-輸出.md` | Phase 6（任務 032）：聚合物單元的介電常數 ε（式 11.7 用 Va、式 11.8 用 P_V 兩個估計）、ΣP、ΣR、分子極化率 α′、缺基團與缺莫耳體積；Table 11.2 的 18 個聚合物對照與 V 用 Va 的驗證。不輸出折射率 n（D07）。重新產生：`npm run verify:phase6-dielectric` |
 | `phase6-相對Tg-輸出.md` | Phase 6（任務 038，D61）：簡易 Tg 相對估算。使用者材料的聚合物單元與骨架範本 BT01–BT06 的 VvdW、Vm 與來源、Bondi 型 FFV、Δα（不給 Tg）；任務卡的示範算例；k／Tg 表 50 個材料的 FFV（= 1 − 1.3k）；同類別兩種材料的 FFV 隨比例變化；White & Lipson (2015) 的同家族提醒。重新產生：`npm run verify:phase6-relative-tg` |
+| `phase6-Tm-Td-吸濕-彈性模數-輸出.md` | Phase 6（任務 P6B）：Tm（書 Table 6.15 的 54 個聚合物）、Td,1/2（書 Table 21.3 的 34 個聚合物）、吸濕性（書 Example 18.4 尼龍 6,6）、體積模數（書 Table 13.6，能算的列數）的書值與本卡值並列、差與判定；不符者只如實列出，不調整數值。重新產生：`engine/.venv/Scripts/python.exe scripts/verification/phase6-tm-td-moisture-modulus.py` |
 | `phase5-使用者檢查.md` | Phase 5.7：任務 020～024 後續累積的瀏覽器確認清單（表格，結果與備註欄由使用者填寫，不會被腳本覆蓋） |
 | `phase4-使用者檢查.md` | 使用者對 Phase 4 輸出的檢查結果（手寫記錄） |
 | `phase3-使用者檢查.md` | 使用者對 Phase 3 輸出的檢查結果（手寫記錄） |

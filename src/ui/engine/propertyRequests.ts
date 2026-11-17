@@ -48,6 +48,25 @@ export function unitRequests(c: Pick<Component, 'canonicalSmiles' | 'polymer'>):
   return list;
 }
 
+/** Table 18.14 的相對濕度（吸濕性只允許這五個值） */
+export const MOISTURE_RH = [0.3, 0.5, 0.7, 0.9, 1.0] as const;
+export const DEFAULT_RH = 0.7;
+
+/**
+ * Tm、Td、吸濕性、體積／彈性模數（任務 P6B）的引擎請求。四項都針對聚合物重複單元；小分子不送出（面板顯示不適用與原因）。
+ * 吸濕性帶面板選的相對濕度。
+ */
+export function thermalRequests(c: Pick<Component, 'canonicalSmiles'>, rh: number = DEFAULT_RH): EngineRequest[] {
+  const smiles = c.canonicalSmiles;
+  if (!isPolymerSmiles(smiles)) return [];
+  return [
+    { path: '/tm', body: { smiles } },
+    { path: '/td', body: { smiles } },
+    { path: '/moisture', body: { smiles, rh } },
+    { path: '/modulus', body: { smiles } },
+  ];
+}
+
 /** 配方混合（Fox 混合 Tg、混合密度、混合介電）的輸入；Catalyst/Initiator 與標記揮發／分解的成分不混入（與 Tg 混合一致） */
 export interface MixtureSolid {
   component: Component;

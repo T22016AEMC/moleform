@@ -149,7 +149,7 @@ U02 已由 D46 決定（任務 019）。
 
 註（2026-11-13，D62；2026-11-16 依 D64 重排）：剩餘工作一律直接寫在 Python 引擎，合併為三張卡，暫列、待使用者逐張確認開工：
 - P6-A：6.7 剩餘（混合密度、混合介電常數、共聚比例影響）（已完成，任務 P6A）
-- P6-B：6.4 的 Tm、Td（預留任務 040）與 6.5（彈性模數、吸濕性；Tm 對不可結晶聚合物標「不適用」）。開工前需要使用者決定各方法的資料來源（書或文獻）
+- P6-B：6.4 的 Tm、Td（預留任務 040）與 6.5（彈性模數、吸濕性；Tm 對不可結晶聚合物標「不適用」）。開工前需要使用者決定各方法的資料來源（書或文獻）（已做，任務 P6B：Tm、Td、吸濕性完成；彈性模數缺書中的增量表未做；書算例對照有不符，待使用者決定，見 `docs/reports/P6B-結果.md`）
 - P6-C：6.8 每個公式的自動測試（沿用黃金比對）與 6.9 使用者驗證清單文件
 順序：Phase 6A（M04、M05）→ P6-A → P6-B → P6-C
 
@@ -165,6 +165,8 @@ U02 已由 D46 決定（任務 019）。
   - 補註（任務 036）：6.4 的 CTE 完成：`src/core/properties/cte.ts`（van Krevelen 4.4 節 MTE 模型，E_l = 1.00×10⁻³·VW、E_g = 0.45×10⁻³·VW，α、β；只依 VW 與 Tg）、輸出 `docs/verification/phase6-自由體積-CTE-輸出.md`；自由體積分率：書中沒有由結構計算的方法，不做（使用者 2026-11-06 決定，見 `docs/reports/036-結果.md`）。6.4 不勾選
   - 補註（任務 036a）：6.4 的自由體積（使用者定義經驗係數法，D57，任務 036a）完成：Vf = Vω × 經驗係數（`src/data/free_volume_groups.csv` 19 列、`src/data/free_volume_coefficients.csv` 5 列，皆「待使用者審」；`src/core/properties/freeVolume.ts`），共聚物按莫耳分率加權，輸出 `docs/verification/phase6-自由體積-經驗係數-輸出.md`，結果見 `docs/reports/036a-結果.md`。這是使用者定義的經驗法，不是書中的自由體積分率，不用於 CTE。6.4 不勾選
   - 補註（任務 036b）：經驗自由體積法的酮、醛、酯基改為含羰基碳的整個官能基（數值 10.8、11.5、23 不變；酯基 23 於任務 036c 改為書的 15.2，見 D58），羰基碳不另計；結果見 `docs/reports/036b-結果.md`。6.4 不勾選
+  - 補註（任務 P6B）：6.4 的 Tm、Td 完成（Python 引擎 `POST /tm`、`/td`；`src/data/ym_groups.csv`、`yd_groups.csv`、`ym_side_chain.csv`、`ym_ch2_sequence.csv`，皆「待使用者審」；方法見 `docs/MODELS.md`），面板（I01）顯示；書算例對照（Table 6.15：54 個中相符 40、不符 14；Table 21.3：34 個中相符 25、不符 7、無法計算 2，其中 4 個不符只是書的 Td calc 欄與自己的 Yd÷M 不一致）見 `docs/verification/phase6-Tm-Td-吸濕-彈性模數-輸出.md`，使用者 2026-11-17 已決定書中未說明條件基團的選值方式與 Td 詮釋；其餘不符為書自己的表矛盾或規則限制，6.4 不勾選
+  - 補註（任務 P6B）：6.5 的吸濕性完成（`POST /moisture`，Table 18.14，`src/data/water_groups.csv`；書 Example 18.4 相符）；彈性模數未做：書 13.2.6 節的三個體積模數方法需要 Rao 函數（Table 14.4）、莫耳熱容、內聚能與熔化熱，本專案沒有也未收錄，`POST /modulus` 只回報缺什麼（使用者 2026-11-17 決定 Table 14.4、莫耳熱容、內聚能、熔化熱先不收錄）；彈性模數未做，6.5 不勾選
   - 補註（任務 036d）：經驗自由體積的芳香 C 依 Bondi Table XV 分 C–H 8.11、取代 5.54、縮合 4.74，並依 Table XVII 套用修正（D60）：`src/data/free_volume_groups.csv` 21 列、`src/data/free_volume_corrections.csv` 6 列；不勾選。
   - 補註（任務 037）：VW 缺基團以 Bondi (1964) 補充（D59）：`src/data/vw_groups_bondi.csv`（13 個基團 BG、5 個 Table XVII 修正 BC）、`src/core/data/vwGroupsBondi.ts`；書的基團先配對，補充結果標「含 Bondi 補充基團（非書值）」；環氧、五員雜環（醯亞胺、PBO、內酯）、籠狀環維持缺基團；結果見 `docs/reports/037-結果.md`，6.4 仍不勾選
   - 補註：Tg–Mn 文獻資料與 K 擬合（任務 035）已做：Lin-Gibson 2001 的鄰、對甲酚酚醛各自擬合 Tg∞ 與 K（異構物互檢誤差 ≤ 8 K，兩類收錄，低可信度，待使用者審）；BPA 環氧鏈只做參考擬合與 EPON 順序檢查，未收錄 K；ECN、PGMA 只登錄與觀察，不擬合；Szeluga 2008、Sadeghinia 2012 只記為驗證候選；`src/core/properties/tgFit.ts`、`novolacUnits.ts`，輸出 `docs/verification/phase6-Tg-混合-輸出.md` 第 7–9 節。6.7 仍不勾選

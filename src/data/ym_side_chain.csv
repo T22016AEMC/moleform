@@ -1,0 +1,6 @@
+﻿id,系列,基礎聚合物,基礎單元 SMILES,Ymo,Ym5,Mo,M5,出處,稽核狀態,備註
+S1,Polyolefins,Polypropylene,*CC(*)C,18.7,26.3,42.0,112.2,"van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009), Table 6.9，書頁 157（PDF 第 184 頁）",待使用者審,側鏈結束於 CH3（end-group E = methyl）
+S2,Polyvinyl ethers,Poly(vinyl methyl ether),*CC(*)OC,24.4,30.1,58.1,128.2,"van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009), Table 6.9，書頁 157（PDF 第 184 頁）",待使用者審,書中 M5 欄印為「1282」（疑漏小數點，0.235 × 128.2 = 30.1 = Ym5 相符），此處存 128.2；M5 引擎不使用（式 6.22 以 Ym5 直接代入）
+S3,Polyvinyl esters,Poly(vinyl acetate),*CC(*)OC(C)=O,44,36.7,86.1,156.2,"van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009), Table 6.9，書頁 157（PDF 第 184 頁）",待使用者審,
+S4,Polyacrylates,Poly(methyl acrylate),*CC(*)C(=O)OC,48,36.7,86.1,156.2,"van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009), Table 6.9，書頁 157（PDF 第 184 頁）",待使用者審,書中 Ymo 印 48（Fig. 6.6 上聚丙烯酸酯線在 N = 0 約 48，相符）；Table 6.8 的 –CH2–（5.7）＋–CH(COOCH3)–（38）= 43.7，與 48 不同，兩者都照書
+S5,Polymethacrylates,Poly(methyl methacrylate),*CC(*)(C)C(=O)OC,47.3,40.0,100.1,170.2,"van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009), Table 6.9，書頁 157（PDF 第 184 頁）",待使用者審,

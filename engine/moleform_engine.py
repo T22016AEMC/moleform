@@ -11,6 +11,7 @@
   /polymer/copolymer、/polymer/convert、/polymer/distribution；任務 M05 起新增其餘計算模組 POST /free-volume、/relative-tg、/joback、
   /tg/mixing、/tg/flory-fit、/dielectric、/tpsa-logp、/crosslink/analyze、/crosslink/prepare、/crosslink/layer1、/crosslink/layer1/scan；
   除此之外不含任何物性公式。尚未接到介面，TypeScript 仍是預設計算來源。
+- 任務 P6B 起新增 POST /tm（結晶熔點）、/td（半分解溫度）、/moisture（吸濕性）、/modulus（體積模數；目前只回報缺什麼）。
 """
 
 from __future__ import annotations
@@ -172,6 +173,179 @@ def handle_tg(request: object) -> tuple[int, dict]:
     quantity = {"value": result["tgK"], "unit": TG_UNIT, "source": tg.TG_MODEL, "status": "predicted"}
     keys = ("polymer", "tgC", "sumYg", "sumM", "containsCalibrated", "formulaMass", "massDelta", "massWithinTolerance", "groups", "sources")
     return 200, {"ok": True, "quantity": quantity, **{k: result[k] for k in keys}, "disclaimer": tg.TG_DISCLAIMER}
+
+
+TM_UNIT = "K"
+TD_UNIT = "K"
+
+
+def _load_core(*names: str):
+    """載入 moleform_core 的模組；RDKit 沒有安裝時回傳 503 錯誤回應。"""
+    import importlib
+
+    if ENGINE_DIR not in sys.path:
+        sys.path.insert(0, ENGINE_DIR)
+    try:
+        return tuple(importlib.import_module(f"moleform_core.{n}") for n in names), None
+    except ImportError as e:
+        return None, (503, {"ok": False, "errors": [f"引擎無法載入計算模組（RDKit 沒有安裝？）：{e}"]})
+
+
+def _missing_body(result: dict) -> dict:
+    return {k: result[k] for k in ("polymer", "groups", "missing") if k in result}
+
+
+def handle_tm(request: object) -> tuple[int, dict]:
+    """聚合物重複單元的結晶熔點 Tm（van Krevelen Ym 基團貢獻，任務 P6B）。請求 {"smiles": "<含 * 的重複單元 SMILES>", "crystallizable": true／false／省略}。
+
+    Tm = 1000·ΣYmi ÷ M（式 6.20、6.21）；主鏈 –CH2– 依 Table 6.10 位置值，Table 6.9 系列的長側鏈依式 6.22–6.24。
+    crystallizable 為 false：HTTP 200，quantity.status = "missing"、value = null、notApplicable = true（不適用，不是數值）；
+    省略：照算並加警告「Tm 只在聚合物可結晶時有意義」。
+    缺基團：HTTP 200，quantity.status = "missing"，missing 列出缺的基團（原子位置與描述）。SMILES 無法解析或空白：HTTP 400。
+    """
+    smiles, error = _read_smiles(request)
+    if error is not None:
+        return error
+    assert smiles is not None
+    crystallizable = request.get("crystallizable") if isinstance(request, dict) else None
+    if crystallizable is not None and not isinstance(crystallizable, bool):
+        return 400, {"ok": False, "errors": ["crystallizable 必須是 true、false 或省略"]}
+    loaded, err = _load_core("tm", "mol_graph", "y_tables")
+    if err is not None:
+        return err
+    assert loaded is not None
+    tm, mol_graph, y_tables = loaded
+    absent = {"value": None, "unit": TM_UNIT, "source": tm.TM_MODEL, "status": "missing"}
+    try:
+        if crystallizable is False:
+            if mol_graph.mol_from_smiles(smiles) is None:
+                return 400, {"ok": False, "errors": ["RDKit 無法解析這個 SMILES"]}
+            return 200, {
+                "ok": True, "quantity": absent, "notApplicable": True,
+                "message": "不適用：聚合物不可結晶（crystallizable = false），沒有結晶熔點 Tm", "disclaimer": tm.TM_DISCLAIMER,
+            }  # fmt: skip
+        result = tm.compute_tm(smiles)
+    except (y_tables.YTableError, ValueError, OSError) as e:
+        return 500, {"ok": False, "errors": [f"Tm 資料表或 SMARTS 錯誤：{e}"]}
+    if result["status"] == "invalid":
+        return 400, {"ok": False, "errors": [result["message"]]}
+    if result["status"] == "missing":
+        return 200, {"ok": True, "quantity": absent, **_missing_body(result), "disclaimer": tm.TM_DISCLAIMER}
+    if not _json_safe(result):
+        return 400, {"ok": False, "errors": ["沒有可計算的基團（沒有重原子）"]}
+    warnings: list[str] = []
+    if crystallizable is None:
+        warnings.append("Tm 只在聚合物可結晶時有意義（未指定 crystallizable）")
+    if not result["polymer"]:
+        warnings.append("輸入沒有連接點 *：Tm 的方法針對聚合物重複單元；小分子的熔點請用 /joback（D56）")
+    if result["containsTentative"]:
+        warnings.append("含書中括號值（暫定，不確定）的基團")
+    quantity = {"value": result["tmK"], "unit": TM_UNIT, "source": tm.TM_MODEL, "status": "predicted"}
+    keys = ("polymer", "tmC", "sumYm", "sumM", "containsTentative", "groups", "sources", "sideChain", "formulaMass")
+    body = {k: result[k] for k in keys if k in result}
+    return 200, {"ok": True, "quantity": quantity, **body, "warnings": warnings, "notes": tm.TM_NOTES, "disclaimer": tm.TM_DISCLAIMER}
+
+
+def handle_td(request: object) -> tuple[int, dict]:
+    """聚合物重複單元的半分解溫度 Td,1/2（van Krevelen Yd,1/2 基團貢獻，任務 P6B）。請求 {"smiles": "<含 * 的重複單元 SMILES>"}。
+
+    Td,1/2 = 1000·ΣYd,1/2,i ÷ M（式 21.4）；輸出 K 與 °C（tdC）。這是書定義的半分解溫度，不是 5% 失重溫度（Td5），備註寫在 notes。
+    缺基團：HTTP 200，quantity.status = "missing"，missing 列出缺的基團。SMILES 無法解析或空白：HTTP 400。
+    """
+    smiles, error = _read_smiles(request)
+    if error is not None:
+        return error
+    assert smiles is not None
+    loaded, err = _load_core("td", "y_tables")
+    if err is not None:
+        return err
+    assert loaded is not None
+    td, y_tables = loaded
+    try:
+        result = td.compute_td(smiles)
+    except (y_tables.YTableError, ValueError, OSError) as e:
+        return 500, {"ok": False, "errors": [f"Td 資料表或 SMARTS 錯誤：{e}"]}
+    if result["status"] == "invalid":
+        return 400, {"ok": False, "errors": [result["message"]]}
+    if result["status"] == "missing":
+        quantity = {"value": None, "unit": TD_UNIT, "source": td.TD_MODEL, "status": "missing"}
+        return 200, {"ok": True, "quantity": quantity, **_missing_body(result), "disclaimer": td.TD_DISCLAIMER}
+    warnings: list[str] = []
+    if not result["polymer"]:
+        warnings.append("輸入沒有連接點 *：Td,1/2 的方法針對聚合物重複單元")
+    if result["containsTentative"]:
+        warnings.append("含書中括號值（暫定，不確定）的基團")
+    quantity = {"value": result["tdK"], "unit": TD_UNIT, "source": td.TD_MODEL, "status": "predicted"}
+    keys = ("polymer", "tdC", "sumYd", "unitMass", "containsTentative", "groups", "sources")
+    return 200, {"ok": True, "quantity": quantity, **{k: result[k] for k in keys}, "warnings": warnings, "notes": td.TD_NOTES, "disclaimer": td.TD_DISCLAIMER}
+
+
+def handle_moisture(request: object) -> tuple[int, dict]:
+    """聚合物重複單元的吸濕量（van Krevelen Table 18.14，任務 P6B）。請求 {"smiles", "rh": 0.3／0.5／0.7／0.9／1.0, "crystallinity": 0～1（可省略）}。
+
+    g 水／100 g 聚合物（25 °C、非晶區基團加成，參考趨勢）；結晶度依式 18.15 乘 (1 − x_c)。rh 不在 Table 18.14 的五個值內：HTTP 400（拒絕）。
+    表中沒有的基團列在 uncovered 並加警告；書中括號值標在 groups 的 uncertain 與 warnings；書中空白的格子（–NH3⁺、–COO⁻）回報 missing。
+    """
+    smiles, error = _read_smiles(request)
+    if error is not None:
+        return error
+    assert smiles is not None
+    loaded, err = _load_core("moisture", "y_tables")
+    if err is not None:
+        return err
+    assert loaded is not None
+    moisture, y_tables = loaded
+    req = request if isinstance(request, dict) else {}
+    try:
+        rh = moisture.check_rh(req.get("rh"))
+        crystallinity = moisture.check_crystallinity(req.get("crystallinity"))
+    except ValueError as e:
+        return 400, {"ok": False, "errors": [str(e)]}
+    try:
+        result = moisture.compute_moisture(smiles, rh, crystallinity)
+    except (y_tables.YTableError, ValueError, OSError) as e:
+        return 500, {"ok": False, "errors": [f"吸濕性資料表或 SMARTS 錯誤：{e}"]}
+    if result["status"] == "invalid":
+        return 400, {"ok": False, "errors": [result["message"]]}
+    warnings: list[str] = []
+    if result["uncovered"]:
+        warnings.append(f"有 {len(result['uncovered'])} 個原子不在 Table 18.14 涵蓋的基團內，視為無貢獻（見 uncovered）")
+    if result["status"] == "missing":
+        quantity = {"value": None, "unit": moisture.WATER_UNIT, "source": moisture.WATER_MODEL, "status": "missing"}
+        body = {k: result[k] for k in ("polymer", "rh", "groups", "missingValues", "uncovered")}
+        return 200, {"ok": True, "quantity": quantity, **body, "warnings": warnings, "notes": moisture.WATER_NOTES, "disclaimer": moisture.WATER_DISCLAIMER}
+    if not result["polymer"]:
+        warnings.append("輸入沒有連接點 *：吸濕量以結構單元計，請輸入聚合物重複單元")
+    if result["uncertainGroups"]:
+        warnings.append("書中括號值（不確定）：" + "、".join(result["uncertainGroups"]))
+    quantity = {"value": result["value"], "unit": moisture.WATER_UNIT, "source": moisture.WATER_MODEL, "status": "predicted"}
+    keys = ("polymer", "rh", "crystallinity", "amorphousValue", "molesWaterPerUnit", "unitMass", "groups", "uncovered", "uncertainGroups", "sources")
+    return 200, {"ok": True, "quantity": quantity, **{k: result[k] for k in keys}, "warnings": warnings, "notes": moisture.WATER_NOTES, "disclaimer": moisture.WATER_DISCLAIMER}
+
+
+def handle_modulus(request: object) -> tuple[int, dict]:
+    """體積模數 K 與彈性模數 E（van Krevelen 13.2.6 節，任務 P6B）。請求 {"smiles": "<SMILES>"}。
+
+    本專案沒有式 13.30–13.32 需要的增量表（Rao 函數、莫耳熱容、內聚能與熔化熱），P6B 也沒有收錄，所以三個方法與 E 都不做：
+    HTTP 200，quantity.status = "missing"、value = null，methods 列出每個方法缺什麼、可由本專案現有模組取得什麼。SMILES 無法解析或空白：HTTP 400。
+    """
+    smiles, error = _read_smiles(request)
+    if error is not None:
+        return error
+    assert smiles is not None
+    loaded, err = _load_core("modulus")
+    if err is not None:
+        return err
+    assert loaded is not None
+    (modulus,) = loaded
+    result = modulus.compute_modulus(smiles)
+    if result["status"] == "invalid":
+        return 400, {"ok": False, "errors": [result["message"]]}
+    quantity = {"value": None, "unit": modulus.MODULUS_UNIT, "source": modulus.MODULUS_MODEL, "status": "missing"}
+    return 200, {
+        "ok": True, "quantity": quantity, "methods": result["methods"], "youngsModulus": result["youngsModulus"],
+        "summary": result["summary"], "notes": modulus.MODULUS_NOTES, "disclaimer": modulus.MODULUS_DISCLAIMER,
+    }  # fmt: skip
 
 
 VM_UNIT = "cm³/mol"
@@ -1101,6 +1275,10 @@ POST_ROUTES = {
     "/demo/quantity": handle_demo_quantity,
     "/vw": handle_vw,
     "/tg": handle_tg,
+    "/tm": handle_tm,
+    "/td": handle_td,
+    "/moisture": handle_moisture,
+    "/modulus": handle_modulus,
     "/vm": handle_vm,
     "/cte": handle_cte,
     "/polymer/repeat-unit": handle_polymer_repeat_unit,
