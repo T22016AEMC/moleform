@@ -104,3 +104,66 @@ def test_compare_measured_excludes_calibration_rows_from_validation_stats() -> N
     # 加 --include-demo 才納入示範列
     with_demo = cm.summarize(cm.evaluate(rows, include_demo=True))
     assert "F3" in with_demo and with_demo["全部"]["n"] == 3
+
+
+# ---------------- P6D：mixture／relative 模式 ----------------
+
+NOVOLAC_UNIT = "[*:1]Cc1cc([*:2])ccc1O"
+BADGE = "CC(C)(c1ccc(OCC2CO2)cc1)c1ccc(OCC2CO2)cc1"
+PMMA_ETHYL = "*CC(*)(C)C(=O)OCC"
+
+
+def _mrow(name: str, comp: str, smiles: str, wt: str, mn: str, tg: str = "", purpose: str = "", family: str = "") -> dict[str, str]:
+    return {cm.COL_MODE: "mixture", cm.COL_NAME: name, cm.COL_COMP: comp, cm.COL_STRUCT: smiles, cm.COL_WT: wt, cm.COL_MN: mn, cm.COL_TG: tg, cm.COL_PURPOSE: purpose, cm.COL_FAMILY: family}
+
+
+def _rrow(name: str, role: str, smiles: str, mol: str = "", anchor: str = "", tg: str = "", purpose: str = "", family: str = "") -> dict[str, str]:
+    return {cm.COL_MODE: "relative", cm.COL_NAME: name, cm.COL_ROLE: role, cm.COL_COMP: role, cm.COL_STRUCT: smiles, cm.COL_MOL: mol, cm.COL_ANCHOR: anchor, cm.COL_TG: tg, cm.COL_PURPOSE: purpose, cm.COL_FAMILY: family}
+
+
+def test_compare_measured_mixture_mode_calls_mixing_without_measured_value(monkeypatch: pytest.MonkeyPatch) -> None:
+    seen: list[dict] = []
+    real = engine.handle_tg_mixing
+
+    def spy(request: object) -> tuple[int, dict]:
+        seen.append(dict(request))  # type: ignore[arg-type]
+        return real(request)
+
+    monkeypatch.setattr(engine, "handle_tg_mixing", spy)
+    rows = [_mrow("m1", "poly", NOVOLAC_UNIT, "70", "1000", "123.456", "驗證", "F1"), _mrow("m1", "small", BADGE, "30", "")]
+    items = cm.evaluate(rows)
+    assert len(items) == 1 and items[0]["mode"] == "mixture" and items[0]["counted"]
+    assert items[0]["predicted"] is not None and items[0]["error"] == pytest.approx(items[0]["predicted"] - 123.456)
+    assert len(seen) == 1 and set(seen[0]) == {"components", "wtPct", "mn"} and "123.456" not in repr(seen[0])
+
+
+def test_compare_measured_relative_mode_anchor_is_input_and_measured_is_not(monkeypatch: pytest.MonkeyPatch) -> None:
+    seen: list[dict] = []
+    real = engine.handle_relative_tg
+
+    def spy(request: object) -> tuple[int, dict]:
+        seen.append(dict(request))  # type: ignore[arg-type]
+        return real(request)
+
+    monkeypatch.setattr(engine, "handle_relative_tg", spy)
+    rows = [_rrow("r1", "A", PMMA_UNIT, anchor="100"), _rrow("r1", "B", PMMA_ETHYL, mol="1", tg="87.654", purpose="驗證", family="F1")]
+    items = cm.evaluate(rows)
+    assert len(items) == 1 and items[0]["mode"] == "relative" and items[0]["predicted"] is not None and items[0]["counted"]
+    assert seen[0]["tgA"] == {"value": 100.0, "unit": "C"} and "87.654" not in repr(seen[0])
+
+
+def test_compare_measured_new_modes_calibration_not_counted_and_missing_not_error() -> None:
+    rows = [
+        _mrow("cal", "poly", NOVOLAC_UNIT, "100", "1000", "0", "校準", "F2"),
+        _mrow("val", "poly", NOVOLAC_UNIT, "100", "1000", "100", "驗證", "F1"),
+        _mrow("nomn", "poly", NOVOLAC_UNIT, "100", "", "100", "驗證", "F1"),  # 缺 Mn：算不出，不是誤差
+        _rrow("rmiss", "A", "*C#N", anchor="100"),
+        _rrow("rmiss", "B", PMMA_ETHYL, mol="1", tg="90", purpose="驗證", family="F1"),  # A 缺基團：算不出
+    ]
+    items = cm.evaluate(rows)
+    assert [it["name"] for it in items] == ["cal", "val", "nomn", "rmiss"]
+    assert items[0]["use"] == "calibration" and items[0]["error"] is not None and not items[0]["counted"]
+    for it in items[2:]:
+        assert it["predicted"] is None and it["error"] is None and it["note"] and not it["counted"]
+    stats = cm.summarize(items)
+    assert set(stats) == {"F1", "全部"} and stats["F1"]["n"] == 1  # 只有 val 進統計
