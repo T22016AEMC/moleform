@@ -171,9 +171,11 @@ U02 已由 D46 決定（任務 019）。
   - 補註（任務 037）：VW 缺基團以 Bondi (1964) 補充（D59）：`src/data/vw_groups_bondi.csv`（13 個基團 BG、5 個 Table XVII 修正 BC）、`src/core/data/vwGroupsBondi.ts`；書的基團先配對，補充結果標「含 Bondi 補充基團（非書值）」；環氧、五員雜環（醯亞胺、PBO、內酯）、籠狀環維持缺基團；結果見 `docs/reports/037-結果.md`，6.4 仍不勾選
   - 補註：Tg–Mn 文獻資料與 K 擬合（任務 035）已做：Lin-Gibson 2001 的鄰、對甲酚酚醛各自擬合 Tg∞ 與 K（異構物互檢誤差 ≤ 8 K，兩類收錄，低可信度，待使用者審）；BPA 環氧鏈只做參考擬合與 EPON 順序檢查，未收錄 K；ECN、PGMA 只登錄與觀察，不擬合；Szeluga 2008、Sadeghinia 2012 只記為驗證候選；`src/core/properties/tgFit.ts`、`novolacUnits.ts`，輸出 `docs/verification/phase6-Tg-混合-輸出.md` 第 7–9 節。6.7 仍不勾選
   - 補註（任務 038，D61）：簡易 Tg 相對估算（任務 038，D61）：Tg_B = Tg_A − Δf／Δα，Δf =（Vf_B − Vf_A）／V_A（使用者 2026-11-13 指定的範例算法），Bondi 型 FFV = 1 − 1.3 × VvdW／Vm；`src/data/packing_coefficient_k.csv`（使用者的 k／Tg 表 50 列，「待使用者審」）、`src/core/data/packingCoefficientK.ts`、`src/core/properties/relativeTg.ts`（只有核心函式，沒有畫面），輸出 `docs/verification/phase6-相對Tg-輸出.md`，結果見 `docs/reports/038-結果.md`。6.7 不勾選
-- [ ] 6.8 每個公式的自動測試（檢查程式是否照公式算對）
-- [ ] 6.9 使用者驗證清單
-  - 補註（僅供驗證，不作為程式輸入，D02）：使用者有配方**固化前** Tg 實測值，用於比對 6.7 混合配方 Tg（Fox／Gordon–Taylor）
+- [x] 6.8 每個公式的自動測試（檢查程式是否照公式算對）
+  - 補註（任務 P6C）：覆蓋表見 `docs/verification/phase6-公式測試覆蓋.md`（逐模組列公式、端點、測試位置與案例數）；完全沒有 pytest 的公式 2 個（Tm 長側鏈式 6.22–6.24、Td 共軛值 c），已補 4 個手算案例（`engine/tests/test_p6c_unit.py`）；`/modulus` 公式未實作，不算缺口；Tm、Td、吸濕的書算例仍只在對照文件，不是 pytest（列為弱點）。報告 `docs/reports/P6C-結果.md`。
+- [x] 6.9 使用者驗證清單
+  - 補註（任務 P6C）：清單與模板完成（`docs/verification/phase6-使用者驗證清單.md`：待審資料列統計與 57 列判斷性資料列、20 個代表分子對照表、實測比對說明；`docs/verification/user-measured-template.csv`；`engine/scripts/compare_measured.py`，校準列不併入驗證誤差）；**使用者實際審完屬後續**，審完後才算 D17 的化學驗證完成。
+  - 補註（僅供驗證，不作為程式輸入，D02）：使用者有配方**固化前** Tg 實測值，用於比對 6.7 混合配方 Tg（Fox／Gordon–Taylor）。比對腳本 `compare_measured.py` 目前只比對 /tg（單一重複單元 SMILES）；混合配方 Tg 的比對未做
 
 ## Phase 7：交聯第 2 層與擴充反應體系
 
