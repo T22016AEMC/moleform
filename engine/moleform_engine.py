@@ -11,7 +11,7 @@
   /polymer/copolymer、/polymer/convert、/polymer/distribution；任務 M05 起新增其餘計算模組 POST /free-volume、/relative-tg、/joback、
   /tg/mixing、/tg/flory-fit、/dielectric、/tpsa-logp、/crosslink/analyze、/crosslink/prepare、/crosslink/layer1、/crosslink/layer1/scan；
   除此之外不含任何物性公式。尚未接到介面，TypeScript 仍是預設計算來源。
-- 任務 P6B 起新增 POST /tm（結晶熔點）、/td（半分解溫度）、/moisture（吸濕性）、/modulus（體積模數；目前只回報缺什麼）。
+- 任務 P6B 起新增 POST /tm（結晶熔點）、/td（半分解溫度）、/moisture（吸濕性）、/modulus（體積模數 K、剪切模數 G、泊松比 ν、楊氏模數 E；任務 P6E 補完）。
 """
 
 from __future__ import annotations
@@ -324,27 +324,46 @@ def handle_moisture(request: object) -> tuple[int, dict]:
 
 
 def handle_modulus(request: object) -> tuple[int, dict]:
-    """體積模數 K 與彈性模數 E（van Krevelen 13.2.6 節，任務 P6B）。請求 {"smiles": "<SMILES>"}。
+    """體積模數 K、剪切模數 G、泊松比 ν、楊氏模數 E（van Krevelen 13.2.4–13.2.6 節，任務 P6E）。
+    請求 {"smiles": "<含 * 的重複單元 SMILES>", "density": g/cm³（可省略）, "crystallinity": 0～1（可省略）}。
 
-    本專案沒有式 13.30–13.32 需要的增量表（Rao 函數、莫耳熱容、內聚能與熔化熱），P6B 也沒有收錄，所以三個方法與 E 都不做：
-    HTTP 200，quantity.status = "missing"、value = null，methods 列出每個方法缺什麼、可由本專案現有模組取得什麼。SMILES 無法解析或空白：HTTP 400。
+    方法一（式 13.30，Rao 函數）與方法三（式 13.32，內聚能＋熔化熱；只涵蓋 Table 7.1 與 Table 5.7 基團定義可對應的基團）；方法二不做。
+    G 用 Hartmann 函數（式 14.12，U_H 為書中暫定值）；ν、E 依 Table 13.2，K、G 都有才輸出。K 以 GPa 輸出：兩個以上方法時取平均，只有一個方法時標「單一方法」。
+    quantity = K（缺值時 status = "missing"，原因在 moduli.bulk.reason）；moduli 含 bulk／shear／poisson／young 四個量；methods 列出各方法的值或缺的基團。
+    density 省略：V 用 Vm 模組；crystallinity 省略：方法三視為 0 並加警告。SMILES 無法解析或空白、density／crystallinity 不合法：HTTP 400。
     """
     smiles, error = _read_smiles(request)
     if error is not None:
         return error
     assert smiles is not None
-    loaded, err = _load_core("modulus")
+    loaded, err = _load_core("modulus", "moisture", "modulus_tables", "y_tables")
     if err is not None:
         return err
     assert loaded is not None
-    (modulus,) = loaded
-    result = modulus.compute_modulus(smiles)
+    modulus, moisture, modulus_tables, y_tables = loaded
+    req = request if isinstance(request, dict) else {}
+    try:
+        density = modulus.check_density(req.get("density"))
+        crystallinity = moisture.check_crystallinity(req.get("crystallinity"))
+    except ValueError as e:
+        return 400, {"ok": False, "errors": [str(e)]}
+    try:
+        result = modulus.compute_modulus(smiles, density, crystallinity)
+    except (modulus_tables.ModulusTableError, y_tables.YTableError, ValueError, OSError) as e:
+        return 500, {"ok": False, "errors": [f"彈性模數資料表或 SMARTS 錯誤：{e}"]}
     if result["status"] == "invalid":
         return 400, {"ok": False, "errors": [result["message"]]}
-    quantity = {"value": None, "unit": modulus.MODULUS_UNIT, "source": modulus.MODULUS_MODEL, "status": "missing"}
+    if not _json_safe(result):
+        return 400, {"ok": False, "errors": ["彈性模數的計算結果不是有限數值"]}
+    keys = ("polymer", "unitMass", "volume", "volumeReason", "methods")
+    moduli = {
+        "bulk": result["bulkModulus"], "shear": result["shearModulus"], "poisson": result["poissonRatio"], "young": result["youngsModulus"],
+    }
+    bulk = result["bulkModulus"]
+    quantity = {"value": bulk["value"], "unit": modulus.MODULUS_UNIT, "source": modulus.MODULUS_MODEL, "status": bulk["status"]}
     return 200, {
-        "ok": True, "quantity": quantity, "methods": result["methods"], "youngsModulus": result["youngsModulus"],
-        "summary": result["summary"], "notes": modulus.MODULUS_NOTES, "disclaimer": modulus.MODULUS_DISCLAIMER,
+        "ok": True, "quantity": quantity, "moduli": moduli, **{k: result[k] for k in keys}, "warnings": result["warnings"],
+        "notes": modulus.MODULUS_NOTES, "disclaimer": modulus.MODULUS_DISCLAIMER,
     }  # fmt: skip
 
 

@@ -134,12 +134,7 @@ def test_moisture_lists_uncovered_groups() -> None:
     assert any("未涵蓋" in w or "不在 Table 18.14" in w for w in body["warnings"])
 
 
-def test_modulus_reports_what_is_missing() -> None:
-    code, body = engine.handle_modulus({"smiles": PE})
-    assert code == 200
-    assert body["quantity"]["value"] is None and body["quantity"]["status"] == "missing"
-    assert [m["id"] for m in body["methods"]] == ["rao", "gruneisen", "gruneisen-tobolsky"]
-    assert all(m["missing"] for m in body["methods"])
+# 彈性模數的測試在 test_p6e_unit.py（任務 P6E 補完；P6B 時 /modulus 只回報缺什麼）
 
 
 def test_invalid_smiles_rejected() -> None:

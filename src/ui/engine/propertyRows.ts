@@ -152,7 +152,7 @@ function p6bRows(replies: UnitReplies, polymer: boolean): PropertyRow[] {
       na('tm', 'Tm（結晶熔點）', 'K', '不適用：小分子的熔點見 Tf（Joback，D56）'),
       na('td', 'Td,1/2（半分解溫度）', 'K', '不適用：只針對聚合物重複單元（Yd,1/2 基團貢獻）'),
       na('moisture', '吸濕量（25 °C）', 'g 水／100 g 聚合物', '不適用：只針對聚合物重複單元（Table 18.14 結構基團）'),
-      na('modulus', '體積模數 K／彈性模數 E', 'N/m²', '不適用：只針對聚合物重複單元'),
+      na('modulus', '體積模數 K／剪切模數 G／泊松比 ν／楊氏模數 E', 'GPa', '不適用：只針對聚合物重複單元'),
     ];
   }
   const get = (path: string) => replies[path];
@@ -178,12 +178,38 @@ function p6bRows(replies: UnitReplies, polymer: boolean): PropertyRow[] {
     ]),
   );
 
-  const mod = of('/modulus');
-  rows.push(
-    withNotes(rowFrom('modulus', '體積模數 K／彈性模數 E', mod.quantity, 'N/m²', get('/modulus'), () => (typeof mod.summary === 'string' ? mod.summary : undefined)), [
-      typeof mod.notes === 'string' ? mod.notes : '',
-    ]),
-  );
+  rows.push(...modulusRows(get('/modulus')));
+  return rows;
+}
+
+const reasonOf = (q: unknown): string | undefined => (isObj(q) && typeof q.reason === 'string' && q.reason !== '' ? q.reason : undefined);
+
+/** 彈性模數（任務 P6E）：K（各方法的平均或單一方法）、G、ν、E，加上各方法的 K 值。缺值顯示 missing 與原因 */
+function modulusRows(reply: EngineReply | undefined): PropertyRow[] {
+  const mod = bodyOf(reply);
+  const moduli = isObj(mod.moduli) ? mod.moduli : {};
+  const warnings = strings(mod.warnings);
+  const notes = typeof mod.notes === 'string' ? mod.notes : '';
+  const rows: PropertyRow[] = [];
+  const bulk = isObj(moduli.bulk) ? moduli.bulk : {};
+  const basis = typeof bulk.basis === 'string' ? bulk.basis : '';
+  rows.push(withNotes(rowFrom('modulus', '體積模數 K', moduli.bulk, 'GPa', reply, () => reasonOf(moduli.bulk) ?? bodyReason(mod)), [basis, ...warnings, notes]));
+  rows.push(rowFrom('modulus-g', '剪切模數 G（Hartmann，U_H 書中暫定）', moduli.shear, 'GPa', reply, () => reasonOf(moduli.shear) ?? bodyReason(mod)));
+  rows.push(rowFrom('modulus-nu', '泊松比 ν（Table 13.2）', moduli.poisson, '', reply, () => reasonOf(moduli.poisson) ?? bodyReason(mod)));
+  rows.push(rowFrom('modulus-e', '楊氏模數 E（Table 13.2）', moduli.young, 'GPa', reply, () => reasonOf(moduli.young) ?? bodyReason(mod)));
+  const methods = Array.isArray(mod.methods) ? mod.methods.filter(isObj) : [];
+  for (const m of methods) {
+    const id = typeof m.id === 'string' ? m.id : 'method';
+    const value = typeof m.value === 'number' ? m.value : null;
+    const q: EngineQuantity = {
+      value,
+      unit: 'GPa',
+      source: typeof m.equation === 'string' ? m.equation : '—',
+      status: value === null ? 'missing' : 'predicted',
+    };
+    const why = [typeof m.reason === 'string' ? m.reason : undefined, describeMissing(m.missing)].filter((x): x is string => typeof x === 'string' && x !== '').join('；');
+    rows.push(rowFrom(`modulus-${id}`, `K：${typeof m.name === 'string' ? m.name : id}`, q, 'GPa', reply, () => (why === '' ? undefined : why)));
+  }
   return rows;
 }
 

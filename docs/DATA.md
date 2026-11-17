@@ -182,6 +182,12 @@ MoleForm 的化學資料放在 `src/data/` 的四個 CSV。**目前只有任務 
 
 格式與正反例檢查：`engine/moleform_core/y_tables.py`（缺出處、缺正反例、id 與狀態後綴不符、括號值缺註明一律拋出 `YTableError`），測試 `engine/tests/test_p6b_unit.py`。
 
+## 彈性模數基團表 rao_hartmann_groups.csv、ecoh_groups.csv、hm_groups.csv（任務 P6E，D08、D22）
+
+`src/data/rao_hartmann_groups.csv`（UTF-8 BOM，42 列）：書 Table 14.4（書頁 515，PDF 第 542 頁）Rao 函數 U_R 與 Hartmann 函數 U_H 的基團值（單位 (cm³/mol)(cm/s)^(1/3)）。表中環狀基團（對伸苯基、間伸苯基、2,6-二甲基對伸苯基、雙酚 A 單元、苯基、環己基、三取代與四取代苯環、喹㗁啉環）在文字抽取中是圖，已將頁面轉成圖片目視對照後謄錄，環上取代位置依結構式判讀（出處與稽核狀態欄註明）；三取代、四取代苯環（U_R 3700、3300）兩列標「詮釋」（依據：書的 Table 14.4 圖示的鍵位，使用者 2026-11-17 同意維持），其他位置的環以 CHar＋Car 計；U_H 整欄是書中暫定值（表標題），稽核狀態逐列註明；括號值（–S–、–F、–Br 的 U_R；–S–、–F、–Cl、–Br 的 U_H）是書中不確定值，稽核狀態註明「書中標為暫定」；–Si(CH3)2– 書中 U_H 印「–」，U_H 欄留空，含此基團的分子 G、ν、E 回報 missing；Cross-link 列只是謄錄（無 SMARTS）。SMARTS：與 Yg 表同名基團沿用 Yg 的寫法，其餘自行撰寫（D22，出處欄註明），每條有正反例（單元測試核對）。切分沿用 Tm／Td 的 `tg.compute_tg_book`（大基團優先於小基團）。
+
+`src/data/ecoh_groups.csv`（6 列）：書 Table 7.1（書頁 192–193）的 Ecoh（J/mol），選 Hoftyzer and Van Krevelen 欄（詮釋：Example 13.1 的 8380 J/mol = 2 × 4190 只有這一欄對得上，待使用者審）；`src/data/hm_groups.csv`（6 列）：書 Table 5.7（書頁 122）的 ΔHm,i（kJ/mol，書中標為暫定值）。兩張表只收錄兩者都有值、基團定義可對應的列（–CH2– 主鏈、–CH(CH3)–、–O–、–COO–、–CONH–、–S–），其餘列未收錄，方法三對含其他基團的分子回報 missing。Table 7.1 的 –COO– 在該欄印 3410（同列 Fedors 18,000、Bunn 12,150），與同列其他欄差異大，已把該格轉成圖片目視確認書中確實印 3410（使用者 2026-11-17 要求），照書謄錄；–CH(CH3)– 的 Ecoh 是書中括號值。
+
 ## 吸濕性基團表 water_groups.csv（任務 P6B，D08、D22）
 
 `src/data/water_groups.csv`（13 列）：書 Table 18.14（書頁 690，引 Barrie 1968）每結構基團的莫耳含水量，25 °C、非晶聚合物，相對濕度 0.3／0.5／0.7／0.9／1.0 五欄。儲存格寫書中的數字；括號數字是書中括號值（不確定）；空白是書中此格空白（–NH3⁺ 在 0.3、0.5、1.0，–COO⁻ 在 0.9、1.0）。「計數方式」欄說明每個基團怎麼數。SMARTS 自行撰寫（D22），每條有正反例；原書以 (1.5 × 10⁻⁵) 寫的值存為 (1.5e-5)。

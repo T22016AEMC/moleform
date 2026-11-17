@@ -1,6 +1,6 @@
 """任務 P6B 的書中算例對照（驗證只做一次）。產生 docs/verification/phase6-Tm-Td-吸濕-彈性模數-輸出.md。
 
-用書自己的算例：Table 6.15（Tm）、Table 21.3（Td,1/2）、Example 18.4（尼龍 6,6 吸濕）、Table 13.6（體積模數）。
+用書自己的算例：Table 6.15（Tm）、Table 21.3（Td,1/2）、Example 18.4（尼龍 6,6 吸濕）；任務 P6E 起彈性模數用 Example 13.1、13.2、Table 13.6、Table 14.5。
 每個聚合物只列：書值、本卡值、差。不調整任何數值去湊；對不上的只如實列出與可能原因。
 
 重新產生（在專案根目錄）：engine/.venv/Scripts/python.exe scripts/verification/phase6-tm-td-moisture-modulus.py
@@ -126,13 +126,61 @@ TD_CASES = [
 
 NYLON66 = "*C(=O)NCCCCCCNC(=O)CCCC*"
 
-# Table 13.6（書頁 396，PDF 第 423 頁）列名；三個方法都缺資料，全部不可算
+# Table 13.6（書頁 396，PDF 第 423 頁）：(聚合物, ρ g/cm³, 書 Exp.（原文）, 書 (U_R/V)⁶·ρ 欄, 重複單元 SMILES 或 None＝書中只有名稱、沒有結構)
 TABLE_136 = [
-    "Polyethylene (am)", "Polyethylene (ld)", "Polyethylene (md)", "Polyethylene (HD)", "Polyethylene (cr)", "Polypropylene", "Polybutene-1",
-    "Polystyrene", "Poly(vinyl chloride)", "Poly(vinylidene fluoride)", "Poly(chlorotrifluoroethylene)", "Poly(tetrafluoroethylene)",
-    "Poly(vinyl butyral)", "Poly(methyl methacrylate)", "Poly(isobutyl methacrylate)", "Polyisoprene (natural rubber)", "Poly(chlorobutadiene)",
-    "Poly(methylene oxide)", "Poly(ethylene oxide)", "Poly(2,6-dimethyl-p-phenylene oxide)", "Poly(ethylene terephthalate)", "Nylon 6", "Nylon 66",
-    "Polyimide", "Poly(bisphenol carbonate)", "Polysulphone", "Phenolformaldehyde resin", "Epoxy resin",
+    ("Polyethylene (am) (extrapol.)", 0.85, "(1.9)", 1.95, "*CC*"),
+    ("Polyethylene (ld)", 0.92, "3.4", 3.55, "*CC*"),
+    ("Polyethylene (md)", 0.95, "4.5", 4.3, "*CC*"),
+    ("Polyethylene (HD)", 0.97, "5.0", 5.05, "*CC*"),
+    ("Polyethylene (cr) (extrapol.)", 1.00, "(6.0)", 6.3, "*CC*"),
+    ("Polypropylene", 0.91, "3.5", 3.85, "*CC(*)C"),
+    ("Polybutene-1", 0.91, "3.8", 3.8, "*CC(*)CC"),
+    ("Polystyrene", 1.05, "5.0", 5.15, "*CC(*)c1ccccc1"),
+    ("Poly(vinyl chloride)", 1.42, "5.5", 5.25, "*CC(*)Cl"),
+    ("Poly(vinylidene fluoride)", 1.77, "5.4", 4.2, "*CC(F)(F)*"),
+    ("Poly(chlorotrifluoroethylene)", 2.15, "5.2", 4.55, "*C(F)(F)C(F)(Cl)*"),
+    ("Poly(tetrafluoroethylene)", 2.35, "2.5", 3.6, "*C(F)(F)C(F)(F)*"),
+    ("Poly(vinyl butyral)", 1.11, "4.2", 3.1, None),
+    ("Poly(methyl methacrylate)", 1.19, "5.1", 5.25, "*CC(C)(C(=O)OC)*"),
+    ("Poly(isobutyl methacrylate)", 1.04, "2.9", 3.2, "*CC(C)(C(=O)OCC(C)C)*"),
+    ("Polyisoprene (natural rubber)", 0.91, "2.0", 1.9, "*CC(C)=CC*"),
+    ("Poly(chlorobutadiene)", 1.24, "2.3", 2.3, "*CC(Cl)=CC*"),
+    ("Poly(methylene oxide)", 1.43, "6.9", 7.4, "*CO*"),
+    ("Poly(ethylene oxide)", 1.21, "5.7", 6.9, "*CCO*"),
+    ("Poly(2,6-dimethyl-p-phenylene oxide)", 1.07, "4.1", 4.0, "*Oc1c(C)cc(*)cc1C"),
+    ("Poly(ethylene terephthalate)", 1.40, ">4", 7.4, "*OCCOC(=O)c1ccc(cc1)C(=O)*"),
+    ("Nylon 6", 1.14, "5.1", 6.05, "*NCCCCCC(=O)*"),
+    ("Nylon 66", 1.14, "8.1", 6.05, "*NCCCCCCNC(=O)CCCCC(=O)*"),
+    ("Polyimide", 1.44, "6.0", 6.05, None),
+    ("Poly(bisphenol carbonate)", 1.20, "5.0", 5.3, "*c1ccc(cc1)C(C)(C)c1ccc(cc1)OC(=O)O*"),
+    ("Polysulphone", 1.24, "5.3", 6.2, "*c1ccc(cc1)C(C)(C)c1ccc(cc1)Oc1ccc(cc1)S(=O)(=O)c1ccc(cc1)O*"),
+    ("Phenolformaldehyde resin", 1.22, "7.4", 5.4, None),
+    ("Epoxy resin", 1.18, "6.4", 6.8, None),
+]
+
+# Table 14.5（書頁 516，PDF 第 543 頁）：(聚合物, V cm³/mol, 書 calculated U_R, 書 calculated U_H, SMILES 或 None)；ABS、PVB、PF、EP 書中沒有結構
+TABLE_145 = [
+    ("PE(HD)", 29.4, 1760, 1350, "*CC*"),
+    ("PP", 46.1, 2755, 2325, "*CC(*)C"),
+    ("PMP", 100.8, 5680, 4725, "*CC(*)CC(C)C"),
+    ("PS", 99.0, 5780, 4725, "*CC(*)c1ccccc1"),
+    ("PVC", 44.9, 2605, 2125, "*CC(*)Cl"),
+    ("PVDF", 360, 1980, 1575, "*CC(F)(F)*"),
+    ("PTFE", 45.9, 2200, 1800, "*C(F)(F)C(F)(F)*"),
+    ("PMMA", 84.5, 5100, 4325, "*CC(C)(C(=O)OC)*"),
+    ("POM", 21.1, 1280, 975, "*CO*"),
+    ("PEO", 36.5, 2160, 1650, "*CCO*"),
+    ("PA-6", 98.8, 6150, 4750, "*NCCCCCC(=O)*"),
+    ("PA-66", 196.8, 12300, 9500, "*NCCCCCCNC(=O)CCCCC(=O)*"),
+    ("PPO", 111.1, 6500, 5100, "*Oc1c(C)cc(*)cc1C"),
+    ("PC", 213.7, 12575, 9900, "*c1ccc(cc1)C(C)(C)c1ccc(cc1)OC(=O)O*"),
+    ("PSF", 356.9, 21250, 16600, "*c1ccc(cc1)C(C)(C)c1ccc(cc1)Oc1ccc(cc1)S(=O)(=O)c1ccc(cc1)O*"),
+    ("PESF", 169, 9850, 7600, "*c1ccc(cc1)S(=O)(=O)c1ccc(cc1)O*"),
+    ("ABS", 206, 11750, 9470, None),
+    ("PVB", 88.7, 5140, 4275, None),
+    ("PF", 87, 5570, 4375, None),
+    ("EP-DM", 664, 41600, 33300, None),
+    ("EP-RP", 407, 26400, 20935, None),
 ]
 
 
@@ -161,7 +209,7 @@ def td_values(smiles: str) -> tuple[float | None, float | None, float | None, st
 def main() -> None:
     lines: list[str] = []
     w = lines.append
-    w("# Phase 6（任務 P6B）：Tm、Td、吸濕性、彈性模數——書中算例對照")
+    w("# Phase 6（任務 P6B、P6E）：Tm、Td、吸濕性、彈性模數——書中算例對照")
     w("")
     w("產生方式：engine/.venv/Scripts/python.exe scripts/verification/phase6-tm-td-moisture-modulus.py。內容只有程式算出的數字與書中印的數字並列，不調整任何數值去湊；")
     w("判斷由使用者進行（D17）。書：van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009)。")
@@ -265,24 +313,157 @@ def main() -> None:
     w("書中的實驗值 4 g／100 g 只作對照，不參與計算。")
     w("")
 
-    # ---------------- 彈性模數 ----------------
-    w("## 4. 體積模數 K：Table 13.6（書頁 396）")
+    mo_a, mo_r = a, r
+    # ---------------- 彈性模數（任務 P6E） ----------------
+    w("## 4. 彈性模數（任務 P6E）：K、G、ν、E")
     w("")
-    res = modulus.compute_modulus("*CC*")
-    w(f"Table 13.6 共 {len(TABLE_136)} 列。三個方法本專案都缺必要的增量表，所以**能算的列數為 0**，沒有任何一列可對照：")
+    w("方法：式 13.30（K = ρ·(U_R/V)⁶）、式 14.12（G = ρ·(U_H/V)⁶）、Table 13.2（ν、E）、式 13.32（方法三）。V 一律用書中給的密度或 V（輸入密度路徑，V = M/ρ），")
+    w("不使用 Vm 模組的估算值，這樣才能與書的算例同基準比較。相符標準：K、G 差 ≤ 0.05 GPa（書印 1～3 位）；U_R、U_H 差 ≤ 5（書印到 5）。不調整任何數值去湊。")
+    w("方法二（式 13.31，需要 Fig. 5.4 的 C_p/C_v，是圖）本卡不做。方法三只對 Table 7.1（Hoftyzer and Van Krevelen 欄）與 Table 5.7 同時有值、基團定義可對應的基團啟用。")
     w("")
-    w("| 方法 | 缺什麼 |")
-    w("|---|---|")
-    for m in res["methods"]:
-        w(f"| {m['equation']} | {'；'.join(m['missing'])} |")
-    w(f"| 彈性模數 E：{res['youngsModulus']['equation']} | {'；'.join(res['youngsModulus']['missing'])} |")
+
+    def mod(smi: str, rho: float | None, xc: float | None = None) -> dict:
+        return modulus.compute_modulus(smi, rho, xc)
+
+    def ok(diff: float | None, tol: float) -> str:
+        return "—" if diff is None else ("相符" if abs(diff) <= tol else "不符")
+
+    n_match = 0
+    n_bad = 0
+    w("### 4.1 Example 13.1：聚乙烯（ρ 0.95、結晶度 70%）")
     w("")
-    w("書中的 Example 13.1（聚乙烯，三個方法 4.3、4.0、3.8 ×10⁹ N/m²，平均 4.1）與 Example 13.2（雙酚 A 聚碳酸酯）也都需要 Table 14.4 或 Chapter 5、7 的資料，同樣無法重現。")
+    r = mod("*CC*", 0.95, 0.70)
+    rao, tob = r["methods"][0], r["methods"][2]
+    w("| 項目 | 書 | 本卡 | 差 | 判定 |")
+    w("|---|---|---|---|---|")
+    rows = [
+        ("U_R", 1760.0, rao["sumUR"], 5.0, 0),
+        ("V（cm³/mol）", 29.5, r["volume"]["value"], 0.05, 2),
+        ("方法一 K（GPa）", 4.3, rao["value"], 0.05, 3),
+        ("E_coh（J/mol）", 8380.0, tob["ecoh"], 5.0, 0),
+        ("ΔH_m（kJ/mol）", 8.0, tob["dhm"], 0.05, 1),
+        ("方法三 K（GPa）", 3.8, tob["value"], 0.05, 3),
+    ]
+    for name, book, mine, tol, dec in rows:
+        res_txt = ok(mine - book, tol)
+        n_match += res_txt == "相符"
+        n_bad += res_txt == "不符"
+        w(f"| {name} | {book} | {mine:.{dec}f} | {mine - book:+.{dec}f} | {res_txt} |")
+    w("")
+    w(f"兩個方法的平均 = {r['bulkModulus']['value']:.2f} GPa（書：三個方法的平均 4.1，其中方法二本卡不做，所以不比較）。")
+    w("")
+    w("### 4.2 Example 13.2：雙酚 A 聚碳酸酯（M 254、V 212、ρ 1.2）")
+    w("")
+    pc = "*c1ccc(cc1)C(C)(C)c1ccc(cc1)OC(=O)O*"
+    r = mod(pc, 254.28 / 212.0)  # ρ 取 M/V，使 V 恰為書的 212
+    rao = r["methods"][0]
+    uh_sum = 0.0
+    for grp in rao["groups"]:
+        uh_sum += grp["uh"]
+    w("| 項目 | 書 | 本卡 | 差 | 判定 |")
+    w("|---|---|---|---|---|")
+    ex = [
+        ("U_R", 12575.0, rao["sumUR"], 5.0, 0),
+        ("U_H", 9900.0, uh_sum, 5.0, 0),
+        ("K（GPa）", 5.23, r["bulkModulus"]["value"], 0.05, 3),
+        ("G（GPa）", 1.24, r["shearModulus"]["value"], 0.05, 3),
+        ("ν", 0.39, r["poissonRatio"]["value"], 0.005, 3),
+        ("E（GPa）", 3.52, r["youngsModulus"]["value"], 0.05, 3),
+    ]
+    for name, book, mine, tol, dec in ex:
+        res_txt = ok(mine - book, tol)
+        n_match += res_txt == "相符"
+        n_bad += res_txt == "不符"
+        w(f"| {name} | {book} | {mine:.{dec}f} | {mine - book:+.{dec}f} | {res_txt} |")
+    w("")
+    k5, g1, nu_b = 5.23, 1.24, 0.39
+    e_formula = 3 * g1 / (1 + g1 / k5 / 3)
+    w(f"E 不符的說明（書自己的算術）：用書印的 K = 5.23、G = 1.24 代入書的式 E = 3G/(1 + G/(3K)) 得 {e_formula:.2f} GPa；用書印的 ν = 0.39 代入 E = 2G(1 + ν) 得 {2 * g1 * (1 + nu_b):.2f} GPa；")
+    w("兩個式都得 3.45 左右，與書印的 3.52 不一致。本卡的 E 由本卡的 K、G 用同一個式算出，沒有調整。（U_R、U_H、K、G、ν 都與書相符。）")
+    w("")
+    w("### 4.3 Table 13.6：方法一欄 (U_R/V)⁶·ρ（ρ 用書中表列的值）")
+    w("")
+    w("書的 ρ 只印到 0.01，而 K ∝ ρ⁷（M 固定時 V = M/ρ），所以 ρ 取整本身就造成 ±(7 × 0.005 ÷ ρ) 的 K 誤差（約 ±3～4%）：差在這個範圍內判為相符，超過才判不符。")
+    w("最後一欄用書 Table 14.5 自己印的 calculated U_R 與 V 代入式 13.30（ρ 取 Table 13.6 的值），檢查 Table 13.6 與 Table 14.5 在書中是否一致，與本卡的謄錄無關。")
+    w("")
+    w("| 聚合物 | ρ | 書 Exp. | 書 方法一 | 本卡 U_R | 本卡 K（GPa） | 差 | ρ 取整誤差 | 判定／原因 | 書 Table 14.5 的 U_R、V 代入式 13.30 的 K |")
+    w("|---|---|---|---|---|---|---|---|---|---|")
+    t_ok = t_bad = t_na = 0
+    book145 = {x[0]: x for x in TABLE_145}
+    link145 = {
+        "Polyethylene (HD)": "PE(HD)", "Polypropylene": "PP", "Polystyrene": "PS", "Poly(vinyl chloride)": "PVC", "Poly(tetrafluoroethylene)": "PTFE",
+        "Poly(methyl methacrylate)": "PMMA", "Poly(methylene oxide)": "POM", "Poly(ethylene oxide)": "PEO", "Nylon 6": "PA-6", "Nylon 66": "PA-66",
+        "Poly(2,6-dimethyl-p-phenylene oxide)": "PPO", "Poly(bisphenol carbonate)": "PC", "Polysulphone": "PSF",
+    }  # fmt: skip
+    BOOK_INCONSISTENT = {"Polypropylene", "Polystyrene", "Poly(methyl methacrylate)", "Poly(ethylene oxide)", "Nylon 6", "Nylon 66", "Polysulphone"}
+    for name, rho, exp, book, smi in TABLE_136:
+        if smi is None:
+            t_na += 1
+            w(f"| {name} | {rho} | {exp} | {book} | — | — | — | — | 無法算：書中只有名稱，沒有結構 | — |")
+            continue
+        r = mod(smi, rho)
+        rao = r["methods"][0]
+        if rao["status"] != "predicted":
+            t_na += 1
+            miss = "；".join(m["description"] for m in rao.get("missing", [])[:2]) or rao.get("reason", "")
+            w(f"| {name} | {rho} | {exp} | {book} | — | — | — | — | 缺基團：{esc(miss)} | — |")
+            continue
+        d = rao["value"] - book
+        tol = max(0.05, book * 7 * 0.005 / rho)
+        verdict = "相符" if abs(d) <= tol else "不符"
+        t_ok += verdict == "相符"
+        t_bad += verdict.startswith("不符")
+        key = link145.get(name)
+        if verdict == "不符":
+            verdict = "不符：書內不一致（13.6 與 14.5 矛盾），不調整" if name in BOOK_INCONSISTENT else "不符：原因不明，不調整"
+        if key is None:
+            self_k = "—"
+        else:
+            _, v145, ur145, _, _ = book145[key]
+            self_k = f"{rho * (ur145 / v145) ** 6 * 0.1 / 1e9:.2f}（U_R {ur145}、V {v145}）"
+        w(f"| {name} | {rho} | {exp} | {book} | {rao['sumUR']:.0f} | {rao['value']:.2f} | {d:+.2f} | ±{book * 7 * 0.005 / rho:.2f} | {verdict} | {self_k} |")
+    w("")
+    w("使用者 2026-11-17 決定：接受 Table 13.6 的不符——7 列（PP、PS、PMMA、PEO、PA-6、PA-66、PSF）是書的 Table 13.6 與 14.5 互相矛盾（書內不一致），其餘 8 列原因不明；一律照實列出，不調整。")
+    w(f"Table 13.6 共 {len(TABLE_136)} 列：能算 {t_ok + t_bad} 列，其中相符 {t_ok}、不符 {t_bad}；不能算 {t_na} 列。")
+    w("Table 14.5 的 PVDF 列印 V = 360（與 ρ 1.77 推得的約 36 差 10 倍，應為印刷錯誤），所以 PVDF 不放進最後一欄。")
+    w("Table 13.6 的方法三欄（E_subl/V）需要各聚合物的結晶度 x_c，書中沒有列出，所以只用 Example 13.1（x_c = 0.70）對照；方法二欄（C_v/E）本卡不做。")
+    w("")
+    w("### 4.4 Table 14.5：U_R、U_H 的 calculated 欄（只比較基團加成值，與 V 無關）")
+    w("")
+    w("| 聚合物 | 書 U_R | 本卡 U_R | 判定 | 書 U_H | 本卡 U_H | 判定 | 原因／備註 |")
+    w("|---|---|---|---|---|---|---|---|")
+    u_ok = u_bad = u_na = 0
+    for name, v, ur_b, uh_b, smi in TABLE_145:
+        if smi is None:
+            u_na += 1
+            w(f"| {name} | {ur_b} | — | — | {uh_b} | — | — | 無法算：書中只有名稱，沒有結構 |")
+            continue
+        r = mod(smi, 1.0)
+        rao = r["methods"][0]
+        if rao.get("sumUR") is None:
+            u_na += 1
+            miss = "；".join(m["description"] for m in rao.get("missing", [])[:2])
+            w(f"| {name} | {ur_b} | — | — | {uh_b} | — | — | 缺基團：{esc(miss)} |")
+            continue
+        ur = rao["sumUR"]
+        uh_vals = [grp["uh"] for grp in rao["groups"]]
+        uh = None if any(x is None for x in uh_vals) else sum(uh_vals)
+        v1 = ok(ur - ur_b, 5)
+        v2 = ok(None if uh is None else uh - uh_b, 5)
+        u_ok += (v1 == "相符") + (v2 == "相符")
+        u_bad += (v1 == "不符") + (v2 == "不符")
+        uh_txt = "—" if uh is None else f"{uh:.0f}"
+        d2 = "" if uh is None else f"（{uh - uh_b:+.0f}）"
+        w(f"| {name} | {ur_b} | {ur:.0f} | {v1}（{ur - ur_b:+.0f}） | {uh_b} | {uh_txt} | {v2}{d2} | |")
+    w("")
+    w(f"Table 14.5 共 {len(TABLE_145)} 列（每列 U_R、U_H 兩個值）：能算的值中相符 {u_ok}、不符 {u_bad}；{u_na} 列無法算（書中沒有結構）。")
+    w("")
+    w(f"Example 13.1、13.2 的項目合計：相符 {n_match}、不符 {n_bad}。")
     w("")
     with open(OUT, "w", encoding="utf-8", newline="\n") as f:
         f.write("\n".join(lines) + "\n")
     print("Tm", tm_ok, tm_bad, tm_na, "| Td", td_ok, td_bad, td_na)
-    print("moisture", a["value"], r["value"], r["molesWaterPerUnit"], r["unitMass"])
+    print("moisture", mo_a["value"], mo_r["value"], mo_r["molesWaterPerUnit"], mo_r["unitMass"])
     print("wrote", OUT)
 
 
