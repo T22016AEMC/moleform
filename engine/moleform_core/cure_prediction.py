@@ -19,9 +19,11 @@ from __future__ import annotations
 
 from typing import Any, Mapping, Sequence
 
+from .copolymer import analyze_polymer_units
 from .layer1 import compute_layer1, prepare_layer1
 from .td import compute_td
-from .tg_mixing import CATALYST_CATEGORY, UNIFIED_NOTE, compute_formulation_tg
+from .tg import compute_tg
+from .tg_mixing import CATALYST_CATEGORY, UNIFIED_NOTE, compute_formulation_tg, fox_mix
 
 # ---------- 常數（出處見檔頭） ----------
 
@@ -103,9 +105,79 @@ def _missing(reason: str, **extra: Any) -> dict[str, Any]:
     return {"status": "missing", "reason": reason, **extra}
 
 
+COPOLYMER_TG_MODEL = (
+    "各單元均聚物的 Tg∞（基團貢獻，`tg.compute_tg`）以 Fox 混合，質量分率 wᵢ ∝ xᵢ·Mᵢ（xᵢ 為單元莫耳分率、Mᵢ 為單元質量，"
+    "與共聚比例掃描 `/copolymer-scan`〔任務 P6A〕同一做法；組合用法，非書中公式，待使用者審）；單元比例與質量取自 `analyze_polymer_units`（任務 M04）；"
+    "不含分子量修正（沒有共聚物的 K）"
+)
+
+
+def _is_copolymer(c: Mapping[str, Any]) -> bool:
+    polymer = c.get("polymer")
+    units = polymer.get("units") if isinstance(polymer, Mapping) else None
+    return isinstance(units, list) and len(units) > 1
+
+
+def copolymer_component_tg(c: Mapping[str, Any]) -> dict[str, Any]:
+    """共聚物成分（polymer.units 有兩種以上單元）的 Tg（K）。比例缺漏／不合規則、單元缺基團都回報 missing 與原因，不猜。"""
+    spec = {k: c["polymer"][k] for k in ("units", "fractionBasis") if c["polymer"].get(k) is not None}
+    try:
+        info = analyze_polymer_units(c["canonicalSmiles"], spec)
+    except Exception as e:  # noqa: BLE001 — RDKit 呼叫錯誤等，回報原因
+        return {"status": "missing", "reason": f"共聚物單元無法解析：{e}"}
+    if not info["ok"]:
+        return {"status": "missing", "reason": f"共聚物組成比例有問題：{info['problem']['message']}"}
+    items: list[dict[str, float]] = []
+    bad: list[str] = []
+    for i, u in enumerate(info["units"]):
+        tg = compute_tg(u["smiles"])
+        if tg["status"] != "ok":
+            bad.append(f"單元 {i + 1} 缺基團，算不出 Tg" if tg["status"] == "missing" else f"單元 {i + 1}：{tg.get('message', 'Tg 無法計算')}")
+            continue
+        items.append({"w": u["molFraction"] * u["mUnit"], "tgK": tg["tgK"]})
+    if len(bad) > 0:
+        return {"status": "missing", "reason": f"共聚物 Tg 缺值：{'；'.join(bad)}"}
+    return {"status": "ok", "tgK": fox_mix(items)}
+
+
+def _mix_with_copolymers(solid: Sequence[Mapping[str, Any]], mix: Mapping[str, Any], cop_ids: set[str]) -> dict[str, Any]:
+    """把既有混合 Tg 結果中「共聚物成分缺 Tg」的成分換成 `copolymer_component_tg` 的結果，再依既有規則（Fox、質量分率正規化）重新混合。"""
+    by_id = {c["id"]: c for c in solid}
+    comps: list[dict[str, Any]] = []
+    notes: list[str] = []
+    for comp in mix["components"]:
+        if comp["id"] in cop_ids and comp["status"] == "missing":
+            r = copolymer_component_tg(by_id[comp["id"]])
+            if r["status"] == "ok":
+                comp = {**comp, "status": "ok", "tgK": r["tgK"], "missingReason": None, "flags": [*comp["flags"], "共聚物（各單元 Tg∞ 的 Fox 混合）"]}
+                notes.append(f"共聚物成分 {comp['name']} 的 Tg：{COPOLYMER_TG_MODEL}")
+            else:
+                comp = {**comp, "missingReason": r["reason"]}
+        comps.append(comp)
+    messages = [m for m in mix["messages"] if not m.startswith(("缺成分 Tg：", "部分混合值", "所有參與混合的成分都缺 Tg"))]
+    missing = [c for c in comps if c["status"] == "missing"]
+    for m in missing:
+        messages.append(f"缺成分 Tg：{m['name']}（{m['missingReason']}）")
+    messages.extend(notes)
+    usable = [c for c in comps if c["status"] == "ok" and c["solidFraction"] is not None and c["solidFraction"] > 0]
+    out = {**mix, "components": comps, "messages": messages, "missing": [m["name"] for m in missing], "partial": None}
+    if len(missing) > 0:
+        return {**out, "status": "incomplete"}
+    if len(usable) == 0:
+        return {**out, "status": "unavailable", "messages": [*messages, "沒有聚合物或寡聚物成分可混合（小分子不計 Tg，D56）"]}
+    tg_k = fox_mix([{"w": c["solidFraction"], "tgK": c["tgK"]} for c in usable])
+    return {**out, "status": "complete", "tgK": tg_k, "tgC": tg_k - 273.15}
+
+
 def compute_tg0(solid: Sequence[Mapping[str, Any]], wt_pct: Mapping[str, float | None], mn_by_id: Mapping[str, float | None]) -> dict[str, Any]:
-    """Tg,0（未交聯 Tg 估計）：沿用既有的混合 Tg（Fox，`compute_formulation_tg`），不新增模型。完整才給值；缺成分 Tg 時 missing 並列出原因。"""
+    """Tg,0（未交聯 Tg 估計）：沿用既有的混合 Tg（Fox，`compute_formulation_tg`），不新增模型。完整才給值；缺成分 Tg 時 missing 並列出原因。
+
+    既有混合 Tg 不處理共聚物成分（回報缺值）；這裡改以 `copolymer_component_tg` 取得共聚物成分的 Tg 再混合，
+    其餘成分（均聚物、小分子、排除的成分）的處理與既有混合 Tg 完全相同。"""
     mix = compute_formulation_tg(solid, wt_pct, mn_by_id)
+    cop_ids = {c["id"] for c in solid if _is_copolymer(c)}
+    if mix["status"] in ("complete", "incomplete") and any(m["id"] in cop_ids for m in mix["components"] if m["status"] == "missing"):
+        mix = _mix_with_copolymers(solid, mix, cop_ids)
     base = {"model": mix["model"], "messages": mix["messages"]}
     if mix["status"] == "complete":
         return {"status": "predicted", "tgK": mix["tgK"], "tgC": mix["tgC"], **base}

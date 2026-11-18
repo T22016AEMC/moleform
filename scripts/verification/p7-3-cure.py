@@ -1,7 +1,9 @@
 """任務 P7-3：產生 docs/verification/phase7-固化預測-輸出.md（交聯第 2 層：Tg∞、固化後 Tg、完全固化最低溫度、最大轉化率、Td 警示）。
 
 用引擎的 HTTP 處理函式（moleform_engine.handle_crosslink_analyze／handle_crosslink_cure，與介面走同一條路徑）對配方 4A、4B（docs/verification/phase4-測試體系.md）各算一次；
-另附一個「補充案例」：鄰甲酚酚醛（有 K 的樹脂類別）＋ BADGE，用來顯示 Tg,0 可算時的數值路徑（4A、4B 因共聚物與 PGMA 缺基團，Tg,0 為 missing）。
+另附一個「補充案例」：鄰甲酚酚醛（有 K 的樹脂類別）＋ BADGE，用來顯示 Tg,0 可算時的數值路徑。
+追加（共聚物與 PGMA）：共聚物成分的 Tg,0 改用各單元 Tg∞ 的 Fox 混合（見 docs/MODELS.md）；4A、4B 的 P 有一個單元缺 Yg 基團、E（PGMA）缺環氧丙基酯相關基團，Tg,0 仍為 missing，原因逐項列在輸出。
+另附「補充案例 2」：共聚物成分（雙酚茀酚單元＋聚苯乙烯單元各 50 mol%）＋ BADGE，用來顯示共聚物 Tg,0 可算時的數值路徑。
 「使用者判定」欄留空。執行：engine/.venv/Scripts/python scripts/verification/p7-3-cure.py
 """
 
@@ -17,8 +19,9 @@ from rdkit import Chem  # noqa: E402
 from rdkit.Chem import Descriptors  # noqa: E402
 
 import moleform_engine as eng  # noqa: E402
+from moleform_core.tg import compute_tg  # noqa: E402
 
-CURE_TEMP_C = 150  # 驗證輸出用的硬化溫度（可在介面修改）
+CURE_TEMP_C = None  # 硬化溫度沒有預設值（介面欄位空白）：驗證輸出不給硬化溫度，最大轉化率顯示「請輸入硬化溫度」
 OUT = ROOT / "docs" / "verification" / "phase7-固化預測-輸出.md"
 
 P_A = "[*:1]c1ccc(C2(c3ccc([*:2])c(O)c3)c3ccccc3-c3ccccc32)cc1O"
@@ -55,6 +58,21 @@ CASES = [
         ],
         {"N": 80, "B": 20},
     ),
+    (
+        "補充案例 2（非任務指定）",
+        "Solid（wt%）共聚物 C（雙酚茀酚單元 50 mol%＋聚苯乙烯單元 50 mol%，Mn 3000）80、BADGE 20；用來顯示共聚物 Tg,0 可算時的數值路徑",
+        [
+            {
+                "id": "C",
+                "name": "共聚物 C（雙酚茀酚／苯乙烯）",
+                "category": "Resin",
+                "canonicalSmiles": P_A,
+                "polymer": {"units": [{"smiles": P_A, "fraction": 50}, {"smiles": "[*:1]CC([*:2])c1ccccc1", "fraction": 50}], "fractionBasis": "mol", "mnInput": 3000},
+            },
+            {"id": "B", "name": "BADGE", "category": "Resin", "canonicalSmiles": BADGE},
+        ],
+        {"C": 80, "B": 20},
+    ),
 ]
 
 
@@ -77,7 +95,10 @@ def run_case(comps: list[dict], amounts: dict) -> tuple[dict, dict]:
     assert code == 200, analysis
     mn = {c["id"]: c["molarMass"] for c in analysis["components"]}
     solid = {"unit": "wt", "components": [{**c, "amount": amounts[c["id"]]} for c in comps]}
-    code, out = eng.handle_crosslink_cure({"result": analysis, "solid": solid, "wtPct": amounts, "mn": mn, "cureTempC": CURE_TEMP_C})
+    body = {"result": analysis, "solid": solid, "wtPct": amounts, "mn": mn}
+    if CURE_TEMP_C is not None:
+        body["cureTempC"] = CURE_TEMP_C
+    code, out = eng.handle_crosslink_cure(body)
     assert code == 200, out
     return analysis, out
 
@@ -106,7 +127,9 @@ def render(title: str, desc: str, analysis: dict, out: dict) -> list[str]:
         m = post["minFullCureTemp"]
         rows.append(("完全固化最低溫度", f"{k_c(m['low']['tgK'])} 至 {k_c(m['high']['tgK'])}", out["notes"]["fullCure"]))
         mc = post["maxConversion"]
-        if mc is not None:
+        if mc is None:
+            rows.append(("最大轉化率", "請輸入硬化溫度", out["notes"]["maxConversion"]))
+        else:
             rows.append((f"最大轉化率（硬化溫度 {mc['cureTempC']:.0f} °C）", f"{mc['low'] * 100:.1f}%（Tg∞ 下限）／{mc['high'] * 100:.1f}%（Tg∞ 上限）", out["notes"]["maxConversion"]))
     else:
         rows.append(("固化後 Tg、完全固化最低溫度、最大轉化率", f"missing：{post['reason']}", out["models"]["postCure"]))
@@ -125,12 +148,28 @@ def main() -> None:
         "# 任務 P7-3 輸出：固化預測（交聯第 2 層）",
         "",
         "產生方式：`engine/.venv/Scripts/python scripts/verification/p7-3-cure.py`（引擎 `/crosslink/analyze` → `/crosslink/cure`，與介面同一條路徑）。",
-        f"硬化溫度固定為 {CURE_TEMP_C} °C（介面可修改）。所有數值為依理論模型估算之參考值，非實測值；Tg∞ 範圍是式 (6.13) 兩個書中 K 值各算一次，不選單一值。「使用者判定」欄留空。",
+        "硬化溫度沒有預設值，本輸出不給硬化溫度（介面欄位空白）：最大轉化率顯示「請輸入硬化溫度」，其餘項目照常顯示。所有數值為依理論模型估算之參考值，非實測值；Tg∞ 範圍是式 (6.13) 兩個書中 K 值各算一次，不選單一值。「使用者判定」欄留空。",
         "",
     ]
     for title, desc, comps, amounts in CASES:
         analysis, out = run_case(comps, amounts)
         lines += render(title, desc, analysis, out)
+    lines += [
+        "## 4A、4B 的 Tg,0 缺值原因（各單元的 Yg 基團，`/tg` 的缺基團清單）",
+        "",
+        "| 單元 | 缺基團的原子 | 備註 | 使用者判定 |",
+        "|---|---|---|---|",
+    ]
+    notes = {
+        "P 單元 1（雙酚茀酚）": "Tg 可算",
+        "P 單元 2（萘基亞甲基）": "Table 6.1 沒有萘環基團；4A、4B 的共聚物 Tg 因此缺值，不估",
+        "E（PGMA）": "Table 6.1（書頁 133–136）沒有環氧環（oxirane）的基團，也沒有 –C(CH3)(COO–環氧丙基)– ；側鏈 –CH2– 要用式 6.6–6.8（KNOWN_ISSUES M11 未實作）；不新增、不估",
+    }
+    for label, smi in (("P 單元 1（雙酚茀酚）", P_A), ("P 單元 2（萘基亞甲基）", P_B), ("E（PGMA）", E_PGMA)):
+        r = compute_tg(smi)
+        miss = "無（Tg 可算）" if r["status"] == "ok" else "；".join(m["description"] for m in r.get("missing", []))
+        lines.append(f"| {label} | {miss} | {notes[label]} | |")
+    lines.append("")
     OUT.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(f"wrote {OUT}")
 

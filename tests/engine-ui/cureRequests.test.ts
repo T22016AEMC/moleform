@@ -4,11 +4,20 @@ import { describe, expect, it } from "vitest";
 import { ALLOWED_PATHS } from "../../desktop/bridge.cjs";
 import type { CrosslinkResult } from "../../src/core/crosslink/types";
 import type { Formulation, FormulationOutcome } from "../../src/core/formulation/types";
+import { CURE_TEMP_HINT, CURE_TEMP_REQUIRED_TEXT, DEFAULT_CURE_TEMP_TEXT } from "../../src/ui/crosslink/cureText";
 import { cureBody } from "../../src/ui/engine/crosslinkEngine";
 
 describe("橋接白名單含固化預測端點", () => {
   it("/crosslink/cure 在白名單內", () => {
     expect(ALLOWED_PATHS).toContain("/crosslink/cure");
+  });
+});
+
+describe("硬化溫度沒有預設值", () => {
+  it("欄位初始為空白，提示文字為「請輸入硬化溫度」，說明不含預設值", () => {
+    expect(DEFAULT_CURE_TEMP_TEXT).toBe("");
+    expect(CURE_TEMP_REQUIRED_TEXT).toBe("請輸入硬化溫度");
+    expect(CURE_TEMP_HINT).not.toContain("150");
   });
 });
 

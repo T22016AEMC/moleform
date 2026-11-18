@@ -10,10 +10,8 @@ import { ResultValue } from '../components/ResultValue';
 import { UnifiedNote } from '../components/UnifiedNote';
 import { computeCureViaEngine, cureBody, type CureData, type CureOutcome } from '../engine/crosslinkEngine';
 import { ResultBlock } from '../workbench/ResultBlock';
+import { CURE_TEMP_HINT, CURE_TEMP_REQUIRED_TEXT, DEFAULT_CURE_TEMP_TEXT } from './cureText';
 import { calc, parseNumber, round, useEngineCall } from './Layer1Cards';
-
-/** 硬化溫度的預設值（°C）；介面上可修改，清空則不計算最大轉化率 */
-const DEFAULT_CURE_TEMP_TEXT = '150';
 
 const tgText = (p: { tgK: number; tgC: number }) => `${round(p.tgC, 4)} °C（${round(p.tgK, 4)} K）`;
 const rangeText = (a: { tgK: number; tgC: number }, b: { tgK: number; tgC: number }) => `${tgText(a)} 至 ${tgText(b)}`;
@@ -62,7 +60,7 @@ export function CureSection({ result, formulation }: Props) {
           <input id="cure-temp-input" type="text" inputMode="decimal" value={tempText} aria-invalid={!tempValid} onChange={(e) => setTempText(e.target.value)} />
           <span className="amount-unit">°C</span>
         </div>
-        <small>預設 150 °C，可修改；清空則不計算最大轉化率。</small>
+        <small>{CURE_TEMP_HINT}</small>
       </div>
       {!tempValid && (
         <div className="error" role="alert">
@@ -170,7 +168,7 @@ function CureOutput({ data }: { data: CureData }) {
           />
           <h4>指定硬化溫度下的最大轉化率</h4>
           {postCure.maxConversion === null ? (
-            <p className="crosslink-notes">未填硬化溫度。</p>
+            <p className="structure-notice" role="status">{CURE_TEMP_REQUIRED_TEXT}</p>
           ) : (
             <>
               <ResultValue
