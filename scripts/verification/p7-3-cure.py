@@ -162,8 +162,8 @@ def main() -> None:
     ]
     notes = {
         "P 單元 1（雙酚茀酚）": "Tg 可算",
-        "P 單元 2（萘基亞甲基）": "Table 6.1 沒有萘環基團；4A、4B 的共聚物 Tg 因此缺值，不估",
-        "E（PGMA）": "Table 6.1（書頁 133–136）沒有環氧環（oxirane）的基團，也沒有 –C(CH3)(COO–環氧丙基)– ；側鏈 –CH2– 要用式 6.6–6.8（KNOWN_ISSUES M11 未實作）；不新增、不估",
+        "P 單元 2（萘基亞甲基）": "Table 6.1 沒有萘環基團。本機文獻只找到 van Krevelen 書 Table V（書頁 922，PDF 第 950 頁）poly(α-vinyl naphthalene) 的 Tg 範圍 408/435 K（1-萘基、範圍值）；P 的是 2-萘基，且沒有第二個含萘基的聚合物可做 D54 要求的獨立檢驗，因此不收錄、不估（見報告 P7-3 末節）",
+        "E（PGMA）": "Table 6.1（書頁 133–136）沒有環氧環（oxirane）的基團，也沒有 –C(CH3)(COO–環氧丙基)– ；側鏈 –CH2– 要用式 6.6–6.8（KNOWN_ISSUES M11 未實作）。本機有 PGMA 的 Tg 70 °C（Tzoumani 2022）可當錨點，但獨立檢驗只有共聚物，且收錄會改變 golden 內既有的 PGMA 缺基團項目；加了基團 E 仍缺 K（沒有 PGMA 的已擬合 K），Tg,0 照樣缺值。因此不收錄、不估（見報告 P7-3 末節）",
     }
     for label, smi in (("P 單元 1（雙酚茀酚）", P_A), ("P 單元 2（萘基亞甲基）", P_B), ("E（PGMA）", E_PGMA)):
         r = compute_tg(smi)
