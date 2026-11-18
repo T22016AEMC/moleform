@@ -256,6 +256,28 @@ MoleForm 的化學資料放在 `src/data/` 的四個 CSV。**目前 `functional_
 
 `src/data/molar_refraction_groups.csv`（47 列）。Table 10.4（書頁 293–294，PDF 第 320–321 頁）的 R_LL 欄（λ = 589 nm，10⁻⁶ m³/mol ＝ cm³/mol，不換算）；R_GD、R_V 欄只用於折射率，不收。欄位：`id`（R01–R47）、`基團名稱`、`SMARTS`、`原子數`、`R`、`出處`、`稽核狀態`（全部「待使用者審」）、`備註`。書中 General／Attached to benzene ring 等變體的判斷條件書中沒有定義，取字面並寫在備註；Δ 構成增量、Br、I、–SH、–SS–、–NO2、–CHO 未收（結構不需要或書中沒說套用方式）。程式：`src/core/data/molarRefractionGroups.ts`、`src/core/properties/dielectricRefraction.ts`。
 
+## Hammett／Taft 取代基常數表 hammett_sigma.csv 與 pKa 式子表 pka_equations.csv（任務 P7-5，D22、D38、D66）
+
+資料來源只有 Perrin, Dempsey & Serjeant, *pKa Prediction for Organic Acids and Bases*（Chapman & Hall, 1981）；每列 `source_type = book`、`review_status = pending`，數值逐列看頁面圖像謄錄、再以 PDF 文字層第二次比對。只收本卡用得到的取代基與可解離基團類別，不整張表照抄。
+
+`src/data/hammett_sigma.csv`（UTF-8 BOM，46 列）。每列一個取代基：
+
+| 欄位 | 說明 |
+|---|---|
+| `id`、`name_zh` | `sub.` 開頭的代號與中文名稱 |
+| `smarts`、`match_mode` | 取代基的 SMARTS，`[#0]` 是連接點（與環或中心原子相連的虛原子）；`exact` ＝ 取代基片段必須與 SMARTS **整個**相同（片段原子數也要相等，避免 −CH3 配到 −CH2CH3）；`generic` ＝ Table A.1 的 Cn 通式列（−OR、−SR、−NHR、−COOR），只在所有 `exact` 列都不命中時使用。H 的 SMARTS 是單獨的 `[#0]` |
+| `sigma_meta`、`sigma_para`、`sigma_star` | Table A.1 的 σmeta、σpara、Taft σ\*；書中空白留空 |
+| `a1_marks` | A.1 σpara 旁印的註腳記號（† 酚、‡ 苯胺、§ 吡啶：該位置請改查 Table A.4） |
+| `approx_columns` | 書以 `~` 標示近似值的欄位名稱（數值欄只放數字，`~` 記在這裡） |
+| `sigma_para_phenol`、`sigma_para_aniline` | Table A.4（書頁 136）的 para 特殊 σ（酚欄、苯胺欄；吡啶欄不收） |
+| `sigma_ortho_acid`、`sigma_ortho_phenol`、`sigma_ortho_aniline` | Table A.5（書頁 137–138）的 apparent σortho（羧酸、酚、苯胺；吡啶欄不收） |
+| `should_match`、`should_not_match` | 取代基片段的 SMILES（`*` 是連接點），正例必須配到這一列、反例不得配到（D22） |
+| 共用六欄 | `source_detail` 寫 A.1／A.4／A.5 的書頁；`source_original` 寫書頁 44 說明的 A.1 原始來源（Hansch et al. 1973、Exner 1978） |
+
+`src/data/pka_equations.csv`（UTF-8 BOM，18 列）。每列一個可解離基團類別的一條式子：`role`（`nucleophile` 親核位點／`acid` 酸性位點）、`kind`（`hammett`、`hammett_ring`、`taft`）、`center_smarts`（可解離基團，映射編號 `key_map` ＝ 可解離原子、`center_map` ＝ 環上或 α 的中心原子）、`intercept` 與 `rho`（pKa = 截距 − ρ·Σσ，ρ 保留書的正負號寫法）、`sigma_set`（`sigma`／`sigma_star`）、`para_source`（`A1`、`A4_phenol`、`A4_aniline`）、`ortho_source`（`A5_acid`、`A5_phenol`、`A5_aniline`、`none`）、`roots`（Taft 取代基根的取法）、`priority`（同一可解離原子配到多列時，數字小的優先）、`position_rule`（位置判定與適用範圍）、`original_ref`（Perrin 原文引用的文獻）、正反例（完整分子的 SMILES）與共用六欄（`source_detail` 寫 Table A.2／A.3 的書頁）。脂肪硫醇兩列的式取自正文 §6.3.3（書頁 60），不在 A.2／A.3，已在 `notes` 註明。
+
+程式：`engine/moleform_core/pka.py`（載入、取代基片段比對、Hammett／Taft、`validate_tables` 檢查正反例）、`site_activity.py`（位點排序與 SASA）；測試 `engine/tests/test_p7_5_pka.py`；輸出文件 `docs/verification/phase7-pKa-輸出.md`。模型、σ 加總規則與限制見 `docs/MODELS.md`。
+
 ## 程式位置
 ## 自由體積（使用者定義經驗法）基團表與係數表（任務 036a，D22、D55、D57）
 

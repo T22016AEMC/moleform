@@ -29,6 +29,9 @@ const ALLOWED_PATHS = Object.freeze([
   '/crosslink/layer1/scan',
   // P7-3：固化預測（Tg∞、固化後 Tg、Td 警示）
   '/crosslink/cure',
+  // P7-5：pKa 估算與反應位點相對活性（成分詳細彈窗的「位點活性」表）
+  '/pka',
+  '/crosslink/site-activity',
 ]);
 
 const LOOPBACK_HOST = '127.0.0.1';

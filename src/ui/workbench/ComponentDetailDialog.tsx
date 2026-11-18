@@ -18,6 +18,7 @@ import { Modal } from './Modal';
 import { applyStructureToRow, candidateFromValidation, isPolymerSmiles, libraryInputFromRow } from './model';
 import { StructureImage, useStructureDrawing } from './StructureImage';
 import { usePairedGroups } from '../crosslink/latestCrosslink';
+import { SiteActivityCard } from '../crosslink/SiteActivityCard';
 
 interface Props {
   row: Row;
@@ -211,6 +212,8 @@ export function ComponentDetailDialog({ row, area, onChange, onClose }: Props) {
       ) : (
         <Conformer3DCard structure={molblock ? { valid: true, molblock, canonicalSmiles: row.canonicalSmiles } : null} componentId={row.id} />
       )}
+
+      <SiteActivityCard componentId={row.id} />
 
       <div className="modal-section">
         <h3>修改結構</h3>

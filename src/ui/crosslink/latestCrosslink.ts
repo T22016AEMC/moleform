@@ -24,3 +24,8 @@ export function usePairedGroups(componentId?: string): readonly string[] {
   const result = useSyncExternalStore(subscribe, () => latest);
   return useMemo(() => pairedGroupIds(result, componentId), [result, componentId]);
 }
+
+/** 最近一次交聯第 0 層結果本身（P7-5：成分詳細彈窗的「位點活性」表用它取得該成分的官能基位點）；沒有結果時為 null */
+export function useLatestCrosslinkResult(): CrosslinkResult | null {
+  return useSyncExternalStore(subscribe, () => latest);
+}

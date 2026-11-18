@@ -11,6 +11,7 @@
   /polymer/copolymer、/polymer/convert、/polymer/distribution；任務 M05 起新增其餘計算模組 POST /free-volume、/relative-tg、/joback、
   /tg/mixing、/tg/flory-fit、/dielectric、/tpsa-logp、/crosslink/analyze、/crosslink/prepare、/crosslink/layer1、/crosslink/layer1/scan；任務 P7-3 起新增 /crosslink/cure（固化預測）；
   除此之外不含任何物性公式。尚未接到介面，TypeScript 仍是預設計算來源。
+- 任務 P7-5 起新增 POST /pka（pKa 估算，Hammett／Taft）與 /crosslink/site-activity（反應位點相對活性：電子效應與空間位阻兩個分開的排序）。
 - 任務 P6B 起新增 POST /tm（結晶熔點）、/td（半分解溫度）、/moisture（吸濕性）、/modulus（體積模數 K、剪切模數 G、泊松比 ν、楊氏模數 E；任務 P6E 補完）。
 """
 
@@ -1348,7 +1349,73 @@ def handle_copolymer_scan(request: object) -> tuple[int, dict]:
     return 200, {"ok": True, "unitA": result["unitA"], "unitB": result["unitB"], "rows": rows, "model": mx.SCAN_MODEL, "note": mx.SCAN_NOTE, "disclaimer": UNIFIED_NOTE}
 
 
+def handle_pka(request: object) -> tuple[int, dict]:
+    """pKa 估算（任務 P7-5；PLAN 7.3a，D38、D66）：Hammett／Taft 線性自由能法，Perrin 1981 Table A.1–A.5。請求 {"smiles": "<小分子或含 * 的重複單元 SMILES>"}。
+
+    回應的每個可解離基團（groups）各有 quantity（值、單位、來源、狀態）、所用式子（equation）與每個 σ 的明細（sigmaDetails：取代基、位置、σ 值、出處）。
+    水溶液 25 °C 值，只用於比較相對強弱（參考趨勢）。缺值（取代基不在表中、該位置書沒給值、環系不涵蓋、基團沒有式子）：該基團 quantity.status = "missing"
+    並附 reason，不估、不內插；沒有任何涵蓋的可解離基團：status = "no-site"。SMILES 無法解析或空白：400。含連接點 *：以甲基代替後估算。"""
+    smiles, error = _read_smiles(request)
+    if error is not None:
+        return error
+    assert smiles is not None
+    mods, err = _import_core("pka", "tables")
+    if err is not None:
+        return err
+    pka, tables = mods
+    try:
+        result = pka.compute_pka(smiles)
+    except (tables.TableDataError, OSError) as e:
+        return 500, {"ok": False, "errors": [f"pKa 資料表或 SMARTS 錯誤：{e}"]}
+    if result["status"] == "invalid":
+        return 400, {"ok": False, "errors": [result["message"]]}
+    if not _json_safe(result):
+        return 400, {"ok": False, "errors": ["結果不是有限數字"]}
+    return 200, {"ok": True, **result, "disclaimer": pka.PKA_DISCLAIMER}
+
+
+def handle_crosslink_site_activity(request: object) -> tuple[int, dict]:
+    """反應位點相對活性排序（任務 P7-5；PLAN 7.3）。請求 {"components": [<`/crosslink/analyze` 回應 components 的項目>]}（用到 id、name、isPolymer、source、groups、units、problem）。
+
+    每個位點兩個分開的排序，不合併：電子效應（pKa，Hammett／Taft，參考趨勢）與空間位阻（3D 構型的相對可及表面積；幾何描述量、不是文獻公式，參數固定、可重現）。
+    同一成分同一官能基類別的位點只在 pKa（或 SASA）都算得出時排序；缺值的位點列出原因。聚合物成分以重複單元片段（連接點換成甲基）計算。格式不合：400。"""
+    if not isinstance(request, dict):
+        return 400, {"ok": False, "errors": ["請求需要 JSON 物件"]}
+    comps = request.get("components")
+    if not isinstance(comps, list) or len(comps) > MAX_LIST_ITEMS:
+        return 400, {"ok": False, "errors": [f"components 必須是陣列（上限 {MAX_LIST_ITEMS} 項）"]}
+    for c in comps:
+        if not (isinstance(c, dict) and isinstance(c.get("id"), str) and isinstance(c.get("name"), str) and isinstance(c.get("source"), str)):
+            return 400, {"ok": False, "errors": ["components 的每一項需要字串欄位 id、name、source"]}
+        if len(c["source"]) > MAX_SMILES_CHARS:
+            return 400, {"ok": False, "errors": [f"source 太長（上限 {MAX_SMILES_CHARS} 字元）"]}
+        groups = c.get("groups")
+        if groups is not None and not (
+            isinstance(groups, list)
+            and all(isinstance(g, dict) and isinstance(g.get("groupId"), str) and isinstance(g.get("sites"), list) and all(isinstance(s, list) and all(isinstance(a, int) and not isinstance(a, bool) for a in s) for s in g["sites"]) for g in groups)
+        ):
+            return 400, {"ok": False, "errors": ["groups 必須是 {groupId, sites: [[原子編號…]]} 的陣列"]}
+        units = c.get("units")
+        if units is not None and not (isinstance(units, list) and all(isinstance(u, dict) and isinstance(u.get("smiles"), str) for u in units)):
+            return 400, {"ok": False, "errors": ["units 必須是含字串 smiles 的陣列"]}
+    mods, err = _import_core("site_activity", "tables")
+    if err is not None:
+        return err
+    sa, tables = mods
+    try:
+        result = sa.compute_site_activity(comps)
+    except (tables.TableDataError, OSError) as e:
+        return 500, {"ok": False, "errors": [f"pKa 資料表或 SMARTS 錯誤：{e}"]}
+    except Exception as e:  # noqa: BLE001
+        return _computation_error(e)
+    if not _json_safe(result):
+        return 400, {"ok": False, "errors": ["結果不是有限數字"]}
+    return 200, {"ok": True, **result}
+
+
 POST_ROUTES = {
+    "/pka": handle_pka,
+    "/crosslink/site-activity": handle_crosslink_site_activity,
     "/mixture-density": handle_mixture_density,
     "/mixture-dielectric": handle_mixture_dielectric,
     "/copolymer-scan": handle_copolymer_scan,

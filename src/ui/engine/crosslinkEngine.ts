@@ -342,3 +342,110 @@ export async function scanLayer1ViaEngine(setup: Layer1Setup, conversion: number
   const { ok: _ok, disclaimer: _d, model: _m, ...scan } = reply.body;
   return { ok: true, value: scan as unknown as ScanResult };
 }
+
+// ---------- 反應位點相對活性（P7-5） ----------
+
+/** 引擎 `/crosslink/site-activity` 的回應（只列介面用到的欄位）；缺值時 status 為 missing 並附 reason */
+export interface SiteQuantity {
+  value: number | null;
+  unit: string;
+  source: string;
+  status: 'predicted' | 'missing';
+}
+export interface SiteSigmaDetail {
+  substituent: string;
+  name: string;
+  /** Hammett 的位置（ortho、meta、para）；Taft 的 σ* 沒有位置 */
+  position?: string;
+  column: string;
+  value: number;
+  source: string;
+  approx?: boolean;
+  attenuationSteps?: number;
+}
+export interface SitePka {
+  /** false：這個官能基不是 pKa 類別涵蓋的可解離基團 */
+  applicable: boolean;
+  quantity: SiteQuantity;
+  classId: string | null;
+  className: string | null;
+  role: 'nucleophile' | 'acid' | null;
+  equation?: { text: string; reference: string; table: string; positionRule: string };
+  sigmaSum?: number | null;
+  sigmaDetails: SiteSigmaDetail[];
+  reason: string | null;
+  note: string;
+}
+export interface SiteSasa {
+  relative: number | null;
+  absolute: number | null;
+  unit: string;
+  source: string;
+  status: 'predicted' | 'missing';
+  reason: string | null;
+}
+export interface SiteRank {
+  rank: number | null;
+  of: number;
+  reason: string | null;
+  direction?: string;
+  trend: string;
+}
+export interface SiteRow {
+  groupId: string;
+  groupName: string;
+  /** 共聚物的單元編號（0 起算）；小分子與均聚物為 null */
+  unitIndex: number | null;
+  atoms: number[];
+  pka: SitePka;
+  sasa: SiteSasa;
+  electronic: SiteRank;
+  steric: SiteRank;
+}
+export interface SiteComponent {
+  id: string;
+  name: string;
+  isPolymer: boolean;
+  status: 'ok' | 'missing';
+  reason: string | null;
+  sites: SiteRow[];
+}
+export interface SiteActivityData {
+  model: string;
+  electronicTrend: string;
+  stericTrend: string;
+  sasaParams: Record<string, unknown>;
+  pkaModel: string;
+  pkaNote: string;
+  polymerNote: string;
+  disclaimer: string;
+  components: SiteComponent[];
+}
+
+/**
+ * 位點活性請求本文：只搬運第 0 層結果中該成分的結構與官能基位點（引擎自己找 pKa 類別、算 SASA）。找不到成分時回傳 null。
+ * 不送其他成分、配方或用量。
+ */
+export function siteActivityBody(result: Pick<CrosslinkResult, 'components'> | null, componentId: string): Record<string, unknown> | null {
+  const c = result?.components.find((x) => x.id === componentId);
+  if (!c) return null;
+  return {
+    components: [
+      {
+        id: c.id,
+        name: c.name,
+        isPolymer: c.isPolymer,
+        source: c.source,
+        groups: c.groups,
+        ...(c.units ? { units: c.units.map((u) => ({ smiles: u.smiles, groups: u.groups })) } : {}),
+        ...(c.problem ? { problem: c.problem } : {}),
+      },
+    ],
+  };
+}
+
+export async function computeSiteActivityViaEngine(body: Record<string, unknown>): Promise<EngineOutcome<SiteActivityData>> {
+  const reply = await post('/crosslink/site-activity', body);
+  if (!reply.ok) return { ok: false, error: reply.error };
+  return { ok: true, value: reply.body as unknown as SiteActivityData };
+}
