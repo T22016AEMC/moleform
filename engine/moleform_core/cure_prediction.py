@@ -20,6 +20,8 @@ from __future__ import annotations
 from typing import Any, Mapping, Sequence
 
 from .copolymer import analyze_polymer_units
+from .crosslink import load_reaction_rules
+from .cure_shrinkage import SHRINKAGE_NOTE, TEMP_NOTE, compute_shrinkage, compute_temperature_ranges
 from .layer1 import compute_layer1, prepare_layer1
 from .td import compute_td
 from .tg import compute_tg
@@ -303,12 +305,16 @@ def compute_cure_prediction(
     mn_by_id: Mapping[str, float | None],
     cure_temp_c: float | None = None,
     conversions: Sequence[float] = DEFAULT_CONVERSIONS,
+    reaction_rules: Sequence[Mapping[str, Any]] | None = None,
 ) -> dict[str, Any]:
-    """固化預測。`result` 為第 0 層結果，`solid` 為 {unit, components:[id, name, canonicalSmiles, amount, category, polymer?, volatileFlag?, isResin?]}。
-    第 1 層不支援的體系回傳 supported = False 與第 1 層同一個原因；其餘各項分別回報 predicted 或 missing（附原因）。"""
+    """固化預測。`result` 為第 0 層結果，`solid` 為 {unit, components:[id, name, canonicalSmiles, amount, category, polymer?, volatileFlag?, isResin?, density?]}（density：g/cm3，選用，只供固化收縮的混合密度）。
+    第 1 層不支援的體系回傳 supported = False 與第 1 層同一個原因；其餘各項分別回報 predicted 或 missing（附原因）。
+    反應溫度範圍（7.2，只顯示規則表的文獻值）不計算，支援與否都列；固化收縮（7.6）只對第 1 層支援的體系計算。"""
+    rules = load_reaction_rules() if reaction_rules is None else reaction_rules
+    temperature_ranges = compute_temperature_ranges(result["pairs"], rules)
     prep = prepare_layer1(result, solid["components"], solid["unit"], wt_pct)
     if not prep["ok"]:
-        return {"supported": False, "reason": prep["reason"]}
+        return {"supported": False, "reason": prep["reason"], "temperatureRanges": temperature_ranges}
     assert wt_pct is not None  # prepare_layer1 在 wt_pct 為 None 時已回報 ok = False
     tg0 = compute_tg0(solid["components"], wt_pct, mn_by_id)
     m_crl = compute_m_crl(prep["setup"])
@@ -322,6 +328,8 @@ def compute_cure_prediction(
         "eq614": _missing(EQ614_MISSING_REASON, model=EQ614_MODEL),
         "postCure": compute_post_cure(tg0, tg_inf, conversions, cure_temp_c),
         "td": compute_td_comparison(solid["components"], tg_inf),
+        "temperatureRanges": temperature_ranges,
+        "shrinkage": compute_shrinkage(prep, solid["components"], wt_pct, conversions, rules, result["pairs"]),
         "models": {"tg0": tg0.get("model"), "tgInf": TG_INF_MODEL, "eq614": EQ614_MODEL, "postCure": POST_CURE_MODEL},
         "notes": {
             "tgInf": NOTE_TG_INF,
@@ -331,6 +339,8 @@ def compute_cure_prediction(
             "fullCure": NOTE_FULL_CURE,
             "maxConversion": NOTE_MAX_CONVERSION,
             "td": NOTE_TD,
+            "temperature": TEMP_NOTE,
+            "shrinkage": SHRINKAGE_NOTE,
         },
         "disclaimer": UNIFIED_NOTE,
     }

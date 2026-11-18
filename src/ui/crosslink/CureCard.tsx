@@ -8,9 +8,19 @@ import type { Formulation } from '../../core/formulation/types';
 import { confidenceLabel } from '../../core/result';
 import { ResultValue } from '../components/ResultValue';
 import { UnifiedNote } from '../components/UnifiedNote';
-import { computeCureViaEngine, cureBody, type CureData, type CureOutcome } from '../engine/crosslinkEngine';
+import { computeCureViaEngine, cureBody, type CureData, type CureOutcome, type CureShrinkage, type CureTemperatureRanges } from '../engine/crosslinkEngine';
 import { ResultBlock } from '../workbench/ResultBlock';
-import { CURE_TEMP_HINT, CURE_TEMP_REQUIRED_TEXT, DEFAULT_CURE_TEMP_TEXT } from './cureText';
+import {
+  CURE_TEMP_HINT,
+  CURE_TEMP_REQUIRED_TEXT,
+  DEFAULT_CURE_TEMP_TEXT,
+  SHRINKAGE_EXCLUDED_TEXT,
+  SHRINKAGE_KIND_DIRECT,
+  SHRINKAGE_SECTION_TITLE,
+  SHRINKAGE_SIGN_TEXT,
+  TEMP_NO_RANGE_TEXT,
+  TEMP_SECTION_TITLE,
+} from './cureText';
 import { calc, parseNumber, round, useEngineCall } from './Layer1Cards';
 
 const tgText = (p: { tgK: number; tgC: number }) => `${round(p.tgC, 4)} °C（${round(p.tgK, 4)} K）`;
@@ -51,7 +61,7 @@ export function CureSection({ result, formulation }: Props) {
   return (
     <ResultBlock id="cure" title="固化預測">
       <p>
-        依目前配方，估算未交聯 Tg、完全固化時的 Tg∞（範圍）、不同轉化率下的 Tg、完全固化最低溫度與指定硬化溫度下的最大轉化率，並檢查 Tg∞ 是否高於成分的 Td,1/2。
+        依目前配方，估算未交聯 Tg、完全固化時的 Tg∞（範圍）、不同轉化率下的 Tg、完全固化最低溫度與指定硬化溫度下的最大轉化率，並檢查 Tg∞ 是否高於成分的 Td,1/2；另列各反應的文獻溫度範圍與估算固化收縮。
         <span className="confidence-tag confidence-trend">{confidenceLabel('trend')}</span>
       </p>
       <div className="form-row-inline" id="field-cure-temp">
@@ -76,14 +86,131 @@ export function CureSection({ result, formulation }: Props) {
           固化預測無法計算：{state.message}
         </p>
       ) : !state.value.supported ? (
-        <p className="structure-notice" role="status">
-          固化預測無法計算：{state.value.reason}
-        </p>
+        <>
+          <p className="structure-notice" role="status">
+            固化預測無法計算：{state.value.reason}
+          </p>
+          {/* 反應溫度範圍只是顯示規則表的文獻值（不是計算），第 1 層不支援的體系也列出；固化收縮需要第 1 層的鍵莫耳數，不硬算 */}
+          {state.value.temperatureRanges !== null && <TemperatureSection data={state.value.temperatureRanges} />}
+        </>
       ) : (
-        <CureOutput data={state.value} />
+        <>
+          <CureOutput data={state.value} />
+          <TemperatureSection data={state.value.temperatureRanges} />
+          <ShrinkageSection data={state.value.shrinkage} />
+        </>
       )}
       <UnifiedNote />
     </ResultBlock>
+  );
+}
+
+function TemperatureSection({ data }: { data: CureTemperatureRanges }) {
+  return (
+    <>
+      <h3>{TEMP_SECTION_TITLE}</h3>
+      <p className="crosslink-notes">{data.note}</p>
+      {data.rows.length === 0 ? (
+        <p className="structure-notice" role="status">配方中沒有命中的反應規則。</p>
+      ) : (
+        <div className="table-wrap">
+          <table className="result-table crosslink-table">
+            <thead>
+              <tr>
+                <th scope="col">反應規則</th>
+                <th scope="col">文獻溫度範圍</th>
+                <th scope="col">適用條件（notes 摘要）</th>
+                <th scope="col">出處</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.rows.map((r) => (
+                <tr key={r.ruleId}>
+                  <th scope="row">
+                    {r.label}
+                    <br />
+                    <small>{r.ruleId}</small>
+                  </th>
+                  <td>{r.text}</td>
+                  <td>
+                    {r.conditions !== '' ? r.conditions : r.status === 'photo' ? `光觸發（${r.catalyst}），溫度不是觸發條件` : `${TEMP_NO_RANGE_TEXT}（規則表欄位空白）`}
+                    <details>
+                      <summary>完整 notes</summary>
+                      <small>{r.notes}</small>
+                    </details>
+                  </td>
+                  <td>
+                    <small>{r.source}</small>
+                    <br />
+                    <small>審核狀態：{r.reviewStatus}</small>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </>
+  );
+}
+
+function ShrinkageSection({ data }: { data: CureShrinkage }) {
+  const direct = data.reactions.filter((r) => r.kind === 'direct');
+  const interpreted = data.reactions.filter((r) => r.kind === 'interpreted');
+  return (
+    <>
+      <h3>
+        {SHRINKAGE_SECTION_TITLE}
+        <span className="confidence-tag confidence-trend">{confidenceLabel('trend')}</span>
+      </h3>
+      <ul className="crosslink-notes">
+        {direct.map((r) => (
+          <li key={r.ruleId}>
+            {r.name}：{SHRINKAGE_KIND_DIRECT} ΔV = {round(r.deltaV ?? 0, 4)} cm³/mol。出處：{r.source}
+          </li>
+        ))}
+        {interpreted.map((r) => (
+          <li key={r.ruleId}>
+            {r.name}：<strong>{r.interpretation}</strong> ΔV = {round(r.deltaV ?? 0, 4)} cm³/mol。{r.note}出處（{r.borrowedFrom}）：{r.source}
+          </li>
+        ))}
+        {data.excluded.map((r) => (
+          <li key={`x-${r.ruleId}`}>
+            {r.name}：{SHRINKAGE_EXCLUDED_TEXT}（{r.reason}）
+          </li>
+        ))}
+      </ul>
+      {data.status === 'missing' ? (
+        <MissingLine label="固化收縮" reason={data.reason} />
+      ) : (
+        <>
+          <div className="table-wrap">
+            <table className="result-table crosslink-table">
+              <thead>
+                <tr>
+                  <th scope="col">轉化率</th>
+                  <th scope="col">{SHRINKAGE_SIGN_TEXT}</th>
+                  <th scope="col">其中：直接文獻值</th>
+                  <th scope="col">其中：詮釋（沿用環氧開環值）</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.table.map((r) => (
+                  <tr key={r.conversion}>
+                    <th scope="row">{round(r.conversion * 100, 4)}%</th>
+                    <td>{round(r.totalPct, 4)} %</td>
+                    <td>{r.directPct === 0 && direct.length === 0 ? '—' : `${round(r.directPct, 4)} %`}</td>
+                    <td>{interpreted.length === 0 ? '—' : `${round(r.interpretedPct, 4)} %`}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="crosslink-notes">混合密度 ρ = {round(data.density.gPerCm3, 4)} g/cm³（{data.density.model}）。</p>
+        </>
+      )}
+      <p className="crosslink-notes">{data.model}。{data.note}</p>
+    </>
   );
 }
 

@@ -245,6 +245,53 @@ export interface CureTd {
   excluded: { name: string; reason: string }[];
   warning: { status: 'triggered' | 'clear' | 'cannot-judge'; text: string };
 }
+/** 7.2 反應溫度範圍（P7-4）：只顯示規則表的文獻值；status 為 range（有範圍）、photo（光觸發，無溫度）、none（無文獻範圍） */
+export interface CureTempRow {
+  ruleId: string;
+  label: string;
+  status: 'range' | 'photo' | 'none';
+  text: string;
+  tempMinC: number | null;
+  tempMaxC: number | null;
+  conditions: string;
+  source: string;
+  reviewStatus: string;
+  catalyst: string;
+  notes: string;
+}
+export interface CureTemperatureRanges {
+  rows: CureTempRow[];
+  note: string;
+}
+/** 7.6 固化收縮（P7-4）：kind 為 direct（規則表的文獻值）、interpreted（環氧開環沿用，詮釋）、missing（沒有值，不計入） */
+export interface CureShrinkReaction {
+  ruleId: string;
+  name: string;
+  kind: 'direct' | 'interpreted' | 'missing';
+  deltaV: number | null;
+  unit: string | null;
+  source: string | null;
+  reason: string | null;
+  note: string | null;
+  interpretation: string | null;
+  borrowedFrom: string | null;
+}
+export interface CureShrinkRow {
+  conversion: number;
+  totalPct: number;
+  directPct: number;
+  interpretedPct: number;
+  byReaction: { ruleId: string; kind: 'direct' | 'interpreted'; pct: number; bondsMolPerKg: number }[];
+}
+export type CureShrinkage = {
+  model: string;
+  note: string;
+  reactions: CureShrinkReaction[];
+  excluded: { ruleId: string; name: string; reason: string }[];
+} & (
+  | { status: 'predicted'; density: { gPerCm3: number; model: string; note: string }; table: CureShrinkRow[] }
+  | { status: 'missing'; reason: string }
+);
 export interface CureData {
   supported: true;
   ruleId: string;
@@ -254,16 +301,23 @@ export interface CureData {
   eq614: { status: 'missing'; reason: string; model: string };
   postCure: CurePostCure;
   td: CureTd;
+  temperatureRanges: CureTemperatureRanges;
+  shrinkage: CureShrinkage;
   models: { tg0: string; tgInf: string; eq614: string; postCure: string };
-  notes: { tgInf: string; kUnit: string; mCrl: string; lambda: string; fullCure: string; maxConversion: string; td: string };
+  notes: { tgInf: string; kUnit: string; mCrl: string; lambda: string; fullCure: string; maxConversion: string; td: string; temperature: string; shrinkage: string };
 }
-export type CureOutcome = { supported: false; reason: string } | CureData;
+export type CureOutcome = { supported: false; reason: string; temperatureRanges: CureTemperatureRanges | null } | CureData;
 
 /** 固化預測（body 由 cureBody 產生）：第 1 層不支援的體系回 supported: false 並附同一個原因（不是呼叫錯誤） */
 export async function computeCureViaEngine(body: Record<string, unknown>): Promise<EngineOutcome<CureOutcome>> {
   const reply = await post('/crosslink/cure', body);
   if (!reply.ok) return { ok: false, error: reply.error };
-  if (reply.body.supported === false) return { ok: true, value: { supported: false, reason: String(reply.body.reason ?? '') } };
+  if (reply.body.supported === false) {
+    return {
+      ok: true,
+      value: { supported: false, reason: String(reply.body.reason ?? ''), temperatureRanges: (reply.body.temperatureRanges as CureTemperatureRanges | undefined) ?? null },
+    };
+  }
   return { ok: true, value: reply.body as unknown as CureData };
 }
 

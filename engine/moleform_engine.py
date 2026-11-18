@@ -1194,7 +1194,8 @@ def handle_crosslink_prepare(request: object) -> tuple[int, dict]:
 def handle_crosslink_cure(request: object) -> tuple[int, dict]:
     """交聯第 2 層：固化預測（任務 P7-3；PLAN 7.4、7.5、7.7）。Tg,0（未交聯 Tg 估計）、Tg∞（式 6.13，兩個書中 K 值各算一次，輸出範圍）、
     式 6.14 對照（取不到 x_crl 時回報原因）、固化後 Tg 表、完全固化最低溫度、指定硬化溫度下的最大轉化率、Tg∞ 高於成分 Td,1/2 的警示。
-    請求 {"result": <crosslink/analyze 的回應>, "solid": {"unit", "components": [{id, name, category, canonicalSmiles, amount, polymer?, volatileFlag?, isResin?}]},
+    任務 P7-4 起加入 temperatureRanges（7.2：第 0 層命中規則的文獻溫度範圍，只顯示規則表的值，支援與否都列）與 shrinkage（7.6：固化收縮表，缺值反應列出、環氧開環沿用標「詮釋」）。
+    請求 {"result": <crosslink/analyze 的回應>, "solid": {"unit", "components": [{id, name, category, canonicalSmiles, amount, polymer?, volatileFlag?, isResin?, density?（g/cm³，選用，只供固化收縮的混合密度；介面不送）}]},
     "wtPct": {id: 數字|null}|null, "mn": {id: 數字|null}, "cureTempC"?: 硬化溫度（°C）, "conversions"?: [0–1]（預設 0.5、0.8、0.9、1.0）}。
     200：第 1 層不支援的體系 supported = false 並附同一個原因（不是 HTTP 錯誤）；支援時各項分別為 predicted 或 missing（附原因）。格式不合：400。"""
     if not isinstance(request, dict) or not isinstance(request.get("result"), dict):
@@ -1216,6 +1217,8 @@ def handle_crosslink_cure(request: object) -> tuple[int, dict]:
             problem = _check_spec(c["polymer"])
             if problem is not None:
                 return 400, {"ok": False, "errors": [problem]}
+        if c.get("density") is not None and not (_is_number(c["density"]) and c["density"] > 0):
+            return 400, {"ok": False, "errors": ["density（g/cm³，選用）必須是大於 0 的有限數字"]}
     ids = {c["id"] for c in solid["components"]}
     if len(ids) != len(solid["components"]):
         return 400, {"ok": False, "errors": ["solid.components 的 id 不可重複"]}
@@ -1245,7 +1248,7 @@ def handle_crosslink_cure(request: object) -> tuple[int, dict]:
     if not _json_safe(out):
         return 400, {"ok": False, "errors": ["結果不是有限數字"]}
     if not out["supported"]:
-        return 200, {"ok": True, "supported": False, "reason": out["reason"]}
+        return 200, {"ok": True, "supported": False, "reason": out["reason"], "temperatureRanges": out["temperatureRanges"]}
     tg0, m_crl, tg_inf = out["tg0"], out["mCrl"], out["tgInf"]
     quantities = {
         "tg0": _q(tg0.get("tgK"), TEMPERATURE_UNIT, out["models"]["tg0"]),
