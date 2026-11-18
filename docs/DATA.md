@@ -1,6 +1,6 @@
 # 資料表說明（DATA）
 
-MoleForm 的化學資料放在 `src/data/` 的四個 CSV。**目前 `functional_groups.csv` 有 28 列、`reaction_rules.csv` 有 39 列**（任務 016 的 `hydroxyl.phenolic`、`ether.epoxide`、`epoxy+phenol`；任務 P7-1A 的反應規則 A 批 11 個官能基與 13 條規則，環氧與酚醛體系；任務 P7-1B 的 B 批 15 個官能基與 25 條規則，縮合與加成體系；D65，新列皆 `pending`，命中列表見 `docs/verification/phase7-反應規則A-命中列表.md`、`phase7-反應規則B-命中列表.md`）；其餘表只有標題列（任務 009、016）；資料由使用者提供的書籍、論文或成熟套件的內建值轉錄（AGENTS.md 鐵則 3、DECISIONS D18），不得憑記憶填寫。
+MoleForm 的化學資料放在 `src/data/` 的四個 CSV。**目前 `functional_groups.csv` 有 39 列、`reaction_rules.csv` 有 55 列**（任務 016 的 `hydroxyl.phenolic`、`ether.epoxide`、`epoxy+phenol`；任務 P7-1A 的反應規則 A 批 11 個官能基與 13 條規則，環氧與酚醛體系；任務 P7-1B 的 B 批 15 個官能基與 25 條規則，縮合與加成體系；任務 P7-1C 的 C 批 9 個官能基與 12 條規則，自由基體系；任務 P7-2 的 D 批 2 個官能基與 4 條規則（馬來醯亞胺自聚、ene 後續共聚、苯并㗁嗪＋環氧、肟封端異氰酸酯解封端），並依 D67 由公開文獻補入部分規則的 `temp_min_c`／`temp_max_c` 與 `bond_volume_change`；D65、D67，新列皆 `pending`，命中列表見 `docs/verification/phase7-反應規則A-命中列表.md`、`B`、`C`、`D`（D 列表末尾有本卡填入數值的總表））；其餘表只有標題列（任務 009、016）；資料由使用者提供的書籍、論文或成熟套件的內建值轉錄（AGENTS.md 鐵則 3、DECISIONS D18），不得憑記憶填寫。
 
 | 檔案 | 用途 | 每一列是 |
 |---|---|---|
@@ -53,7 +53,7 @@ MoleForm 的化學資料放在 `src/data/` 的四個 CSV。**目前 `functional_
 | `temp_min_c`、`temp_max_c` | 文獻典型溫度範圍（°C）；可空，空時兩者都要空；`temp_min_c ≤ temp_max_c` |
 | `functionality_a`、`functionality_b` | 官能度（正整數）；`group_b` 空時 `functionality_b` 也要空 |
 | `byproduct` | 副產物 SMILES（縮合型）；無則空 |
-| `bond_volume_change` | 單位鍵體積變化；可空 |
+| `bond_volume_change` | 單位鍵體積變化；可空。D67（P7-2）填入的值是文獻原文的「收縮量」，正值＝體積減少，單位欄寫明（例如 `cm3/mol（每莫耳反應 C=C 的收縮量…）`），不做換算 |
 | `bond_volume_change_unit` | 上欄的單位；上欄有值時必填 |
 | `should_react` | 應反應的測試分子組合，格式 `SMILES_A+SMILES_B`，`\|` 分隔；至少 1 個 |
 | `should_not_react` | 不應反應的組合，同上；至少 1 個 |

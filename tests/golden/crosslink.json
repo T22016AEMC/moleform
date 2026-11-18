@@ -10726,9 +10726,38 @@
     0,
     0
    ]
+  },
+  {
+   "id": "queryAtomMaps/[c:4]-[CH1:1]=[CH1:2]-[CX4:3]",
+   "input": {
+    "kind": "queryAtomMaps",
+    "smarts": "[c:4]-[CH1:1]=[CH1:2]-[CX4:3]"
+   },
+   "output": [
+    4,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "id": "queryAtomMaps/[#6:1]-[NX3H1:2]-[CX3:3](=[O:4])-[OX2:5]-[NX2:6]=[C:7]",
+   "input": {
+    "kind": "queryAtomMaps",
+    "smarts": "[#6:1]-[NX3H1:2]-[CX3:3](=[O:4])-[OX2:5]-[NX2:6]=[C:7]"
+   },
+   "output": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+   ]
   }
  ],
- "commit": "ff1cacb5860bcc505c29147b48fa16cf8103b2b1+dirty-src",
+ "commit": "d2e8e05ef06fae599773e96734876881ce9374a3+dirty-src",
  "module": "crosslink",
  "rdkitjs": "2026.09.1",
  "tolerance": {

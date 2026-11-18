@@ -77,8 +77,8 @@ def test_all_batch_c_rows_are_pending_and_counted() -> None:
     new_rules = [r for r in crosslink.load_reaction_rules() if r["id"] in {c[0] for c in CASES}]
     assert len(new_groups) == 9 and len(new_rules) == 12
     assert all(r["review_status"] == "pending" for r in [*new_groups, *new_rules])
-    # 數值欄全留空（本機文獻找不到可引用的範圍或單位鍵體積變化）
-    assert all(r["temp_min_c"] is None and r["temp_max_c"] is None and r["bond_volume_change"] is None for r in new_rules)
+    # 溫度欄全留空（P7-1C 本機文獻只有單一程序）；P7-2（D67）起部分規則已補單位鍵體積變化（出處與適用條件見 test_p7_2_rules.py），不再要求全空
+    assert all(r["temp_min_c"] is None and r["temp_max_c"] is None for r in new_rules)
 
 
 # ---- 官能基區分：丙烯酸酯／甲基丙烯酸酯／丙烯醯胺／苯乙烯／乙烯基醚／烯丙基／降冰片烯／硫醇與硫醚 ----

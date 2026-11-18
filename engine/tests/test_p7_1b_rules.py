@@ -71,14 +71,18 @@ def test_every_batch_b_rule_has_a_case() -> None:
     assert b_ids == new_rules
 
 
-# P7-1C（C 批）新增的規則與官能基（test_p7_1c_rules.py）；本檔只管 A、B 批，計數時排除
+# P7-1C（C 批）與 P7-2（D 批，test_p7_2_rules.py）新增的規則與官能基；本檔只管 A、B 批，計數時排除
 _C_RULE_IDS = (
     "acrylate+initiator.thermal", "acrylate+initiator.photo", "methacrylate+initiator.thermal", "methacrylate+initiator.photo",
     "acrylamide+initiator.thermal", "acrylamide+initiator.photo", "styrene+initiator.thermal", "styrene+initiator.photo",
     "thiol+alkene.allyl", "thiol+vinyl.ether", "thiol+norbornene", "thiol+acrylate",
+    # P7-2
+    "maleimide.homopolymerization", "maleimide+propenyl.copolymerization", "benzoxazine+epoxy", "isocyanate.deblocking.oxime",
 )
 _C_GROUP_IDS = (
     "acrylate", "methacrylate", "acrylamide", "styrene", "vinyl.ether", "norbornene", "thiol", "initiator.thermal", "initiator.photo",
+    # P7-2
+    "alkene.propenyl.aryl", "isocyanate.blocked.oxime",
 )
 
 _A_RULE_IDS = (

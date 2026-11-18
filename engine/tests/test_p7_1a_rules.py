@@ -55,10 +55,10 @@ def test_cationic_rules_do_not_touch_plain_epoxy_formulations() -> None:
 
 def test_all_new_rows_are_pending() -> None:
     # P7-1B 起資料表含 B 批的 15 個官能基與 25 條規則（B 批另有 test_p7_1b_rules.py）、P7-1C 起含 C 批的 9 個官能基與 12 條規則
-    # （test_p7_1c_rules.py）；這裡計 A + B + C 全部新列
+    # （test_p7_1c_rules.py）、P7-2 起含 D 批的 2 個官能基與 4 條規則（test_p7_2_rules.py）；這裡計 A + B + C + D 全部新列
     new_groups = [g for g in crosslink.load_functional_groups() if g["id"] not in ("hydroxyl.phenolic", "ether.epoxide")]
     new_rules = [r for r in crosslink.load_reaction_rules() if r["id"] != "epoxy+phenol"]
-    assert len(new_groups) == 11 + 15 + 9 and len(new_rules) == 13 + 25 + 12
+    assert len(new_groups) == 11 + 15 + 9 + 2 and len(new_rules) == 13 + 25 + 12 + 4
     assert all(r["review_status"] == "pending" for r in [*new_groups, *new_rules])
 
 
