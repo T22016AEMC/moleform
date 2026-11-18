@@ -223,6 +223,11 @@ def formulation_density(solid: Sequence[Mapping[str, Any]], wt_pct: Mapping[str,
             item["density"] = c["density"]
         elif not _is_copolymer(c):
             item["smiles"] = c["canonicalSmiles"]
+        # 使用者輸入的密度（P7-4a）：只在預測密度取不到時使用
+        if c.get("userDensity") is not None:
+            item["userDensity"] = c["userDensity"]
+            if c.get("userDensitySource") is not None:
+                item["userDensitySource"] = c["userDensitySource"]
         items.append(item)
     try:
         r = compute_mixture_density(items)
@@ -236,7 +241,7 @@ def formulation_density(solid: Sequence[Mapping[str, Any]], wt_pct: Mapping[str,
             reason = "共聚物以第一種單元代表會失真，不計算密度" if _is_copolymer(comp) and comp.get("density") is None else m["reason"]
             parts.append(f"{m['name']}（{reason}）")
         return {"status": "missing", "reason": "成分缺密度：" + "、".join(parts) + "；不猜值，整項不計算"}
-    return {"status": "predicted", "density": r["density"], "model": r["model"], "note": r["note"]}
+    return {"status": "predicted", "density": r["density"], "model": r["model"], "note": r["note"], "components": r["components"]}
 
 
 def compute_shrinkage(
@@ -264,7 +269,7 @@ def compute_shrinkage(
     if dens["status"] != "predicted":
         return {**out, "status": "missing", "reason": dens["reason"]}
     rho = dens["density"]
-    out["density"] = {"gPerCm3": rho, "model": dens["model"], "note": dens["note"]}
+    out["density"] = {"gPerCm3": rho, "model": dens["model"], "note": dens["note"], "components": dens["components"]}
 
     table: list[dict[str, Any]] = []
     for x in conversions:

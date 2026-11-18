@@ -24,6 +24,7 @@ import {
   SOLID_UNIT_OPTIONS,
   toFormulation,
   UNIT_SUFFIX,
+  densityProblem,
   type EditorState,
   type Row,
 } from '../formulation/model';
@@ -265,6 +266,31 @@ function AreaCard({ area, state, setState, issues, units, onAdd, onOpenDetail, d
                         <input type="checkbox" checked={!!row.volatileFlag} onChange={(e) => patchRow(row.id, { volatileFlag: e.target.checked })} />
                         會揮發／分解
                       </label>
+                    </div>
+                  )}
+                  {isSolid && (
+                    <div className="comp-fields density-fields">
+                      <div className="amount-input">
+                        <input
+                          type="text"
+                          inputMode="decimal"
+                          aria-label={`${row.name} 密度（選填）`}
+                          value={row.densityText ?? ''}
+                          placeholder="密度（選填）"
+                          aria-invalid={densityProblem(row.densityText) !== null}
+                          onChange={(e) => patchRow(row.id, { densityText: e.target.value })}
+                        />
+                        <span className="amount-unit">g/cm³</span>
+                      </div>
+                      <input
+                        type="text"
+                        aria-label={`${row.name} 密度來源（選填）`}
+                        value={row.densitySource ?? ''}
+                        placeholder="密度來源（文獻或供應商）"
+                        onChange={(e) => patchRow(row.id, { densitySource: e.target.value })}
+                      />
+                      <small className="auto-note">請填文獻或供應商資料的密度（g/cm³）；用於混合密度與固化收縮</small>
+                      {densityProblem(row.densityText) && <p className="form-error" role="alert">{densityProblem(row.densityText)}</p>}
                     </div>
                   )}
                   {unitProblem && <p className="form-error" role="alert">{unitProblem}</p>}

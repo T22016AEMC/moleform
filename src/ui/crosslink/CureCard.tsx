@@ -207,6 +207,12 @@ function ShrinkageSection({ data }: { data: CureShrinkage }) {
             </table>
           </div>
           <p className="crosslink-notes">混合密度 ρ = {round(data.density.gPerCm3, 4)} g/cm³（{data.density.model}）。</p>
+          {(data.density.components ?? []).filter((c) => c.densitySource === 'user').map((c) => (
+            <p className="crosslink-notes" key={c.name}>
+              {c.name} 的密度 {c.density} g/cm³：{c.densitySourceLabel ?? '使用者輸入'}
+              {c.userDensitySource ? `；來源：${c.userDensitySource}` : '；未填來源'}
+            </p>
+          ))}
         </>
       )}
       <p className="crosslink-notes">{data.model}。{data.note}</p>

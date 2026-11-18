@@ -1,6 +1,6 @@
 // 物性面板的輸入轉換（任務 I01）：介面狀態（配方、成分、formulation/compute 的換算結果）→ 引擎請求本文。
 // 只搬運資料，不計算任何物性。質量分率、Mn、每分子質量由介面端以現有 TypeScript 的 computeFormulation 換算後傳入（D04、039a）。
-import type { Component, Formulation, FormulationOutcome } from '../../core/formulation/types';
+import { isValidDensity, type Component, type Formulation, type FormulationOutcome } from '../../core/formulation/types';
 
 export interface EngineRequest {
   /** 引擎端點（桌面橋接的白名單內） */
@@ -10,7 +10,13 @@ export interface EngineRequest {
 
 const CATALYST = 'Catalyst/Initiator';
 
-export const isPolymerSmiles = (smiles: string) => smiles.includes('*');
+/** 使用者輸入的密度（P7-4a）：引擎只在預測密度取不到時使用，並標「使用者輸入」；無效值不送 */
+export function userDensityFields(c: Pick<Component, 'density' | 'densitySource'>): Record<string, unknown> {
+  if (!isValidDensity(c.density)) return {};
+  return { userDensity: c.density, ...(c.densitySource && c.densitySource.trim() !== '' ? { userDensitySource: c.densitySource } : {}) };
+}
+
+export const isPolymerSmiles =(smiles: string) => smiles.includes('*');
 
 /** 共聚物（兩種以上單元）：單元性質不能用第一種單元代表 */
 export function isCopolymer(c: Pick<Component, 'polymer'>): boolean {
@@ -132,6 +138,7 @@ export function formulationRequests(
     w: (pct as number) / total,
     // 共聚物以第一種單元代表會失真：不給 smiles，讓引擎回報缺密度／缺介電
     ...(isCopolymer(c) ? {} : { smiles: c.canonicalSmiles }),
+    ...userDensityFields(c),
   }));
   return {
     tgMixing,

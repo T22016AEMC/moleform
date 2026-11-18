@@ -45,7 +45,17 @@ export interface Component<Category extends string = string> {
    * 聚合物的 mol% 依 Formulation.polymerMolBasis 換算（D46）：整條鏈以 Mn 計，重複單元以 M_unit 計。
    */
   polymer?: PolymerSpec;
+  /**
+   * 使用者輸入的密度（g/cm³，選填；P7-4a）：文獻或供應商資料，不是實測 DSC 值（D02），結果中標「使用者輸入」。
+   * 聚合物有預測密度時沿用預測；小分子或預測缺值時才使用。舊檔沒有這兩個欄位，視為空。
+   */
+  density?: number;
+  /** 密度來源（文字，選填） */
+  densitySource?: string;
 }
+
+/** 密度必須是正的有限數 */
+export const isValidDensity = (value: unknown): value is number => typeof value === 'number' && Number.isFinite(value) && value > 0;
 
 export interface Area<Unit extends string, Category extends string> {
   /** 每一區使用同一種輸入單位（D36） */

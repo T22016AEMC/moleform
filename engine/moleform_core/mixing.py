@@ -72,23 +72,38 @@ def _check_sum(values: Sequence[float], label: str) -> None:
         raise ValueError(f"{label}合計必須為 1（目前 {total}）")
 
 
-def _density_of(c: Mapping[str, Any], label: str) -> tuple[float | None, str | None]:
-    """成分密度（g/cm³）：呼叫端傳入的 density 優先，否則由 smiles 呼叫 vm；回傳 (值, 缺值原因)。"""
+USER_DENSITY_LABEL = "使用者輸入（文獻或供應商資料，非預測）"
+
+
+def _density_resolve(c: Mapping[str, Any], label: str) -> tuple[float | None, str | None, str | None]:
+    """成分密度（g/cm³）：回傳 (值, 缺值原因, 來源)。來源為 "given"（呼叫端的 density）、"predicted"（莫耳體積表）、"user"（userDensity）。
+    順序：density 優先；其次由 smiles 的預測密度（聚合物，不改現有行為）；預測取不到時才用 userDensity（使用者輸入的文獻／供應商值）。"""
     if c.get("density") is not None:
-        return _positive(c["density"], f"{label}的 density"), None
+        return _positive(c["density"], f"{label}的 density"), None, "given"
+    user = _positive(c["userDensity"], f"{label}的 userDensity") if c.get("userDensity") is not None else None
     smiles = c.get("smiles")
     if not isinstance(smiles, str) or smiles.strip() == "":
-        return None, "沒有提供密度（density 或 smiles）"
+        if user is not None:
+            return user, None, "user"
+        return None, "沒有提供密度（density 或 smiles）", None
     r = _vm.compute_molar_volume_density(smiles)
     if r["status"] == "ok" and r["amorphous"] is not None:
-        return r["amorphous"]["density"], None
+        return r["amorphous"]["density"], None, "predicted"
+    if user is not None:
+        return user, None, "user"
     if r["status"] == "unsupported":
-        return None, "小分子液體密度（Fedors）尚未收錄，請自行提供 density"
+        return None, "小分子液體密度（Fedors）尚未收錄，請自行提供 density", None
     if r["status"] == "missing":
-        return None, "莫耳體積表缺基團，算不出密度"
+        return None, "莫耳體積表缺基團，算不出密度", None
     if r["status"] == "ok":
-        return None, "單元質量無法計算，算不出密度"
+        return None, "單元質量無法計算，算不出密度", None
     raise ValueError(f"{label}：{r['message']}")
+
+
+def _density_of(c: Mapping[str, Any], label: str) -> tuple[float | None, str | None]:
+    """成分密度（g/cm³）；回傳 (值, 缺值原因)。"""
+    rho, why, _src = _density_resolve(c, label)
+    return rho, why
 
 
 def _epsilon_of(c: Mapping[str, Any], label: str) -> tuple[float | None, str | None]:
@@ -120,8 +135,16 @@ def compute_mixture_density(items: object) -> dict[str, Any]:
     missing: list[dict[str, Any]] = []
     for i, c in enumerate(comps):
         name = _name(c, i)
-        rho, why = _density_of(c, name)
-        rows.append({"name": name, "w": weights[i], "density": rho})
+        rho, why, src = _density_resolve(c, name)
+        row: dict[str, Any] = {"name": name, "w": weights[i], "density": rho}
+        if src == "user":
+            row["densitySource"] = "user"
+            row["densitySourceLabel"] = USER_DENSITY_LABEL
+            if isinstance(c.get("userDensitySource"), str) and c["userDensitySource"].strip() != "":
+                row["userDensitySource"] = c["userDensitySource"]
+        elif src is not None:
+            row["densitySource"] = src
+        rows.append(row)
         if rho is None:
             missing.append({"index": i, "name": name, "field": "density", "reason": why})
     if missing:

@@ -1219,6 +1219,10 @@ def handle_crosslink_cure(request: object) -> tuple[int, dict]:
                 return 400, {"ok": False, "errors": [problem]}
         if c.get("density") is not None and not (_is_number(c["density"]) and c["density"] > 0):
             return 400, {"ok": False, "errors": ["density（g/cm³，選用）必須是大於 0 的有限數字"]}
+        if c.get("userDensity") is not None and not (_is_number(c["userDensity"]) and c["userDensity"] > 0):
+            return 400, {"ok": False, "errors": ["userDensity（使用者輸入的密度，g/cm³，選用）必須是大於 0 的有限數字"]}
+        if c.get("userDensitySource") is not None and not (isinstance(c["userDensitySource"], str) and len(c["userDensitySource"]) <= 500):
+            return 400, {"ok": False, "errors": ["userDensitySource（密度來源）必須是不超過 500 字的文字"]}
     ids = {c["id"] for c in solid["components"]}
     if len(ids) != len(solid["components"]):
         return 400, {"ok": False, "errors": ["solid.components 的 id 不可重複"]}

@@ -2,11 +2,13 @@
 import { newId } from '../../core/library/library';
 import type { PolymerSpec } from '../../core/polymer/types';
 import { editFromSpec, specFromEdit, type PolymerEdit } from '../polymer/model';
-import type { Component, Formulation, LiquidCategory, LiquidUnit, PolymerMolBasis, SolidCategory, SolidUnit, TargetBasis } from '../../core/formulation/types';
+import { isValidDensity, type Component, type Formulation, type LiquidCategory, LiquidUnit, PolymerMolBasis, SolidCategory, SolidUnit, TargetBasis } from '../../core/formulation/types';
 
 /** amountTouched：使用者輸入過或離開過用量欄位（只在畫面使用，不存進配方）；在那之前空白用量不顯示錯誤 */
-export type Row = Omit<Component, 'amount' | 'polymer'> & {
+export type Row = Omit<Component, 'amount' | 'polymer' | 'density'> & {
   amountText: string;
+  /** 使用者輸入的密度（g/cm³）原始文字；空白＝沒有填（P7-4a） */
+  densityText?: string;
   amountTouched?: boolean;
   /** 聚合物的 Mw／Mn／DP 與 PDI 輸入（含 `*` 的成分才會用到）；存檔時轉成 Component.polymer */
   polymerEdit?: PolymerEdit;
@@ -68,10 +70,24 @@ export const hasVolatileRow = (state: Pick<EditorState, 'solidRows'>) => state.s
 export const targetActive = (state: Pick<EditorState, 'targetText'>) => state.targetText.trim() !== '';
 
 function toComponent(row: Row, blankAmount?: number): Component {
-  const { amountText, amountTouched: _touched, polymerEdit, ...rest } = row;
+  const { amountText, amountTouched: _touched, polymerEdit, densityText, densitySource, ...rest } = row;
   const polymer = polymerEdit && rest.canonicalSmiles.includes('*') ? specFromEdit(polymerEdit, rest.canonicalSmiles) : null;
   const amount = blankAmount !== undefined && amountText.trim() === '' ? blankAmount : parseNumberText(amountText);
-  return { ...rest, amount, ...(polymer ? { polymer } : {}) };
+  const density = parseNumberText(densityText ?? '');
+  return {
+    ...rest,
+    amount,
+    ...(polymer ? { polymer } : {}),
+    // 無效的密度不寫入（畫面以 densityProblem 顯示錯誤），避免把非正數送進計算或存檔
+    ...(isValidDensity(density) ? { density } : {}),
+    ...(densitySource && densitySource.trim() !== '' ? { densitySource } : {}),
+  };
+}
+
+/** 密度欄位的錯誤說明；空白或有效回傳 null */
+export function densityProblem(text: string | undefined): string | null {
+  if (text === undefined || text.trim() === '') return null;
+  return isValidDensity(parseNumberText(text)) ? null : '密度必須是大於 0 的數字（g/cm³）';
 }
 
 export function toFormulation(state: EditorState): Formulation {
@@ -96,8 +112,8 @@ export function toFormulation(state: EditorState): Formulation {
 const textOf = (value: number | undefined) => (value === undefined || Number.isNaN(value) ? '' : String(value));
 
 function toRow(component: Component): Row {
-  const { amount, polymer, ...rest } = component;
-  return { ...rest, amountText: textOf(amount), ...(polymer ? { polymerEdit: editFromSpec(polymer) } : {}) };
+  const { amount, polymer, density, ...rest } = component;
+  return { ...rest, amountText: textOf(amount), ...(density !== undefined ? { densityText: textOf(density) } : {}), ...(polymer ? { polymerEdit: editFromSpec(polymer) } : {}) };
 }
 
 export function fromFormulation(f: Formulation): EditorState {

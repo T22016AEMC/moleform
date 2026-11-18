@@ -9,6 +9,7 @@ import type { ScanOption, ScanResult, ScanSettings } from '../../core/crosslink/
 import type { Formulation, FormulationOutcome } from '../../core/formulation/types';
 import { averageWeightOf, drawCrosslinkInWorker } from '../../worker/client';
 import { getBridge } from './engineClient';
+import { userDensityFields } from './propertyRequests';
 
 export type EngineOutcome<T> = { ok: true; value: T } | { ok: false; error: string };
 
@@ -125,6 +126,7 @@ export function cureBody(
         ...(c.isResin ? { isResin: true } : {}),
         ...(c.polymer ? { polymer: c.polymer } : {}),
         ...(c.volatileFlag ? { volatileFlag: true } : {}),
+        ...userDensityFields(c),
       })),
     },
     wtPct: base.wtPct,
@@ -283,13 +285,22 @@ export interface CureShrinkRow {
   interpretedPct: number;
   byReaction: { ruleId: string; kind: 'direct' | 'interpreted'; pct: number; bondsMolPerKg: number }[];
 }
+export interface CureDensityComponent {
+  name: string;
+  w: number;
+  density: number | null;
+  /** given＝呼叫端給的值；predicted＝莫耳體積表預測；user＝使用者輸入（P7-4a） */
+  densitySource?: 'given' | 'predicted' | 'user';
+  densitySourceLabel?: string;
+  userDensitySource?: string;
+}
 export type CureShrinkage = {
   model: string;
   note: string;
   reactions: CureShrinkReaction[];
   excluded: { ruleId: string; name: string; reason: string }[];
 } & (
-  | { status: 'predicted'; density: { gPerCm3: number; model: string; note: string }; table: CureShrinkRow[] }
+  | { status: 'predicted'; density: { gPerCm3: number; model: string; note: string; components?: CureDensityComponent[] }; table: CureShrinkRow[] }
   | { status: 'missing'; reason: string }
 );
 export interface CureData {

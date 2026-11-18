@@ -1,6 +1,6 @@
 // 配方的序列化與讀回（任務 013；任務 014 的存檔會用到）。含 schemaVersion，不認得的版本拒絕讀取。
 import { parsePolymerSpec } from '../polymer/convert';
-import { FORMULATION_SCHEMA_VERSION, type Component, type Formulation } from './types';
+import { FORMULATION_SCHEMA_VERSION, isValidDensity, type Component, type Formulation } from './types';
 
 /** NaN 無法存成 JSON（會變成 null），讀回時再還原為 NaN，讓計算時指出「數值無效」 */
 export function serializeFormulation(formulation: Formulation): string {
@@ -24,6 +24,12 @@ function parseComponent(value: unknown, where: string): Component | string {
   if (typeof volatileFlag === 'boolean') component.volatileFlag = volatileFlag;
   if (typeof compoundId === 'string') component.compoundId = compoundId;
   if (typeof molfile === 'string') component.molfile = molfile;
+  // 密度與來源（P7-4a）：選填；舊檔沒有，視為空。密度必須是正的有限數，否則拒絕讀取
+  if (value.density != null) {
+    if (!isValidDensity(value.density)) return `${where}的密度必須是大於 0 的有限數字`;
+    component.density = value.density;
+  }
+  if (typeof value.densitySource === 'string' && value.densitySource !== '') component.densitySource = value.densitySource;
   if (value.polymer != null) {
     const parsed = parsePolymerSpec(value.polymer);
     if (!parsed.ok) return `${where}的${parsed.reason}`;
