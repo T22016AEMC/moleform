@@ -15,6 +15,7 @@ import { confidenceLabel } from '../../core/result';
 import { analyzeCrosslinkViaEngine } from '../engine/crosslinkEngine';
 import { UnifiedNote } from '../components/UnifiedNote';
 import { ResultBlock } from '../workbench/ResultBlock';
+import { CureSection } from './CureCard';
 import { Layer1Section } from './Layer1Cards';
 import { setLatestCrosslinkResult } from './latestCrosslink';
 import './crosslink.css';
@@ -100,6 +101,7 @@ export function CrosslinkPage({ formulation }: { formulation: Formulation | null
         {state.kind === 'done' && <Result result={state.result} svgs={state.svgs} />}
       </ResultBlock>
       {state.kind === 'done' && <Layer1Section result={state.result} formulation={formulation} />}
+      {state.kind === 'done' && <CureSection result={state.result} formulation={formulation} />}
     </div>
   );
 }

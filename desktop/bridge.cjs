@@ -27,6 +27,8 @@ const ALLOWED_PATHS = Object.freeze([
   '/crosslink/prepare',
   '/crosslink/layer1',
   '/crosslink/layer1/scan',
+  // P7-3：固化預測（Tg∞、固化後 Tg、Td 警示）
+  '/crosslink/cure',
 ]);
 
 const LOOPBACK_HOST = '127.0.0.1';

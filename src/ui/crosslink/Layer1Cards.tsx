@@ -38,20 +38,20 @@ import { computeLayer1ViaEngine, prepareBody, prepareLayer1ViaEngine, scanLayer1
 
 const UNIT_LABEL: Record<string, string> = { g: 'g', parts: '重量份', wt: 'wt%', mol: 'mol%', phr: 'phr' };
 
-const round = (v: number, digits = 4) => Number(v.toPrecision(digits));
+export const round = (v: number, digits = 4) => Number(v.toPrecision(digits));
 
-function calc(value: number | null, unit: string, modelName: string, confidence: Confidence, notApplicable?: string): CalcResult {
+export function calc(value: number | null, unit: string, modelName: string, confidence: Confidence, notApplicable?: string): CalcResult {
   return { value: value === null ? null : round(value), unit, modelName, confidence, sources: [], ...(notApplicable ? { notApplicable } : {}) };
 }
 
 /** 引擎呼叫的狀態：計算中、失敗（附原因）、完成 */
-type Remote<T> = { kind: 'working' } | { kind: 'error'; message: string } | { kind: 'done'; value: T };
+export type Remote<T> = { kind: 'working' } | { kind: 'error'; message: string } | { kind: 'done'; value: T };
 
 /** 輸入連續改變（打字）時，等這麼久沒有新輸入才呼叫引擎 */
 const ENGINE_DEBOUNCE_MS = 200;
 
 /** 引擎請求的共用流程：key 不變不重算；重算期間保留上一次的結果（避免畫面閃爍）。key 為 null 表示不需要請求 */
-function useEngineCall<T>(key: string | null, run: () => Promise<{ ok: true; value: T } | { ok: false; error: string }>): Remote<T> | null {
+export function useEngineCall<T>(key: string | null, run: () => Promise<{ ok: true; value: T } | { ok: false; error: string }>): Remote<T> | null {
   const [state, setState] = useState<Remote<T> | null>(null);
   useEffect(() => {
     if (key === null) {
@@ -92,7 +92,7 @@ function usePrepared(result: CrosslinkResult, formulation: Formulation | null): 
   return useEngineCall(key, () => prepareLayer1ViaEngine(body as Record<string, unknown>));
 }
 
-function parseNumber(text: string): number {
+export function parseNumber(text: string): number {
   const t = text.trim();
   return t === '' ? Number.NaN : Number(t);
 }

@@ -9,7 +9,7 @@
 - 任務 M01 起新增 POST /vw（van der Waals 體積）、任務 M02 起新增 POST /tg（Tg，Yg 基團貢獻）、任務 M03 起新增 POST /vm
   （莫耳體積與密度）與 POST /cte（熱膨脹係數）；任務 M04 起新增聚合物基礎 POST /polymer/repeat-unit、/polymer/end-groups、
   /polymer/copolymer、/polymer/convert、/polymer/distribution；任務 M05 起新增其餘計算模組 POST /free-volume、/relative-tg、/joback、
-  /tg/mixing、/tg/flory-fit、/dielectric、/tpsa-logp、/crosslink/analyze、/crosslink/prepare、/crosslink/layer1、/crosslink/layer1/scan；
+  /tg/mixing、/tg/flory-fit、/dielectric、/tpsa-logp、/crosslink/analyze、/crosslink/prepare、/crosslink/layer1、/crosslink/layer1/scan；任務 P7-3 起新增 /crosslink/cure（固化預測）；
   除此之外不含任何物性公式。尚未接到介面，TypeScript 仍是預設計算來源。
 - 任務 P6B 起新增 POST /tm（結晶熔點）、/td（半分解溫度）、/moisture（吸濕性）、/modulus（體積模數 K、剪切模數 G、泊松比 ν、楊氏模數 E；任務 P6E 補完）。
 """
@@ -1191,6 +1191,71 @@ def handle_crosslink_prepare(request: object) -> tuple[int, dict]:
     return 200, {"ok": True, "supported": True, **{k: prep[k] for k in ("setup", "ruleId", "solidUnit", "items", "masses")}}
 
 
+def handle_crosslink_cure(request: object) -> tuple[int, dict]:
+    """交聯第 2 層：固化預測（任務 P7-3；PLAN 7.4、7.5、7.7）。Tg,0（未交聯 Tg 估計）、Tg∞（式 6.13，兩個書中 K 值各算一次，輸出範圍）、
+    式 6.14 對照（取不到 x_crl 時回報原因）、固化後 Tg 表、完全固化最低溫度、指定硬化溫度下的最大轉化率、Tg∞ 高於成分 Td,1/2 的警示。
+    請求 {"result": <crosslink/analyze 的回應>, "solid": {"unit", "components": [{id, name, category, canonicalSmiles, amount, polymer?, volatileFlag?, isResin?}]},
+    "wtPct": {id: 數字|null}|null, "mn": {id: 數字|null}, "cureTempC"?: 硬化溫度（°C）, "conversions"?: [0–1]（預設 0.5、0.8、0.9、1.0）}。
+    200：第 1 層不支援的體系 supported = false 並附同一個原因（不是 HTTP 錯誤）；支援時各項分別為 predicted 或 missing（附原因）。格式不合：400。"""
+    if not isinstance(request, dict) or not isinstance(request.get("result"), dict):
+        return 400, {"ok": False, "errors": ["請求需要物件欄位 result（交聯第 0 層的結果）"]}
+    result = request["result"]
+    if not (isinstance(result.get("pairs"), list) and isinstance(result.get("components"), list)):
+        return 400, {"ok": False, "errors": ["result 需要 pairs 與 components 陣列"]}
+    solid = request.get("solid")
+    if not (isinstance(solid, dict) and isinstance(solid.get("unit"), str) and isinstance(solid.get("components"), list) and len(solid["components"]) <= MAX_LIST_ITEMS):
+        return 400, {"ok": False, "errors": [f"solid 需要字串 unit 與 components 陣列（上限 {MAX_LIST_ITEMS} 項）"]}
+    for c in solid["components"]:
+        if not (isinstance(c, dict) and all(isinstance(c.get(k), str) for k in ("id", "name", "category", "canonicalSmiles")) and _is_number(c.get("amount"))):
+            return 400, {"ok": False, "errors": ["solid.components 的每一項需要字串 id、name、category、canonicalSmiles 與數字 amount"]}
+        if len(c["canonicalSmiles"]) > MAX_SMILES_CHARS:
+            return 400, {"ok": False, "errors": [f"canonicalSmiles 太長（上限 {MAX_SMILES_CHARS} 字元）"]}
+        if c.get("polymer") is not None:
+            if not isinstance(c["polymer"], dict):
+                return 400, {"ok": False, "errors": ["polymer 必須是物件"]}
+            problem = _check_spec(c["polymer"])
+            if problem is not None:
+                return 400, {"ok": False, "errors": [problem]}
+    ids = {c["id"] for c in solid["components"]}
+    if len(ids) != len(solid["components"]):
+        return 400, {"ok": False, "errors": ["solid.components 的 id 不可重複"]}
+    wt = request.get("wtPct")
+    if wt is not None:
+        problem = _check_wt_map(wt, "wtPct", ids)
+        if problem is not None:
+            return 400, {"ok": False, "errors": [problem]}
+    mn = request.get("mn", {})
+    problem = _check_wt_map(mn, "mn", ids)
+    if problem is not None:
+        return 400, {"ok": False, "errors": [problem]}
+    temp = request.get("cureTempC")
+    if temp is not None and not (_is_number(temp) and -273.15 < temp <= 2000):
+        return 400, {"ok": False, "errors": ["cureTempC（硬化溫度，°C）必須是高於 −273.15 的有限數字"]}
+    conversions = request.get("conversions")
+    if conversions is not None and not (isinstance(conversions, list) and 0 < len(conversions) <= 20 and all(_is_number(x) and 0 <= x <= 1 for x in conversions)):
+        return 400, {"ok": False, "errors": ["conversions 必須是由 0 到 1 的數字組成的陣列（最多 20 個）"]}
+    mods, err = _import_core("cure_prediction")
+    if err is not None:
+        return err
+    (cp,) = mods
+    try:
+        out = cp.compute_cure_prediction(result, solid, wt, mn, temp, tuple(conversions) if conversions is not None else cp.DEFAULT_CONVERSIONS)
+    except Exception as e:  # noqa: BLE001
+        return _computation_error(e)
+    if not _json_safe(out):
+        return 400, {"ok": False, "errors": ["結果不是有限數字"]}
+    if not out["supported"]:
+        return 200, {"ok": True, "supported": False, "reason": out["reason"]}
+    tg0, m_crl, tg_inf = out["tg0"], out["mCrl"], out["tgInf"]
+    quantities = {
+        "tg0": _q(tg0.get("tgK"), TEMPERATURE_UNIT, out["models"]["tg0"]),
+        "mCrl": _q(m_crl.get("value"), MASS_UNIT, cp.TG_INF_MODEL),
+        "tgInfLow": _q(tg_inf["low"]["tgK"] if tg_inf["status"] == "predicted" else None, TEMPERATURE_UNIT, cp.K_CRL_SOURCES["low"]),
+        "tgInfHigh": _q(tg_inf["high"]["tgK"] if tg_inf["status"] == "predicted" else None, TEMPERATURE_UNIT, cp.K_CRL_SOURCES["high"]),
+    }
+    return 200, {"ok": True, "supported": True, "quantities": quantities, **out}
+
+
 def _mixing_envelope(result: dict, model: str, note: str, quantities: dict) -> tuple[int, dict]:
     """混合端點共用的回應：統一備註＋各端點備註；缺值時 quantities 內各值為 missing。"""
     from moleform_core.tg_mixing import UNIFIED_NOTE
@@ -1291,6 +1356,7 @@ POST_ROUTES = {
     "/crosslink/prepare": handle_crosslink_prepare,
     "/crosslink/layer1": handle_crosslink_layer1,
     "/crosslink/layer1/scan": handle_crosslink_layer1_scan,
+    "/crosslink/cure": handle_crosslink_cure,
     "/demo/quantity": handle_demo_quantity,
     "/vw": handle_vw,
     "/tg": handle_tg,

@@ -100,6 +100,39 @@ export function prepareBody(result: CrosslinkResult, formulation: Formulation, o
   };
 }
 
+/**
+ * 固化預測的請求（P7-3）：與第 1 層輸入整理同一份第 0 層結果與質量百分比，另帶 Solid 區成分的分類、聚合物設定與揮發標記（混合 Tg 與 Td 比較需要）、
+ * 各成分的 Mn（聚合物）或每分子質量（小分子）與硬化溫度（°C，null 表示不算最大轉化率）。引擎自己判斷第 1 層是否支援。
+ */
+export function cureBody(
+  result: CrosslinkResult,
+  formulation: Formulation,
+  outcome: FormulationOutcome | null,
+  mnById: Readonly<Record<string, number | null | undefined>>,
+  cureTempC: number | null,
+): Record<string, unknown> {
+  const base = prepareBody(result, formulation, outcome) as { result: unknown; solid: { unit: string }; wtPct: unknown };
+  return {
+    result: base.result,
+    solid: {
+      unit: base.solid.unit,
+      components: formulation.solid.components.map((c) => ({
+        id: c.id,
+        name: c.name,
+        canonicalSmiles: c.canonicalSmiles,
+        amount: Number.isFinite(c.amount) ? c.amount : 0,
+        category: c.category,
+        ...(c.isResin ? { isResin: true } : {}),
+        ...(c.polymer ? { polymer: c.polymer } : {}),
+        ...(c.volatileFlag ? { volatileFlag: true } : {}),
+      })),
+    },
+    wtPct: base.wtPct,
+    mn: Object.fromEntries(formulation.solid.components.map((c) => [c.id, mnById[c.id] ?? null])),
+    ...(cureTempC !== null ? { cureTempC } : {}),
+  };
+}
+
 // ---------- 呼叫 ----------
 
 export interface CrosslinkAnalysis {
@@ -170,6 +203,68 @@ export async function computeLayer1ViaEngine(setup: Layer1Setup, conversion: num
       stoichiometric: (reply.body.stoichiometric as Layer1Computed['stoichiometric']) ?? null,
     },
   };
+}
+
+// ---------- 固化預測（P7-3） ----------
+
+/** 引擎 `/crosslink/cure` 各項的回應（只列介面用到的欄位）；缺值時 status 為 missing 並附 reason */
+export interface CureTgPoint {
+  tgK: number;
+  tgC: number;
+}
+export interface CureTgInfEnd extends CureTgPoint {
+  kCrl: number;
+  source: string;
+}
+export type CureTg0 = { status: 'predicted'; tgK: number; tgC: number; model: string; messages: string[] } | { status: 'missing'; reason: string; model: string; messages: string[] };
+export type CureMCrl = { status: 'predicted'; value: number; unit: string } | { status: 'missing'; reason: string };
+export type CureTgInf =
+  | { status: 'predicted'; low: CureTgInfEnd; high: CureTgInfEnd; deltaLowK: number; deltaHighK: number }
+  | { status: 'missing'; reason: string };
+export type CurePostCure =
+  | {
+      status: 'predicted';
+      lambda: { low: number; high: number };
+      table: { conversion: number; low: CureTgPoint; high: CureTgPoint }[];
+      minFullCureTemp: { low: CureTgPoint; high: CureTgPoint };
+      maxConversion: { cureTempC: number; cureTempK: number; low: number; high: number } | null;
+    }
+  | { status: 'missing'; reason: string };
+export interface CureTdRow {
+  name: string;
+  status: 'ok' | 'missing' | 'not-applicable';
+  tdK: number | null;
+  tdC: number | null;
+  reason: string | null;
+}
+export interface CureTd {
+  model: string;
+  components: CureTdRow[];
+  lowest: { name: string; tdK: number; tdC: number } | null;
+  notCompared: { name: string; reason: string }[];
+  excluded: { name: string; reason: string }[];
+  warning: { status: 'triggered' | 'clear' | 'cannot-judge'; text: string };
+}
+export interface CureData {
+  supported: true;
+  ruleId: string;
+  tg0: CureTg0;
+  mCrl: CureMCrl;
+  tgInf: CureTgInf;
+  eq614: { status: 'missing'; reason: string; model: string };
+  postCure: CurePostCure;
+  td: CureTd;
+  models: { tg0: string; tgInf: string; eq614: string; postCure: string };
+  notes: { tgInf: string; kUnit: string; mCrl: string; lambda: string; fullCure: string; maxConversion: string; td: string };
+}
+export type CureOutcome = { supported: false; reason: string } | CureData;
+
+/** 固化預測（body 由 cureBody 產生）：第 1 層不支援的體系回 supported: false 並附同一個原因（不是呼叫錯誤） */
+export async function computeCureViaEngine(body: Record<string, unknown>): Promise<EngineOutcome<CureOutcome>> {
+  const reply = await post('/crosslink/cure', body);
+  if (!reply.ok) return { ok: false, error: reply.error };
+  if (reply.body.supported === false) return { ok: true, value: { supported: false, reason: String(reply.body.reason ?? '') } };
+  return { ok: true, value: reply.body as unknown as CureData };
 }
 
 /** 比例掃描（參考趨勢）。conversion 為 0–1；settings 已由呼叫端用 checkScanSettings 檢查過 */
