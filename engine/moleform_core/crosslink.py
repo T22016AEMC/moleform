@@ -51,7 +51,8 @@ PAIR_KIND_LABEL = {
 }
 # P7-1B 修正（使用者 2026-11-17）：這些官能基是催化劑（光酸產生劑不被消耗），含它們的規則配對不用 f 計數判定
 # （否則 f = 1 會被誤判成「具封端」）；配對顯示「催化劑配對（不計當量）」，第 1 層仍由 UNSUPPORTED_RULES 回報不支援。
-CATALYST_GROUPS = frozenset({"pag.onium"})
+# P7-1C（D65 C 批）：自由基起始劑（熱起始劑、光起始劑）同為催化劑，與光酸產生劑用同一種表示法。
+CATALYST_GROUPS = frozenset({"pag.onium", "initiator.thermal", "initiator.photo"})
 
 EPS = 1e-9
 

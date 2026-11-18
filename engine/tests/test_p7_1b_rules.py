@@ -67,9 +67,19 @@ def test_new_rule_hits_and_misses(rule_id: str, hit: tuple[str, ...], miss: tupl
 
 def test_every_batch_b_rule_has_a_case() -> None:
     b_ids = {c[0] for c in CASES}
-    new_rules = {r["id"] for r in crosslink.load_reaction_rules()} - {r for r in _A_RULE_IDS}
+    new_rules = {r["id"] for r in crosslink.load_reaction_rules()} - {r for r in _A_RULE_IDS} - set(_C_RULE_IDS)
     assert b_ids == new_rules
 
+
+# P7-1C（C 批）新增的規則與官能基（test_p7_1c_rules.py）；本檔只管 A、B 批，計數時排除
+_C_RULE_IDS = (
+    "acrylate+initiator.thermal", "acrylate+initiator.photo", "methacrylate+initiator.thermal", "methacrylate+initiator.photo",
+    "acrylamide+initiator.thermal", "acrylamide+initiator.photo", "styrene+initiator.thermal", "styrene+initiator.photo",
+    "thiol+alkene.allyl", "thiol+vinyl.ether", "thiol+norbornene", "thiol+acrylate",
+)
+_C_GROUP_IDS = (
+    "acrylate", "methacrylate", "acrylamide", "styrene", "vinyl.ether", "norbornene", "thiol", "initiator.thermal", "initiator.photo",
+)
 
 _A_RULE_IDS = (
     "epoxy+phenol", "epoxy+amine.primary.aliphatic", "epoxy+amine.primary.aromatic", "epoxy+amine.secondary.aliphatic",
@@ -84,8 +94,8 @@ def test_all_batch_b_rows_are_pending() -> None:
         "amine.secondary.aromatic", "anhydride", "cyanate.ester", "ether.oxetane", "pag.onium", "aromatic.ch.phenol.ortho_para",
         "hydroxymethyl.phenolic", "hmta",
     }
-    new_groups = [g for g in crosslink.load_functional_groups() if g["id"] not in a_groups]
-    new_rules = [r for r in crosslink.load_reaction_rules() if r["id"] not in _A_RULE_IDS]
+    new_groups = [g for g in crosslink.load_functional_groups() if g["id"] not in a_groups and g["id"] not in _C_GROUP_IDS]
+    new_rules = [r for r in crosslink.load_reaction_rules() if r["id"] not in _A_RULE_IDS and r["id"] not in _C_RULE_IDS]
     assert len(new_groups) == 15 and len(new_rules) == 25
     assert all(r["review_status"] == "pending" for r in [*new_groups, *new_rules])
 

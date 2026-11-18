@@ -52076,9 +52076,1785 @@
      6
     ]
    }
+  },
+  {
+   "id": "docs/verification/phase7-反應規則C-命中列表.md#1",
+   "input": {
+    "smiles": "C=CC(=O)OCC(CC)(COC(=O)C=C)COC(=O)C=C"
+   },
+   "output": {
+    "aromatic": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "doubleBondStereo": {
+     "$map": []
+    },
+    "hCount": [
+     2,
+     1,
+     0,
+     0,
+     0,
+     2,
+     0,
+     2,
+     3,
+     2,
+     0,
+     0,
+     0,
+     1,
+     2,
+     2,
+     0,
+     0,
+     0,
+     1,
+     2
+    ],
+    "neighbors": [
+     [
+      1
+     ],
+     [
+      0,
+      2
+     ],
+     [
+      1,
+      3,
+      4
+     ],
+     [
+      2
+     ],
+     [
+      2,
+      5
+     ],
+     [
+      4,
+      6
+     ],
+     [
+      5,
+      7,
+      9,
+      15
+     ],
+     [
+      6,
+      8
+     ],
+     [
+      7
+     ],
+     [
+      6,
+      10
+     ],
+     [
+      9,
+      11
+     ],
+     [
+      10,
+      12,
+      13
+     ],
+     [
+      11
+     ],
+     [
+      11,
+      14
+     ],
+     [
+      13
+     ],
+     [
+      6,
+      16
+     ],
+     [
+      15,
+      17
+     ],
+     [
+      16,
+      18,
+      19
+     ],
+     [
+      17
+     ],
+     [
+      17,
+      20
+     ],
+     [
+      19
+     ]
+    ],
+    "z": [
+     6,
+     6,
+     6,
+     8,
+     8,
+     6,
+     6,
+     6,
+     6,
+     6,
+     8,
+     6,
+     8,
+     6,
+     6,
+     6,
+     8,
+     6,
+     8,
+     6,
+     6
+    ]
+   }
+  },
+  {
+   "id": "docs/verification/phase7-反應規則C-命中列表.md#2",
+   "input": {
+    "smiles": "O=C(c1ccccc1)C1(O)CCCCC1"
+   },
+   "output": {
+    "aromatic": [
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "doubleBondStereo": {
+     "$map": []
+    },
+    "hCount": [
+     0,
+     0,
+     0,
+     1,
+     1,
+     1,
+     1,
+     1,
+     0,
+     1,
+     2,
+     2,
+     2,
+     2,
+     2
+    ],
+    "neighbors": [
+     [
+      1
+     ],
+     [
+      0,
+      2,
+      8
+     ],
+     [
+      1,
+      3,
+      7
+     ],
+     [
+      2,
+      4
+     ],
+     [
+      3,
+      5
+     ],
+     [
+      4,
+      6
+     ],
+     [
+      5,
+      7
+     ],
+     [
+      2,
+      6
+     ],
+     [
+      1,
+      9,
+      10,
+      14
+     ],
+     [
+      8
+     ],
+     [
+      8,
+      11
+     ],
+     [
+      10,
+      12
+     ],
+     [
+      11,
+      13
+     ],
+     [
+      12,
+      14
+     ],
+     [
+      8,
+      13
+     ]
+    ],
+    "z": [
+     8,
+     6,
+     6,
+     6,
+     6,
+     6,
+     6,
+     6,
+     6,
+     8,
+     6,
+     6,
+     6,
+     6,
+     6
+    ]
+   }
+  },
+  {
+   "id": "docs/verification/phase7-反應規則C-命中列表.md#3",
+   "input": {
+    "smiles": "C=CC(=O)OCCCC"
+   },
+   "output": {
+    "aromatic": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "doubleBondStereo": {
+     "$map": []
+    },
+    "hCount": [
+     2,
+     1,
+     0,
+     0,
+     0,
+     2,
+     2,
+     2,
+     3
+    ],
+    "neighbors": [
+     [
+      1
+     ],
+     [
+      0,
+      2
+     ],
+     [
+      1,
+      3,
+      4
+     ],
+     [
+      2
+     ],
+     [
+      2,
+      5
+     ],
+     [
+      4,
+      6
+     ],
+     [
+      5,
+      7
+     ],
+     [
+      6,
+      8
+     ],
+     [
+      7
+     ]
+    ],
+    "z": [
+     6,
+     6,
+     6,
+     8,
+     8,
+     6,
+     6,
+     6,
+     6
+    ]
+   }
+  },
+  {
+   "id": "docs/verification/phase7-反應規則C-命中列表.md#4",
+   "input": {
+    "smiles": "CC(C)(C#N)N=NC(C)(C)C#N"
+   },
+   "output": {
+    "aromatic": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "doubleBondStereo": {
+     "$map": []
+    },
+    "hCount": [
+     3,
+     0,
+     3,
+     0,
+     0,
+     0,
+     0,
+     0,
+     3,
+     3,
+     0,
+     0
+    ],
+    "neighbors": [
+     [
+      1
+     ],
+     [
+      0,
+      2,
+      3,
+      5
+     ],
+     [
+      1
+     ],
+     [
+      1,
+      4
+     ],
+     [
+      3
+     ],
+     [
+      1,
+      6
+     ],
+     [
+      5,
+      7
+     ],
+     [
+      6,
+      8,
+      9,
+      10
+     ],
+     [
+      7
+     ],
+     [
+      7
+     ],
+     [
+      7,
+      11
+     ],
+     [
+      10
+     ]
+    ],
+    "z": [
+     6,
+     6,
+     6,
+     6,
+     7,
+     7,
+     7,
+     6,
+     6,
+     6,
+     6,
+     7
+    ]
+   }
+  },
+  {
+   "id": "docs/verification/phase7-反應規則C-命中列表.md#5",
+   "input": {
+    "smiles": "CC(=C)C(=O)OC"
+   },
+   "output": {
+    "aromatic": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "doubleBondStereo": {
+     "$map": []
+    },
+    "hCount": [
+     3,
+     0,
+     2,
+     0,
+     0,
+     0,
+     3
+    ],
+    "neighbors": [
+     [
+      1
+     ],
+     [
+      0,
+      2,
+      3
+     ],
+     [
+      1
+     ],
+     [
+      1,
+      4,
+      5
+     ],
+     [
+      3
+     ],
+     [
+      3,
+      6
+     ],
+     [
+      5
+     ]
+    ],
+    "z": [
+     6,
+     6,
+     6,
+     6,
+     8,
+     8,
+     6
+    ]
+   }
+  },
+  {
+   "id": "docs/verification/phase7-反應規則C-命中列表.md#6",
+   "input": {
+    "smiles": "C=CC(=O)N"
+   },
+   "output": {
+    "aromatic": [
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "doubleBondStereo": {
+     "$map": []
+    },
+    "hCount": [
+     2,
+     1,
+     0,
+     0,
+     2
+    ],
+    "neighbors": [
+     [
+      1
+     ],
+     [
+      0,
+      2
+     ],
+     [
+      1,
+      3,
+      4
+     ],
+     [
+      2
+     ],
+     [
+      2
+     ]
+    ],
+    "z": [
+     6,
+     6,
+     6,
+     8,
+     7
+    ]
+   }
+  },
+  {
+   "id": "docs/verification/phase7-反應規則C-命中列表.md#7",
+   "input": {
+    "smiles": "C=CC(=O)NCNC(=O)C=C"
+   },
+   "output": {
+    "aromatic": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "doubleBondStereo": {
+     "$map": []
+    },
+    "hCount": [
+     2,
+     1,
+     0,
+     0,
+     1,
+     2,
+     1,
+     0,
+     0,
+     1,
+     2
+    ],
+    "neighbors": [
+     [
+      1
+     ],
+     [
+      0,
+      2
+     ],
+     [
+      1,
+      3,
+      4
+     ],
+     [
+      2
+     ],
+     [
+      2,
+      5
+     ],
+     [
+      4,
+      6
+     ],
+     [
+      5,
+      7
+     ],
+     [
+      6,
+      8,
+      9
+     ],
+     [
+      7
+     ],
+     [
+      7,
+      10
+     ],
+     [
+      9
+     ]
+    ],
+    "z": [
+     6,
+     6,
+     6,
+     8,
+     7,
+     6,
+     7,
+     6,
+     8,
+     6,
+     6
+    ]
+   }
+  },
+  {
+   "id": "docs/verification/phase7-反應規則C-命中列表.md#8",
+   "input": {
+    "smiles": "C=Cc1ccccc1"
+   },
+   "output": {
+    "aromatic": [
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "doubleBondStereo": {
+     "$map": []
+    },
+    "hCount": [
+     2,
+     1,
+     0,
+     1,
+     1,
+     1,
+     1,
+     1
+    ],
+    "neighbors": [
+     [
+      1
+     ],
+     [
+      0,
+      2
+     ],
+     [
+      1,
+      3,
+      7
+     ],
+     [
+      2,
+      4
+     ],
+     [
+      3,
+      5
+     ],
+     [
+      4,
+      6
+     ],
+     [
+      5,
+      7
+     ],
+     [
+      2,
+      6
+     ]
+    ],
+    "z": [
+     6,
+     6,
+     6,
+     6,
+     6,
+     6,
+     6,
+     6
+    ]
+   }
+  },
+  {
+   "id": "docs/verification/phase7-反應規則C-命中列表.md#9",
+   "input": {
+    "smiles": "C=Cc1ccc(C=C)cc1"
+   },
+   "output": {
+    "aromatic": [
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     true,
+     true
+    ],
+    "doubleBondStereo": {
+     "$map": []
+    },
+    "hCount": [
+     2,
+     1,
+     0,
+     1,
+     1,
+     0,
+     1,
+     2,
+     1,
+     1
+    ],
+    "neighbors": [
+     [
+      1
+     ],
+     [
+      0,
+      2
+     ],
+     [
+      1,
+      3,
+      9
+     ],
+     [
+      2,
+      4
+     ],
+     [
+      3,
+      5
+     ],
+     [
+      4,
+      6,
+      8
+     ],
+     [
+      5,
+      7
+     ],
+     [
+      6
+     ],
+     [
+      5,
+      9
+     ],
+     [
+      2,
+      8
+     ]
+    ],
+    "z": [
+     6,
+     6,
+     6,
+     6,
+     6,
+     6,
+     6,
+     6,
+     6,
+     6
+    ]
+   }
+  },
+  {
+   "id": "docs/verification/phase7-反應規則C-命中列表.md#10",
+   "input": {
+    "smiles": "CC(=C)c1ccccc1"
+   },
+   "output": {
+    "aromatic": [
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "doubleBondStereo": {
+     "$map": []
+    },
+    "hCount": [
+     3,
+     0,
+     2,
+     0,
+     1,
+     1,
+     1,
+     1,
+     1
+    ],
+    "neighbors": [
+     [
+      1
+     ],
+     [
+      0,
+      2,
+      3
+     ],
+     [
+      1
+     ],
+     [
+      1,
+      4,
+      8
+     ],
+     [
+      3,
+      5
+     ],
+     [
+      4,
+      6
+     ],
+     [
+      5,
+      7
+     ],
+     [
+      6,
+      8
+     ],
+     [
+      3,
+      7
+     ]
+    ],
+    "z": [
+     6,
+     6,
+     6,
+     6,
+     6,
+     6,
+     6,
+     6,
+     6
+    ]
+   }
+  },
+  {
+   "id": "docs/verification/phase7-反應規則C-命中列表.md#11",
+   "input": {
+    "smiles": "C=CCOC"
+   },
+   "output": {
+    "aromatic": [
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "doubleBondStereo": {
+     "$map": []
+    },
+    "hCount": [
+     2,
+     1,
+     2,
+     0,
+     3
+    ],
+    "neighbors": [
+     [
+      1
+     ],
+     [
+      0,
+      2
+     ],
+     [
+      1,
+      3
+     ],
+     [
+      2,
+      4
+     ],
+     [
+      3
+     ]
+    ],
+    "z": [
+     6,
+     6,
+     6,
+     8,
+     6
+    ]
+   }
+  },
+  {
+   "id": "docs/verification/phase7-反應規則C-命中列表.md#12",
+   "input": {
+    "smiles": "O=C(CCS)OCC(COC(=O)CCS)(COC(=O)CCS)COC(=O)CCS"
+   },
+   "output": {
+    "aromatic": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "doubleBondStereo": {
+     "$map": []
+    },
+    "hCount": [
+     0,
+     0,
+     2,
+     2,
+     1,
+     0,
+     2,
+     0,
+     2,
+     0,
+     0,
+     0,
+     2,
+     2,
+     1,
+     2,
+     0,
+     0,
+     0,
+     2,
+     2,
+     1,
+     2,
+     0,
+     0,
+     0,
+     2,
+     2,
+     1
+    ],
+    "neighbors": [
+     [
+      1
+     ],
+     [
+      0,
+      2,
+      5
+     ],
+     [
+      1,
+      3
+     ],
+     [
+      2,
+      4
+     ],
+     [
+      3
+     ],
+     [
+      1,
+      6
+     ],
+     [
+      5,
+      7
+     ],
+     [
+      6,
+      8,
+      15,
+      22
+     ],
+     [
+      7,
+      9
+     ],
+     [
+      8,
+      10
+     ],
+     [
+      9,
+      11,
+      12
+     ],
+     [
+      10
+     ],
+     [
+      10,
+      13
+     ],
+     [
+      12,
+      14
+     ],
+     [
+      13
+     ],
+     [
+      7,
+      16
+     ],
+     [
+      15,
+      17
+     ],
+     [
+      16,
+      18,
+      19
+     ],
+     [
+      17
+     ],
+     [
+      17,
+      20
+     ],
+     [
+      19,
+      21
+     ],
+     [
+      20
+     ],
+     [
+      7,
+      23
+     ],
+     [
+      22,
+      24
+     ],
+     [
+      23,
+      25,
+      26
+     ],
+     [
+      24
+     ],
+     [
+      24,
+      27
+     ],
+     [
+      26,
+      28
+     ],
+     [
+      27
+     ]
+    ],
+    "z": [
+     8,
+     6,
+     6,
+     6,
+     16,
+     8,
+     6,
+     6,
+     6,
+     8,
+     6,
+     8,
+     6,
+     6,
+     16,
+     6,
+     8,
+     6,
+     8,
+     6,
+     6,
+     16,
+     6,
+     8,
+     6,
+     8,
+     6,
+     6,
+     16
+    ]
+   }
+  },
+  {
+   "id": "docs/verification/phase7-反應規則C-命中列表.md#13",
+   "input": {
+    "smiles": "C=COCCOCCOC=C"
+   },
+   "output": {
+    "aromatic": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "doubleBondStereo": {
+     "$map": []
+    },
+    "hCount": [
+     2,
+     1,
+     0,
+     2,
+     2,
+     0,
+     2,
+     2,
+     0,
+     1,
+     2
+    ],
+    "neighbors": [
+     [
+      1
+     ],
+     [
+      0,
+      2
+     ],
+     [
+      1,
+      3
+     ],
+     [
+      2,
+      4
+     ],
+     [
+      3,
+      5
+     ],
+     [
+      4,
+      6
+     ],
+     [
+      5,
+      7
+     ],
+     [
+      6,
+      8
+     ],
+     [
+      7,
+      9
+     ],
+     [
+      8,
+      10
+     ],
+     [
+      9
+     ]
+    ],
+    "z": [
+     6,
+     6,
+     8,
+     6,
+     6,
+     8,
+     6,
+     6,
+     8,
+     6,
+     6
+    ]
+   }
+  },
+  {
+   "id": "docs/verification/phase7-反應規則C-命中列表.md#14",
+   "input": {
+    "smiles": "O=C(OCCOC(=O)C1CC2CC1C=C2)C1CC2CC1C=C2"
+   },
+   "output": {
+    "aromatic": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "doubleBondStereo": {
+     "$map": []
+    },
+    "hCount": [
+     0,
+     0,
+     0,
+     2,
+     2,
+     0,
+     0,
+     0,
+     1,
+     2,
+     1,
+     2,
+     1,
+     1,
+     1,
+     1,
+     2,
+     1,
+     2,
+     1,
+     1,
+     1
+    ],
+    "neighbors": [
+     [
+      1
+     ],
+     [
+      0,
+      2,
+      15
+     ],
+     [
+      1,
+      3
+     ],
+     [
+      2,
+      4
+     ],
+     [
+      3,
+      5
+     ],
+     [
+      4,
+      6
+     ],
+     [
+      5,
+      7,
+      8
+     ],
+     [
+      6
+     ],
+     [
+      6,
+      9,
+      12
+     ],
+     [
+      8,
+      10
+     ],
+     [
+      9,
+      11,
+      14
+     ],
+     [
+      10,
+      12
+     ],
+     [
+      8,
+      11,
+      13
+     ],
+     [
+      12,
+      14
+     ],
+     [
+      10,
+      13
+     ],
+     [
+      1,
+      16,
+      19
+     ],
+     [
+      15,
+      17
+     ],
+     [
+      16,
+      18,
+      21
+     ],
+     [
+      17,
+      19
+     ],
+     [
+      15,
+      18,
+      20
+     ],
+     [
+      19,
+      21
+     ],
+     [
+      17,
+      20
+     ]
+    ],
+    "z": [
+     8,
+     6,
+     8,
+     6,
+     6,
+     8,
+     6,
+     8,
+     6,
+     6,
+     6,
+     6,
+     6,
+     6,
+     6,
+     6,
+     6,
+     6,
+     6,
+     6,
+     6,
+     6
+    ]
+   }
+  },
+  {
+   "id": "docs/verification/phase7-反應規則C-命中列表.md#15",
+   "input": {
+    "smiles": "CC(=C)C(=O)OCC1CO1"
+   },
+   "output": {
+    "aromatic": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "doubleBondStereo": {
+     "$map": []
+    },
+    "hCount": [
+     3,
+     0,
+     2,
+     0,
+     0,
+     0,
+     2,
+     1,
+     2,
+     0
+    ],
+    "neighbors": [
+     [
+      1
+     ],
+     [
+      0,
+      2,
+      3
+     ],
+     [
+      1
+     ],
+     [
+      1,
+      4,
+      5
+     ],
+     [
+      3
+     ],
+     [
+      3,
+      6
+     ],
+     [
+      5,
+      7
+     ],
+     [
+      6,
+      8,
+      9
+     ],
+     [
+      7,
+      9
+     ],
+     [
+      7,
+      8
+     ]
+    ],
+    "z": [
+     6,
+     6,
+     6,
+     6,
+     8,
+     8,
+     6,
+     6,
+     6,
+     8
+    ]
+   }
+  },
+  {
+   "id": "docs/verification/phase7-反應規則C-命中列表.md#16",
+   "input": {
+    "smiles": "C=CC(=O)OCC1CO1"
+   },
+   "output": {
+    "aromatic": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "doubleBondStereo": {
+     "$map": []
+    },
+    "hCount": [
+     2,
+     1,
+     0,
+     0,
+     0,
+     2,
+     1,
+     2,
+     0
+    ],
+    "neighbors": [
+     [
+      1
+     ],
+     [
+      0,
+      2
+     ],
+     [
+      1,
+      3,
+      4
+     ],
+     [
+      2
+     ],
+     [
+      2,
+      5
+     ],
+     [
+      4,
+      6
+     ],
+     [
+      5,
+      7,
+      8
+     ],
+     [
+      6,
+      8
+     ],
+     [
+      6,
+      7
+     ]
+    ],
+    "z": [
+     6,
+     6,
+     6,
+     8,
+     8,
+     6,
+     6,
+     6,
+     8
+    ]
+   }
+  },
+  {
+   "id": "docs/verification/phase7-反應規則C-命中列表.md#17",
+   "input": {
+    "smiles": "C=CC(=O)OCC(O)COc1ccccc1"
+   },
+   "output": {
+    "aromatic": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "doubleBondStereo": {
+     "$map": []
+    },
+    "hCount": [
+     2,
+     1,
+     0,
+     0,
+     0,
+     2,
+     1,
+     1,
+     2,
+     0,
+     0,
+     1,
+     1,
+     1,
+     1,
+     1
+    ],
+    "neighbors": [
+     [
+      1
+     ],
+     [
+      0,
+      2
+     ],
+     [
+      1,
+      3,
+      4
+     ],
+     [
+      2
+     ],
+     [
+      2,
+      5
+     ],
+     [
+      4,
+      6
+     ],
+     [
+      5,
+      7,
+      8
+     ],
+     [
+      6
+     ],
+     [
+      6,
+      9
+     ],
+     [
+      8,
+      10
+     ],
+     [
+      9,
+      11,
+      15
+     ],
+     [
+      10,
+      12
+     ],
+     [
+      11,
+      13
+     ],
+     [
+      12,
+      14
+     ],
+     [
+      13,
+      15
+     ],
+     [
+      10,
+      14
+     ]
+    ],
+    "z": [
+     6,
+     6,
+     6,
+     8,
+     8,
+     6,
+     6,
+     8,
+     6,
+     8,
+     6,
+     6,
+     6,
+     6,
+     6,
+     6
+    ]
+   }
   }
  ],
- "commit": "9f2dbc8fcfe894f1ff350ec37514f0e789877560+dirty-src",
+ "commit": "ff1cacb5860bcc505c29147b48fa16cf8103b2b1+dirty-src",
  "module": "molGraph",
  "rdkitjs": "2026.09.1",
  "tolerance": {

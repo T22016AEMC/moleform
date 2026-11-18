@@ -109,6 +109,11 @@
 
 Miller–Macosko 只適用「兩類官能基、單一步驟、等活性」的逐步加成。反應規則 A 批中下列規則的體系不符合，第 1 層（Python `layer1.py` 的 `UNSUPPORTED_RULES`；任務 I05 起 TypeScript `prepare.ts` 的同一份清單已退役）回報「此體系的凝膠點與當量計算尚未支援：原因」，不套用公式：`epoxy+anhydride`（多步）、`epoxy+cyanate`（多路徑）、`cyanate.trimerization`（三聚自反應）、`novolac+hmta`（HMTA 須先分解、等效位點未定）、`resol.methylol+phenol_ring`／`resol.methylol-ether`／`resol.methylol-methylene`（同分子兩類官能基、自縮合）、`epoxy+pag.cationic`／`oxetane+pag.cationic`（陽離子鏈增長）。`epoxy+amine.*` 四條照現有公式計算（一級胺 N 的 functionality = 2、二級胺 = 1；一級與二級胺氫的活性差異不計，" 等活性 " 假設）；配方同時含一級與二級胺（如二乙三胺）時有兩條規則，回報「目前只支援單一反應規則」。反應規則的 `functionality` 為「每個官能基形成的鍵數」，對催化劑類配對（PAG）無化學計量意義。
 
+### C 批（自由基體系，任務 P7-1C，D65）
+
+- **鏈增長聚合不適用逐步聚合的 Miller–Macosko 凝膠點**：`acrylate`／`methacrylate`／`acrylamide`／`styrene` 各與熱起始劑（`initiator.thermal`，偶氮、過氧化物）或光起始劑（`initiator.photo`，α-羥基烷基苯酮）共 8 條規則，第 1 層回報「此體系的凝膠點與當量計算尚未支援」，不給數值。起始劑與光酸產生劑同一種表示法：官能基列入 `crosslink.py` 的 `CATALYST_GROUPS`，配對顯示「催化劑配對（不計當量）」，起始劑的 f 無化學計量意義；每個單體 C=C 的 functionality 取 2（打開 π 鍵、與前後單元各形成一鍵，自行判斷）。反應 SMARTS 表示一步增長（碳自由基＋單體），資料表測試組合因此是「單體＋碳自由基」。
+- **硫醇–烯**：`thiol`（RDKit `fr_SH`）與烯丙基（`alkene.allyl`）、乙烯基醚（`vinyl.ether`）、降冰片烯（`norbornene`）各一條規則，視為 1:1 等活性的逐步加成（每個 –SH 與每個 C=C 各反應一次，這類 ene 不自聚；判斷無本機文獻，待使用者確認），第 1 層照現有公式計算，適用條件見各規則 notes；`thiol+acrylate` 因丙烯酸酯可同時均聚、官能度不固定，列入不支援清單。同一配方含多種 ene 時有多條規則，回報「目前只支援單一反應規則」。含環氧的丙烯酸酯（GMA）同時命中 `ether.epoxide` 與 `methacrylate`，只做官能基命中，沒有跨體系規則。
+
 ## 理論配比與比例掃描（D40）
 
 - **化學計量配比**：`group_a` 側成分用量不變，`group_b` 側所有成分乘同一個係數 N_A／N_B，使兩類官能基等量。可信度「直接計算」。

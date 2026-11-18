@@ -9895,7 +9895,17 @@
     "dp": null,
     "endGroupCounts": {},
     "ends": null,
-    "groups": [],
+    "groups": [
+     {
+      "groupId": "acrylate",
+      "sites": [
+       [
+        0,
+        1
+       ]
+      ]
+     }
+    ],
     "id": "m",
     "isPolymer": false,
     "molarMass": 86.08999999999999,
@@ -10595,9 +10605,130 @@
     4,
     0
    ]
+  },
+  {
+   "id": "queryAtomMaps/[CH2:1]=[CH1:2]-[CX3](=[OX1])-[OX2]-[#6]",
+   "input": {
+    "kind": "queryAtomMaps",
+    "smarts": "[CH2:1]=[CH1:2]-[CX3](=[OX1])-[OX2]-[#6]"
+   },
+   "output": [
+    1,
+    2,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "id": "queryAtomMaps/[CH2:1]=[CX3:2]([CH3])-[CX3](=[OX1])-[OX2]-[#6]",
+   "input": {
+    "kind": "queryAtomMaps",
+    "smarts": "[CH2:1]=[CX3:2]([CH3])-[CX3](=[OX1])-[OX2]-[#6]"
+   },
+   "output": [
+    1,
+    2,
+    0,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "id": "queryAtomMaps/[CH2:1]=[CH1:2]-[CX3](=[OX1])-[NX3]",
+   "input": {
+    "kind": "queryAtomMaps",
+    "smarts": "[CH2:1]=[CH1:2]-[CX3](=[OX1])-[NX3]"
+   },
+   "output": [
+    1,
+    2,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "id": "queryAtomMaps/[CH2:1]=[CH1:2]-[c;$(c1ccccc1)]",
+   "input": {
+    "kind": "queryAtomMaps",
+    "smarts": "[CH2:1]=[CH1:2]-[c;$(c1ccccc1)]"
+   },
+   "output": [
+    1,
+    2,
+    0
+   ]
+  },
+  {
+   "id": "queryAtomMaps/[CH2:1]=[CH1:2]-[OX2]-[#6;!$([#6]=[#8])]",
+   "input": {
+    "kind": "queryAtomMaps",
+    "smarts": "[CH2:1]=[CH1:2]-[OX2]-[#6;!$([#6]=[#8])]"
+   },
+   "output": [
+    1,
+    2,
+    0,
+    0
+   ]
+  },
+  {
+   "id": "queryAtomMaps/[C:1]1=[C:2][C]2[C][C][C]1[C]2",
+   "input": {
+    "kind": "queryAtomMaps",
+    "smarts": "[C:1]1=[C:2][C]2[C][C][C]1[C]2"
+   },
+   "output": [
+    1,
+    2,
+    0,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "id": "queryAtomMaps/[SH:1]",
+   "input": {
+    "kind": "queryAtomMaps",
+    "smarts": "[SH:1]"
+   },
+   "output": [
+    1
+   ]
+  },
+  {
+   "id": "queryAtomMaps/[$([NX2;!R](-[CX4])=[NX2;!R]-[CX4]),$([OX2;!R]([#6])-[OX2;!R]),$([OX2H1;!R]-[OX2;!R]-[#6]):1]~[$([NX2;!R](-[CX4])=[NX2;!R]-[CX4]),$([OX2;!R]([#6])-[OX2;!R]),$([OX2H1;!R]-[OX2;!R]-[#6]):2]",
+   "input": {
+    "kind": "queryAtomMaps",
+    "smarts": "[$([NX2;!R](-[CX4])=[NX2;!R]-[CX4]),$([OX2;!R]([#6])-[OX2;!R]),$([OX2H1;!R]-[OX2;!R]-[#6]):1]~[$([NX2;!R](-[CX4])=[NX2;!R]-[CX4]),$([OX2;!R]([#6])-[OX2;!R]),$([OX2H1;!R]-[OX2;!R]-[#6]):2]"
+   },
+   "output": [
+    1,
+    2
+   ]
+  },
+  {
+   "id": "queryAtomMaps/[CX3:1](=[OX1])(-c)-[CX4]-[OX2H]",
+   "input": {
+    "kind": "queryAtomMaps",
+    "smarts": "[CX3:1](=[OX1])(-c)-[CX4]-[OX2H]"
+   },
+   "output": [
+    1,
+    0,
+    0,
+    0,
+    0
+   ]
   }
  ],
- "commit": "9f2dbc8fcfe894f1ff350ec37514f0e789877560+dirty-src",
+ "commit": "ff1cacb5860bcc505c29147b48fa16cf8103b2b1+dirty-src",
  "module": "crosslink",
  "rdkitjs": "2026.09.1",
  "tolerance": {
