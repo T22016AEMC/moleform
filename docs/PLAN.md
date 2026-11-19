@@ -215,11 +215,11 @@ U02 已由 D46 決定（任務 019）。
 
 目的：完成溶劑相關物性與相容性判斷。
 
-開工前需要使用者決定：P06（內建溶劑清單）
+開工前需要使用者決定：P06（內建溶劑清單）——已定案為 D72（2026-11-18）
 
-- [ ] 8.1 溶劑資料表填入資料（優先取自成熟套件並標出處，D18）
-- [ ] 8.2 Liquid 區 vol% 換算（使用溶劑資料表的密度）
-- [ ] 8.3 HSP 基團貢獻、混合溶劑 HSP、Ra、RED、Flory–Huggins χ、溶解性判斷（參考趨勢）
+- [x] 8.1 溶劑資料表填入資料（優先取自成熟套件並標出處，D18）（任務 P8-1，D72：`src/data/solvents.csv` 23 個溶劑、197 列，皆 `pending`；HSP 取 Hansen 2007 Table A.1，密度、黏度、表面張力、沸點取 PubChem 經 HSDB 轉引的文獻值並標出處與溫度，分子量與摩爾體積為計算值；**有空欄**：黏度 5 個、表面張力 6 個缺值，密度多為 20 °C 值，原因逐溶劑寫在各溶劑 molecular_weight 列的備註與 `docs/reports/P8-1-結果.md`，不因空欄不勾）
+- [x] 8.2 Liquid 區 vol% 換算（使用溶劑資料表的密度）（任務 P8-1：`POST /liquid-volume`，右欄「Liquid 體積比（vol%）」卡片，加入成分彈窗新增「從溶劑資料表選取」；缺密度回報 missing；**Liquid 區的輸入單位 vol% 仍不支援**，既有行為不改）
+- [x] 8.3 HSP 基團貢獻、混合溶劑 HSP、Ra、RED、Flory–Huggins χ、溶解性判斷（參考趨勢）（任務 P8-1：`POST /hsp`、`POST /solubility`，`src/data/hsp_groups.csv`〔Table 7.10〕、`hsp_polymers.csv`〔Table 7.8〕，右欄「溶解性」卡片；書算例對照見 `docs/verification/phase8-溶劑與溶解性-輸出.md`：Example 7.3 相符，Example 7.5 的 δh 與 Table 7.6 的聚(乙烯硫醚)有無法由書內資料解釋的差，待使用者決定；未套用對稱因子與 Ring）
 - [ ] 8.4 混合溶劑黏度（Grunberg–Nissan）、聚合物溶液黏度
 - [ ] 8.5 表面張力（Parachor）、混合溶液表面張力
 - [ ] 8.6 界面張力與潤濕性（Owens–Wendt、Young）

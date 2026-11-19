@@ -88,6 +88,28 @@ MoleForm 的化學資料放在 `src/data/` 的四個 CSV。**目前 `functional_
 
 `(solvent_id, property, temperature_c)` 必須唯一；同一 `solvent_id` 的 `name_en`、`name_zh`、`cas`、`smiles` 每一列都要一致。
 
+### 溶劑資料表的內容（任務 P8-1，D72）
+
+`src/data/solvents.csv`（UTF-8 BOM，197 列）：D72 清單的 23 個溶劑（PGMEA、PGME、乳酸乙酯、環己酮、環戊酮、2-庚酮、γ-丁內酯、苯甲醚、NMP、DMAc、DMF、DMSO、丙酮、異丙醇、乙醇、MEK、MIBK、乙酸乙酯、乙酸丁酯、甲苯、二甲苯、THF、水）。現有欄位（每個值一列、各自帶 `temperature_c` 與共用出處欄）已足夠，**沒有擴充欄位**，載入與驗證程式不變。每個值的 `review_status` 一律 `pending`。
+
+| `property` | 單位 | 來源 |
+|---|---|---|
+| `molecular_weight` | g/mol | **computed**（`source_type = self`）：由 SMILES 以 RDKit 平均原子量計算；測試核對每個溶劑的 SMILES 與分子量 |
+| `density` | g/cm³ | PubChem（NIH／NLM）各化合物「Density」節的 HSDB 條目轉引（原始文獻在 `source_original`，例如 CRC Handbook、Merck Index、Hawley）；溫度為來源標示（多數是 20 °C，部分 25 °C；水另有最大密度溫度 3.98 °C 的一列）。標「比重」者是相對 4 °C 水（或 NMP 的 25 °C/25 °C），未換算 |
+| `molar_volume` | cm³/mol | **computed**：分子量 ÷ 密度（同一溫度，取最接近 25 °C 的密度） |
+| `hsp_d`、`hsp_p`、`hsp_h` | MPa^0.5 | Hansen, *Hansen Solubility Parameters: A User's Handbook* 2nd ed. (2007) Appendix A Table A.1（`source_detail` 寫條目編號與書頁、PDF 頁）；25 °C |
+| `viscosity` | mPa·s | PubChem「Viscosity」節（來源單位 cP，1 cP = 1 mPa·s）；溫度為來源標示 |
+| `surface_tension` | mN/m | PubChem「Surface Tension」節（來源單位 dyn/cm，數值相同；GBL 的 N/cm 寫法換算成 mN/m 並註明）；溫度為來源標示 |
+| `boiling_point` | °C | PubChem「Boiling Point」節，常壓（760 mmHg），`temperature_c` 留空 |
+
+同一個值有多個來源值不一致時取單一來源，其他值寫進 `notes`（例如 PGME 的密度、乳酸乙酯、苯甲醚、甲苯的 PAC 條目）。**空欄**（找不到可引用且標明溫度的值就不填，不內插、不換算）：黏度缺 PGMEA、乳酸乙酯、環戊酮、2-庚酮、MIBK；表面張力缺 PGMEA、PGME、環戊酮、NMP、DMSO、乙酸丁酯（PubChem 值與同類差距大，疑為錄入錯誤）；原因寫在各溶劑 `molecular_weight` 列的 `notes`。二甲苯以對二甲苯代表（Hansen 表列「Xylene」的 ACD 名稱為 p-Xylene；工業二甲苯是混合異構物，待使用者確認）。程式：`engine/moleform_core/solvents.py`（讀取與驗證、依「最接近 25 °C」取值）、`src/core/data/solventOptions.ts`（加入成分彈窗的下拉選單）。
+
+## HSP 基團表 hsp_groups.csv 與 Table 7.8 聚合物表 hsp_polymers.csv（任務 P8-1，D22）
+
+`src/data/hsp_groups.csv`（UTF-8 BOM，33 列）：van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009) Table 7.10（Hoftyzer–Van Krevelen 法，書頁 215，PDF 第 242 頁）逐列看圖謄錄：Fdi、Fpi（(MJ/m³)^½·cm³/mol）、Ehi（J/mol）。欄位：`id`（H01–H33）、`基團名稱`、`SMARTS`、`Fdi`、`Fpi`、`Ehi`、`表格區段`、`出處`、`稽核狀態`（皆「待使用者審」）、`正例 SMILES`、`反例 SMILES`、`備註`。書中括號值（–F、–Br 的 Fdi）稽核狀態註明「書中標為暫定」；書中印「–」（無值）的欄位留空並註明「無值」（含此基團的分子，對應的 δp 或 δh 回報 missing）。**只有謄錄、沒有 SMARTS 的列**：H30 Ring（書中沒有說明套用方式）與 H31–H33 對稱因子（引擎不套用）。「(o, m, p)」一列為了用 SMARTS 區分位置拆成 H10／H11／H12，數值相同。SMARTS 自行撰寫（D22；–O–、–CO–、–COO–、–S– 沿用 Yg 表同名基團的寫法），每條有正反例（單元測試核對）。
+
+`src/data/hsp_polymers.csv`（8 列）：Table 7.8（書頁 207，引 Hansen 1971）的 δ、δd、δp、δH 與 2R（交互作用直徑），另加「重複單元 SMILES」供引擎對應聚合物；R0 = 2R ÷ 2；聚丁二烯的 2R 書中印「–」，欄位留空、備註「沒有 R0」；書的註腳說該表有些值看起來可疑。聚丁二烯與聚異戊二烯的重複單元以 1,4 加成解讀（詮釋，待使用者審）。程式：`engine/moleform_core/hsp.py`；測試 `engine/tests/test_p8_1_hsp.py`。
+
 ## 各表必填欄位與額外規則（任務 009、010，使用者 2026-10-29 同意）
 
 除各表說明中的規則外，檢查程式還會檢查：

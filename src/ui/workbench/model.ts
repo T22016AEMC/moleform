@@ -16,6 +16,9 @@ export interface Candidate {
   compoundId?: string;
   /** 從化合物庫選聚合物時帶入的 Mn 或 DP */
   polymer?: PolymerSpec;
+  /** 從溶劑資料表選取時帶入的密度（g/cm³）與來源說明（任務 P8-1）；之後仍可在成分上自行修改 */
+  density?: number;
+  densitySource?: string;
 }
 
 /** 「加入成分」彈窗的表單 */
@@ -47,6 +50,17 @@ export function candidateFromCompound(compound: Compound): Candidate {
   };
 }
 
+/** 從溶劑資料表選取的溶劑 → 候選結構（結構已通過驗證）；有密度就帶入 */
+export function candidateFromSolvent(validation: StructureValidation | null, option: { nameZh: string; nameEn: string; density: { value: number } | null }, densitySource: string): Candidate | null {
+  const base = candidateFromValidation(validation);
+  if (!base) return null;
+  return {
+    ...base,
+    name: option.nameZh.trim() !== '' ? option.nameZh : option.nameEn,
+    ...(option.density ? { density: option.density.value, densitySource } : {}),
+  };
+}
+
 /** 選定結構後表單的初始值（名稱以化合物庫的為主，其餘用預設「成分 N」） */
 export function initialForm(candidate: Candidate | null, existingCount: number, defaultCategory: string): AddForm {
   return {
@@ -67,7 +81,12 @@ export function rowFromCandidate(area: 'solid' | 'liquid', candidate: Candidate,
     molfile: candidate.molfile,
     ...(candidate.compoundId ? { compoundId: candidate.compoundId } : {}),
   });
-  return { ...row, category: form.category, ...(polymer ? { polymerEdit: form.polymerEdit } : {}) };
+  return {
+    ...row,
+    category: form.category,
+    ...(polymer ? { polymerEdit: form.polymerEdit } : {}),
+    ...(candidate.density !== undefined ? { densityText: String(candidate.density), densitySource: candidate.densitySource ?? '' } : {}),
+  };
 }
 
 /** 勾選「同時存進化合物庫」時，要新增的化合物 */

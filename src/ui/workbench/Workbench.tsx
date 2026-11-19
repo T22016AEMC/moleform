@@ -12,6 +12,7 @@ import { analyzeRepeatUnitInWorker, averageWeightOf } from '../../worker/client'
 import { CrosslinkPage } from '../crosslink/CrosslinkPage';
 import { UnifiedNote } from '../components/UnifiedNote';
 import { EnginePropertiesBlock } from '../engine/EnginePropertiesBlock';
+import { LiquidVolumeBlock, SolubilityBlock } from '../engine/SolventBlocks';
 import { FormulationLibrary } from '../formulation/FormulationLibrary';
 import {
   emptyState,
@@ -268,7 +269,7 @@ function AreaCard({ area, state, setState, issues, units, onAdd, onOpenDetail, d
                       </label>
                     </div>
                   )}
-                  {isSolid && (
+                  {(
                     <div className="comp-fields density-fields">
                       <div className="amount-input">
                         <input
@@ -289,7 +290,11 @@ function AreaCard({ area, state, setState, issues, units, onAdd, onOpenDetail, d
                         placeholder="密度來源（文獻或供應商）"
                         onChange={(e) => patchRow(row.id, { densitySource: e.target.value })}
                       />
-                      <small className="auto-note">請填文獻或供應商資料的密度（g/cm³）；用於混合密度與固化收縮</small>
+                      <small className="auto-note">
+                        {isSolid
+                          ? '請填文獻或供應商資料的密度（g/cm³）；用於混合密度與固化收縮'
+                          : '用於 Liquid 的 vol% 換算與混合溶劑的體積分率；從溶劑資料表選取的溶劑已帶入密度，未填時依結構對應溶劑資料表'}
+                      </small>
                       {densityProblem(row.densityText) && <p className="form-error" role="alert">{densityProblem(row.densityText)}</p>}
                     </div>
                   )}
@@ -673,6 +678,8 @@ export function Workbench({ storage }: Props) {
             </div>
           </ResultBlock>
           <EnginePropertiesBlock formulation={debounced} outcome={outcome} mnById={mnById} />
+          <LiquidVolumeBlock formulation={debounced} outcome={outcome} />
+          <SolubilityBlock formulation={debounced} outcome={outcome} />
           <CrosslinkPage formulation={formulation} />
         </div>
       </div>

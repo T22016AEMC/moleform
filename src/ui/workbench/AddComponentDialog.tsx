@@ -10,16 +10,19 @@ import type { RepeatUnitAnalysis } from '../../core/polymer/types';
 import type { StructureValidation } from '../../core/structure/validate';
 import { analyzeRepeatUnitInWorker, validateInput } from '../../worker/client';
 import type { Row } from '../formulation/model';
+import { densitySourceText } from '../../core/data/solventOptions';
 import { createIndexedDbStorage } from '../library/storage';
 import { analysisKey, applyBackboneTemplate, specFromEdit, templateCardVisible, type PolymerEdit } from '../polymer/model';
 import { BackboneTemplatePicker, PolymerFields } from '../polymer/PolymerFields';
 import { UnitDrawPanel } from '../polymer/UnitDrawPanel';
 import { useUnitDrawing } from '../polymer/useUnitDrawing';
 import { saveCompoundToLibrary } from './libraryBridge';
+import { bundledSolventOptions } from './solvents';
 import { KetcherPane } from './KetcherPane';
 import { Modal } from './Modal';
 import {
   candidateFromCompound,
+  candidateFromSolvent,
   candidateFromValidation,
   drawSource,
   initialForm,
@@ -31,12 +34,14 @@ import {
 } from './model';
 import { StructureImage } from './StructureImage';
 
-type Method = 'smiles' | 'library' | 'ketcher';
+type Method = 'smiles' | 'library' | 'ketcher' | 'solvent';
 const METHODS: [Method, string][] = [
   ['smiles', '貼 SMILES'],
   ['library', '從化合物庫搜尋'],
   ['ketcher', '用 Ketcher 畫'],
 ];
+/** Liquid 區多一個方式：從溶劑資料表選取（帶入結構與密度，D72；任務 P8-1） */
+const SOLVENT_METHOD: [Method, string] = ['solvent', '從溶劑資料表選取'];
 const VALIDATE_DELAY_MS = 300;
 
 interface Props {
@@ -62,6 +67,22 @@ export function AddComponentDialog({ area, existingCount, onAdd, onClose }: Prop
   const [query, setQuery] = useState('');
   const [picked, setPicked] = useState<Compound | null>(null);
   const [ketcher, setKetcher] = useState<StructureValidation | null>(null);
+  // 從溶劑資料表選取（只有 Liquid 區）：選了溶劑後以它的 SMILES 走同一套結構驗證
+  const solventChoices = useMemo(() => bundledSolventOptions(), []);
+  const [solventId, setSolventId] = useState('');
+  const [solventView, setSolventView] = useState<StructureValidation | null>(null);
+  const pickedSolvent = solventChoices.find((o) => o.id === solventId) ?? null;
+  useEffect(() => {
+    setSolventView(null);
+    if (!pickedSolvent) return;
+    let cancelled = false;
+    void validateInput(pickedSolvent.smiles).then((outcome) => {
+      if (!cancelled && outcome.ok) setSolventView(outcome.result);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [pickedSolvent]);
   const [ketcherDirty, setKetcherDirty] = useState(false);
   // 共聚物單元用 Ketcher 畫：借用本彈窗唯一的 Ketcher（畫單元時暫時卸下主結構的 Ketcher，之後以最近一次的結構還原）
   const [mainUnverified, setMainUnverified] = useState(false); // 主結構的畫布有尚未驗證的筆畫
@@ -118,7 +139,17 @@ export function AddComponentDialog({ area, existingCount, onAdd, onClose }: Prop
   const shownCompounds = useMemo(() => (compounds ? searchCompounds(compounds, query) : []), [compounds, query]);
 
   const candidate: Candidate | null =
-    method === 'smiles' ? candidateFromValidation(smilesView.validation) : method === 'library' ? (picked ? candidateFromCompound(picked) : null) : candidateFromValidation(ketcher);
+    method === 'smiles'
+      ? candidateFromValidation(smilesView.validation)
+      : method === 'library'
+        ? picked
+          ? candidateFromCompound(picked)
+          : null
+        : method === 'solvent'
+          ? pickedSolvent
+            ? candidateFromSolvent(solventView, pickedSolvent, densitySourceText(pickedSolvent))
+            : null
+          : candidateFromValidation(ketcher);
   const candidateKey = candidate ? `${method}|${candidate.canonicalSmiles}|${candidate.compoundId ?? ''}` : '';
   const polymer = candidate ? isPolymerSmiles(candidate.canonicalSmiles) : false;
 
@@ -213,7 +244,7 @@ export function AddComponentDialog({ area, existingCount, onAdd, onClose }: Prop
   return (
     <Modal title={`加入成分（${area === 'solid' ? 'Solid' : 'Liquid'}）`} onRequestClose={requestClose}>
       <div className="modal-tabs" role="tablist" aria-label="加入方式">
-        {METHODS.map(([id, label]) => (
+        {(area === 'liquid' ? [...METHODS, SOLVENT_METHOD] : METHODS).map(([id, label]) => (
           <button key={id} type="button" role="tab" aria-selected={method === id} aria-pressed={method === id} onClick={() => setMethod(id)}>
             {label}
           </button>
@@ -226,6 +257,27 @@ export function AddComponentDialog({ area, existingCount, onAdd, onClose }: Prop
           <input id="add-smiles" type="text" value={smilesText} spellCheck={false} autoComplete="off" placeholder="例如 CCO" onChange={(e) => setSmilesText(e.target.value)} />
           {smilesView.busy && <small role="status">驗證中…</small>}
           {smilesView.failed && <p className="error" role="alert">結構驗證未完成，請稍後再試</p>}
+        </div>
+      )}
+
+      {method === 'solvent' && (
+        <div className="modal-section">
+          <label htmlFor="add-solvent">溶劑（溶劑資料表）</label>
+          <select id="add-solvent" value={solventId} onChange={(e) => setSolventId(e.target.value)}>
+            <option value="">請選擇溶劑</option>
+            {solventChoices.map((o) => (
+              <option key={o.id} value={o.id}>
+                {o.nameZh || o.nameEn}（{o.nameEn}）
+              </option>
+            ))}
+          </select>
+          {pickedSolvent && (
+            <small role="status">
+              {pickedSolvent.density
+                ? `帶入密度 ${pickedSolvent.density.value} g/cm³${pickedSolvent.density.temperatureC === null ? '' : `（${pickedSolvent.density.temperatureC} °C）`}，資料表列為待使用者審；加入後仍可自行修改。`
+                : '資料表沒有這個溶劑的密度，加入後請自行填入密度，否則 vol% 無法換算。'}
+            </small>
+          )}
         </div>
       )}
 
@@ -285,7 +337,7 @@ export function AddComponentDialog({ area, existingCount, onAdd, onClose }: Prop
         ) : method === 'ketcher' && ketcher && !ketcher.valid && !ketcher.empty ? (
           <p className="error" role="alert">{firstError(ketcher)}</p>
         ) : (
-          <p className="structure-placeholder">{method === 'library' ? '請從清單選一個化合物。' : '還沒有可用的結構。'}</p>
+          <p className="structure-placeholder">{method === 'library' ? '請從清單選一個化合物。' : method === 'solvent' ? '請從清單選一個溶劑。' : '還沒有可用的結構。'}</p>
         )}
       </div>
 

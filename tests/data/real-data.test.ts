@@ -10,7 +10,7 @@ describe('src/data 實際資料表', () => {
     expect(describeIssues(checkAllTables(RDKit, bundledTexts))).toEqual([]);
   });
 
-  it('資料列數：官能基 39 列、反應規則 55 列（任務 016、P7-1A、P7-1B、P7-1C、P7-2），其餘只有標題列', () => {
+  it('資料列數：官能基 39 列、反應規則 55 列（任務 016、P7-1A、P7-1B、P7-1C、P7-2）、溶劑 197 列（任務 P8-1、D72），基團貢獻只有標題列', () => {
     const { tables } = loadTables(bundledTexts);
     expect(tables.functionalGroups.rows).toHaveLength(39);
     expect(tables.functionalGroups.rows.slice(0, 2).map((r) => r.id)).toEqual(['hydroxyl.phenolic', 'ether.epoxide']);
@@ -20,7 +20,9 @@ describe('src/data 實際資料表', () => {
     expect(tables.functionalGroups.rows.slice(2).every((r) => r.review_status === 'pending')).toBe(true);
     expect(tables.reactionRules.rows.slice(1).every((r) => r.review_status === 'pending')).toBe(true);
     expect(tables.groupContributions.rows).toHaveLength(0);
-    expect(tables.solvents.rows).toHaveLength(0);
+    expect(tables.solvents.rows).toHaveLength(197);
+    // 溶劑資料依 D72 一律 pending（待使用者審）
+    expect(tables.solvents.rows.every((r) => r.review_status === "pending")).toBe(true);
   });
 
   it('四個檔案都以 UTF-8 BOM 開頭（Excel 可直接開啟中文）', () => {

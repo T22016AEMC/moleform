@@ -184,3 +184,19 @@ Miller–Macosko 只適用「兩類官能基、單一步驟、等活性」的逐
 | 空間位阻（SASA） | 位點反應原子的**相對可及表面積** = Σ SASA(反應原子) ÷ Σ 4π(r + 1.4)²，0 ＝ 完全被遮蔽、1 ＝ 完全暴露；排名 1 ＝ 最暴露。**這是幾何描述量，不是文獻公式。** 參數固定：RDKit ETKDGv3（randomSeed = 42、numThreads = 1）產生 10 個構型 → MMFF94 最佳化（maxIters = 2000）→ `rdFreeSASA.CalcSASA`（Lee–Richards、探針半徑 1.4 Å、原子半徑取 RDKit 週期表 vdW 半徑，含氫）→ 各構型取平均。相對 SASA 相差不到 0.01 視為同名次（對稱位點的構型雜訊）。聚合物沿用任務 024 的重複單元片段（連接點換成甲基、端基不計）；共聚物每種單元各算 | 重原子 ≤ 150；分子有 MMFF94 全部參數 | MMFF94 缺參數、無法產生構型、分子太大 → `missing`（不改用其他力場）；單一固定種子的構型，只是參考趨勢；與電子效應排序**分開**，不合併、不自訂權重 | 本專案的幾何描述（RDKit 標準 SASA 方法），無文獻公式 |
 
 驗證：`engine/tests/test_p7_5_pka.py`（Hammett 手算 4-氯-3,5-二甲基酚 9.92 − 2.23 × (0.24 − 0.06 − 0.06)、苦味酸 9.92 − 2.23 × (1.40 + 1.40 + 1.24)；Taft 手算 2-(甲胺基)乙醯胺 10.59 − 3.23 × 0.67；取代基不在表中與不涵蓋的環系回報 missing；有 missing 時不排序；SASA 固定種子逐位重現）；對書算例與對照表見 `docs/verification/phase7-pKa-輸出.md`。
+
+## 溶劑資料、Liquid vol% 換算、HSP 與溶解性（任務 P8-1，PLAN 8.1、8.2、8.3，D72；Python 引擎 `engine/moleform_core/solvents.py`、`liquid_volume.py`、`hsp.py`，`POST /hsp`、`POST /solubility`、`POST /liquid-volume`，無 TS 版；右欄「Liquid 體積比（vol%）」「溶解性」兩張卡片）
+
+**出處：待使用者審。** 資料表 `src/data/solvents.csv`（23 個溶劑、197 列，每個值有出處與溫度，皆 `pending`）、`src/data/hsp_groups.csv`（Table 7.10，33 列）、`src/data/hsp_polymers.csv`（Table 7.8，8 列）。書的式子與表看圖謄錄（van Krevelen & te Nijenhuis 4th ed. (2009) 書頁 201、203、207、215、219；Hansen, *Hansen Solubility Parameters* 2nd ed. (2007) 書頁 7、8、40、99）。
+
+| 條目 | 公式／做法 | 適用條件 | 限制 | 出處 |
+|---|---|---|---|---|
+| Liquid vol% | V_i = m_i / ρ_i；vol%_i = 100·V_i / ΣV_j。m_i 用質量（g）或 wt% 比例；密度：成分上填的值優先（含從溶劑資料表帶入後的值），否則以結構對應溶劑資料表（最接近 25 °C 的一列，標溫度與出處）。任一成分缺密度 → 所有成分的 vol% 回報 missing 並指出是誰 | 理想體積加成 | 無過量體積；溶劑資料表的密度多數是 20 °C 值（表中標溫度），不做溫度修正；vol% 是輸出，**Liquid 區的輸入單位 vol% 仍不支援**（既有行為不改） | 標準體積加成；密度見資料表各列 |
+| HSP 基團貢獻 | δd = ΣFdi / V；δp = √(ΣFpi²) / V；δh = √(ΣEhi / V)；總 δ = √(δd² + δp² + δh²)。V（cm³/mol）：輸入摩爾體積 > 輸入密度（V = M/ρ）> 聚合物 Vm 模組（Table 4.10 非晶）> 溶劑資料表（小分子）。切分沿用 Tg／Tm 的最大基團優先法；基團值 Table 7.10 | 聚合物重複單元或小分子；Table 7.10 涵蓋的基團 | 缺基團 → 全部分量 missing 並列出缺的原子；書中印「–」（無值）的 Fpi／Ehi（–F、–Br、–NH2、–S–、HCOO–、Ring）→ 只有該分量 missing 並指出基團；**不套用 Table 7.10 末三列的對稱因子**（結果附註）；Ring（Fdi 190）書中沒有說明套用方式，不套用；含 Vm 模組缺基團的聚合物（例如含 C=C、–Cl 以外的鹵素）需輸入密度或摩爾體積 | 式 7.22–7.24、Table 7.10（書頁 215）；Example 7.3 |
+| 混合溶劑 HSP | δ_mix = Σφ_i·δ_i（d、p、h 各自加權）；φ_i = (m_i/ρ_i) / Σ(m_j/ρ_j)；混合莫耳體積 Vs = 1 / Σ(φ_i / V_i)，V_i = M_i/ρ_i（用於 χ） | 溶劑必須在溶劑資料表（HSP 不接受使用者輸入的實測值，D02） | 體積加成，不含非理想混合 | Hansen 2007 書頁 40（「以體積分率乘溶解度參數加總」）；體積分率由密度算 |
+| Ra | Ra² = 4(δD2−δD1)² + (δP2−δP1)² + (δH2−δH1)² | 聚合物（基團貢獻）對溶劑或混合溶劑 | **含係數 4**：R0 取自 Hansen 1971（書 Table 7.8），與 Hansen 的距離式配套；van Krevelen 式 7.25（沒有係數 4）另列 `bookDistance` 供對照 | Hansen 2007 式 1.9（書頁 7）；van Krevelen 式 7.25（書頁 219） |
+| RED | RED = Ra / R0；R0 = 書 Table 7.8 的 2R ÷ 2（2R 稱「交互作用直徑」）。聚合物重複單元與 Table 7.8 的某列相同（忽略連接點編號與寫法）才有 R0；否則（含 Table 7.8 的聚丁二烯，2R 印「–」）RED 回報 missing 並說明，Ra 照常輸出 | 只有 Table 7.8 的 8 個聚合物 | **不自行訂 R0**；Table 7.8 的 R0 配 Hansen 實驗球心，本程式的 Ra 用基團貢獻的 δ，所以另列「聚合物 δ 取書 Table 7.8」的 Ra、RED 對照；書註腳說該表有些值可疑（δH 的聚異丁烯與聚苯乙烯、δP 的聚丁二烯） | Hansen 2007 式 1.10（書頁 8）；van Krevelen Table 7.8（書頁 207） |
+| Flory–Huggins χ | χ ≈ 0.34 + (Vs / RT)(δP − δS)²；Vs 為溶劑（混合溶劑）莫耳體積（cm³/mol），δ 為總 δ（MPa^0.5），R = 8.314462618 J/(mol·K)，T 預設 298.15 K | 溶劑 HSP 的評估溫度為 25 °C | 溫度只代入式子，HSP 本身沒有溫度修正；0.34 是書給的非極性系統常數 | van Krevelen 式 7.12（書頁 203） |
+| 溶解性判斷 | RED < 1：傾向溶解；RED ≥ 1：傾向不溶解（Hansen：等於或接近 1 是邊界，沒有數值範圍）。χ ≤ 0.5：高分子量聚合物有可能溶解（必要條件）；χ > 0.5 不易溶解。兩者並列：一致→該結論；不一致→「結論不一致，無法判斷」；缺值→「無法判斷」 | 門檻皆照書原文，不自訂 | **參考趨勢，非定量保證；HSP 對聚合物分子量、結晶度、溫度未做修正** | Hansen 2007 書頁 8；van Krevelen 書頁 201 |
+
+驗證：`engine/tests/test_p8_1_hsp.py`（每個溶劑的 SMILES 能被 RDKit 解析且分子量與資料表一致；Table 7.10 正反例；端點可用；Example 7.3 的 δd 15.8、δp 7.4、δh 13.3；缺基團與缺 R0 的回報；Ra、χ 手算；混合溶劑 HSP 手算〔PGMEA 10 g＋丙酮 5 g〕；vol% 手算〔60 g、ρ 0.8 與 40 g、ρ 1.2 → 69.2308 %、30.7692 %〕）、`tests/engine-ui/solventRequests.test.ts`（請求本文與溶劑選項）。對照結果見 `docs/verification/phase8-溶劑與溶解性-輸出.md`：Example 7.3 相符；Example 7.5 的 HVK 欄 δh 8.5 無法由 Table 7.10 重現；Table 7.6 的 calculated 欄與 Ecoh 路徑在聚乙烯、聚丙烯相符、聚(乙烯硫醚)差 0.37。

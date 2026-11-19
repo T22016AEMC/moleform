@@ -1413,7 +1413,107 @@ def handle_crosslink_site_activity(request: object) -> tuple[int, dict]:
     return 200, {"ok": True, **result}
 
 
+def handle_hsp(request: object) -> tuple[int, dict]:
+    """Hansen 溶解度參數（任務 P8-1，PLAN 8.3）。請求二擇一：
+    - {"smiles": "<聚合物重複單元（含 *）或小分子 SMILES>", "volume"?: cm³/mol, "density"?: g/cm³}：Hoftyzer–Van Krevelen 基團貢獻（Table 7.10）的 δd、δp、δh 與總 δ。
+      聚合物的 V 取 Vm 模組；小分子需要 volume 或 density（或在溶劑資料表內）。缺基團或缺 Fpi／Ehi：對應分量 missing 並列出缺的基團。
+    - {"solventId": "<溶劑資料表的 id>"}：溶劑資料表的 HSP（Hansen 2007 Table A.1，25 °C；不是估算）。
+    回傳 quantities（deltaD／deltaP／deltaH／delta，各為 value／unit／source／status）。SMILES 無法解析、格式不合：400。"""
+    if not isinstance(request, dict):
+        return 400, {"ok": False, "errors": ["請求必須是 JSON 物件"]}
+    mods, err = _import_core("hsp")
+    if err is not None:
+        return err
+    (hsp,) = mods
+    try:
+        if "solventId" in request:
+            sid = request["solventId"]
+            if not isinstance(sid, str):
+                return 400, {"ok": False, "errors": ["solventId 必須是字串"]}
+            result = hsp.solvent_hsp(sid)
+            if result["status"] == "invalid":
+                return 400, {"ok": False, "errors": [result["message"]]}
+            return 200, {"ok": True, **result, "disclaimer": hsp.HSP_DISCLAIMER}
+        smiles, error = _read_smiles(request)
+        if error is not None:
+            return error
+        assert smiles is not None
+        volume = request.get("volume")
+        density = request.get("density")
+        if volume is not None and not (_is_number(volume) and volume > 0):
+            return 400, {"ok": False, "errors": ["volume 必須是大於 0 的數字（cm³/mol）"]}
+        if density is not None and not (_is_number(density) and density > 0):
+            return 400, {"ok": False, "errors": ["density 必須是大於 0 的數字（g/cm³）"]}
+        result = hsp.compute_hsp(smiles, None if volume is None else float(volume), None if density is None else float(density))
+    except Exception as e:  # noqa: BLE001
+        return _computation_error(e)
+    if result["status"] == "invalid":
+        return 400, {"ok": False, "errors": [result["message"]]}
+    if not _json_safe(result):
+        return 400, {"ok": False, "errors": ["結果不是有限數字"]}
+    return 200, {"ok": True, **result, "disclaimer": hsp.HSP_DISCLAIMER}
+
+
+def handle_solubility(request: object) -> tuple[int, dict]:
+    """聚合物與（混合）溶劑的溶解性（任務 P8-1，PLAN 8.3）。請求
+    {"smiles": "<聚合物重複單元>", "solvents": [{"solventId"? | "smiles"?, "amount": 質量或體積, "name"?, "userDensity"?, "userDensitySource"?}],
+     "basis"?: "mass"|"volume"（預設 mass：amount 是質量，體積分率由密度算）, "temperatureK"?: 298.15, "polymerVolume"?, "polymerDensity"?}。
+    回傳聚合物、溶劑（混合）HSP、Ra、R0、RED、χ、判斷；缺值（缺基團、缺密度、書 Table 7.8 沒有 R0）逐項回報 missing 與原因。格式不合：400。
+    結果標示「參考趨勢，非定量保證；HSP 對聚合物分子量、結晶度、溫度未做修正」。"""
+    if not isinstance(request, dict):
+        return 400, {"ok": False, "errors": ["請求必須是 JSON 物件"]}
+    smiles, error = _read_smiles(request)
+    if error is not None:
+        return error
+    assert smiles is not None
+    if not isinstance(request.get("solvents"), list):
+        return 400, {"ok": False, "errors": ["請求需要陣列欄位 solvents"]}
+    for key in ("polymerVolume", "polymerDensity"):
+        v = request.get(key)
+        if v is not None and not (_is_number(v) and v > 0):
+            return 400, {"ok": False, "errors": [f"{key} 必須是大於 0 的數字"]}
+    mods, err = _import_core("hsp")
+    if err is not None:
+        return err
+    (hsp,) = mods
+    t = request.get("temperatureK", hsp.DEFAULT_TEMPERATURE_K)
+    try:
+        result = hsp.compute_solubility(
+            smiles, request["solvents"], request.get("basis", "mass"), t,
+            request.get("polymerVolume"), request.get("polymerDensity"),
+        )  # fmt: skip
+    except Exception as e:  # noqa: BLE001
+        return _computation_error(e)
+    if result["status"] == "invalid":
+        return 400, {"ok": False, "errors": [result["message"]]}
+    if not _json_safe(result):
+        return 400, {"ok": False, "errors": ["結果不是有限數字"]}
+    return 200, {"ok": True, **result}
+
+
+def handle_liquid_volume(request: object) -> tuple[int, dict]:
+    """Liquid 區 vol% 換算（任務 P8-1，PLAN 8.2）。請求 {"components": [{"id"?, "name", "amount": 質量（g）或 wt% 比例, "amountIsGram"?: bool,
+    "smiles"?, "solventId"?, "userDensity"?: g/cm³, "userDensitySource"?}]}。密度：輸入優先，否則依 SMILES／solventId 取溶劑資料表。
+    任一成分缺密度 → HTTP 200、status = "missing"、各成分 volPct 為 missing 並說明是誰缺。格式不合：400。"""
+    if not isinstance(request, dict) or not isinstance(request.get("components"), list):
+        return 400, {"ok": False, "errors": ["請求需要陣列欄位 components"]}
+    mods, err = _import_core("liquid_volume")
+    if err is not None:
+        return err
+    (lv,) = mods
+    try:
+        result = lv.compute_liquid_volume(request["components"])
+    except Exception as e:  # noqa: BLE001
+        return _computation_error(e)
+    if not _json_safe(result):
+        return 400, {"ok": False, "errors": ["結果不是有限數字"]}
+    return 200, {"ok": True, **result, "disclaimer": "本數值為依理論模型估算之參考值，非實測值。實際結果受原料純度、製程條件與反應動力學影響，請以實驗結果為準。"}
+
+
 POST_ROUTES = {
+    "/hsp": handle_hsp,
+    "/solubility": handle_solubility,
+    "/liquid-volume": handle_liquid_volume,
     "/pka": handle_pka,
     "/crosslink/site-activity": handle_crosslink_site_activity,
     "/mixture-density": handle_mixture_density,

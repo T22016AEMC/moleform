@@ -48239,6 +48239,264 @@
    }
   },
   {
+   "id": "docs/verification/phase7-使用者驗證清單.md#1",
+   "input": {
+    "smiles": "[#6]-[O:1]-[C:2]#[N:3]"
+   },
+   "output": {
+    "aromatic": [
+     false,
+     false,
+     false,
+     false
+    ],
+    "doubleBondStereo": {
+     "$map": []
+    },
+    "hCount": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "neighbors": [
+     [
+      1
+     ],
+     [
+      0,
+      2
+     ],
+     [
+      1,
+      3
+     ],
+     [
+      2
+     ]
+    ],
+    "z": [
+     6,
+     8,
+     6,
+     7
+    ]
+   }
+  },
+  {
+   "id": "docs/verification/phase7-使用者驗證清單.md#2",
+   "input": {
+    "smiles": "[#6:5]-[N:4]1-[C:6](=O)-[CH:2]=[CH:3]-[C:7]1=O"
+   },
+   "output": {
+    "aromatic": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "doubleBondStereo": {
+     "$map": []
+    },
+    "hCount": [
+     0,
+     0,
+     0,
+     0,
+     1,
+     1,
+     0,
+     0
+    ],
+    "neighbors": [
+     [
+      1
+     ],
+     [
+      0,
+      2,
+      6
+     ],
+     [
+      1,
+      3,
+      4
+     ],
+     [
+      2
+     ],
+     [
+      2,
+      5
+     ],
+     [
+      4,
+      6
+     ],
+     [
+      1,
+      5,
+      7
+     ],
+     [
+      6
+     ]
+    ],
+    "z": [
+     6,
+     7,
+     6,
+     8,
+     6,
+     6,
+     6,
+     8
+    ]
+   }
+  },
+  {
+   "id": "docs/verification/phase7-使用者驗證清單.md#3",
+   "input": {
+    "smiles": "[O:1]1[CH2:2][N:3]([#6:4])[CH2:5][c:6]:[c:7]1"
+   },
+   "output": {
+    "aromatic": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "doubleBondStereo": {
+     "$map": []
+    },
+    "hCount": [
+     0,
+     2,
+     0,
+     0,
+     2,
+     0,
+     0
+    ],
+    "neighbors": [
+     [
+      1,
+      6
+     ],
+     [
+      0,
+      2
+     ],
+     [
+      1,
+      3,
+      4
+     ],
+     [
+      2
+     ],
+     [
+      2,
+      5
+     ],
+     [
+      4,
+      6
+     ],
+     [
+      0,
+      5
+     ]
+    ],
+    "z": [
+     8,
+     6,
+     7,
+     6,
+     6,
+     6,
+     6
+    ]
+   }
+  },
+  {
+   "id": "docs/verification/phase7-使用者驗證清單.md#4",
+   "input": {
+    "smiles": "[C:1]1=[C:2][C]2[C][C][C]1[C]2"
+   },
+   "output": {
+    "aromatic": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "doubleBondStereo": {
+     "$map": []
+    },
+    "hCount": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "neighbors": [
+     [
+      1,
+      5
+     ],
+     [
+      0,
+      2
+     ],
+     [
+      1,
+      3,
+      6
+     ],
+     [
+      2,
+      4
+     ],
+     [
+      3,
+      5
+     ],
+     [
+      0,
+      4,
+      6
+     ],
+     [
+      2,
+      5
+     ]
+    ],
+    "z": [
+     6,
+     6,
+     6,
+     6,
+     6,
+     6,
+     6
+    ]
+   }
+  },
+  {
    "id": "docs/verification/phase7-反應規則A-命中列表.md#1",
    "input": {
     "smiles": "Oc1ccc(Cc2ccc(O)c(Cc3ccccc3O)c2)cc1"
@@ -54907,7 +55165,7 @@
    }
   }
  ],
- "commit": "d2e8e05ef06fae599773e96734876881ce9374a3+dirty-src",
+ "commit": "9c766f1e5a0f4f76e316181155179521f65e8baa+dirty-src",
  "module": "molGraph",
  "rdkitjs": "2026.09.1",
  "tolerance": {
