@@ -52,10 +52,37 @@ export interface Component<Category extends string = string> {
   density?: number;
   /** 密度來源（文字，選填） */
   densitySource?: string;
+  /**
+   * 使用者輸入的堆積係數 k（0 < k < 1，選填；任務 P8-3，D61）：聚合物成分密度的第一順位（Vm = VvdW／k），
+   * 也是 Bondi FFV 相對 Tg 的條件之一。舊檔沒有，視為空。
+   */
+  packingK?: number;
+  /** Bondi FFV 相對 Tg（任務 038、D61）的參考聚合物 A（選填；任務 P8-3）。只在書的基團加成缺基團時使用 */
+  referencePolymer?: ReferencePolymer;
+}
+
+/**
+ * 參考聚合物 A：由使用者指定，程式不自行挑選。Tg 是錨點（D61：不屬於 D02 禁止的實驗輸入），不是本成分的實測值。
+ * 名稱與 k 表「材料名稱」逐字相同時，k 與 Tg 可由 k 表帶出；輸入值優先。
+ */
+export interface ReferencePolymer {
+  name?: string;
+  /** A 的重複單元 SMILES（含 `*`） */
+  smiles?: string;
+  /** A 的 Tg（°C，錨點） */
+  tgC?: number;
+  /** A 的堆積係數 k（0 < k < 1） */
+  packingK?: number;
 }
 
 /** 密度必須是正的有限數 */
 export const isValidDensity = (value: unknown): value is number => typeof value === 'number' && Number.isFinite(value) && value > 0;
+
+/** 堆積係數 k 必須在 0 與 1 之間（任務 P8-3） */
+export const isValidPackingK = (value: unknown): value is number => typeof value === 'number' && Number.isFinite(value) && value > 0 && value < 1;
+
+/** 參考聚合物 A 的 Tg（°C）必須高於絕對零度 */
+export const isValidTgC = (value: unknown): value is number => typeof value === 'number' && Number.isFinite(value) && value > -273.15;
 
 export interface Area<Unit extends string, Category extends string> {
   /** 每一區使用同一種輸入單位（D36） */

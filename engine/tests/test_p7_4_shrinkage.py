@@ -274,5 +274,6 @@ def test_density_includes_only_mixed_components_and_marks_copolymer() -> None:
     assert d["status"] == "predicted" and d["density"] == pytest.approx(1.0)  # 催化劑與揮發成分不混入
     cop = {"id": "P", "name": "共聚物", "category": "Resin", "canonicalSmiles": CRESOL_NOVOLAC, "polymer": {"units": [{"smiles": CRESOL_NOVOLAC, "fraction": 50}, {"smiles": "[*:1]CC([*:2])c1ccccc1", "fraction": 50}]}}
     d = cs.formulation_density([cop], {"P": 100})
-    assert d["status"] == "missing" and "共聚物" in d["reason"]
+    # 任務 P8-3（使用者 2026-11-19 同意改此行）：共聚物按莫耳分率加權各單元，不再回 missing；第 1 單元書 Va 缺基團 → 類別預設並標示
+    assert d["status"] == "predicted" and d["components"][0]["densitySource"] == "class" and "類別預設，非材料值" in d["components"][0]["detail"]
     assert cs.formulation_density([solid[1]], {"C": 100})["status"] == "missing"

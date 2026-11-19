@@ -2,17 +2,28 @@
 import { newId } from '../../core/library/library';
 import type { PolymerSpec } from '../../core/polymer/types';
 import { editFromSpec, specFromEdit, type PolymerEdit } from '../polymer/model';
-import { isValidDensity, type Component, type Formulation, type LiquidCategory, LiquidUnit, PolymerMolBasis, SolidCategory, SolidUnit, TargetBasis } from '../../core/formulation/types';
+import { isValidDensity, isValidPackingK, isValidTgC, type Component, type ReferencePolymer, type Formulation, type LiquidCategory, LiquidUnit, PolymerMolBasis, SolidCategory, SolidUnit, TargetBasis } from '../../core/formulation/types';
 
 /** amountTouched：使用者輸入過或離開過用量欄位（只在畫面使用，不存進配方）；在那之前空白用量不顯示錯誤 */
-export type Row = Omit<Component, 'amount' | 'polymer' | 'density'> & {
+export type Row = Omit<Component, 'amount' | 'polymer' | 'density' | 'packingK' | 'referencePolymer'> & {
   amountText: string;
   /** 使用者輸入的密度（g/cm³）原始文字；空白＝沒有填（P7-4a） */
   densityText?: string;
+  /** 使用者輸入的堆積係數 k 原始文字；空白＝沒有填（任務 P8-3） */
+  packingKText?: string;
+  /** 參考聚合物 A 的輸入（任務 P8-3）：名稱、SMILES、Tg（°C）文字、堆積係數 k 文字；全部空白＝沒有填 */
+  refEdit?: RefEdit;
   amountTouched?: boolean;
   /** 聚合物的 Mw／Mn／DP 與 PDI 輸入（含 `*` 的成分才會用到）；存檔時轉成 Component.polymer */
   polymerEdit?: PolymerEdit;
 };
+
+export interface RefEdit {
+  name: string;
+  smiles: string;
+  tgText: string;
+  packingKText: string;
+}
 
 /** 尚未填用量（空白且還沒輸入過、沒離開過欄位）的成分編號 */
 export function pendingAmountIds(rows: readonly Row[]): Set<string> {
@@ -70,10 +81,12 @@ export const hasVolatileRow = (state: Pick<EditorState, 'solidRows'>) => state.s
 export const targetActive = (state: Pick<EditorState, 'targetText'>) => state.targetText.trim() !== '';
 
 function toComponent(row: Row, blankAmount?: number): Component {
-  const { amountText, amountTouched: _touched, polymerEdit, densityText, densitySource, ...rest } = row;
+  const { amountText, amountTouched: _touched, polymerEdit, densityText, densitySource, packingKText, refEdit, ...rest } = row;
   const polymer = polymerEdit && rest.canonicalSmiles.includes('*') ? specFromEdit(polymerEdit, rest.canonicalSmiles) : null;
   const amount = blankAmount !== undefined && amountText.trim() === '' ? blankAmount : parseNumberText(amountText);
   const density = parseNumberText(densityText ?? '');
+  const packingK = parseNumberText(packingKText ?? '');
+  const referencePolymer = refFromEdit(refEdit);
   return {
     ...rest,
     amount,
@@ -81,7 +94,40 @@ function toComponent(row: Row, blankAmount?: number): Component {
     // 無效的密度不寫入（畫面以 densityProblem 顯示錯誤），避免把非正數送進計算或存檔
     ...(isValidDensity(density) ? { density } : {}),
     ...(densitySource && densitySource.trim() !== '' ? { densitySource } : {}),
+    // 堆積係數 k 與參考聚合物 A（任務 P8-3）：無效值不寫入（畫面以 packingKProblem／refProblem 顯示錯誤）
+    ...(isValidPackingK(packingK) ? { packingK } : {}),
+    ...(referencePolymer ? { referencePolymer } : {}),
   };
+}
+
+/** 參考聚合物 A 的輸入 → ReferencePolymer；全部空白回傳 null；無效的數字欄位不寫入 */
+export function refFromEdit(edit: RefEdit | undefined): ReferencePolymer | null {
+  if (!edit) return null;
+  const ref: ReferencePolymer = {};
+  if (edit.name.trim() !== '') ref.name = edit.name.trim();
+  if (edit.smiles.trim() !== '') ref.smiles = edit.smiles.trim();
+  const tgC = parseNumberText(edit.tgText);
+  if (isValidTgC(tgC)) ref.tgC = tgC;
+  const k = parseNumberText(edit.packingKText);
+  if (isValidPackingK(k)) ref.packingK = k;
+  return Object.keys(ref).length > 0 ? ref : null;
+}
+
+function editFromRef(ref: ReferencePolymer | undefined): RefEdit | undefined {
+  if (!ref) return undefined;
+  return { name: ref.name ?? '', smiles: ref.smiles ?? '', tgText: textOf(ref.tgC), packingKText: textOf(ref.packingK) };
+}
+
+/** 堆積係數 k 欄位的錯誤說明；空白或有效回傳 null */
+export function packingKProblem(text: string | undefined): string | null {
+  if (text === undefined || text.trim() === '') return null;
+  return isValidPackingK(parseNumberText(text)) ? null : '堆積係數 k 必須是 0 與 1 之間的數字';
+}
+
+/** 參考聚合物 A 的 Tg 欄位錯誤說明；空白或有效回傳 null */
+export function refTgProblem(text: string | undefined): string | null {
+  if (text === undefined || text.trim() === '') return null;
+  return isValidTgC(parseNumberText(text)) ? null : 'Tg 必須是高於絕對零度的數字（°C）';
 }
 
 /** 密度欄位的錯誤說明；空白或有效回傳 null */
@@ -112,8 +158,16 @@ export function toFormulation(state: EditorState): Formulation {
 const textOf = (value: number | undefined) => (value === undefined || Number.isNaN(value) ? '' : String(value));
 
 function toRow(component: Component): Row {
-  const { amount, polymer, density, ...rest } = component;
-  return { ...rest, amountText: textOf(amount), ...(density !== undefined ? { densityText: textOf(density) } : {}), ...(polymer ? { polymerEdit: editFromSpec(polymer) } : {}) };
+  const { amount, polymer, density, packingK, referencePolymer, ...rest } = component;
+  const refEdit = editFromRef(referencePolymer);
+  return {
+    ...rest,
+    amountText: textOf(amount),
+    ...(density !== undefined ? { densityText: textOf(density) } : {}),
+    ...(packingK !== undefined ? { packingKText: textOf(packingK) } : {}),
+    ...(refEdit ? { refEdit } : {}),
+    ...(polymer ? { polymerEdit: editFromSpec(polymer) } : {}),
+  };
 }
 
 export function fromFormulation(f: Formulation): EditorState {

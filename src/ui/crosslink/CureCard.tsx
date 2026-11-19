@@ -213,6 +213,12 @@ function ShrinkageSection({ data }: { data: CureShrinkage }) {
               {c.userDensitySource ? `；來源：${c.userDensitySource}` : '；未填來源'}
             </p>
           ))}
+          {(data.density.components ?? []).filter((c) => c.densitySource === 'userK' || c.densitySource === 'tableK' || c.densitySource === 'class').map((c) => (
+            <p className="crosslink-notes" key={`k-${c.name}`}>
+              {c.name} 的密度 {c.density === null ? '—' : round(c.density, 4)} g/cm³：{c.densitySourceLabel ?? c.densitySource}
+              {c.detail ? `；${c.detail}` : ''}
+            </p>
+          ))}
         </>
       )}
       <p className="crosslink-notes">{data.model}。{data.note}</p>

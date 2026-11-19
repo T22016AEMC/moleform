@@ -9,7 +9,7 @@ import type { ScanOption, ScanResult, ScanSettings } from '../../core/crosslink/
 import type { Formulation, FormulationOutcome } from '../../core/formulation/types';
 import { averageWeightOf, drawCrosslinkInWorker } from '../../worker/client';
 import { getBridge } from './engineClient';
-import { userDensityFields } from './propertyRequests';
+import { packingKFields, userDensityFields } from './propertyRequests';
 
 export type EngineOutcome<T> = { ok: true; value: T } | { ok: false; error: string };
 
@@ -127,6 +127,7 @@ export function cureBody(
         ...(c.polymer ? { polymer: c.polymer } : {}),
         ...(c.volatileFlag ? { volatileFlag: true } : {}),
         ...userDensityFields(c),
+        ...packingKFields(c),
       })),
     },
     wtPct: base.wtPct,
@@ -289,9 +290,11 @@ export interface CureDensityComponent {
   name: string;
   w: number;
   density: number | null;
-  /** given＝呼叫端給的值；predicted＝莫耳體積表預測；user＝使用者輸入（P7-4a） */
-  densitySource?: 'given' | 'predicted' | 'user';
+  /** given＝呼叫端給的值；predicted＝莫耳體積表預測；user＝使用者輸入（P7-4a）；userK／tableK＝堆積係數 k；class＝D57 類別預設（任務 P8-3） */
+  densitySource?: 'given' | 'predicted' | 'user' | 'userK' | 'tableK' | 'class';
   densitySourceLabel?: string;
+  /** 任務 P8-3：k 或類別預設的細節（k 值、k 表材料、D57 類別） */
+  detail?: string;
   userDensitySource?: string;
 }
 export type CureShrinkage = {

@@ -1,6 +1,6 @@
 // 物性面板的輸入轉換（任務 I01）：介面狀態（配方、成分、formulation/compute 的換算結果）→ 引擎請求本文。
 // 只搬運資料，不計算任何物性。質量分率、Mn、每分子質量由介面端以現有 TypeScript 的 computeFormulation 換算後傳入（D04、039a）。
-import { isValidDensity, type Component, type Formulation, type FormulationOutcome } from '../../core/formulation/types';
+import { isValidDensity, isValidPackingK, type Component, type Formulation, type FormulationOutcome } from '../../core/formulation/types';
 
 export interface EngineRequest {
   /** 引擎端點（桌面橋接的白名單內） */
@@ -14,6 +14,31 @@ const CATALYST = 'Catalyst/Initiator';
 export function userDensityFields(c: Pick<Component, 'density' | 'densitySource'>): Record<string, unknown> {
   if (!isValidDensity(c.density)) return {};
   return { userDensity: c.density, ...(c.densitySource && c.densitySource.trim() !== '' ? { userDensitySource: c.densitySource } : {}) };
+}
+
+/** 使用者輸入的堆積係數 k（任務 P8-3）：聚合物成分密度的第一順位；無效值不送 */
+export function packingKFields(c: Pick<Component, 'packingK'>): Record<string, unknown> {
+  return isValidPackingK(c.packingK) ? { packingK: c.packingK } : {};
+}
+
+/** 參考聚合物 A（任務 P8-3）：只送給 /tg/mixing，書的基團加成缺基團時才用於 Bondi FFV 相對 Tg */
+export function referenceFields(c: Pick<Component, 'referencePolymer'>): Record<string, unknown> {
+  return c.referencePolymer ? { referencePolymer: c.referencePolymer } : {};
+}
+
+/**
+ * 成分密度的結構欄位（任務 P8-3）：均聚物／小分子送 smiles；共聚物送 units 與 fractionBasis（不送 smiles，不用第一種單元代表），
+ * 引擎按莫耳分率加權各單元的 Vm 與單元質量。
+ */
+function densityStructureFields(c: Pick<Component, 'canonicalSmiles' | 'polymer'>): Record<string, unknown> {
+  if (!isCopolymer(c)) return { smiles: c.canonicalSmiles };
+  const p = c.polymer!;
+  return { units: p.units, ...(p.fractionBasis ? { fractionBasis: p.fractionBasis } : {}) };
+}
+
+/** 單一對象的「成分密度（採用值）」請求：與配方混合密度同一順序（k ＞ 書 Va ＞ 使用者密度 ＞ 類別預設） */
+export function componentDensityRequest(c: Pick<Component, 'name' | 'canonicalSmiles' | 'polymer' | 'density' | 'densitySource' | 'packingK'>): EngineRequest {
+  return { path: '/mixture-density', body: { components: [{ name: c.name, w: 1, ...densityStructureFields(c), ...userDensityFields(c), ...packingKFields(c) }] } };
 }
 
 export const isPolymerSmiles =(smiles: string) => smiles.includes('*');
@@ -119,6 +144,8 @@ export function formulationRequests(
         canonicalSmiles: c.canonicalSmiles,
         ...(c.polymer ? { polymer: c.polymer } : {}),
         ...(c.volatileFlag ? { volatileFlag: true } : {}),
+        ...packingKFields(c),
+        ...referenceFields(c),
       })),
       wtPct,
       mn,
@@ -136,9 +163,10 @@ export function formulationRequests(
   const components = mixed.map(({ component: c, wtPct: pct }) => ({
     name: c.name,
     w: (pct as number) / total,
-    // 共聚物以第一種單元代表會失真：不給 smiles，讓引擎回報缺密度／缺介電
-    ...(isCopolymer(c) ? {} : { smiles: c.canonicalSmiles }),
+    // 共聚物以第一種單元代表會失真：不給 smiles；改送 units（任務 P8-3，密度按莫耳分率加權；介電仍缺值）
+    ...densityStructureFields(c),
     ...userDensityFields(c),
+    ...packingKFields(c),
   }));
   return {
     tgMixing,

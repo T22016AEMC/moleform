@@ -5,8 +5,8 @@ import type { Formulation, FormulationOutcome } from '../../core/formulation/typ
 import { UnifiedNote } from '../components/UnifiedNote';
 import { ResultBlock } from '../workbench/ResultBlock';
 import { getBridge, type EngineReply, type EngineStatus } from './engineClient';
-import { DEFAULT_RH, MOISTURE_RH, formulationRequests, isCopolymer, isPolymerSmiles, thermalRequests, unitRequests, type EngineRequest } from './propertyRequests';
-import { formulationRows, unitRows, type PropertyRow } from './propertyRows';
+import { DEFAULT_RH, MOISTURE_RH, componentDensityRequest, formulationRequests, isCopolymer, isPolymerSmiles, thermalRequests, unitRequests, type EngineRequest } from './propertyRequests';
+import { DENSITY_ORDER_NOTE, formulationRows, unitRows, type PropertyRow } from './propertyRows';
 
 const FORMULATION = '__formulation__';
 
@@ -82,7 +82,11 @@ export function EnginePropertiesBlock({ formulation, outcome, mnById }: Props) {
 
   // 請求內容（含換算後的質量分率、Mn）改變才重算
   const plan = useMemo(() => {
-    if (selected) return { kind: 'unit' as const, requests: [...unitRequests(selected), ...thermalRequests(selected, rh)], polymer: isPolymerSmiles(selected.canonicalSmiles) };
+    if (selected) {
+      // 任務 P8-3：另送單一成分的 /mixture-density，顯示與配方混合密度同一順序的密度採用值
+      const requests = [...unitRequests(selected), ...thermalRequests(selected, rh), componentDensityRequest(selected)];
+      return { kind: 'unit' as const, requests, polymer: isPolymerSmiles(selected.canonicalSmiles) };
+    }
     return { kind: 'formulation' as const, req: formulationRequests(formulation, outcome, mnById) };
   }, [selected, formulation, outcome, mnById, rh]);
   const planKey = JSON.stringify(plan);
@@ -146,8 +150,8 @@ export function EnginePropertiesBlock({ formulation, outcome, mnById }: Props) {
             </select>
           </div>
         )}
-        {selected && isCopolymer(selected) && <small>共聚物：除自由體積外，其餘單一對象物性以第一種單元計算（共聚物混合不處理）。</small>}
-        {!selected && <small>配方混合只混 Solid 區成分（Catalyst/Initiator 與揮發／分解成分不混入）。</small>}
+        {selected && isCopolymer(selected) && <small>共聚物：自由體積與「密度（採用值）」按莫耳分率加權各單元；其餘單一對象物性以第一種單元計算。</small>}
+        {!selected && <small>配方混合只混 Solid 區成分（Catalyst/Initiator 與揮發／分解成分不混入）。{DENSITY_ORDER_NOTE}。</small>}
         {rows === null ? <p role="status">引擎計算中…</p> : <PropertyTable rows={rows} />}
       </>
     );

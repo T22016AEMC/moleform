@@ -27,7 +27,10 @@ import {
   toFormulation,
   UNIT_SUFFIX,
   densityProblem,
+  packingKProblem,
+  refTgProblem,
   type EditorState,
+  type RefEdit,
   type Row,
 } from '../formulation/model';
 import type { FormulationStorage } from '../formulation/storage';
@@ -298,6 +301,9 @@ function AreaCard({ area, state, setState, issues, units, onAdd, onOpenDetail, d
                       </small>
                       {densityProblem(row.densityText) && <p className="form-error" role="alert">{densityProblem(row.densityText)}</p>}
                     </div>
+                  )}
+                  {isSolid && row.canonicalSmiles.includes('*') && (
+                    <PackingFields row={row} onPatch={(patch) => patchRow(row.id, patch)} />
                   )}
                   {unitProblem && <p className="form-error" role="alert">{unitProblem}</p>}
                 </div>
@@ -701,5 +707,42 @@ export function Workbench({ storage }: Props) {
         <ComponentDetailDialog row={detailRow} area={detailArea} onChange={(update) => updateRow(detailRow.id, update)} onClose={() => setDialog(null)} />
       )}
     </BlockStateContext.Provider>
+  );
+}
+
+/** 聚合物成分的堆積係數 k 與參考聚合物 A（任務 P8-3）：k 用於成分密度（第一順位）；A 只在書的基團加成缺基團時用於 Bondi FFV 相對 Tg */
+function PackingFields({ row, onPatch }: { row: Row; onPatch: (patch: Partial<Row>) => void }) {
+  const ref: RefEdit = row.refEdit ?? { name: '', smiles: '', tgText: '', packingKText: '' };
+  const patchRef = (p: Partial<RefEdit>) => onPatch({ refEdit: { ...ref, ...p } });
+  const kProblem = packingKProblem(row.packingKText);
+  const refKProblem = packingKProblem(ref.packingKText);
+  const tgProblem = refTgProblem(ref.tgText);
+  return (
+    <div className="comp-fields density-fields">
+      <input
+        type="text"
+        inputMode="decimal"
+        aria-label={`${row.name} 堆積係數 k（選填）`}
+        value={row.packingKText ?? ''}
+        placeholder="堆積係數 k（選填，0–1）"
+        aria-invalid={kProblem !== null}
+        onChange={(e) => onPatch({ packingKText: e.target.value })}
+      />
+      <small className="auto-note">堆積係數 k（Vm = VvdW／k）：成分密度的第一順位；沒填時，成分名稱與 k 表的材料名稱逐字相同才用 k 表</small>
+      {kProblem && <p className="form-error" role="alert">{kProblem}</p>}
+      <details>
+        <summary>參考聚合物 A（Bondi FFV 相對 Tg，選填）</summary>
+        <input type="text" aria-label={`${row.name} 參考聚合物 A 名稱`} value={ref.name} placeholder="A 的名稱（與 k 表相同時可帶出 k 與 Tg）" onChange={(e) => patchRef({ name: e.target.value })} />
+        <input type="text" aria-label={`${row.name} 參考聚合物 A 的 SMILES`} value={ref.smiles} placeholder="A 的重複單元 SMILES（含 *）" onChange={(e) => patchRef({ smiles: e.target.value })} />
+        <div className="amount-input">
+          <input type="text" inputMode="decimal" aria-label={`${row.name} 參考聚合物 A 的 Tg`} value={ref.tgText} placeholder="A 的 Tg（錨點）" aria-invalid={tgProblem !== null} onChange={(e) => patchRef({ tgText: e.target.value })} />
+          <span className="amount-unit">°C</span>
+        </div>
+        <input type="text" inputMode="decimal" aria-label={`${row.name} 參考聚合物 A 的堆積係數 k`} value={ref.packingKText} placeholder="A 的堆積係數 k（0–1）" aria-invalid={refKProblem !== null} onChange={(e) => patchRef({ packingKText: e.target.value })} />
+        <small className="auto-note">只在書的基團加成缺基團時使用：Tg_B = Tg_A − Δf／Δα（D61，參考趨勢）。A 由你指定，程式不自行挑選；A 的 Tg 是錨點，不是本成分的實測值</small>
+        {tgProblem && <p className="form-error" role="alert">{tgProblem}</p>}
+        {refKProblem && <p className="form-error" role="alert">{refKProblem}</p>}
+      </details>
+    </div>
   );
 }

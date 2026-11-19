@@ -223,23 +223,28 @@ def formulation_density(solid: Sequence[Mapping[str, Any]], wt_pct: Mapping[str,
             item["density"] = c["density"]
         elif not _is_copolymer(c):
             item["smiles"] = c["canonicalSmiles"]
+        else:
+            # 共聚物（任務 P8-3）：各單元按莫耳分率加權，與混合密度同一函式
+            item["units"] = c["polymer"]["units"]
+            if c["polymer"].get("fractionBasis") is not None:
+                item["fractionBasis"] = c["polymer"]["fractionBasis"]
         # 使用者輸入的密度（P7-4a）：只在預測密度取不到時使用
         if c.get("userDensity") is not None:
             item["userDensity"] = c["userDensity"]
             if c.get("userDensitySource") is not None:
                 item["userDensitySource"] = c["userDensitySource"]
+        # 使用者輸入的堆積係數 k（任務 P8-3）：聚合物的第一順位
+        if c.get("packingK") is not None:
+            item["packingK"] = c["packingK"]
         items.append(item)
     try:
         r = compute_mixture_density(items)
     except ValueError as e:
         return {"status": "missing", "reason": f"混合密度無法計算：{e}"}
     if r["status"] != "predicted":
-        by_name = {c["name"]: c for c in mixed}
         parts = []
         for m in r["missing"]:
-            comp = by_name.get(m["name"], {})
-            reason = "共聚物以第一種單元代表會失真，不計算密度" if _is_copolymer(comp) and comp.get("density") is None else m["reason"]
-            parts.append(f"{m['name']}（{reason}）")
+            parts.append(f"{m['name']}（{m['reason']}）")
         return {"status": "missing", "reason": "成分缺密度：" + "、".join(parts) + "；不猜值，整項不計算"}
     return {"status": "predicted", "density": r["density"], "model": r["model"], "note": r["note"], "components": r["components"]}
 

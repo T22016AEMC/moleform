@@ -10,6 +10,7 @@ import math
 from collections.abc import Mapping, Sequence
 from typing import Any
 
+from . import component_density as _cd
 from . import dielectric as _de
 from . import free_volume as _fv
 from . import vm as _vm
@@ -72,32 +73,21 @@ def _check_sum(values: Sequence[float], label: str) -> None:
         raise ValueError(f"{label}合計必須為 1（目前 {total}）")
 
 
-USER_DENSITY_LABEL = "使用者輸入（文獻或供應商資料，非預測）"
+USER_DENSITY_LABEL = _cd.USER_DENSITY_LABEL
+
+
+def _density_full(c: Mapping[str, Any], label: str) -> dict[str, Any]:
+    """成分密度的完整結果（任務 P8-3，`component_density.resolve_component_density`）。"""
+    return _cd.resolve_component_density(c, label)
 
 
 def _density_resolve(c: Mapping[str, Any], label: str) -> tuple[float | None, str | None, str | None]:
-    """成分密度（g/cm³）：回傳 (值, 缺值原因, 來源)。來源為 "given"（呼叫端的 density）、"predicted"（莫耳體積表）、"user"（userDensity）。
-    順序：density 優先；其次由 smiles 的預測密度（聚合物，不改現有行為）；預測取不到時才用 userDensity（使用者輸入的文獻／供應商值）。"""
-    if c.get("density") is not None:
-        return _positive(c["density"], f"{label}的 density"), None, "given"
-    user = _positive(c["userDensity"], f"{label}的 userDensity") if c.get("userDensity") is not None else None
-    smiles = c.get("smiles")
-    if not isinstance(smiles, str) or smiles.strip() == "":
-        if user is not None:
-            return user, None, "user"
-        return None, "沒有提供密度（density 或 smiles）", None
-    r = _vm.compute_molar_volume_density(smiles)
-    if r["status"] == "ok" and r["amorphous"] is not None:
-        return r["amorphous"]["density"], None, "predicted"
-    if user is not None:
-        return user, None, "user"
-    if r["status"] == "unsupported":
-        return None, "小分子液體密度（Fedors）尚未收錄，請自行提供 density", None
-    if r["status"] == "missing":
-        return None, "莫耳體積表缺基團，算不出密度", None
-    if r["status"] == "ok":
-        return None, "單元質量無法計算，算不出密度", None
-    raise ValueError(f"{label}：{r['message']}")
+    """成分密度（g/cm³）：回傳 (值, 缺值原因, 來源)。來源見 `component_density.SOURCE_LABELS`
+    （given／userK／tableK／predicted（書 Va）／user（userDensity）／class（D57 類別預設））。
+    順序（任務 P8-3）：density ＞ 堆積係數 k（使用者輸入 ＞ k 表名稱命中，只限聚合物）＞ 書 Va ＞ userDensity ＞ D57 類別預設（只在 Va 算不出時）。
+    沒有 k 也沒有 userDensity 時與修改前相同。"""
+    r = _density_full(c, label)
+    return r["density"], r["reason"], r["source"]
 
 
 def _density_of(c: Mapping[str, Any], label: str) -> tuple[float | None, str | None]:
@@ -135,18 +125,35 @@ def compute_mixture_density(items: object) -> dict[str, Any]:
     missing: list[dict[str, Any]] = []
     for i, c in enumerate(comps):
         name = _name(c, i)
-        rho, why, src = _density_resolve(c, name)
+        full = _density_full(c, name)
+        rho, why, src = full["density"], full["reason"], full["source"]
         row: dict[str, Any] = {"name": name, "w": weights[i], "density": rho}
         if src == "user":
             row["densitySource"] = "user"
             row["densitySourceLabel"] = USER_DENSITY_LABEL
             if isinstance(c.get("userDensitySource"), str) and c["userDensitySource"].strip() != "":
                 row["userDensitySource"] = c["userDensitySource"]
+        elif src in ("userK", "tableK", "class"):
+            # 任務 P8-3 新增的來源：標出實際用了哪一條；類別預設一律標「類別預設，非材料值」
+            row["densitySource"] = src
+            row["densitySourceLabel"] = _cd.SOURCE_LABELS[src]
+            for key in ("detail", "packingK", "units"):
+                if full.get(key) is not None:
+                    row[key] = full[key]
         elif src is not None:
             row["densitySource"] = src
+            if src == "predicted" and full.get("units") is not None:
+                row["units"] = full["units"]
+        if full.get("notes"):
+            row["densityNotes"] = full["notes"]
         rows.append(row)
         if rho is None:
-            missing.append({"index": i, "name": name, "field": "density", "reason": why})
+            entry: dict[str, Any] = {"index": i, "name": name, "field": "density", "reason": why}
+            if full.get("remedy"):
+                entry["remedy"] = full["remedy"]
+            if full.get("missingUnit") is not None:
+                entry["unit"] = full["missingUnit"]
+            missing.append(entry)
     if missing:
         return {
             "status": "missing",

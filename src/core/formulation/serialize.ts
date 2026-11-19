@@ -1,6 +1,6 @@
 // 配方的序列化與讀回（任務 013；任務 014 的存檔會用到）。含 schemaVersion，不認得的版本拒絕讀取。
 import { parsePolymerSpec } from '../polymer/convert';
-import { FORMULATION_SCHEMA_VERSION, isValidDensity, type Component, type Formulation } from './types';
+import { FORMULATION_SCHEMA_VERSION, isValidDensity, isValidPackingK, isValidTgC, type Component, type Formulation, type ReferencePolymer } from './types';
 
 /** NaN 無法存成 JSON（會變成 null），讀回時再還原為 NaN，讓計算時指出「數值無效」 */
 export function serializeFormulation(formulation: Formulation): string {
@@ -10,6 +10,23 @@ export function serializeFormulation(formulation: Formulation): string {
 export type ParseResult = { ok: true; formulation: Formulation } | { ok: false; error: string };
 
 const isRecord = (value: unknown): value is Record<string, unknown> => !!value && typeof value === 'object' && !Array.isArray(value);
+
+/** 參考聚合物 A（任務 P8-3）：全部欄位都空時回傳 null；格式錯誤回傳錯誤說明 */
+function parseReferencePolymer(value: unknown): ReferencePolymer | null | string {
+  if (!isRecord(value)) return '格式錯誤';
+  const ref: ReferencePolymer = {};
+  if (typeof value.name === 'string' && value.name !== '') ref.name = value.name;
+  if (typeof value.smiles === 'string' && value.smiles !== '') ref.smiles = value.smiles;
+  if (value.tgC != null) {
+    if (!isValidTgC(value.tgC)) return '的 Tg 必須是高於絕對零度的數字（°C）';
+    ref.tgC = value.tgC;
+  }
+  if (value.packingK != null) {
+    if (!isValidPackingK(value.packingK)) return '的堆積係數 k 必須在 0 與 1 之間';
+    ref.packingK = value.packingK;
+  }
+  return Object.keys(ref).length > 0 ? ref : null;
+}
 
 function parseComponent(value: unknown, where: string): Component | string {
   if (!isRecord(value)) return `${where}不是成分資料`;
@@ -30,6 +47,16 @@ function parseComponent(value: unknown, where: string): Component | string {
     component.density = value.density;
   }
   if (typeof value.densitySource === 'string' && value.densitySource !== '') component.densitySource = value.densitySource;
+  // 堆積係數 k 與參考聚合物 A（任務 P8-3）：選填；舊檔沒有，視為空。數值不合法就拒絕讀取
+  if (value.packingK != null) {
+    if (!isValidPackingK(value.packingK)) return `${where}的堆積係數 k 必須在 0 與 1 之間`;
+    component.packingK = value.packingK;
+  }
+  if (value.referencePolymer != null) {
+    const ref = parseReferencePolymer(value.referencePolymer);
+    if (typeof ref === 'string') return `${where}的參考聚合物 A ${ref}`;
+    if (ref) component.referencePolymer = ref;
+  }
   if (value.polymer != null) {
     const parsed = parsePolymerSpec(value.polymer);
     if (!parsed.ok) return `${where}的${parsed.reason}`;

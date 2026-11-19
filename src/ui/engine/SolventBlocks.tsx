@@ -6,6 +6,7 @@ import { UnifiedNote } from '../components/UnifiedNote';
 import { ResultBlock } from '../workbench/ResultBlock';
 import { bundledSolventOptions } from '../workbench/solvents';
 import { getBridge, type EngineQuantity, type EngineReply, type EngineStatus } from './engineClient';
+import { POLYMER_HSP_MISSING_NOTE } from './propertyRows';
 import { liquidVolumeRequest, solubilityPolymers, solubilityRequest, type SolventChoice } from './solventRequests';
 
 export function fmt(v: number, digits = 4): string {
@@ -304,6 +305,7 @@ function SolubilityResult({ r }: { r: SolubilityReply }) {
       </div>
       {polyReasons.length > 0 && <small className="form-warning">聚合物 HSP 缺值：{polyReasons.join('；')}</small>}
       {r.polymer.missing.length > 0 && <small className="form-warning"> 缺基團：{r.polymer.missing.map((m) => m.description).join('；')}</small>}
+      {r.polymer.missing.length > 0 && <small className="form-warning"> {POLYMER_HSP_MISSING_NOTE}</small>}
       {r.solvent.status !== 'ok' && <p className="form-error" role="alert">混合溶劑算不出：{r.solvent.reason}</p>}
       {r.solvent.components.length > 1 && r.solvent.status === 'ok' && (
         <small>

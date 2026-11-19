@@ -11,7 +11,7 @@
 from __future__ import annotations
 
 import re
-from typing import Any, Mapping, Sequence
+from typing import Any, Callable, Mapping, Sequence
 
 from rdkit import Chem
 
@@ -188,6 +188,7 @@ def compute_formulation_tg(
     *,
     error_messages: Sequence[str] | None = None,
     k_rows: Sequence[TgKRow] | None = None,
+    polymer_fallback: Callable[[Mapping[str, Any], dict[str, Any]], dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     """對應 computeFormulationTg 的 Fox 混合部分。
 
@@ -195,6 +196,8 @@ def compute_formulation_tg(
     `wt_pct_by_id`：各成分的質量百分比（TS 的 `solidResult.components[].wtPct.value`）；`None` 表示配方換算失敗
     （TS 的 `!solidResult`），此時回報 status 'error' 並附 `error_messages`（TS 的 `outcome.errors` 中 area 不是 liquid 的訊息）。
     `mn_by_id`：各成分的分子量／Mn（TS 的 `mnById`，沒有為 None）。
+    `polymer_fallback`（任務 P8-3，選用）：聚合物成分 Tg 為 missing 時呼叫 (成分, 結果) → 新結果（`component_tg.bondi_fallback`）；
+    省略時與 TS 逐步等價（黃金比對不受影響）。
     """
     k_rows = load_tg_k_rows() if k_rows is None else k_rows
     base: dict[str, Any] = {
@@ -229,7 +232,10 @@ def compute_formulation_tg(
             continue
         w = fraction_of(c["id"])
         if _is_polymer(c):
-            components.append(polymer_component_tg(c, mn_by_id.get(c["id"]), w, k_rows))
+            pc = polymer_component_tg(c, mn_by_id.get(c["id"]), w, k_rows)
+            if polymer_fallback is not None and pc["status"] == "missing":
+                pc = polymer_fallback(c, pc)
+            components.append(pc)
         else:
             components.append(small_molecule_component_tg(c, w))
 

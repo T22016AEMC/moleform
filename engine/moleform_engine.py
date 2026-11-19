@@ -950,6 +950,27 @@ def _check_wt_map(value: object, name: str, ids: set[str]) -> str | None:
     return None
 
 
+def _check_tg_fallback_inputs(c: dict) -> str | None:
+    """任務 P8-3：成分的堆積係數 k 與參考聚合物 A（Bondi FFV 相對 Tg 的備援輸入）的型別檢查。"""
+    k = c.get("packingK")
+    if k is not None and not (_is_number(k) and 0 < k < 1):
+        return "packingK（堆積係數 k，選用）必須是 0 與 1 之間的數字"
+    ref = c.get("referencePolymer")
+    if ref is None:
+        return None
+    if not isinstance(ref, dict):
+        return "referencePolymer 必須是物件 {name?, smiles?, tgC?, packingK?}"
+    for key in ("name", "smiles"):
+        if ref.get(key) is not None and not (isinstance(ref[key], str) and len(ref[key]) <= MAX_SMILES_CHARS):
+            return f"referencePolymer.{key} 必須是文字（上限 {MAX_SMILES_CHARS} 字元）"
+    if ref.get("tgC") is not None and not (_is_number(ref["tgC"]) and ref["tgC"] > -273.15):
+        return "referencePolymer.tgC（參考聚合物 A 的 Tg，°C）必須是高於絕對零度的數字"
+    rk = ref.get("packingK")
+    if rk is not None and not (_is_number(rk) and 0 < rk < 1):
+        return "referencePolymer.packingK（參考聚合物 A 的堆積係數 k）必須是 0 與 1 之間的數字"
+    return None
+
+
 def handle_tg_mixing(request: object) -> tuple[int, dict]:
     """成分 Tg（Fox–Flory）與配方未固化 Tg（Fox 式；參考趨勢）（任務 M05）。**不含配方換算與分子量**（formulation/compute、molecularWeight 留在 TypeScript，039a）：
     由呼叫端傳入已算好的各成分質量百分比 wtPct 與 Mn mn。請求 {"components": [{id, name, category, canonicalSmiles, polymer?, volatileFlag?}] (Solid 區),
@@ -971,6 +992,9 @@ def handle_tg_mixing(request: object) -> tuple[int, dict]:
             problem = _check_spec(c["polymer"])
             if problem is not None:
                 return 400, {"ok": False, "errors": [problem]}
+        problem = _check_tg_fallback_inputs(c)
+        if problem is not None:
+            return 400, {"ok": False, "errors": [problem]}
     ids = {c["id"] for c in comps}
     if len(ids) != len(comps):
         return 400, {"ok": False, "errors": ["components 的 id 不可重複"]}
@@ -985,12 +1009,13 @@ def handle_tg_mixing(request: object) -> tuple[int, dict]:
     errors = request.get("errors")
     if errors is not None and not (isinstance(errors, list) and all(isinstance(m, str) for m in errors)):
         return 400, {"ok": False, "errors": ["errors 必須是字串陣列"]}
-    mods, err = _import_core("tg_mixing")
+    mods, err = _import_core("tg_mixing", "component_tg")
     if err is not None:
         return err
-    (tm,) = mods
+    (tm, ctg) = mods
     try:
-        result = tm.compute_formulation_tg(comps, wt, request.get("mn", {}), error_messages=errors)
+        # 任務 P8-3：基團缺失時，條件齊全才改用 Bondi FFV 相對 Tg（component_tg.bondi_fallback）
+        result = tm.compute_formulation_tg(comps, wt, request.get("mn", {}), error_messages=errors, polymer_fallback=ctg.bondi_fallback)
     except Exception as e:  # noqa: BLE001
         return _computation_error(e)
     if not _json_safe(result):
@@ -1224,6 +1249,8 @@ def handle_crosslink_cure(request: object) -> tuple[int, dict]:
             return 400, {"ok": False, "errors": ["userDensity（使用者輸入的密度，g/cm³，選用）必須是大於 0 的有限數字"]}
         if c.get("userDensitySource") is not None and not (isinstance(c["userDensitySource"], str) and len(c["userDensitySource"]) <= 500):
             return 400, {"ok": False, "errors": ["userDensitySource（密度來源）必須是不超過 500 字的文字"]}
+        if c.get("packingK") is not None and not (_is_number(c["packingK"]) and 0 < c["packingK"] < 1):
+            return 400, {"ok": False, "errors": ["packingK（使用者輸入的堆積係數 k，選用）必須是 0 與 1 之間的數字"]}
     ids = {c["id"] for c in solid["components"]}
     if len(ids) != len(solid["components"]):
         return 400, {"ok": False, "errors": ["solid.components 的 id 不可重複"]}
@@ -1273,7 +1300,8 @@ def _mixing_envelope(result: dict, model: str, note: str, quantities: dict) -> t
 
 
 def handle_mixture_density(request: object) -> tuple[int, dict]:
-    """混合密度（任務 P6A）：理想體積加成 1/ρ_mix = Σ(w_i/ρ_i)。請求 {"components": [{"name"?, "w": 質量分率, "density"?: g/cm³, "smiles"?: 含 * 的單元}]}。
+    """混合密度（任務 P6A）：理想體積加成 1/ρ_mix = Σ(w_i/ρ_i)。請求 {"components": [{"name"?, "w": 質量分率, "density"?: g/cm³, "smiles"?: 含 * 的單元,
+    "units"?/"fractionBasis"?: 共聚物各單元, "userDensity"?, "packingK"?}]}；成分密度順序見 `component_density.py`（任務 P8-3）。
     任一成分缺密度 → HTTP 200、status = "missing"、列出 missing，不猜值。格式不合：400。尚未接到介面。"""
     if not isinstance(request, dict) or not isinstance(request.get("components"), list):
         return 400, {"ok": False, "errors": ["請求需要陣列欄位 components"]}

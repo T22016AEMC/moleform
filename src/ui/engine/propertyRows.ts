@@ -13,6 +13,23 @@ type Obj = Record<string, unknown>;
 const isObj = (v: unknown): v is Obj => v !== null && typeof v === 'object' && !Array.isArray(v);
 const isQuantity = (v: unknown): v is EngineQuantity => isObj(v) && 'value' in v && 'status' in v && 'unit' in v && 'source' in v;
 
+// ---------- 任務 P8-3：缺值時「使用者可以怎麼補」 ----------
+
+/** 成分密度的來源（引擎 component_density 的 source）→ 面板顯示 */
+export const DENSITY_SOURCE_TEXT: Record<string, string> = {
+  given: '呼叫端提供的密度',
+  userK: '堆積係數 k（使用者輸入；Vm = VvdW／k，D61）',
+  tableK: '堆積係數 k（k 表名稱命中；Vm = VvdW／k，D61）',
+  predicted: '書 Va（莫耳體積基團表，298 K）',
+  user: '使用者輸入的密度（文獻或供應商資料，非預測）',
+  class: '類別預設，非材料值（D57 類別係數換算 k）',
+};
+export const DENSITY_ORDER_NOTE = '成分密度取得順序：堆積係數 k（使用者輸入 ＞ k 表名稱命中）＞ 書 Va ＞ 使用者密度 ＞ D57 類別預設（只在書 Va 算不出時）';
+export const DENSITY_REMEDY = '可以：填寫成分密度（文獻或供應商資料）、把成分名稱改成 k 表的材料名稱、或輸入堆積係數 k';
+export const TG_REMEDY = '可以：在成分的「參考聚合物 A」填 A 的 SMILES、A 的 Tg（錨點）與 A 的堆積係數 k，並輸入本成分的堆積係數 k（名稱與 k 表相同時可由 k 表帶出）';
+export const DIELECTRIC_MISSING_NOTE = '混合介電只用書的極化基團表（式 11.8）：缺基團時維持缺值，不從 k 表推估；目前沒有可由使用者補的欄位（共聚物的介電也不計算）';
+export const POLYMER_HSP_MISSING_NOTE = '聚合物 HSP 維持缺值：書 Table 7.10（HSP 基團貢獻）缺這些基團（例如稠環基團），不從其他表推估；目前沒有可由使用者補的欄位';
+
 function absent(unit: string): EngineQuantity {
   return { value: null, unit, source: '—', status: 'missing' };
 }
@@ -88,7 +105,9 @@ export function unitRows(replies: UnitReplies, polymer: boolean): PropertyRow[] 
   rows.push(rowFrom('vm', 'Vm（莫耳體積，298 K）', vm.quantity, 'cm³/mol', get('/vm'), () => bodyReason(vm)));
   // 算不出時引擎只回 quantity（缺值）；密度沿用同一個原因
   const density = vm.density ?? (isQuantity(vm.quantity) ? { ...vm.quantity, unit: 'g/cm³' } : undefined);
-  rows.push(rowFrom('density', '密度（298 K）', density, 'g/cm³', get('/vm'), () => bodyReason(vm)));
+  rows.push(rowFrom('density', '密度（書 Va，298 K）', density, 'g/cm³', get('/vm'), () => bodyReason(vm)));
+  // 任務 P8-3：與配方混合密度同一順序的「採用值」（有送 /mixture-density 單一成分請求時才有）
+  if (get('/mixture-density')) rows.push(usedDensityRow(get('/mixture-density')));
 
   const cte = of('/cte');
   const cq = isObj(cte.quantities) ? cte.quantities : {};
@@ -237,8 +256,8 @@ export function formulationRows(r: FormulationReplies): PropertyRow[] {
       rows.push({
         key: `tg-${String(c.id)}`,
         label: `成分 Tg：${name}`,
-        quantity: { value, unit: 'K', source: value === null ? '—' : model, status: value === null ? 'missing' : 'predicted' },
-        ...(value === null ? { reason: typeof c.missingReason === 'string' ? c.missingReason : '算不出' } : flags ? { reason: `可信度標記${flags}` } : {}),
+        quantity: { value, unit: 'K', source: value === null ? '—' : typeof c.tgModel === 'string' ? c.tgModel : model, status: value === null ? 'missing' : 'predicted' },
+        ...(value === null ? { reason: componentTgMissingReason(c) } : componentTgNote(c, flags)),
       });
     }
   }
@@ -259,14 +278,86 @@ export function formulationRows(r: FormulationReplies): PropertyRow[] {
   const dielReply: EngineReply | undefined = r.mixReason ? { ok: false, error: r.mixReason } : r.dielectric;
   const dens = bodyOf(densReply);
   const densQ = isObj(dens.quantities) ? dens.quantities : {};
-  rows.push(rowFrom('mix-density', '混合密度（體積加成）', densQ.density, 'g/cm³', densReply, () => mixingReason(dens)));
+  if (failure(densReply) === undefined) rows.push(...componentDensityRows(dens));
+  rows.push(rowFrom('mix-density', '混合密度（體積加成）', densQ.density, 'g/cm³', densReply, () => withRemedy(mixingReason(dens), dens)));
 
   const diel = bodyOf(dielReply);
   const dielQ = isObj(diel.quantities) ? diel.quantities : {};
-  rows.push(rowFrom('mix-eps-lich', '混合介電 ε（Lichtenecker）', dielQ.lichtenecker, '', dielReply, () => mixingReason(diel)));
-  rows.push(rowFrom('mix-eps-upper', '混合介電 ε（Wiener 上界）', dielQ.wienerUpper, '', dielReply, () => mixingReason(diel)));
-  rows.push(rowFrom('mix-eps-lower', '混合介電 ε（Wiener 下界）', dielQ.wienerLower, '', dielReply, () => mixingReason(diel)));
+  const dielReason = () => [mixingReason(diel), DIELECTRIC_MISSING_NOTE].filter((x): x is string => typeof x === 'string' && x !== '').join('；');
+  rows.push(rowFrom('mix-eps-lich', '混合介電 ε（Lichtenecker）', dielQ.lichtenecker, '', dielReply, dielReason));
+  rows.push(rowFrom('mix-eps-upper', '混合介電 ε（Wiener 上界）', dielQ.wienerUpper, '', dielReply, dielReason));
+  rows.push(rowFrom('mix-eps-lower', '混合介電 ε（Wiener 下界）', dielQ.wienerLower, '', dielReply, dielReason));
   return rows;
+}
+
+/** 單一對象的成分密度採用值（k ＞ 書 Va ＞ 使用者密度 ＞ 類別預設） */
+function usedDensityRow(reply: EngineReply | undefined): PropertyRow {
+  const label = '密度（採用值，依取得順序）';
+  const failed = failure(reply);
+  if (failed !== undefined) return { key: 'density-used', label, quantity: absent('g/cm³'), reason: failed };
+  const row = componentDensityRows(bodyOf(reply), 'density-used-')[0];
+  if (!row) return { key: 'density-used', label, quantity: absent('g/cm³'), reason: '引擎沒有回傳此項' };
+  return { ...row, key: 'density-used', label, reason: [row.reason, DENSITY_ORDER_NOTE].filter((x): x is string => typeof x === 'string' && x !== '').join('；') };
+}
+
+/** 成分 Tg 缺值：書的基團加成原因（含 Bondi FFV 相對 Tg 缺什麼）＋可以怎麼補（只在基團缺失、走過備援判斷時） */
+function componentTgMissingReason(c: Obj): string {
+  const why = typeof c.missingReason === 'string' ? c.missingReason : '算不出';
+  return isObj(c.fallback) ? `${why}。${TG_REMEDY}` : why;
+}
+
+/** 成分 Tg 有值時的說明：Bondi FFV 相對 Tg 的備援標出方法與書的缺基團原因 */
+function componentTgNote(c: Obj, flags: string): { reason?: string } {
+  if (c.tgMethod === 'bondiRelativeTg' && isObj(c.relativeTg)) {
+    const rt = c.relativeTg;
+    const parts = [
+      `書的基團加成算不出（${typeof rt.bookReason === 'string' ? rt.bookReason : '缺基團'}），改用 Bondi FFV 相對 Tg（D61，參考趨勢；未做分子量修正）`,
+      typeof rt.deltaF === 'number' ? `Δf = ${Number(rt.deltaF.toPrecision(4))}` : '',
+      ...strings(rt.warnings),
+    ];
+    return { reason: parts.filter((x) => x !== '').join('；') };
+  }
+  return flags ? { reason: `可信度標記${flags}` } : {};
+}
+
+/** 混合密度缺值時附上「可以怎麼補」（引擎的 remedy；沒有就用通用說明） */
+function withRemedy(why: string | undefined, body: Obj): string | undefined {
+  if (why === undefined) return undefined;
+  const missing = Array.isArray(body.missing) ? body.missing.filter(isObj) : [];
+  const remedies = Array.from(new Set(missing.map((m) => (typeof m.remedy === 'string' ? m.remedy : '')).filter((x) => x !== '')));
+  return [why, ...(remedies.length ? remedies : missing.length ? [DENSITY_REMEDY] : [])].join('；');
+}
+
+/** 每個成分的密度與實際用的來源（k 表／使用者 k／書 Va／使用者密度／類別預設） */
+export function componentDensityRows(body: Obj, keyPrefix = 'density-'): PropertyRow[] {
+  const comps = Array.isArray(body.components) ? body.components.filter(isObj) : [];
+  const missing = Array.isArray(body.missing) ? body.missing.filter(isObj) : [];
+  return comps.map((c, i) => {
+    const name = typeof c.name === 'string' ? c.name : `成分 ${i + 1}`;
+    const value = typeof c.density === 'number' ? c.density : null;
+    const src = typeof c.densitySource === 'string' ? c.densitySource : null;
+    const sourceText = src === null ? '—' : DENSITY_SOURCE_TEXT[src] ?? src;
+    const label = `成分密度：${name}`;
+    if (value === null) {
+      const m = missing.find((x) => x.index === i);
+      const why = m && typeof m.reason === 'string' ? m.reason : '算不出';
+      const remedy = m && typeof m.remedy === 'string' ? m.remedy : DENSITY_REMEDY;
+      return { key: `${keyPrefix}${i}`, label, quantity: { value: null, unit: 'g/cm³', source: '—', status: 'missing' }, reason: `${why}；${remedy}` };
+    }
+    const units = Array.isArray(c.units) ? c.units.filter(isObj) : [];
+    const notes = [
+      typeof c.detail === 'string' ? c.detail : '',
+      typeof c.userDensitySource === 'string' ? `來源：${c.userDensitySource}` : '',
+      units.length > 1 ? `共聚物：${units.map((u) => `單元 ${String(u.index)}（x = ${typeof u.molFraction === 'number' ? Number(u.molFraction.toPrecision(4)) : '—'}，${typeof u.source === 'string' ? DENSITY_SOURCE_TEXT[u.source] ?? u.source : '—'}）`).join('、')}，按莫耳分率加權 Σx·M ÷ Σx·Vm` : '',
+      ...strings(c.densityNotes),
+    ].filter((x) => x !== '');
+    return {
+      key: `${keyPrefix}${i}`,
+      label,
+      quantity: { value, unit: 'g/cm³', source: sourceText, status: 'predicted' },
+      ...(notes.length ? { reason: notes.join('；') } : {}),
+    };
+  });
 }
 
 function mixingReason(body: Obj): string | undefined {
