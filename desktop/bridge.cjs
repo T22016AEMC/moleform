@@ -36,6 +36,11 @@ const ALLOWED_PATHS = Object.freeze([
   '/hsp',
   '/solubility',
   '/liquid-volume',
+  // P8-2：黏度、表面張力（Parachor）、界面張力與潤濕
+  '/viscosity',
+  '/surface-tension',
+  '/interfacial',
+  '/wetting',
 ]);
 
 const LOOPBACK_HOST = '127.0.0.1';

@@ -8,11 +8,11 @@ import { bundledSolventOptions } from '../workbench/solvents';
 import { getBridge, type EngineQuantity, type EngineReply, type EngineStatus } from './engineClient';
 import { liquidVolumeRequest, solubilityPolymers, solubilityRequest, type SolventChoice } from './solventRequests';
 
-function fmt(v: number, digits = 4): string {
+export function fmt(v: number, digits = 4): string {
   return String(Number(v.toPrecision(digits)));
 }
 
-function useEngineStatus(): { bridge: ReturnType<typeof getBridge>; status: EngineStatus | null } {
+export function useEngineStatus(): { bridge: ReturnType<typeof getBridge>; status: EngineStatus | null } {
   const bridge = getBridge();
   const [status, setStatus] = useState<EngineStatus | null>(null);
   useEffect(() => {
@@ -27,14 +27,14 @@ function useEngineStatus(): { bridge: ReturnType<typeof getBridge>; status: Engi
 }
 
 /** 引擎無法使用時的說明；可以使用（ready）回傳 null */
-function unavailable(bridge: ReturnType<typeof getBridge>, status: EngineStatus | null) {
+export function unavailable(bridge: ReturnType<typeof getBridge>, status: EngineStatus | null) {
   if (!bridge) return <p role="status">需要桌面版與引擎</p>;
   if (status === null || status.state === 'starting') return <p role="status">引擎啟動中…</p>;
   if (status.state !== 'ready') return <p className="form-error" role="alert">引擎無法使用：{status.error ?? '未啟動'}。其餘功能不受影響。</p>;
   return null;
 }
 
-function replyBody(reply: EngineReply | null): { body: Record<string, unknown> | null; error: string | null } {
+export function replyBody(reply: EngineReply | null): { body: Record<string, unknown> | null; error: string | null } {
   if (reply === null) return { body: null, error: null };
   if (!reply.ok) return { body: null, error: reply.error };
   if (reply.status !== 200 || reply.body.ok !== true) {
@@ -45,7 +45,7 @@ function replyBody(reply: EngineReply | null): { body: Record<string, unknown> |
 }
 
 /** 依請求（JSON 字串為鍵）呼叫一次引擎；請求內容改變才重算 */
-function useEngineReply(request: { path: string; body: Record<string, unknown> } | null, ready: boolean): { reply: EngineReply | null; busy: boolean } {
+export function useEngineReply(request: { path: string; body: Record<string, unknown> } | null, ready: boolean): { reply: EngineReply | null; busy: boolean } {
   const key = JSON.stringify(request);
   const bridge = getBridge();
   const [state, setState] = useState<{ key: string; reply: EngineReply | null }>({ key: '', reply: null });

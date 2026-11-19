@@ -1,0 +1,19 @@
+id,unit,kind,sugden,mumford_phillips,quayle_low,quayle_high,source,review_status,notes
+PC01,–CH2–,group,39.0,40.0,40.0,40.0,"van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009), Table 8.1，書頁 231（PDF 第 258 頁），逐列看圖謄錄（任務 P8-2）",pending,"書列此行；與 >C< 加 2 個 –H 相同（Sugden 4.8+2×17.1＝39.0；Mumford–Phillips 9.2+2×15.4＝40.0；Quayle 9.0+2×15.5＝40.0）。程式以原子加總（C 與 H），不重複計此列"
+PC02,>C<,atom,4.8,9.2,9.0,9.0,"van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009), Table 8.1，書頁 231（PDF 第 258 頁），逐列看圖謄錄（任務 P8-2）",pending,碳原子
+PC03,–H,atom,17.1,15.4,15.5,15.5,"van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009), Table 8.1，書頁 231（PDF 第 258 頁），逐列看圖謄錄（任務 P8-2）",pending,氫原子
+PC04,–O–,atom,20.0,20.0,19.8,19.8,"van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009), Table 8.1，書頁 231（PDF 第 258 頁），逐列看圖謄錄（任務 P8-2）",pending,氧原子（酯基以外）
+PC05,–O2 (in esters),group,60.0,60.0,54.8,54.8,"van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009), Table 8.1，書頁 231（PDF 第 258 頁），逐列看圖謄錄（任務 P8-2）",pending,"酯基的兩個氧（羰基氧與酯氧）合計；書 Example 8.1 以 –COO– ＝ C ＋ O2（4.8＋60）計，酯基羰基不再另計雙鍵"
+PC06,>N–,atom,12.5,17.5,17.5,17.5,"van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009), Table 8.1，書頁 231（PDF 第 258 頁），逐列看圖謄錄（任務 P8-2）",pending,氮原子
+PC07,–S–,atom,48.2,50.0,49.1,49.1,"van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009), Table 8.1，書頁 231（PDF 第 258 頁），逐列看圖謄錄（任務 P8-2）",pending,硫原子
+PC08,–F,atom,25.7,25.5,26.1,26.1,"van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009), Table 8.1，書頁 231（PDF 第 258 頁），逐列看圖謄錄（任務 P8-2）",pending,氟原子
+PC09,–Cl,atom,54.3,55.0,55.2,55.2,"van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009), Table 8.1，書頁 231（PDF 第 258 頁），逐列看圖謄錄（任務 P8-2）",pending,氯原子
+PC10,–Br,atom,68.0,69.0,68.0,68.0,"van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009), Table 8.1，書頁 231（PDF 第 258 頁），逐列看圖謄錄（任務 P8-2）",pending,溴原子
+PC11,–I,atom,91.0,90.0,90.3,90.3,"van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009), Table 8.1，書頁 231（PDF 第 258 頁），逐列看圖謄錄（任務 P8-2）",pending,碘原子
+PC12,Double bond,bond,23.2,19.0,16.3,19.1,"van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009), Table 8.1，書頁 231（PDF 第 258 頁），逐列看圖謄錄（任務 P8-2）",pending,"Quayle 欄書印範圍 16.3–19.1（書未說明何時取哪個值），程式以低、高兩端各算一次並列出範圍"
+PC13,Triple bond,bond,46.4,38.0,40.6,40.6,"van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009), Table 8.1，書頁 231（PDF 第 258 頁），逐列看圖謄錄（任務 P8-2）",pending,
+PC14,Three-membered ring,ring,16.7,12.5,12.5,12.5,"van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009), Table 8.1，書頁 231（PDF 第 258 頁），逐列看圖謄錄（任務 P8-2）",pending,
+PC15,Four-membered ring,ring,11.6,6.0,6.0,6.0,"van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009), Table 8.1，書頁 231（PDF 第 258 頁），逐列看圖謄錄（任務 P8-2）",pending,
+PC16,Five-membered ring,ring,8.5,3.0,3.0,3.0,"van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009), Table 8.1，書頁 231（PDF 第 258 頁），逐列看圖謄錄（任務 P8-2）",pending,
+PC17,Six-membered ring,ring,6.1,0.8,0.8,0.8,"van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009), Table 8.1，書頁 231（PDF 第 258 頁），逐列看圖謄錄（任務 P8-2）",pending,
+PC18,Seven-membered ring,ring,,-4.0,4.0,4.0,"van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009), Table 8.1，書頁 231（PDF 第 258 頁），逐列看圖謄錄（任務 P8-2）",pending,"Sugden 欄書中空白（無值）；Mumford–Phillips 印 –4.0、Quayle 印 4.0（兩者正負號不同，照書謄錄，未判斷哪個正確）"

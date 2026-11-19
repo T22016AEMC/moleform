@@ -1,0 +1,12 @@
+name,repeat_unit_smiles,gamma_0,t_cr_k,gamma_inf,ks,ke,unit,source,review_status,notes
+Polyethylene (linear),*CC*,53.7,1030,36,31,386,mN/m;K,"van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009), Table 8.3，書頁 237（PDF 第 264 頁），逐列看圖謄錄（任務 P8-2）；書註明資料來自 Wu (1982)",pending,"γ(0) 與 Tc 用於式 8.13（Guggenheim）；γ∞、ks、ke 用於式 8.15、8.16（分子量依賴）"
+Polyethylene (branched),,56.4,921,,,,mN/m;K,"van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009), Table 8.3，書頁 237（PDF 第 264 頁），逐列看圖謄錄（任務 P8-2）；書註明資料來自 Wu (1982)",pending,書 γ∞、ks、ke 印「–」（無值）；重複單元與線型聚乙烯相同，不填 SMILES 以免與線型混淆
+Polypropylene,*CC(C)*,47.2,914,,,,mN/m;K,"van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009), Table 8.3，書頁 237（PDF 第 264 頁），逐列看圖謄錄（任務 P8-2）；書註明資料來自 Wu (1982)",pending,書 γ∞、ks、ke 印「–」（無值）
+Polyisobutylene,*CC(C)(C)*,53.7,918,35,46,383,mN/m;K,"van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009), Table 8.3，書頁 237（PDF 第 264 頁），逐列看圖謄錄（任務 P8-2）；書註明資料來自 Wu (1982)",pending,
+Polystyrene,*CC(c1ccccc1)*,63.3,967,30,75,373,mN/m;K,"van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009), Table 8.3，書頁 237（PDF 第 264 頁），逐列看圖謄錄（任務 P8-2）；書註明資料來自 Wu (1982)",pending,
+Polytetrafluoroethylene,*C(F)(F)C(F)(F)*,44.0,825,25,12,683,mN/m;K,"van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009), Table 8.3，書頁 237（PDF 第 264 頁），逐列看圖謄錄（任務 P8-2）；書註明資料來自 Wu (1982)",pending,
+Polychloroprene,*CC(Cl)=CC*,71.0,892,,,,mN/m;K,"van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009), Table 8.3，書頁 237（PDF 第 264 頁），逐列看圖謄錄（任務 P8-2）；書註明資料來自 Wu (1982)",pending,書 γ∞、ks、ke 印「–」（無值）；SMILES 未標順反（書未說明）
+Poly-vinyl acetate,*CC(OC(C)=O)*,57.4,948,,,,mN/m;K,"van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009), Table 8.3，書頁 237（PDF 第 264 頁），逐列看圖謄錄（任務 P8-2）；書註明資料來自 Wu (1982)",pending,書 γ∞、ks、ke 印「–」（無值）
+Poly-methyl methacrylate,*CC(C)(C(=O)OC)*,65.1,935,,,,mN/m;K,"van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009), Table 8.3，書頁 237（PDF 第 264 頁），逐列看圖謄錄（任務 P8-2）；書註明資料來自 Wu (1982)",pending,書 γ∞、ks、ke 印「–」（無值）；書內文算例：25 °C 為 40.73、100 °C 為 34.95 mN/m
+Polydimethylsiloxane,*[Si](C)(C)O*,35.3,776,21,22,166,mN/m;K,"van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009), Table 8.3，書頁 237（PDF 第 264 頁），逐列看圖謄錄（任務 P8-2）；書註明資料來自 Wu (1982)",pending,
+Polyethylene oxide,*CCO*,,,43,28,343,mN/m;K,"van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009), Table 8.3，書頁 237（PDF 第 264 頁），逐列看圖謄錄（任務 P8-2）；書註明資料來自 Wu (1982)",pending,書 γ(0) 印「–」且 Tc 空白（無值），不能用式 8.13

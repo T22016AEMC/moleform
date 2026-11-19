@@ -220,10 +220,10 @@ U02 已由 D46 決定（任務 019）。
 - [x] 8.1 溶劑資料表填入資料（優先取自成熟套件並標出處，D18）（任務 P8-1，D72：`src/data/solvents.csv` 23 個溶劑、197 列，皆 `pending`；HSP 取 Hansen 2007 Table A.1，密度、黏度、表面張力、沸點取 PubChem 經 HSDB 轉引的文獻值並標出處與溫度，分子量與摩爾體積為計算值；**有空欄**：黏度 5 個、表面張力 6 個缺值，密度多為 20 °C 值，原因逐溶劑寫在各溶劑 molecular_weight 列的備註與 `docs/reports/P8-1-結果.md`，不因空欄不勾）
 - [x] 8.2 Liquid 區 vol% 換算（使用溶劑資料表的密度）（任務 P8-1：`POST /liquid-volume`，右欄「Liquid 體積比（vol%）」卡片，加入成分彈窗新增「從溶劑資料表選取」；缺密度回報 missing；**Liquid 區的輸入單位 vol% 仍不支援**，既有行為不改）
 - [x] 8.3 HSP 基團貢獻、混合溶劑 HSP、Ra、RED、Flory–Huggins χ、溶解性判斷（參考趨勢）（任務 P8-1：`POST /hsp`、`POST /solubility`，`src/data/hsp_groups.csv`〔Table 7.10〕、`hsp_polymers.csv`〔Table 7.8〕，右欄「溶解性」卡片；書算例對照見 `docs/verification/phase8-溶劑與溶解性-輸出.md`：Example 7.3 相符，Example 7.5 的 δh 與 Table 7.6 的聚(乙烯硫醚)有無法由書內資料解釋的差，待使用者決定；未套用對稱因子與 Ring）
-- [ ] 8.4 混合溶劑黏度（Grunberg–Nissan）、聚合物溶液黏度
-- [ ] 8.5 表面張力（Parachor）、混合溶液表面張力
-- [ ] 8.6 界面張力與潤濕性（Owens–Wendt、Young）
-- [ ] 8.7 溫度與濃度依存性
+- [ ] 8.4 混合溶劑黏度（Grunberg–Nissan）、聚合物溶液黏度（任務 P8-2，**部分完成，不勾**）：已做——聚合物溶液黏度（`POST /viscosity`，右欄「黏度」卡片）：Θ 條件 KΘ 與 [η]Θ（式 9.42 反解、式 9.34、Table 9.3 的 29 列基團 J；Table 9.4 的 25 個聚合物 ΣJi 與 Z 全部與書一致）、Mark–Houwink（式 9.32、9.33，K 與 a 由使用者輸入並附來源，不內建）、含 B 項（式 9.38）、濃溶液（式 16.21，K 由使用者輸入）；溶劑黏度取溶劑資料表，溫度依賴用 Andrade 式（式 16.15a，兩個溫度的黏度或 B 與 Eη 由使用者輸入，單一溫度不外推）。**未做——混合溶劑黏度**：查證第 8、9、15、16 章與索引，書中沒有溶劑混合黏度的混合規則（8.2.2 節的 Grunberg–Nissan 式 8.3 是表面張力的內聚功 Wcoh，不是混合黏度式），回 `missing`「書中無溶劑混合黏度式；待使用者指定出處」（本機另有 Grunberg & Nissan 1949 論文，若要採用請使用者指定）。見 D73
+- [ ] 8.5 表面張力（Parachor）、混合溶液表面張力（任務 P8-2，**部分完成，不勾**）：已做——Parachor 表面張力（`POST /surface-tension`，Table 8.1 三組 Sugden、Mumford–Phillips、Quayle 並列列範圍，γ = (Ps/V)^4；聚合物用非晶莫耳體積、溶劑用溶劑資料表該溫度的密度；Table 8.3 的 Guggenheim 與 Table 8.7 的 −dγ/dT 列為文獻對照）；書 Table 8.2 對照：Ps 與書一致（Example 8.1 的 220.8），γ 與書的差異主要來自 V（Vm 模組的非晶莫耳體積與書用的 V 不同），算得出 16／35 列。**未做——混合溶液表面張力**：書中沒有混合規則，回 `missing`。見 D73
+- [x] 8.6 界面張力與潤濕性（Owens–Wendt、Young）（任務 P8-2：`src/data/surface_energy.csv`〔Table 8.6 的 14 種液體、Table 8.7 的 27 個聚合物、Table 8.8 的 14 列，皆 `pending`〕；`POST /interfacial`（式 8.22）、`POST /wetting`（式 8.23 的 cosθ 與 θ、Young 式 8.6、鋪展係數 S = γLV + γSL − γSV，書：S 為負時完全潤濕）；右欄「表面與潤濕」卡片；Example 8.4 重現；溶劑不在 Table 8.6 時 Owens–Wendt 回 `missing`，不補）
+- [ ] 8.7 溫度與濃度依存性（任務 P8-2，**部分完成，不勾**）：已做——溶劑黏度與表面張力的溫度依賴（Andrade 式；Parachor 以該溫度的密度重算）、聚合物表面張力的 Guggenheim 文獻對照、濃溶液冪律式（K 由使用者輸入）；未做——聚合物表面張力的溫度外推（需該溫度的密度，引擎沒有）、分子量依賴（式 8.15、8.16 的 ke、ks 只列在 `src/data/surface_tension_temperature.csv`，未接計算）
 - [ ] 8.8 使用者驗證清單
 
 ## Phase 9：匯出與收尾

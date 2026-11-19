@@ -13,6 +13,7 @@ import { CrosslinkPage } from '../crosslink/CrosslinkPage';
 import { UnifiedNote } from '../components/UnifiedNote';
 import { EnginePropertiesBlock } from '../engine/EnginePropertiesBlock';
 import { LiquidVolumeBlock, SolubilityBlock } from '../engine/SolventBlocks';
+import { SurfaceWettingBlock, ViscosityBlock } from '../engine/ViscositySurfaceBlocks';
 import { FormulationLibrary } from '../formulation/FormulationLibrary';
 import {
   emptyState,
@@ -680,6 +681,8 @@ export function Workbench({ storage }: Props) {
           <EnginePropertiesBlock formulation={debounced} outcome={outcome} mnById={mnById} />
           <LiquidVolumeBlock formulation={debounced} outcome={outcome} />
           <SolubilityBlock formulation={debounced} outcome={outcome} />
+          <ViscosityBlock formulation={debounced} mnById={mnById} />
+          <SurfaceWettingBlock formulation={debounced} />
           <CrosslinkPage formulation={formulation} />
         </div>
       </div>

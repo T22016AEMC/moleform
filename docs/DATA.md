@@ -344,3 +344,17 @@ MoleForm 的化學資料放在 `src/data/` 的四個 CSV。**目前 `functional_
 
 - 讀取程式與檢查：`src/core/data/`（`csv.ts`、`readers.ts`、`validate.ts`、`chemcheck.ts`、`load.ts`）
 - 測試：`tests/data/`
+
+
+## 黏度、表面張力與界面能資料表（任務 P8-2，D22；PLAN 8.4–8.7）
+
+四張新資料表，資料只抄書（van Krevelen & te Nijenhuis, Properties of Polymers 4th ed. (2009)），逐列看圖謄錄，每列有表號與書頁碼，`review_status` 一律 `pending`；括號值（書標為估計或不確定）保留並標示。看不清的值回報而不猜（本卡沒有看不清的值）。
+
+| 檔案 | 內容 | 列數 | 備註 |
+|---|---|---|---|
+| `src/data/parachor_groups.csv` | Table 8.1（書頁 231）：Parachor 的原子與結構貢獻，三欄 Sugden、Mumford–Phillips、Quayle（雙鍵 Quayle 有低高兩端 16.3–19.1） | 18 | 單位 (mN/m)^(1/4)·cm³/mol；七員環 Sugden 欄書中空白，Mumford–Phillips 印 −4.0、Quayle 印 4.0（照書，未判斷哪個正確）；–CH2– 列與 >C< 加 2 個 –H 相同，程式以原子加總不重複計 |
+| `src/data/viscosity_j_groups.csv` | Table 9.3（書頁 253）：莫耳極限黏度函數的基團貢獻 Ji（含 SMARTS 與正反例，D22） | 29 | 括號值（書標為不確定）寫成 `(11)` 等並於 j 欄保留括號；J18（acrylic）沒有 SMARTS，判定規則寫在備註；吡啶、吡咯烷酮、咔唑環（J27–J29）書只有圖，連接位置無法判定，未撰寫 SMARTS，遇到回報缺基團 |
+| `src/data/surface_energy.csv` | Table 8.6（14 種液體：γL、γd、γp，書頁 240）、Table 8.7（**27** 個聚合物：γc、γs、γd、γp、極性、−dγs/dT，書頁 240）、Table 8.8（14 列 Van Oss 分量：γ、γLW、γAB、γ+、γ−，20 °C，書頁 242） | 55 | 欄位含物質名稱、SMILES（或只有名稱）、種類（liquid／polymer）、γ、γd、γp、`gc`（臨界表面張力，另列一欄）、單位、溫度、出處、`review_status`、`note`；Table 8.6、8.7 書未標溫度（溫度欄空白）；括號值於 `note` 標「書中括號值」，± 與 ≈ 值取中心值並於 `note` 說明；Table 8.8 的 γ− 在聚乙烯醇書印範圍 17–57，欄位留空；**Table 8.8 的 LW／AB 與 γd、γp 是不同分解，γd、γp 欄留空** |
+| `src/data/surface_tension_temperature.csv` | Table 8.3（書頁 237）：γ(0)、Tc、γ∞、ks、ke | 11 | 書印「–」的欄位留空；只用於 Guggenheim 式（式 8.13）的文獻對照，不用來外推其他聚合物 |
+
+SMILES 欄（重複單元與液體結構）是依書的名稱撰寫的結構，不是書的數值；書沒有說明結構的物質（二甲基矽氧烷液體、磷酸三甲苯酯與三氯聯苯〔異構物混合〕、纖維素類）不填 SMILES。

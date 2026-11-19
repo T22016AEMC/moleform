@@ -1510,7 +1510,124 @@ def handle_liquid_volume(request: object) -> tuple[int, dict]:
     return 200, {"ok": True, **result, "disclaimer": "本數值為依理論模型估算之參考值，非實測值。實際結果受原料純度、製程條件與反應動力學影響，請以實驗結果為準。"}
 
 
+def _p82_table_error(e: Exception) -> tuple[int, dict] | None:
+    """任務 P8-2 的資料表格式錯誤 → 500（D22：不靜默略過）；其他例外交給 _computation_error。"""
+    if type(e).__name__ in ("ParachorTableError", "ViscosityTableError", "SurfaceEnergyTableError", "SolventTableError", "YTableError"):
+        return 500, {"ok": False, "errors": [f"資料表錯誤：{e}"]}
+    return None
+
+
+def handle_viscosity(request: object) -> tuple[int, dict]:
+    """溶劑與聚合物溶液的黏度（任務 P8-2，PLAN 8.4、8.5）。請求（至少一項）：
+    - "solvents": [{"solventId"? | "smiles"?, "andrade"?: {"points": [{"temperatureC", "viscosityMPas"} ×2]} 或 {"B": mPa·s, "energyKjMol": kJ/mol}}]，"temperatureC"?: 指定溫度。
+      純溶劑黏度取溶劑資料表（單一溫度）；其他溫度需使用者給 Andrade 參數（式 16.15a），只有一個溫度的資料不外推（missing）。Eη 超出書所述 7–14 kJ/mol 標 assumed。
+      多於一種溶劑：混合黏度 missing（書中無溶劑混合黏度式；待使用者指定出處）。
+    - "polymer": {"smiles": "<重複單元，含 *>", "molarMass"?: g/mol, "markHouwink"?: {"K","a","source","temperatureC"?,"solvent"?}, "B"?: Stockmayer–Fixman 的 B,
+      "concentrated"?: {"K","concentration","molarMass"?,"a"?,"b"?,"source"?}}：Θ 條件 KΘ 與 [η]Θ（Table 9.3、式 9.42、9.34）；Mark–Houwink、含 B 項、濃溶液只在使用者輸入 K（等）時才算。
+    回傳各量為 value／unit／source／status。格式不合、SMILES 無法解析：400。"""
+    if not isinstance(request, dict):
+        return 400, {"ok": False, "errors": ["請求必須是 JSON 物件"]}
+    mods, err = _import_core("viscosity")
+    if err is not None:
+        return err
+    (vis,) = mods
+    try:
+        result = vis.compute_viscosity(request)
+    except Exception as e:  # noqa: BLE001
+        return _p82_table_error(e) or _computation_error(e)
+    if not _json_safe(result):
+        return 400, {"ok": False, "errors": ["結果不是有限數字"]}
+    return 200, {"ok": True, **result, "disclaimer": vis.VISCOSITY_DISCLAIMER}
+
+
+def handle_surface_tension(request: object) -> tuple[int, dict]:
+    """表面張力（Parachor，任務 P8-2，PLAN 8.6）。請求 {"smiles": "<小分子或重複單元（含 *）>" 或 "solventId": "<溶劑資料表 id>", "temperatureC"?, "volume"?: cm³/mol, "density"?: g/cm³}。
+    Table 8.1 三組（Sugden、Mumford–Phillips、Quayle 兩端）並列，不挑一組；quantities 的 gammaMin／gammaMax 是三組範圍。
+    V：聚合物取非晶莫耳體積（298 K）；溶劑取溶劑資料表 M ÷ ρ，需要有該溫度的密度，否則 missing。缺基團回報缺基團。SMILES 無法解析、格式不合：400。"""
+    if not isinstance(request, dict):
+        return 400, {"ok": False, "errors": ["請求必須是 JSON 物件"]}
+    smiles = request.get("smiles")
+    solvent_id = request.get("solventId")
+    if smiles is None and solvent_id is None:
+        return 400, {"ok": False, "errors": ["請求需要字串欄位 smiles 或 solventId"]}
+    if smiles is not None and (not isinstance(smiles, str) or len(smiles) > MAX_SMILES_CHARS):
+        return 400, {"ok": False, "errors": [f"smiles 必須是字串（上限 {MAX_SMILES_CHARS} 字元）"]}
+    if solvent_id is not None and not isinstance(solvent_id, str):
+        return 400, {"ok": False, "errors": ["solventId 必須是字串"]}
+    for key in ("volume", "density"):
+        v = request.get(key)
+        if v is not None and not (_is_number(v) and v > 0):
+            return 400, {"ok": False, "errors": [f"{key} 必須是大於 0 的數字"]}
+    t = request.get("temperatureC")
+    if t is not None and not (_is_number(t) and -273.15 < t < 1000):
+        return 400, {"ok": False, "errors": ["temperatureC 必須是合理的攝氏溫度數字"]}
+    mods, err = _import_core("parachor")
+    if err is not None:
+        return err
+    (par,) = mods
+    try:
+        result = par.compute_surface_tension(
+            smiles or "", None if t is None else float(t), request.get("volume"), request.get("density"), solvent_id,
+        )  # fmt: skip
+    except Exception as e:  # noqa: BLE001
+        return _p82_table_error(e) or _computation_error(e)
+    if result["status"] == "invalid":
+        return 400, {"ok": False, "errors": [result["message"]]}
+    if not _json_safe(result):
+        return 400, {"ok": False, "errors": ["結果不是有限數字"]}
+    return 200, {"ok": True, **result, "disclaimer": par.SURFACE_DISCLAIMER}
+
+
+def handle_interfacial(request: object) -> tuple[int, dict]:
+    """兩物質間的界面張力 γ12（Owens–Wendt，式 8.22，任務 P8-2，PLAN 8.7）。請求 {"a": 物質, "b": 物質}，物質 = {"materialId"? | "solventId"? | "smiles"? | "name"?}，
+    或 {"list": true}（列出 surface_energy.csv 的聚合物與液體）。資料只來自書 Table 8.6、8.7（pending）；沒有 γd、γp 的物質 γ12 為 missing 並說明，不補。"""
+    if not isinstance(request, dict):
+        return 400, {"ok": False, "errors": ["請求必須是 JSON 物件"]}
+    mods, err = _import_core("interfacial")
+    if err is not None:
+        return err
+    (itf,) = mods
+    try:
+        if request.get("list") is True:
+            return 200, {"ok": True, **itf.list_materials()}
+        if "a" not in request or "b" not in request:
+            return 400, {"ok": False, "errors": ["請求需要 a 與 b 兩個物質（或 list: true）"]}
+        result = itf.compute_interfacial(request["a"], request["b"])
+    except Exception as e:  # noqa: BLE001
+        return _p82_table_error(e) or _computation_error(e)
+    if not _json_safe(result):
+        return 400, {"ok": False, "errors": ["結果不是有限數字"]}
+    return 200, {"ok": True, **result, "disclaimer": itf.INTERFACIAL_DISCLAIMER}
+
+
+def handle_wetting(request: object) -> tuple[int, dict]:
+    """固體（聚合物）與液體的潤濕（任務 P8-2，PLAN 8.7）。請求 {"solid": 物質, "liquid": 物質}（物質格式同 /interfacial），或 {"list": true}。
+    輸出 γ12（式 8.22）、cosθ 與 θ（式 8.23；cosθ > 1 為完全潤濕、< −1 θ 回 missing 並說明）、黏附張力（式 8.6）、鋪展係數 S = γLV + γSL − γSV（書：S 為負時完全潤濕）。
+    液體不在 Table 8.6（沒有 γd、γp）：Owens–Wendt 相關量 missing，但 γLV（溶劑資料表的文獻值）照列。格式不合：400。"""
+    if not isinstance(request, dict):
+        return 400, {"ok": False, "errors": ["請求必須是 JSON 物件"]}
+    mods, err = _import_core("interfacial")
+    if err is not None:
+        return err
+    (itf,) = mods
+    try:
+        if request.get("list") is True:
+            return 200, {"ok": True, **itf.list_materials()}
+        if "solid" not in request or "liquid" not in request:
+            return 400, {"ok": False, "errors": ["請求需要 solid 與 liquid 兩個物質（或 list: true）"]}
+        result = itf.compute_wetting(request["solid"], request["liquid"])
+    except Exception as e:  # noqa: BLE001
+        return _p82_table_error(e) or _computation_error(e)
+    if not _json_safe(result):
+        return 400, {"ok": False, "errors": ["結果不是有限數字"]}
+    return 200, {"ok": True, **result, "disclaimer": itf.INTERFACIAL_DISCLAIMER}
+
+
 POST_ROUTES = {
+    "/viscosity": handle_viscosity,
+    "/surface-tension": handle_surface_tension,
+    "/interfacial": handle_interfacial,
+    "/wetting": handle_wetting,
     "/hsp": handle_hsp,
     "/solubility": handle_solubility,
     "/liquid-volume": handle_liquid_volume,
